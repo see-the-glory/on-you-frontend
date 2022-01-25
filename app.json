@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "on-you-frontend",
+    "slug": "on-you-frontend",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "on-you-frontend"
+}
