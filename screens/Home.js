@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Animated,ScrollView,Dimensions,SafeAreaView,StyleSheet,View, Text,Image,TextInput,TouchableOpacity} from 'react-native';
 import {StatusBar} from "expo-status-bar";
 import {useFonts} from "expo-font";
-
+import * as Font from "expo-font";
+import AppLoading from 'expo-app-loading';
 //img
 import logo from '../screens/img/logo.png'
 import img from '../screens/img/unnamed.jpeg'
@@ -24,12 +25,14 @@ export default function Home(){
     const [isPress, setIsPress] = React.useState(true);
 
     const [loaded]= useFonts({
-        Quintessential: require('../assets/font/Quintessential-Regular.ttf'),
-        billabong: require('../assets/font/billabong.otf'),
-        Dancing: require('../assets/font/DancingScript-VariableFont_wght.ttf'),
+        Quintessential: require('../assets/fonts/Quintessential-Regular.ttf'),
+        billabong: require('../assets/fonts/billabong.otf'),
+        dancing: require('../assets/fonts/DancingScript-VariableFont.ttf'),
+        satisfy: require('../assets/fonts/Satisfy-Regular.ttf'),
     })
-
-    const [isReady, setIsReady] = useState(false);
+    if (!loaded) {
+        return <AppLoading />;
+    }
 
     const onChangeSearch = query => setSearchQuery(query);
 
@@ -44,11 +47,10 @@ export default function Home(){
                     {/*<Image style={styles.logo} source={logo}/>*/}
                     <Text style={{
                               color:'white',
-                              top: 5,
-                              fontSize: 45,
+                              fontSize: 40,
                                 fontWeight: "bold",
-                              fontFamily: 'Dancing'
-                          }}>ONYOU</Text>
+                              fontFamily: 'satisfy'
+                          }}>OnYou</Text>
                    {/* <Searchbar
                         style={styles.input}
                         placeholder="Search"
