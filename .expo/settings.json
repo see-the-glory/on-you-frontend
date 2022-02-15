@@ -5,6 +5,6 @@
   "minify": false,
   "urlRandomness": "vs-7rc",
   "https": false,
-  "scheme": null,
-  "devClient": false
+  "devClient": true,
+  "scheme": null
 }
