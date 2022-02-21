@@ -4817,6 +4817,11 @@
     "jscodeshift" "^0.11.0"
     "nullthrows" "^1.1.1"
 
+"react-native-grid-image-viewer@^1.3.0":
+  "integrity" "sha512-y+K9+YggIwEFB50s/NYAqtYaLEVrTi/t6zkfXhe3TrQuPx+8+++8GjXLokdvyf+E98e+nCGxaXaPvggRj9HGqA=="
+  "resolved" "https://registry.npmjs.org/react-native-grid-image-viewer/-/react-native-grid-image-viewer-1.3.0.tgz"
+  "version" "1.3.0"
+
 "react-native-iphone-x-helper@^1.3.1":
   "integrity" "sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg=="
   "resolved" "https://registry.npmjs.org/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz"

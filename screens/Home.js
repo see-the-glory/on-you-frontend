@@ -51,21 +51,6 @@ export default function Home(){
                                 fontWeight: "bold",
                               fontFamily: 'satisfy'
                           }}>OnYou</Text>
-                   {/* <Searchbar
-                        style={styles.input}
-                        placeholder="Search"
-                        onChangeText={onChangeSearch}
-                        value={searchQuery}
-                    />*/}
-                    {/*<TextInput
-                        style={styles.input}
-                        onChangeText={onChangeText}
-                        value={text}
-                        placeholder="Search"
-                    />*/}
-                    <TouchableOpacity onPress={()=>styles.event}>
-                        <Icon name="ios-search" size={30} style={styles.search} />
-                    </TouchableOpacity>
                 </View>
             </View>
                 <View style={styles.body}>
@@ -100,9 +85,9 @@ export default function Home(){
                         <TouchableOpacity>
                             <Icon name="paper-plane-outline" size={30} style={styles.heart} />
                     </TouchableOpacity>
-                        <TouchableOpacity>
+                        {/*<TouchableOpacity>
                             <Icon name="bookmark-outline" size={30} style={styles.boormark} />
-                    </TouchableOpacity>
+                    </TouchableOpacity>*/}
                     </View>
                 </View>
                  <View style={styles.likeArea}>
@@ -166,9 +151,9 @@ export default function Home(){
                         <TouchableOpacity>
                             <Icon name="paper-plane-outline" size={30} style={styles.heart} />
                         </TouchableOpacity>
-                        <TouchableOpacity>
+                       {/* <TouchableOpacity>
                             <Icon name="bookmark-outline" size={30} style={styles.boormark} />
-                        </TouchableOpacity>
+                        </TouchableOpacity>*/}
                     </View>
                 </View>
                 <View style={styles.likeArea}>
@@ -228,9 +213,9 @@ export default function Home(){
                         <TouchableOpacity>
                             <Icon name="paper-plane-outline" size={30} style={styles.heart} />
                         </TouchableOpacity>
-                        <TouchableOpacity>
+                        {/*<TouchableOpacity>
                             <Icon name="bookmark-outline" size={30} style={styles.boormark} />
-                        </TouchableOpacity>
+                        </TouchableOpacity>*/}
                     </View>
                 </View>
                 <View style={styles.likeArea}>
@@ -291,9 +276,9 @@ export default function Home(){
                             <TouchableOpacity>
                                 <Icon name="paper-plane-outline" size={30} style={styles.heart} />
                             </TouchableOpacity>
-                            <TouchableOpacity>
+                            {/*<TouchableOpacity>
                                 <Icon name="bookmark-outline" size={30} style={styles.boormark} />
-                            </TouchableOpacity>
+                            </TouchableOpacity>*/}
                         </View>
                     </View>
                     <View style={styles.likeArea}>
@@ -353,13 +338,13 @@ export default function Home(){
                             <TouchableOpacity>
                                 <Icon name="paper-plane-outline" size={30} style={styles.heart} />
                             </TouchableOpacity>
-                            <TouchableOpacity>
+                            {/*<TouchableOpacity>
                                 <Icon name="bookmark-outline" size={30} style={{
                                     color: "white",
                                     // marginLeft: Dimensions.get('window').width
                                     marginLeft: 260
                                 }} />
-                            </TouchableOpacity>
+                            </TouchableOpacity>*/}
                         </View>
                     </View>
                     <View style={styles.likeArea}>

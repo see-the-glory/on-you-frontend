@@ -2,7 +2,6 @@ import React from 'react';
 import {Dimensions, StyleSheet} from "react-native";
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-import * as Font from 'expo-font'
 
 const styles=StyleSheet.create({
     screen:{
@@ -57,7 +56,8 @@ const styles=StyleSheet.create({
         height: 50,
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        borderRadius: 50
+        borderRadius: 50,
+        marginBottom: 5
     },
     heart:{
         color: "white"
