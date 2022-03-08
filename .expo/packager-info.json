@@ -1,5 +1,10 @@
 {
-  "devToolsPort": 19003,
-  "expoServerPort": null,
-  "packagerPort": 8081
+  "devToolsPort": 19002,
+  "expoServerPort": 19000,
+  "packagerPort": 19000,
+  "expoServerNgrokUrl": "https://2a-btw.anonymous.on-you-frontend.exp.direct",
+  "packagerNgrokUrl": "https://packager.2a-btw.anonymous.on-you-frontend.exp.direct",
+  "ngrokPid": 20424,
+  "packagerPid": null,
+  "webpackServerPort": null
 }
