@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ScrollView} from 'react-native';
 import {StatusBar} from "expo-status-bar";
 import styled from 'styled-components/native';
-import DropDownPicker from 'react-native-dropdown-picker'
 import RNPickerSelect from "react-native-picker-select";
 import axios from "axios";
 
