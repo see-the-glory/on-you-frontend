@@ -25,13 +25,13 @@ const styles=StyleSheet.create({
     },
     tabHeader:{
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         borderWidth: 1,
     },
     tabName:{
         fontSize:20,
         margin: 5,
-        color: "white"
+        color: "white",
     },
     body:{
         width: windowWidth,

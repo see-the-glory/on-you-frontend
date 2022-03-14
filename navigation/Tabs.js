@@ -1,8 +1,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Club from '../screens/Club';
+import Group from '../screens/Search';
 import Home from '../screens/Home';
-import MyClub from '../screens/MyClub';
+import Clubs from '../screens/Clubs';
 import Profile from '../screens/Profile';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -27,8 +27,8 @@ const Tabs = () => (
       }}
     />
     <Tab.Screen
-      name='Club'
-      component={Club}
+      name='Group'
+      component={Group}
       options={{
         tabBarIcon: ({ focused, color, size }) => (
           <Ionicons
@@ -41,7 +41,7 @@ const Tabs = () => (
     />
     <Tab.Screen
       name='MyClub'
-      component={MyClub}
+      component={Clubs}
       options={{
         tabBarIcon: ({ focused, color, size }) => (
           <Ionicons

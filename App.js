@@ -6,9 +6,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import Tabs from './navigation/Tabs';
 import LoginStack from './navigation/LoginStack';
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
-import Club from './screens/Club'
+import Search from './screens/Search'
 import Account from './screens/headerTab/Account'
 import Group from './screens/headerTab/Group'
+
 
 
 const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
@@ -49,11 +50,6 @@ export default function App() {
 
   return (
       <NavigationContainer screenOptions={{headerShown: false}}>
-          {/*<Stack.Navigator>
-              <Stack.Screen name="Account" component={Account} />
-              <Stack.Screen name="Group" component={Group} />
-              <Tabs/>
-          </Stack.Navigator>*/}
         {isLoggedIn ? <Tabs screenOptions={{headerShown: false}}/>  : <LoginStack />}
       </NavigationContainer>
   );
