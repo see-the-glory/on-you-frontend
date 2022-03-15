@@ -1,9 +1,9 @@
-import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Text, TouchableOpacity } from 'react-native';
-import styled from 'styled-components/native';
+import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { View, Text, TouchableOpacity } from "react-native";
+import styled from "styled-components/native";
 
-const Container = styled.View`
+const Container = styled.SafeAreaView`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -21,7 +21,7 @@ const Login = () => (
 
 const LoginStack = () => (
   <NativeStack.Navigator screenOptions={{ headerShown: false }}>
-    <NativeStack.Screen name='Login' component={Login} />
+    <NativeStack.Screen name="Login" component={Login} />
   </NativeStack.Navigator>
 );
 

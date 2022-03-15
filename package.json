@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "react-native start",
+    "start": "expo start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "web": "expo start --web"
@@ -25,6 +25,7 @@
     "react-native": "0.64.3",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1",
+    "react-native-swiper": "^1.6.0-rc.3",
     "react-native-web": "0.17.1",
     "styled-components": "^5.3.3"
   },

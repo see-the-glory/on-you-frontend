@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import * as Font from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
-import AppLoading from 'expo-app-loading';
-import { NavigationContainer } from '@react-navigation/native';
-import Tabs from './navigation/Tabs';
-import { Text } from 'react-native';
-import LoginStack from './navigation/LoginStack';
+import React, { useState } from "react";
+import * as Font from "expo-font";
+import { Ionicons } from "@expo/vector-icons";
+import AppLoading from "expo-app-loading";
+import { NavigationContainer } from "@react-navigation/native";
+import Root from "./navigation/Root";
+import LoginStack from "./navigation/LoginStack";
 
 const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
 
@@ -33,7 +32,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      {isLoggedIn ? <Tabs /> : <LoginStack />}
+      {isLoggedIn ? <Root /> : <LoginStack />}
     </NavigationContainer>
   );
 }
