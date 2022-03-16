@@ -2,6 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -45,6 +46,10 @@ const FieldInput = styled.TextInput`
   font-size: 15px;
 `;
 
+const IconButton = styled.TouchableOpacity`
+  margin-left: 20px;
+`;
+
 const NextButton = styled.TouchableOpacity`
   width: 200px;
   height: 40px;
@@ -61,7 +66,7 @@ const ButtonText = styled.Text`
 `;
 
 type ParamList = {
-  StepTwo: { category: string };
+  StepTwo: { category?: string };
 };
 
 type StepTwoScreenProps = NativeStackScreenProps<ParamList, "StepTwo">;
@@ -74,6 +79,7 @@ const StepTwo: React.FC<StepTwoScreenProps> = ({
 }) => {
   const [clubName, setClubName] = useState("");
   const [clubMemberCount, setClubMemberCount] = useState(0);
+  const [limitCheck, setLimitCheck] = useState(false);
   const onChangeName = (name) => setClubName(name);
   const onChangeCount = (count) => setClubMemberCount(count);
 
@@ -100,7 +106,9 @@ const StepTwo: React.FC<StepTwoScreenProps> = ({
               <FieldText>모임 정원</FieldText>
               <FieldInput
                 keyboardType="numeric"
-                placeholder="5"
+                editable={!limitCheck}
+                defaultValue={limitCheck ? "∞" : ""}
+                placeholder="0"
                 style={{ width: 80 }}
                 textAlign="center"
                 maxLength={2}
@@ -110,12 +118,27 @@ const StepTwo: React.FC<StepTwoScreenProps> = ({
               />
               <FieldText>명</FieldText>
             </FieldView>
+            <FieldView>
+              <FieldText>인원 수 무제한으로 받기</FieldText>
+              <IconButton
+                onPress={() => {
+                  if (!limitCheck) setClubMemberCount(-1);
+                  setLimitCheck(!limitCheck);
+                }}
+              >
+                {limitCheck ? (
+                  <FontAwesome5 name="check-circle" size={20} color="black" />
+                ) : (
+                  <FontAwesome5 name="circle" size={20} color="black" />
+                )}
+              </IconButton>
+            </FieldView>
           </SectionView>
           <NextButton
             onPress={() => {
               if (clubName === "") {
                 return Alert.alert("모임 이름을 설정하세요.");
-              } else if (clubMemberCount < 1) {
+              } else if (!limitCheck && clubMemberCount < 1) {
                 return Alert.alert("모임 정원은 최소 1명 이상이어야 합니다.");
               } else {
                 return navigate("StepThree", {
