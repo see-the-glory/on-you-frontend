@@ -1,7 +1,12 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import Swiper from "react-native-swiper";
-import { ActivityIndicator, Dimensions, FlatList, Text } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
@@ -62,6 +67,13 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([[{}]]);
   const [clubs, setClubs] = useState([{}]);
+
+  const goToClubHome = (item) => {
+    navigate("ClubHomeStack", {
+      screen: "ClubHomeTopTabs",
+      item,
+    });
+  };
 
   const goToCreation = () => {
     navigate("ClubCreationStack", {
@@ -165,12 +177,18 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
         data={clubs}
         keyExtractor={(item) => item.id + ""}
         renderItem={({ item }) => (
-          <ClubList
-            thumbnailPath={item.thumbnailPath}
-            organizationName={item.organizationName}
-            clubName={item.clubName}
-            memberNum={item.memberNum}
-          />
+          <TouchableOpacity
+            onPress={() => {
+              goToClubHome(item);
+            }}
+          >
+            <ClubList
+              thumbnailPath={item.thumbnailPath}
+              organizationName={item.organizationName}
+              clubName={item.clubName}
+              memberNum={item.memberNum}
+            />
+          </TouchableOpacity>
         )}
       />
       <FloatingButton onPress={goToCreation}>

@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "@react-navigation/bottom-tabs": "^6.2.0",
+        "@react-navigation/material-top-tabs": "^6.1.1",
         "@react-navigation/native": "^6.0.8",
         "@react-navigation/native-stack": "^6.5.0",
         "@types/styled-components": "^5.1.22",
@@ -23,9 +24,11 @@
         "react": "17.0.1",
         "react-dom": "17.0.1",
         "react-native": "0.64.3",
+        "react-native-pager-view": "5.4.9",
         "react-native-safe-area-context": "3.3.2",
         "react-native-screens": "~3.10.1",
         "react-native-swiper": "^1.6.0-rc.3",
+        "react-native-tab-view": "^3.1.1",
         "react-native-web": "0.17.1",
         "styled-components": "^5.3.3"
     },
