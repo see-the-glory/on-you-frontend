@@ -5,7 +5,6 @@ import { Ionicons } from "@expo/vector-icons";
 import StepOne from "../screens/ClubCreation/StepOne";
 import StepTwo from "../screens/ClubCreation/StepTwo";
 import StepThree from "../screens/ClubCreation/StepThree";
-import { useNavigationState } from "@react-navigation/native";
 
 const NativeStack = createNativeStackNavigator();
 
