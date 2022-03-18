@@ -38,6 +38,8 @@ target 'onyoufrontend' do
     end
   end
 
+  use_flipper!()
+
   post_integrate do |installer|
     begin
       expo_patch_react_imports!(installer)
