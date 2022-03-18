@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import Swiper from "react-native-swiper";
 import { ActivityIndicator, Dimensions, FlatList, Text } from "react-native";
 import styled from "styled-components/native";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import ClubList from "../components/ClubList";
 
 const Loader = styled.View`
   flex: 1;
@@ -34,54 +35,19 @@ const CategoryName = styled.Text``;
 
 // Club ScrollView
 
-const Club = styled.TouchableOpacity`
-  width: 100%;
-  height: 80px;
-  margin-bottom: 20px;
-  align-items: center;
-  flex-direction: row;
-`;
-
-const ThumbnailImage = styled.Image`
-  width: 100px;
-  height: 75px;
-  border-radius: 8px;
-  margin-left: 20px;
-`;
-
-const ClubInfo = styled.View`
-  width: 200px;
-  height: 70px;
-  margin-left: 20px;
-  justify-content: space-evenly;
-`;
-
-const ChurchNameText = styled.Text`
-  font-size: 12px;
-`;
-const ClubNameText = styled.Text`
-  font-size: 16px;
-  font-weight: bold;
-`;
-const MemberNumView = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
 const Wrapper = styled.View`
   flex: 1;
 `;
 
 const FloatingButton = styled.TouchableOpacity`
   position: absolute;
-  right: 0;
-  bottom: 0;
+  right: 20px;
+  bottom: 20px;
   width: 50px;
   height: 50px;
-  margin-right: 15px;
-  margin-bottom: 15px;
   background-color: #e77f67;
-  box-shadow: 1px 1px 2px gray;
+  elevation: 5;
+  box-shadow: 1px 1px 3px gray;
   border-radius: 50px;
   justify-content: center;
   align-items: center;
@@ -89,11 +55,19 @@ const FloatingButton = styled.TouchableOpacity`
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = () => {
+const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
+  navigation: { navigate },
+}) => {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([[{}]]);
   const [clubs, setClubs] = useState([{}]);
+
+  const goToCreation = () => {
+    navigate("ClubCreationStack", {
+      screen: "StepOne",
+    });
+  };
 
   const getCategories = () => {
     const item = {
@@ -115,7 +89,7 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = () => {
         id: i,
         thumbnailPath:
           "https://cdn.pixabay.com/photo/2015/03/30/14/35/love-699480_1280.jpg",
-        churchName: "시광교회",
+        organizationName: "시광교회",
         clubName: "성경 읽기 너무 싫어",
         memberNum: Math.ceil(Math.random() * 10),
       });
@@ -190,25 +164,16 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = () => {
         }
         data={clubs}
         keyExtractor={(item) => item.id + ""}
-        renderItem={({ item, index }) => (
-          <Club>
-            <ThumbnailImage source={{ uri: item.thumbnailPath }} />
-            <ClubInfo>
-              <ChurchNameText>
-                <Text>{item.churchName}</Text>
-              </ChurchNameText>
-              <ClubNameText>
-                <Text>{item.clubName}</Text>
-              </ClubNameText>
-              <MemberNumView>
-                <FontAwesome name="user-o" size={12} color="black" />
-                <Text style={{ marginLeft: 7 }}>{item.memberNum} 명</Text>
-              </MemberNumView>
-            </ClubInfo>
-          </Club>
+        renderItem={({ item }) => (
+          <ClubList
+            thumbnailPath={item.thumbnailPath}
+            organizationName={item.organizationName}
+            clubName={item.clubName}
+            memberNum={item.memberNum}
+          />
         )}
       />
-      <FloatingButton>
+      <FloatingButton onPress={goToCreation}>
         <Ionicons name="ios-add-sharp" size={28} color="white" />
       </FloatingButton>
     </Wrapper>
