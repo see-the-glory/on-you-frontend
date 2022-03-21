@@ -68,9 +68,9 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
   const [categories, setCategories] = useState([[{}]]);
   const [clubs, setClubs] = useState([{}]);
 
-  const goToClubHome = (item) => {
-    navigate("ClubHomeStack", {
-      screen: "ClubHomeTopTabs",
+  const goToClub = (item) => {
+    navigate("ClubStack", {
+      screen: "ClubTopTabs",
       item,
     });
   };
@@ -179,7 +179,7 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {
-              goToClubHome(item);
+              goToClub(item);
             }}
           >
             <ClubList

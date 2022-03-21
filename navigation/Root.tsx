@@ -2,7 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Tabs from "./Tabs";
 import ClubCreationStack from "./ClubCreationStack";
-import ClubHomeStack from "./ClubHomeTopTabs";
+import ClubStack from "./ClubTopTabs";
 
 const Nav = createNativeStackNavigator();
 
@@ -15,7 +15,7 @@ const Root = () => (
   >
     <Nav.Screen name="Tabs" component={Tabs} />
     <Nav.Screen name="ClubCreationStack" component={ClubCreationStack} />
-    <Nav.Screen name="ClubHomeStack" component={ClubHomeStack} />
+    <Nav.Screen name="ClubStack" component={ClubStack} />
   </Nav.Navigator>
 );
 export default Root;

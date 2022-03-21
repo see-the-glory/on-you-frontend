@@ -1,25 +1,15 @@
 import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Text, View, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
+import ClubHome from "../screens/Club/ClubHome";
+import ClubFeed from "../screens/Club/ClubFeed";
 
 const NativeStack = createNativeStackNavigator();
 const TopTab = createMaterialTopTabNavigator();
 
-const ClubHome = () => (
-  <View>
-    <Text>ClubHome</Text>
-  </View>
-);
-
-const Feed = () => (
-  <View>
-    <Text>Feed</Text>
-  </View>
-);
-
-const ClubHomeTopTabs = ({
+const ClubTopTabs = ({
   route: {
     params: { item },
   },
@@ -27,19 +17,26 @@ const ClubHomeTopTabs = ({
   return (
     <TopTab.Navigator
       initialRouteName="ClubHome"
-      screenOptions={{ swipeEnabled: false }}
+      screenOptions={{
+        swipeEnabled: false,
+      }}
     >
       <TopTab.Screen
         options={{ title: "모임소개" }}
         name="ClubHome"
         component={ClubHome}
+        initialParams={{ item }}
       />
-      <TopTab.Screen options={{ title: "피드" }} name="Feed" component={Feed} />
+      <TopTab.Screen
+        options={{ title: "피드" }}
+        name="ClubFeed"
+        component={ClubFeed}
+      />
     </TopTab.Navigator>
   );
 };
 
-const ClubHomeStack = ({
+const ClubStack = ({
   route: {
     params: { item },
   },
@@ -48,8 +45,8 @@ const ClubHomeStack = ({
   return (
     <NativeStack.Navigator>
       <NativeStack.Screen
-        name="ClubHomeTopTabs"
-        component={ClubHomeTopTabs}
+        name="ClubTopTabs"
+        component={ClubTopTabs}
         initialParams={{ item }}
         options={{
           headerLeft: () => (
@@ -69,4 +66,4 @@ const ClubHomeStack = ({
   );
 };
 
-export default ClubHomeStack;
+export default ClubStack;
