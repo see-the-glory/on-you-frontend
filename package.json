@@ -9,6 +9,7 @@
         "web": "expo start --web"
     },
     "dependencies": {
+        "@react-native-seoul/kakao-login": "^3.4.3",
         "@react-navigation/bottom-tabs": "^6.2.0",
         "@react-navigation/native": "^6.0.8",
         "@react-navigation/native-stack": "^6.5.0",
