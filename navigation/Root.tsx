@@ -16,7 +16,6 @@ const Root = () => (
     >
         <Nav.Screen name="Tabs" component={Tabs} />
         <Nav.Screen name="ClubCreationStack" component={ClubCreationStack} />
-        <Nav.Screen name="ClubHomeStack" component={ClubHomeStack} />
         <Nav.Screen name="HomeStack" component={HomeStack}/>
     </Nav.Navigator>
 );
