@@ -125,8 +125,7 @@ const Wrapper = styled.View`
   flex: 1;
   background-color: white;
 `;
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-const { width: SEREEN_WIDTH } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
 //Img Slider
 const ImgView = styled.View`
