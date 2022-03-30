@@ -28,7 +28,7 @@ const Tabs = () => (
             }}
         />
         <Tab.Screen
-            name="검색"
+            name="Search"
             component={Search}
             options={{
                 tabBarIcon: ({ focused, color, size }) => (
