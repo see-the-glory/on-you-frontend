@@ -7,7 +7,7 @@ import {
   unlink,
 } from '@react-native-seoul/kakao-login';
 import React, { useState } from 'react';
-import ResultView from './IntroTemp';
+// import ResultView from './IntroTemp';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, TouchableOpacity, Image, ImageBackground } from "react-native";
 import styled from "styled-components/native";
@@ -59,7 +59,7 @@ function Login() {
   return(
 
   <Container>
-    <ResultView result={result} />
+    {/* <ResultView result={result} /> */}
     <Logo
       source={require("../navigation/img/logo.png")}  //이미지경로
       resizeMode="center" // 'cover', 'contain', 'stretch', 'repeat', 'center' 중 선택 
