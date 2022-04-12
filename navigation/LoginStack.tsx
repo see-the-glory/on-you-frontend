@@ -7,6 +7,7 @@ import {
   unlink,
 } from '@react-native-seoul/kakao-login';
 import React, { useState } from 'react';
+import axios from "axios";
 // import ResultView from './IntroTemp';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, TouchableOpacity, Image, ImageBackground } from "react-native";
@@ -46,14 +47,30 @@ const Logo = styled.ImageBackground`
 
 const NativeStack = createNativeStackNavigator();
 
+// const API = axios.create({
+//   baseURL: "http://",
+//   headers:{
+//     "Content-Type":"application/json",
+//   },
+//   withCredentials: true,
+// })
+
 function Login() {
 
   const [result, setResult] = useState<string>('');
 
   const signInWithKakao = async (): Promise<void> => {
     const token: KakaoOAuthToken = await login();
+    console.log('http://13.125.93.119:8080/api/user/kakao?token='+token.accessToken)
+    // setResult(JSON.stringify(token));
+    axios.get('http://13.125.93.119:8080/api/user/kakao?token='+token.accessToken)
 
-    setResult(JSON.stringify(token));
+    .then(function (response) {
+      console.log(response.data.data);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   };
 
   return(
