@@ -84,7 +84,7 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
   const getCategories = () => {
     const item = {
       iconPath:
-        "https://ima9ines.com/content/images/thumbs/0000017_featured-categories-plugin_300.png",
+        "https://w7.pngwing.com/pngs/507/1014/png-transparent-computer-icons-board-game-video-game-dice-game-white-dice.png",
       name: "보드게임",
     };
     const result = Array.from({ length: 2 }, () =>
