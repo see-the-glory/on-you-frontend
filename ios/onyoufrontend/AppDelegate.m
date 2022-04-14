@@ -14,6 +14,9 @@
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
 
+#import <RNKakaoLogins.h>
+#import <KakaoOpenSDK/KakaoOpenSDK.h>
+
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
   SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
@@ -70,6 +73,16 @@ static void InitializeFlipper(UIApplication *application) {
 - (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {
   BOOL result = [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
   return [super application:application continueUserActivity:userActivity restorationHandler:restorationHandler] || result;
+}
+
+- (BOOL)application:(UIApplication *)app
+     openURL:(NSURL *)url
+     options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+ if([RNKakaoLogins isKakaoTalkLoginUrl:url]) {
+    return [RNKakaoLogins handleOpenUrl: url];
+ }
+
+ return NO;
 }
 
 @end

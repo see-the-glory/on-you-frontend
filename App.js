@@ -22,17 +22,17 @@ export default function App() {
 
   if (!ready) {
     return (
-      <AppLoading
-        startAsync={startLoading}
-        onFinish={onFinish}
-        onError={console.error}
-      />
+        <AppLoading
+            startAsync={startLoading}
+            onFinish={onFinish}
+            onError={console.error}
+        />
     );
   }
 
   return (
-    <NavigationContainer>
-      {isLoggedIn ? <Root /> : <LoginStack />}
-    </NavigationContainer>
+      <NavigationContainer>
+        {isLoggedIn ? <Root /> : <LoginStack />}
+      </NavigationContainer>
   );
 }
