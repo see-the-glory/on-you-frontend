@@ -10,7 +10,7 @@ const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
 
 export default function App() {
   const [ready, setReady] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const onFinish = () => setReady(true);
 
@@ -22,17 +22,17 @@ export default function App() {
 
   if (!ready) {
     return (
-      <AppLoading
-        startAsync={startLoading}
-        onFinish={onFinish}
-        onError={console.error}
-      />
+        <AppLoading
+            startAsync={startLoading}
+            onFinish={onFinish}
+            onError={console.error}
+        />
     );
   }
 
   return (
-    <NavigationContainer>
-      {isLoggedIn ? <Root /> : <LoginStack />}
-    </NavigationContainer>
+      <NavigationContainer>
+        {isLoggedIn ? <Root /> : <LoginStack />}
+      </NavigationContainer>
   );
 }
