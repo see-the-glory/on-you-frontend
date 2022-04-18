@@ -50,14 +50,19 @@ const ButtonText = styled.Text`
 `;
 
 type ParamList = {
-  StepThree: { category: string; clubName: string; clubMemberCount: Number };
+  StepThree: {
+    category1: number;
+    category2: number;
+    clubName: string;
+    clubMemberCount: Number;
+  };
 };
 
 type StepThreeScreenProps = NativeStackScreenProps<ParamList, "StepThree">;
 
 const StepThree: React.FC<StepThreeScreenProps> = ({
   route: {
-    params: { category, clubName, clubMemberCount },
+    params: { category1, category2, clubName, clubMemberCount },
   },
   navigation: { navigate },
 }) => {
@@ -65,7 +70,8 @@ const StepThree: React.FC<StepThreeScreenProps> = ({
   const onChangeText = (text) => setClubText(text);
 
   const onSubmit = () => {
-    console.log(category);
+    console.log(category1);
+    console.log(category2);
     console.log(clubName);
     console.log(clubMemberCount);
     console.log(clubText);

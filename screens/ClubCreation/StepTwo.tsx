@@ -66,14 +66,14 @@ const ButtonText = styled.Text`
 `;
 
 type ParamList = {
-  StepTwo: { category?: string };
+  StepTwo: { category1: number; category2: number };
 };
 
 type StepTwoScreenProps = NativeStackScreenProps<ParamList, "StepTwo">;
 
 const StepTwo: React.FC<StepTwoScreenProps> = ({
   route: {
-    params: { category },
+    params: { category1, category2 },
   },
   navigation: { navigate },
 }) => {
@@ -142,14 +142,15 @@ const StepTwo: React.FC<StepTwoScreenProps> = ({
                 return Alert.alert("모임 정원은 최소 1명 이상이어야 합니다.");
               } else {
                 return navigate("StepThree", {
-                  category,
+                  category1,
+                  category2,
                   clubName,
                   clubMemberCount,
                 });
               }
             }}
           >
-            <ButtonText>다음</ButtonText>
+            <ButtonText>다음 2/3</ButtonText>
           </NextButton>
         </Wrapper>
       </TouchableWithoutFeedback>
