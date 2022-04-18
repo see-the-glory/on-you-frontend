@@ -15,16 +15,6 @@ const Loader = styled.SafeAreaView`
   align-items: center;
 `;
 
-const Container = styled.SafeAreaView`
-  flex: 1;
-  justify-content: space-evenly;
-  align-items: center;
-`;
-
-const SectionView = styled.View`
-  width: 100%;
-`;
-
 const HeaderView = styled.View`
   flex-direction: column;
   align-items: center;
@@ -60,13 +50,23 @@ const CategoryView = styled.View`
 const CategoryItem = styled.TouchableOpacity`
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  background-color: #c4c4c4;
+  border-radius: 10px;
 `;
 
-const CategoryIcon = styled.Image`
+const CategoryIcon = styled.Image<{ selected: boolean }>`
   width: 180px;
   height: 140px;
   border-radius: 10px;
   opacity: ${(props) => (props.selected ? "1" : "0.3")};
+`;
+
+const CategoryText = styled.Text`
+  position: absolute;
+  font-size: 21px;
+  color: white;
+  font-weight: 800;
 `;
 
 const NextButton = styled.TouchableOpacity`
@@ -85,7 +85,7 @@ const ButtonText = styled.Text`
 `;
 
 interface CategoryProps {
-  id: string;
+  id: number;
   iconPath: string;
   name: string;
 }
@@ -100,7 +100,6 @@ const StepOne: React.FC<NativeStackScreenProps<any, "StepOne">> = ({
   const [selectCategory1, setCategory1] = useState<number>(-1);
   const [selectCategory2, setCategory2] = useState<number>(-1);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
-  console.log(selectCategory1, selectCategory2);
 
   const getCategories = () => {
     let items = [];
@@ -144,7 +143,7 @@ const StepOne: React.FC<NativeStackScreenProps<any, "StepOne">> = ({
     getCategories();
   }, []);
 
-  const onPressCategory = (id) => {
+  const onPressCategory = (id: number) => {
     if (selectCategory1 === id) {
       return setCategory1(-1);
     } else if (selectCategory2 === id) {
@@ -210,7 +209,7 @@ const StepOne: React.FC<NativeStackScreenProps<any, "StepOne">> = ({
             return (
               <CategoryItem
                 key={index}
-                activeOpacity={0.6}
+                activeOpacity={0.8}
                 onPress={() => onPressCategory(category.id)}
               >
                 <CategoryIcon
@@ -222,6 +221,7 @@ const StepOne: React.FC<NativeStackScreenProps<any, "StepOne">> = ({
                     category.id === selectCategory2
                   }
                 />
+                <CategoryText>{category.name}</CategoryText>
               </CategoryItem>
             );
           })}
