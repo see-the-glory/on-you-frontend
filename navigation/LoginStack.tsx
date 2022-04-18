@@ -61,10 +61,10 @@ function Login() {
 
   const signInWithKakao = async (): Promise<void> => {
     const token: KakaoOAuthToken = await login();
-    console.log('http://13.125.93.119:8080/api/user/kakao?token='+token.accessToken)
     // setResult(JSON.stringify(token));
     axios.get('http://13.125.93.119:8080/api/user/kakao?token='+token.accessToken)
-
+    //token이 없으면 로그인 화면, 있으면 홈 화면, token을 local storage에 저장하기
+    //코드 예쁘게 정리하기
     .then(function (response) {
       console.log(response.data.data);
     })
