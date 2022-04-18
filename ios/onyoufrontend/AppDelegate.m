@@ -1,4 +1,6 @@
 #import "AppDelegate.h"
+#import <RNKakaoLogins.h>
+// #import <KakaoOpenSDK/KakaoOpenSDK.h>
 
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
@@ -14,8 +16,6 @@
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
 
-#import <RNKakaoLogins.h>
-#import <KakaoOpenSDK/KakaoOpenSDK.h>
 
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
@@ -75,14 +75,48 @@ static void InitializeFlipper(UIApplication *application) {
   return [super application:application continueUserActivity:userActivity restorationHandler:restorationHandler] || result;
 }
 
-- (BOOL)application:(UIApplication *)app
-     openURL:(NSURL *)url
-     options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
- if([RNKakaoLogins isKakaoTalkLoginUrl:url]) {
-    return [RNKakaoLogins handleOpenUrl: url];
- }
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+                                       sourceApplication:(NSString *)sourceApplication
+                                              annotation:(id)annotation {
+    if([RNKakaoLogins isKakaoTalkLoginUrl:url]) {
+      return [RNKakaoLogins handleOpenUrl: url];
+    }
 
- return NO;
+    return NO;
 }
+
+// - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+//                                       sourceApplication:(NSString *)sourceApplication
+//                                               annotation:(id)annotation {
+//     if ([KOSession isKakaoAccountLoginCallback:url]) {
+//         return [KOSession handleOpenURL:url];
+//     }
+
+//     return false;
+// }
+
+// - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+//                                                 options:(NSDictionary<NSString *,id> *)options {
+//     if ([KOSession isKakaoAccountLoginCallback:url]) {
+//         return [KOSession handleOpenURL:url];
+//     }
+
+//     return false;
+// }
+
+// - (void)applicationDidBecomeActive:(UIApplication *)application
+// {
+//     [KOSession handleDidBecomeActive];
+// }
+
+// - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+//     ...
+//     [KOSession sharedSession].automaticPeriodicRefresh = YES;
+// }
+
+// - (void)applicationDidEnterBackground:(UIApplication *)application {
+//     ...
+//     [KOSession handleDidEnterBackground];
+// }
 
 @end
