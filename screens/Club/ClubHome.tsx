@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, Dimensions, ActivityIndicator } from "react-native";
+import { Text, ActivityIndicator, useWindowDimensions } from "react-native";
 import Carousel from "react-native-snap-carousel";
 import styled from "styled-components/native";
 
@@ -155,7 +155,7 @@ const ClubHome = ({
     params: { item },
   },
 }) => {
-  const { width: SCREEN_WIDTH } = Dimensions.get("window");
+  const { width: SCREEN_WIDTH } = useWindowDimensions();
   const imageHeight = Math.floor((SCREEN_WIDTH / 16) * 9);
   const [loading, setLoading] = useState(true);
   const [calendarData, setCalendarData] = useState([{}]);

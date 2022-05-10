@@ -63,8 +63,8 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
   navigation: { navigate },
 }) => {
-  const [refreshing, setRefreshing] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [categories, setCategories] = useState([[{}]]);
   const [clubs, setClubs] = useState([{}]);
 
