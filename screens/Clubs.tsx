@@ -10,6 +10,8 @@ import {
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
+import { useQuery } from "react-query";
+import { clubApi } from "../api";
 
 const Loader = styled.View`
   flex: 1;
@@ -67,6 +69,10 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [categories, setCategories] = useState([[{}]]);
   const [clubs, setClubs] = useState([{}]);
+  const { isLoading: categoryLoading, data: categoryData } = useQuery(
+    "getCategories",
+    clubApi.getCategories
+  );
 
   const goToClub = (item) => {
     navigate("ClubStack", {
@@ -82,14 +88,14 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
   };
 
   const getCategories = () => {
-    const item = {
-      iconPath:
-        "https://w7.pngwing.com/pngs/507/1014/png-transparent-computer-icons-board-game-video-game-dice-game-white-dice.png",
-      name: "보드게임",
-    };
-    const result = Array.from({ length: 2 }, () =>
-      Array.from({ length: 4 }, () => item)
-    );
+    const result = [];
+    const gap = 4;
+    let pos = 0;
+
+    while (pos <= categoryData.data.length) {
+      result.push(categoryData.data.slice(pos, pos + gap));
+      pos += gap;
+    }
 
     setCategories(result);
   };
@@ -161,7 +167,7 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
                         <CategoryItem key={index} onPress={getData}>
                           <CategoryIcon
                             source={{
-                              uri: item.iconPath,
+                              uri: "https://w7.pngwing.com/pngs/507/1014/png-transparent-computer-icons-board-game-video-game-dice-game-white-dice.png",
                             }}
                           />
                           <CategoryName>{item.name}</CategoryName>
