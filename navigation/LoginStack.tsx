@@ -7,11 +7,12 @@ import {
   unlink,
 } from '@react-native-seoul/kakao-login';
 import React, { useState } from 'react';
-import axios from "axios";
 // import ResultView from './IntroTemp';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, TouchableOpacity, Image, ImageBackground } from "react-native";
 import styled from "styled-components/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 
 const Container = styled.View`
   flex: 1;
@@ -47,34 +48,87 @@ const Logo = styled.ImageBackground`
 
 const NativeStack = createNativeStackNavigator();
 
-// const API = axios.create({
-//   baseURL: "http://",
-//   headers:{
-//     "Content-Type":"application/json",
-//   },
-//   withCredentials: true,
-// })
-
 function Login() {
 
   const [result, setResult] = useState<string>('');
 
   const signInWithKakao = async (): Promise<void> => {
     const token: KakaoOAuthToken = await login();
+
+    let jwtToken = fetch("http://52.78.5.27:8080/login/kakao/", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({token: token.accessToken})
+    })
+    .then((response) => response.json())
+    .then((resData) => {
+      console.log('--- log ---');
+      console.log(resData.token)
+      if (resData) {
+          console.log('aaa')
+          // console.log('jwtToken : ', jwtToken.headers.get('Authorization'));
+          AsyncStorage.setItem("jwt", JSON.stringify({'jwt' : resData.token.toString()}));
+          AsyncStorage.getItem('jwt', (err, result) => {
+            console.log(result)
+            //이 부분 해결 필요
+          });
+        }
+      });
+
+    console.log(token.accessToken)
     // setResult(JSON.stringify(token));
-    let accessToken = axios.get('http://13.125.93.119:8080/api/user/kakao?token='+token.accessToken)
+  
+    // const response = fetch('http://52.78.5.27:8080/login/kakao/', {
+    //   method: 'GET',
+    //   headers: {
+    //     Authorization: token.accessToken
+    //   }
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //     console.log(data);
+    // })
+    // .catch(err => console.error(err));
+    
+    // console.log(response.status)
+    // console.log(token.accessToken)
+
+    // if (response.status === 200) {
+    //   console.log('jwtToken : ', response.headers.get('Authorization'));
+    //   localStorage.setItem("jwt", response.headers.get('Authorization'));
+    // }
+
+    // let response = axios.get('http://52.78.5.27:8080/login/kakao/', {
+    //   headers: {
+    //     Authorization: 'Bearer ' + token.accessToken
+    //   },
+    //   validateStatus: function (status) {
+    //     // 상태 코드가 500 이상일 경우 거부. 나머지(500보다 작은)는 허용.
+    //     return status < 500;
+    //   }
+    // })
+    
+    
+    // const header = { Authorization: `Bearer ${token.accessToken}`};
+
+    
+    // let customToken = axios.get('http://52.78.5.27:8080/api/user', {
+    //   headers: {
+    //     Authorization: 'Bearer ' + token.accessToken
+    //   }
+    // })
+    //  axios.get('http://52.78.5.27:8080/api/user/kakao?token='+token.accessToken, {header})
     //token이 없으면 로그인 화면, 있으면 홈 화면, token을 local storage에 저장하기
     //코드 예쁘게 정리하기
-    .then(function (response) {
-      console.log(response.data.data);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+    
 
-    if(accessToken.status === 200){
-      localStorage.setItem("accessToken", accessToken.data)
-    }
+    // if(customToken.status === 200){
+    //   localStorage.setItem("accessToken", token.accessToken)
+    // }
+
+    
   };
 
   return(
