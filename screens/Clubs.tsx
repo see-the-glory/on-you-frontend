@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Swiper from "react-native-swiper";
 import {
   ActivityIndicator,
@@ -11,7 +11,13 @@ import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
 import { useQuery, useQueryClient } from "react-query";
-import { clubApi } from "../api";
+import {
+  Category,
+  CategoryResponse,
+  clubApi,
+  Club,
+  ClubsResponse,
+} from "../api";
 
 const Loader = styled.View`
   flex: 1;
@@ -66,33 +72,39 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
   navigation: { navigate },
 }) => {
   const queryClient = useQueryClient();
-  const [categoryBundle, setCategoryBundle] = useState([[{}]]);
+  const [categoryBundle, setCategoryBundle] = useState<Array<Array<Category>>>([
+    [],
+  ]);
   const {
     isLoading: clubsLoading,
     data: clubs,
     isRefetching: isRefetchingClubs,
-  } = useQuery(["clubs", "getClubs"], clubApi.getClubs);
+  } = useQuery<ClubsResponse>(["clubs", "getClubs"], clubApi.getClubs);
 
   const {
     isLoading: categoryLoading,
     data: category,
     isRefetching: isRefetchingCategory,
-  } = useQuery(["clubs", "getCategories"], clubApi.getCategories, {
-    onSuccess: (res) => {
-      const result = [];
-      const categoryViewSize = 4;
-      let pos = 0;
+  } = useQuery<CategoryResponse>(
+    ["clubs", "getCategories"],
+    clubApi.getCategories,
+    {
+      onSuccess: (res) => {
+        const result = [];
+        const categoryViewSize = 4;
+        let pos = 0;
 
-      while (pos < res.data.length) {
-        result.push(res.data.slice(pos, pos + categoryViewSize));
-        pos += categoryViewSize;
-      }
+        while (pos < res.data.length) {
+          result.push(res.data.slice(pos, pos + categoryViewSize));
+          pos += categoryViewSize;
+        }
 
-      setCategoryBundle(result);
-    },
-  });
+        setCategoryBundle(result);
+      },
+    }
+  );
 
-  const goToClub = (item) => {
+  const goToClub = (item: Club) => {
     navigate("ClubStack", {
       screen: "ClubTopTabs",
       item,
@@ -102,6 +114,7 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
   const goToCreation = () => {
     navigate("ClubCreationStack", {
       screen: "StepOne",
+      category,
     });
   };
 
@@ -160,7 +173,7 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
             </Swiper>
           </>
         }
-        data={clubs.data}
+        data={clubs?.data}
         keyExtractor={(item) => item.id + ""}
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -169,7 +182,7 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
             }}
           >
             <ClubList
-              thumbnailPath={item.thumbnail}
+              thumbnailPath={item.thumbnail ? item.thumbnail : ""}
               organizationName={item.organizationName}
               clubName={item.name}
               memberNum={item.members.length}
