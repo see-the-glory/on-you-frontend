@@ -10,7 +10,7 @@ import {
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { clubApi } from "../api";
 
 const Loader = styled.View`
@@ -65,14 +65,32 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
   navigation: { navigate },
 }) => {
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [categories, setCategories] = useState([[{}]]);
-  const [clubs, setClubs] = useState([{}]);
-  const { isLoading: categoryLoading, data: categoryData } = useQuery(
-    "getCategories",
-    clubApi.getCategories
-  );
+  const queryClient = useQueryClient();
+  const [categoryBundle, setCategoryBundle] = useState([[{}]]);
+  const {
+    isLoading: clubsLoading,
+    data: clubs,
+    isRefetching: isRefetchingClubs,
+  } = useQuery(["clubs", "getClubs"], clubApi.getClubs);
+
+  const {
+    isLoading: categoryLoading,
+    data: category,
+    isRefetching: isRefetchingCategory,
+  } = useQuery(["clubs", "getCategories"], clubApi.getCategories, {
+    onSuccess: (res) => {
+      const result = [];
+      const categoryViewSize = 4;
+      let pos = 0;
+
+      while (pos < res.data.length) {
+        result.push(res.data.slice(pos, pos + categoryViewSize));
+        pos += categoryViewSize;
+      }
+
+      setCategoryBundle(result);
+    },
+  });
 
   const goToClub = (item) => {
     navigate("ClubStack", {
@@ -87,50 +105,12 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
     });
   };
 
-  const getCategories = () => {
-    const result = [];
-    const gap = 4;
-    let pos = 0;
-
-    while (pos <= categoryData.data.length) {
-      result.push(categoryData.data.slice(pos, pos + gap));
-      pos += gap;
-    }
-
-    setCategories(result);
-  };
-
-  const getClubs = () => {
-    const result = [];
-    for (var i = 0; i < 12; ++i) {
-      result.push({
-        id: i,
-        thumbnailPath:
-          "https://cdn.pixabay.com/photo/2015/03/30/14/35/love-699480_1280.jpg",
-        organizationName: "시광교회",
-        clubName: "성경 읽기 너무 싫어",
-        memberNum: Math.ceil(Math.random() * 10),
-      });
-    }
-
-    setClubs(result);
-  };
-
-  const getData = async () => {
-    await Promise.all([getCategories(), getClubs()]);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
-
   const onRefresh = async () => {
-    setRefreshing(true);
-    await getData();
-    setRefreshing(false);
+    queryClient.refetchQueries(["clubs"]);
   };
 
+  const refreshing = isRefetchingCategory || isRefetchingClubs;
+  const loading = categoryLoading || clubsLoading;
   return loading ? (
     <Loader>
       <ActivityIndicator />
@@ -159,12 +139,12 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
                 height: SCREEN_HEIGHT / 6,
               }}
             >
-              {categories.map((bundle, index) => {
+              {categoryBundle.map((bundle, index) => {
                 return (
                   <CategoryView key={index}>
                     {bundle.map((item, index) => {
                       return (
-                        <CategoryItem key={index} onPress={getData}>
+                        <CategoryItem key={index} onPress={onRefresh}>
                           <CategoryIcon
                             source={{
                               uri: "https://w7.pngwing.com/pngs/507/1014/png-transparent-computer-icons-board-game-video-game-dice-game-white-dice.png",
@@ -180,7 +160,7 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
             </Swiper>
           </>
         }
-        data={clubs}
+        data={clubs.data}
         keyExtractor={(item) => item.id + ""}
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -189,10 +169,10 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
             }}
           >
             <ClubList
-              thumbnailPath={item.thumbnailPath}
+              thumbnailPath={item.thumbnail}
               organizationName={item.organizationName}
-              clubName={item.clubName}
-              memberNum={item.memberNum}
+              clubName={item.name}
+              memberNum={item.members.length}
             />
           </TouchableOpacity>
         )}
