@@ -1,6 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import { useMutation } from "react-query";
 import styled from "styled-components/native";
 
 const Container = styled.ScrollView`
@@ -113,6 +114,38 @@ const StepThree: React.FC<StepThreeScreenProps> = ({
 }) => {
   const [briefIntroText, setBriefIntroText] = useState<string>("");
   const [detailIntroText, setDetailIntroText] = useState<string>("");
+  const mutation = useMutation(
+    (data) => {
+      return fetch("http://52.78.5.27:8080/api/clubs", {
+        method: "POST",
+        headers: {
+          "content-type": "multipart/form-data",
+          authorization:
+            "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiLsnqXspIDsmqkiLCJzb2NpYWxJZCI6IjIxOTAwMzc4NTAiLCJpZCI6MzQsImV4cCI6MTY1MzQwNTc0NH0.gJEnm383IbZQ2QS0ldY4RNEmxhRb-hTtFSaeqSymIb8rKZyvMEmCCTLm5rSvur-dtTRpVPy-jLzz_dpKL-kXgA",
+        },
+        body: data,
+      }).then((res) => res.json());
+    },
+    {
+      onMutate: (data) => {
+        console.log("--- Mutate ---");
+        console.log(data);
+      },
+      onSuccess: (data) => {
+        console.log("--- Success ---");
+        console.log(data);
+      },
+      onError: (error) => {
+        console.log("--- Error ---");
+        console.log(error);
+      },
+      onSettled: (data, error) => {
+        console.log("--- Settled ---");
+        console.log(data);
+        console.log(error);
+      },
+    }
+  );
 
   const onSubmit = () => {
     console.log("category1: " + category1);
@@ -125,6 +158,27 @@ const StepThree: React.FC<StepThreeScreenProps> = ({
     console.log("imageURI " + imageURI);
 
     // Post to BE.
+    const testData = {
+      category1Id: 1,
+      category2Id: 2,
+      isApproveRequired: "N",
+      clubLongDesc: "longDesc",
+      clubShortDesc: "shortDesc",
+      clubName: "Test Club",
+      clubMaxMember: 10,
+    };
+
+    const reader = new FileReader();
+    reader.readAsDataURL(require("/../assets/basic.jpg"));
+    reader.onload = () => {
+      const formData = new FormData();
+
+      console.log(reader.result);
+      formData.append("file", require("../assets/basic.jpg"));
+      formData.append("clubCreateRequest", JSON.stringify(testData));
+
+      // mutation.mutate(formData);
+    };
 
     return navigate("Tabs", { screen: "Clubs" });
   };

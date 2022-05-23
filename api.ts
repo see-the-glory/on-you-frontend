@@ -1,4 +1,4 @@
-const BASE_URL = "http://52.78.5.27:8080/api";
+const BASE_URL = "http://localhost:8080/api"; //  "http://52.78.5.27:8080/api";
 
 interface BaseResponse {
   resultCode: string;
@@ -53,4 +53,4 @@ const getCategories = () =>
 
 const getClubs = () => fetch(`${BASE_URL}/clubs`).then((res) => res.json());
 
-export const clubApi = { getCategories, getClubs };
+export const ClubApi = { getCategories, getClubs };

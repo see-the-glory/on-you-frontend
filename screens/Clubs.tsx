@@ -10,11 +10,11 @@ import {
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
-import { useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
   Category,
   CategoryResponse,
-  clubApi,
+  ClubApi,
   Club,
   ClubsResponse,
 } from "../api";
@@ -79,7 +79,7 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
     isLoading: clubsLoading,
     data: clubs,
     isRefetching: isRefetchingClubs,
-  } = useQuery<ClubsResponse>(["clubs", "getClubs"], clubApi.getClubs);
+  } = useQuery<ClubsResponse>(["clubs", "getClubs"], ClubApi.getClubs);
 
   const {
     isLoading: categoryLoading,
@@ -87,7 +87,7 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
     isRefetching: isRefetchingCategory,
   } = useQuery<CategoryResponse>(
     ["clubs", "getCategories"],
-    clubApi.getCategories,
+    ClubApi.getCategories,
     {
       onSuccess: (res) => {
         const result = [];
@@ -100,6 +100,9 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
         }
 
         setCategoryBundle(result);
+      },
+      onError: (error) => {
+        console.log(error);
       },
     }
   );
