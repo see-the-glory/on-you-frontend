@@ -163,7 +163,9 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
                         <CategoryItem key={index} onPress={onRefresh}>
                           <CategoryIcon
                             source={{
-                              uri: "https://w7.pngwing.com/pngs/507/1014/png-transparent-computer-icons-board-game-video-game-dice-game-white-dice.png",
+                              uri: item.thumbnail
+                                ? item.thumbnail
+                                : "https://w7.pngwing.com/pngs/507/1014/png-transparent-computer-icons-board-game-video-game-dice-game-white-dice.png",
                             }}
                           />
                           <CategoryName>{item.name}</CategoryName>
