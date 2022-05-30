@@ -156,6 +156,7 @@ const ClubHome = ({
     params: { item },
   },
   scrollY,
+  headerDiff,
 }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const imageHeight = Math.floor((SCREEN_WIDTH / 16) * 9);
@@ -277,7 +278,19 @@ const ClubHome = ({
         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
         { useNativeDriver: true }
       )}
-      style={{ flex: 1 }}
+      style={{
+        flex: 1,
+        transform: [
+          {
+            translateY: scrollY.interpolate({
+              inputRange: [0, headerDiff],
+              outputRange: [-headerDiff, 0],
+              extrapolate: "clamp",
+            }),
+          },
+        ],
+      }}
+      contentContainerStyle={{ paddingTop: headerDiff }}
     >
       <Thumbnail
         source={{ url: item.thumbnailPath }}

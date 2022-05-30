@@ -1,10 +1,9 @@
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import React from "react";
-import { Animated } from "react-native";
 import styled from "styled-components/native";
 
-const TabBarContainer = styled.View`
-  z-index: 20;
+const TabBarContainer = styled.View<{ height: number }>`
+  width: 100%;
   flex-direction: row;
   align-items: center;
   border-top-width: 1px;
@@ -13,15 +12,15 @@ const TabBarContainer = styled.View`
   border-bottom-color: rgba(0, 0, 0, 0.2);
 `;
 
-const TabButton = styled.TouchableOpacity<{ isFocused: boolean }>`
+const TabButton = styled.TouchableOpacity<{ height: number }>`
   flex: 1;
-  height: 40px;
+  height: ${(props) => props.height}px;
   justify-content: center;
   align-items: center;
 `;
 
-const TextWrap = styled.View<{ isFocused: boolean }>`
-  height: 40px;
+const TextWrap = styled.View<{ isFocused: boolean; height: number }>`
+  height: ${(props) => props.height}px;
   justify-content: center;
   border-bottom-width: 2px;
   border-bottom-color: ${(props) =>
@@ -33,17 +32,15 @@ const TabText = styled.Text<{ isFocused: boolean }>`
   color: ${(props) => (props.isFocused ? "black" : "gray")};
 `;
 
+const TAP_TAP_HEIGHT = 40;
+
 const ClubTabBar: React.FC<MaterialTopTabBarProps> = ({
   state,
   descriptors,
   navigation,
-  scrollY,
 }) => {
-  const AnimatedTabBarContainer =
-    Animated.createAnimatedComponent(TabBarContainer);
-
   return (
-    <AnimatedTabBarContainer>
+    <TabBarContainer height={TAP_TAP_HEIGHT}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
@@ -75,15 +72,15 @@ const ClubTabBar: React.FC<MaterialTopTabBarProps> = ({
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
             onPress={onPress}
-            isFocused={isFocused}
+            height={TAP_TAP_HEIGHT}
           >
-            <TextWrap isFocused={isFocused}>
+            <TextWrap isFocused={isFocused} height={TAP_TAP_HEIGHT}>
               <TabText isFocused={isFocused}>{label}</TabText>
             </TextWrap>
           </TabButton>
         );
       })}
-    </AnimatedTabBarContainer>
+    </TabBarContainer>
   );
 };
 

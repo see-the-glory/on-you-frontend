@@ -17,6 +17,7 @@ const HeaderImage = styled.ImageBackground<{ height: number }>`
 
 const FilterView = styled.View`
   flex: 1;
+  width: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   justify-content: flex-end;
   align-items: center;
@@ -99,19 +100,15 @@ const TText = styled.Text`
 `;
 
 interface ClubHaederProps {
-  height: number;
   imageURI: string;
 }
 
-const ClubHeader: React.FC<ClubHaederProps> = ({ height, imageURI }) => (
+const IMAGE_HEIGHT = 230;
+
+const ClubHeader: React.FC<ClubHaederProps> = ({ imageURI }) => (
   <Header>
-    <HeaderImage
-      height={height}
-      source={{
-        uri: imageURI,
-      }}
-    >
-      <FilterView style={{ flex: 1, backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+    <HeaderImage source={{ uri: imageURI }} height={IMAGE_HEIGHT}>
+      <FilterView>
         <InformationView>
           <CategoryView>
             <CategoryBox>
