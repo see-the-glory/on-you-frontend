@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Text, ActivityIndicator, useWindowDimensions } from "react-native";
+import {
+  Text,
+  ActivityIndicator,
+  useWindowDimensions,
+  Animated,
+} from "react-native";
 import Carousel from "react-native-snap-carousel";
 import styled from "styled-components/native";
 
@@ -7,10 +12,6 @@ const Loader = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-`;
-
-const Container = styled.ScrollView`
-  flex: 1;
 `;
 
 const Thumbnail = styled.Image<{ height: number }>`
@@ -154,6 +155,7 @@ const ClubHome = ({
   route: {
     params: { item },
   },
+  scrollY,
 }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const imageHeight = Math.floor((SCREEN_WIDTH / 16) * 9);
@@ -270,7 +272,13 @@ const ClubHome = ({
       <ActivityIndicator />
     </Loader>
   ) : (
-    <Container>
+    <Animated.ScrollView
+      onScroll={Animated.event(
+        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+        { useNativeDriver: true }
+      )}
+      style={{ flex: 1 }}
+    >
       <Thumbnail
         source={{ url: item.thumbnailPath }}
         resizeMode="cover"
@@ -345,7 +353,7 @@ const ClubHome = ({
           );
         })}
       </MemberView>
-    </Container>
+    </Animated.ScrollView>
   );
 };
 
