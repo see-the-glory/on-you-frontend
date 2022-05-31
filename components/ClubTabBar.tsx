@@ -4,6 +4,7 @@ import styled from "styled-components/native";
 
 const TabBarContainer = styled.View<{ height: number }>`
   width: 100%;
+  background-color: white;
   flex-direction: row;
   align-items: center;
   border-top-width: 1px;
