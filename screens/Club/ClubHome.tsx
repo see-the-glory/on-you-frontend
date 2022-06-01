@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, useWindowDimensions, Animated } from "react-native";
 import styled from "styled-components/native";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Entypo, MaterialIcons } from "@expo/vector-icons";
 
 const Loader = styled.View`
   flex: 1;
@@ -62,16 +62,39 @@ const MemberLineView = styled.View`
 `;
 
 const MemberItem = styled.View`
+  position: relative;
   justify-content: center;
   align-items: center;
   margin-right: 15px;
 `;
 
-const MemberIcon = styled.Image`
+const Badge = styled.View`
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0%;
+  background-color: white;
+  border-radius: 10px;
+`;
+
+const MemberIcon = styled.TouchableOpacity`
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  justify-content: center;
+  align-items: center;
+  border: 1px;
+  border-color: rgba(0, 0, 0, 0.1);
+  background-color: white;
+  margin-bottom: 8px;
+  box-shadow: 1px 1px 1px gray;
+  elevation: 3;
+`;
+
+const MemberImage = styled.Image`
   width: 45px;
   height: 45px;
-  border-radius: 50px;
-  margin-bottom: 8px;
+  border-radius: 25px;
 `;
 
 const MemberName = styled.Text`
@@ -184,7 +207,7 @@ const ClubHome = ({
     >
       <SectionView>
         <TitleView>
-          <Ionicons name="flag" size={18} color="#295AF5" />
+          <Entypo name="megaphone" size={18} color="#295AF5" />
           <SectionTitle>ABOUT</SectionTitle>
         </TitleView>
         <ContentView>
@@ -194,7 +217,7 @@ const ClubHome = ({
       <Break />
       <SectionView>
         <TitleView>
-          <Ionicons name="ios-people-outline" size={18} color="#295AF5" />
+          <Feather name="users" size={18} color="#295AF5" />
           <SectionTitle>MEMBER</SectionTitle>
         </TitleView>
         <MemberView>
@@ -204,7 +227,12 @@ const ClubHome = ({
                 {bundle.map((item, index) => {
                   return (
                     <MemberItem key={index}>
-                      <MemberIcon source={{ uri: item.profilePath }} />
+                      <Badge>
+                        <MaterialIcons name="stars" size={18} color="#FF714B" />
+                      </Badge>
+                      <MemberIcon>
+                        <MemberImage source={{ uri: item.profilePath }} />
+                      </MemberIcon>
                       <MemberName>{item.name}</MemberName>
                     </MemberItem>
                   );
