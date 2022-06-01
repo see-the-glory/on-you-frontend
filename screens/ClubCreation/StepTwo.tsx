@@ -129,8 +129,8 @@ type ParamList = {
     category1: number;
     category2: number;
     clubName: string;
-    clubMemberCount: Number;
-    approvalMethod: Number;
+    clubMemberCount: number;
+    approvalMethod: number;
     imageURI: string | null;
   };
 };

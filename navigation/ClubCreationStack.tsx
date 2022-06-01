@@ -8,7 +8,12 @@ import StepThree from "../screens/ClubCreation/StepThree";
 
 const NativeStack = createNativeStackNavigator();
 
-const ClubCreationStack = ({ navigation: { navigate } }) => {
+const ClubCreationStack = ({
+  navigation: { navigate },
+  route: {
+    params: { category },
+  },
+}) => {
   return (
     <NativeStack.Navigator
       screenOptions={{
@@ -19,6 +24,7 @@ const ClubCreationStack = ({ navigation: { navigate } }) => {
       <NativeStack.Screen
         name="StepOne"
         component={StepOne}
+        initialParams={{ category }}
         options={{
           title: "모임 개설",
           headerLeft: () => (
