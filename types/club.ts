@@ -1,9 +1,7 @@
-import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
-import { NavigatorScreenParams } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Animated } from "react-native";
-import { Club } from "../api";
+import { Club, CategoryResponse } from "../api";
 
 // For Stack Navigation
 export type RootStackParamList = {
@@ -15,7 +13,7 @@ export type RootStackParamList = {
   ClubFeed: {};
 
   ClubCreationStack: {};
-  ClubCreationStepOne: {};
+  ClubCreationStepOne: { category: CategoryResponse };
   ClubCreationStepTwo: { category1: number; category2: number };
   ClubCreationStepThree: {
     category1: number;
@@ -71,12 +69,6 @@ export type ClubCreationStepThreeScreenProps = NativeStackScreenProps<
   RootStackParamList,
   "ClubCreationStepThree"
 >;
-
-export interface CategoryProps {
-  id: number;
-  iconPath: string;
-  name: string;
-}
 
 // ClubHome Param For Collapsed Scroll Animation
 export interface ClubHomeParamList {

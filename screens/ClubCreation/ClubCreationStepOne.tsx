@@ -7,10 +7,8 @@ import {
 } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
-import {
-  CategoryProps,
-  ClubCreationStepOneScreenProps,
-} from "../../types/club";
+import { ClubCreationStepOneScreenProps } from "../../types/club";
+import { Category } from "../../api";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -189,7 +187,9 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
               >
                 <CategoryIcon
                   source={{
-                    uri: categoryItem.thumbnail,
+                    uri: categoryItem.thumbnail
+                      ? categoryItem.thumbnail
+                      : "undefined",
                   }}
                   selected={
                     categoryItem.id === selectCategory1 ||

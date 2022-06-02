@@ -11,6 +11,7 @@ const NativeStack = createNativeStackNavigator<RootStackParamList>();
 
 const ClubCreationStack: React.FC<ClubCreationStackProps> = ({
   navigation: { navigate },
+  route: { params: category },
 }) => {
   return (
     <NativeStack.Navigator
@@ -22,6 +23,7 @@ const ClubCreationStack: React.FC<ClubCreationStackProps> = ({
       <NativeStack.Screen
         name="ClubCreationStepOne"
         component={ClubCreationStepOne}
+        initialParams={category}
         options={{
           title: "모임 개설",
           headerLeft: () => (
@@ -40,7 +42,7 @@ const ClubCreationStack: React.FC<ClubCreationStackProps> = ({
           title: "모임 개설",
           headerLeft: () => (
             <TouchableOpacity
-              onPress={() => navigate("ClubCreationStepOne", {})}
+              onPress={() => navigate("ClubCreationStepOne", { category })}
             >
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
