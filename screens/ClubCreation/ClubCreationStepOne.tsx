@@ -1,4 +1,3 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -8,7 +7,10 @@ import {
 } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
-import { Category, CategoryResponse } from "../../api";
+import {
+  CategoryProps,
+  ClubCreationStepOneScreenProps,
+} from "../../types/club";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -86,12 +88,7 @@ const ButtonText = styled.Text`
   color: white;
 `;
 
-type ParamList = {
-  StepOne: { category: CategoryResponse };
-  StepTwo: { category1: number; category2: number };
-};
-
-const StepOne: React.FC<NativeStackScreenProps<ParamList, "StepOne">> = ({
+const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
   navigation: { navigate },
   route: {
     params: { category },
@@ -167,7 +164,7 @@ const StepOne: React.FC<NativeStackScreenProps<ParamList, "StepOne">> = ({
               if (selectCategory1 === null && selectCategory2 === null) {
                 return Alert.alert("카테고리를 선택하세요!");
               } else {
-                return navigate("StepTwo", {
+                return navigate("ClubCreationStepTwo", {
                   category1: selectCategory1,
                   category2: selectCategory2,
                 });
@@ -209,4 +206,4 @@ const StepOne: React.FC<NativeStackScreenProps<ParamList, "StepOne">> = ({
   );
 };
 
-export default StepOne;
+export default ClubCreationStepOne;

@@ -1,9 +1,9 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { useMutation } from "react-query";
 import styled from "styled-components/native";
 import { ClubApi, ClubCreationRequest } from "../../api";
+import { ClubCreationStepThreeScreenProps } from "../../types/club";
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -83,24 +83,7 @@ const ButtonText = styled.Text`
   color: white;
 `;
 
-type ParamList = {
-  StepThree: {
-    category1: number;
-    category2: number;
-    clubName: string;
-    clubMemberCount: number;
-    approvalMethod: number;
-    imageURI: string | null;
-  };
-
-  Tabs: {
-    screen: string;
-  };
-};
-
-type StepThreeScreenProps = NativeStackScreenProps<ParamList, "StepThree">;
-
-const StepThree: React.FC<StepThreeScreenProps> = ({
+const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   route: {
     params: {
       category1,
@@ -228,4 +211,4 @@ const StepThree: React.FC<StepThreeScreenProps> = ({
   );
 };
 
-export default StepThree;
+export default ClubCreationStepThree;
