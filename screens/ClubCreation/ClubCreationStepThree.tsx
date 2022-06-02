@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import { useMutation } from "react-query";
 import styled from "styled-components/native";
+import { ClubApi, ClubCreationRequest } from "../../api";
 import { ClubCreationStepThreeScreenProps } from "../../types/club";
 
 const Container = styled.ScrollView`
@@ -97,6 +99,26 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   const [briefIntroText, setBriefIntroText] = useState<string>("");
   const [detailIntroText, setDetailIntroText] = useState<string>("");
 
+  const mutation = useMutation(ClubApi.createClub, {
+    onMutate: (data) => {
+      console.log("--- Mutate ---");
+      console.log(data);
+    },
+    onSuccess: (data) => {
+      console.log("--- Success ---");
+      console.log(data);
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(error);
+    },
+    onSettled: (data, error) => {
+      console.log("--- Settled ---");
+      console.log(data);
+      console.log(error);
+    },
+  });
+
   const onSubmit = () => {
     console.log("category1: " + category1);
     console.log("category2: " + category2);
@@ -107,7 +129,36 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
     console.log("approvalMethod " + approvalMethod);
     console.log("imageURI " + imageURI);
 
-    // Post to BE.
+    const data = {
+      category1Id: category1,
+      category2Id: category2,
+      clubName,
+      clubMaxMember: clubMemberCount,
+      clubShortDesc: briefIntroText,
+      clubLongDesc: detailIntroText,
+      isApproveRequired: approvalMethod === 0 ? "N" : "Y",
+    };
+
+    const splitedURI = new String(imageURI).split("/");
+
+    const requestData: ClubCreationRequest =
+      imageURI === null
+        ? {
+            image: null,
+            data,
+          }
+        : {
+            image: {
+              uri: imageURI,
+              type: "image/jpeg",
+              name: splitedURI[splitedURI.length - 1],
+            },
+            data,
+          };
+
+    mutation.mutate(requestData);
+
+    // 결과값 받아서 한번 더 화면 분기할 것.
 
     return navigate("Tabs", { screen: "Clubs" });
   };

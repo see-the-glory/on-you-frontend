@@ -63,6 +63,7 @@ const CategoryIcon = styled.Image<{ selected: boolean }>`
   height: 140px;
   border-radius: 10px;
   opacity: ${(props) => (props.selected ? "1" : "0.3")};
+  ${(props) => (props.selected ? "background-color: #40a798;" : "")};
 `;
 
 const CategoryText = styled.Text`
@@ -89,47 +90,24 @@ const ButtonText = styled.Text`
 
 const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
   navigation: { navigate },
+  route: {
+    params: { category },
+  },
 }) => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [categories, setCategories] = useState<Array<Array<CategoryProps>>>([
-    [],
-  ]);
+  const [categories, setCategories] = useState<Array<Array<Category>>>([[]]);
   const [selectCategory1, setCategory1] = useState<number>(-1);
   const [selectCategory2, setCategory2] = useState<number>(-1);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
 
   const getCategories = () => {
-    let items = [];
-    const cName = [
-      "독서",
-      "경건생활",
-      "봉사",
-      "운동",
-      "문화생활",
-      "게임",
-      "창작",
-      "자기개발",
-      "음식",
-      "여행",
-      "반려동물",
-      "기타",
-    ];
     const result = [];
-    for (var i = 1; i < 13; ++i) {
-      items.push({
-        id: i,
-        iconPath:
-          "https://images.unsplash.com/photo-1553729784-e91953dec042?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80",
-        name: cName[i - 1],
-      });
-      if (i % 2 === 0) {
-        result.push(items);
-        items = [];
-      }
-    }
+    const categoryViewSize = 2;
+    let pos = 0;
 
-    if (items.length !== 0) {
-      result.push(items);
+    while (pos < category.data.length) {
+      result.push(category.data.slice(pos, pos + categoryViewSize));
+      pos += categoryViewSize;
     }
 
     setCategories(result);
@@ -202,23 +180,23 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
       keyExtractor={(item, index) => index + ""}
       renderItem={({ item }) => (
         <CategoryView>
-          {item.map((category, index) => {
+          {item.map((categoryItem, index) => {
             return (
               <CategoryItem
                 key={index}
                 activeOpacity={0.8}
-                onPress={() => onPressCategory(category.id)}
+                onPress={() => onPressCategory(categoryItem.id)}
               >
                 <CategoryIcon
                   source={{
-                    uri: category.iconPath,
+                    uri: categoryItem.thumbnail,
                   }}
                   selected={
-                    category.id === selectCategory1 ||
-                    category.id === selectCategory2
+                    categoryItem.id === selectCategory1 ||
+                    categoryItem.id === selectCategory2
                   }
                 />
-                <CategoryText>{category.name}</CategoryText>
+                <CategoryText>{categoryItem.name}</CategoryText>
               </CategoryItem>
             );
           })}
