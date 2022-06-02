@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
 import { BlurView } from "expo-blur";
+import { ClubHomeHaederProps } from "../types/club";
 
 const Header = styled.View`
   width: 100%;
@@ -19,7 +20,7 @@ const HeaderImage = styled.ImageBackground<{ height: number }>`
 const FilterView = styled.View`
   flex: 1;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   justify-content: flex-end;
   align-items: center;
 `;
@@ -35,9 +36,8 @@ const CategoryView = styled.View`
 `;
 
 const CategoryBox = styled.View`
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.6);
   padding: 3px;
-  border: 1px;
   border-radius: 5px;
   margin-left: 3px;
   margin-right: 3px;
@@ -105,29 +105,20 @@ const TText = styled.Text`
   color: white;
 `;
 
-interface ClubHaederProps {
-  imageURI: string;
-  heightExpanded: number;
-  heightCollapsed: number;
-  headerDiff: number;
-  scrollY: Animated.Value;
-}
-
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 const AnimatedFadeOutBox = Animated.createAnimatedComponent(View);
 
-const ClubHeader: React.FC<ClubHaederProps> = ({
+const ClubHeader: React.FC<ClubHomeHaederProps> = ({
   imageURI,
+  name,
+  shortDesc,
+  category1Name,
+  category2Name,
   heightExpanded,
   heightCollapsed,
   headerDiff,
   scrollY,
 }) => {
-  const translateY = scrollY.interpolate({
-    inputRange: [0, headerDiff],
-    outputRange: [0, -headerDiff],
-    extrapolate: "clamp",
-  });
   const fadeIn = scrollY.interpolate({
     inputRange: [0, headerDiff],
     outputRange: [-3, 1],
@@ -140,9 +131,12 @@ const ClubHeader: React.FC<ClubHaederProps> = ({
 
   return (
     <Header>
-      <HeaderImage source={{ uri: imageURI }} height={heightExpanded}>
+      <HeaderImage
+        source={{ uri: imageURI ? imageURI : "" }}
+        height={heightExpanded}
+      >
         <AnimatedBlurView
-          intensity={20}
+          intensity={70}
           tint="dark"
           style={{
             position: "absolute",
@@ -155,12 +149,10 @@ const ClubHeader: React.FC<ClubHaederProps> = ({
         >
           <CollapsedView>
             <ClubNameView>
-              <ClubNameText>온유 프로젝트</ClubNameText>
+              <ClubNameText>{name}</ClubNameText>
             </ClubNameView>
             <ClubShortDescView>
-              <ClubShortDescText>
-                모임 어플리케이션을 개발하는 프로젝트의 모임입니다.
-              </ClubShortDescText>
+              <ClubShortDescText>{shortDesc}</ClubShortDescText>
             </ClubShortDescView>
           </CollapsedView>
         </AnimatedBlurView>
@@ -169,20 +161,26 @@ const ClubHeader: React.FC<ClubHaederProps> = ({
           <AnimatedFadeOutBox style={{ opacity: fadeOut }}>
             <InformationView>
               <CategoryView>
-                <CategoryBox>
-                  <Text>창작</Text>
-                </CategoryBox>
-                <CategoryBox>
-                  <Text>자기개발</Text>
-                </CategoryBox>
+                {category2Name !== null ? (
+                  <>
+                    <CategoryBox>
+                      <Text>{category1Name}</Text>
+                    </CategoryBox>
+                    <CategoryBox>
+                      <Text>{category2Name}</Text>
+                    </CategoryBox>
+                  </>
+                ) : (
+                  <CategoryBox>
+                    <Text>{category1Name}</Text>
+                  </CategoryBox>
+                )}
               </CategoryView>
               <ClubNameView>
-                <ClubNameText>온유 프로젝트</ClubNameText>
+                <ClubNameText>{name}</ClubNameText>
               </ClubNameView>
               <ClubShortDescView>
-                <ClubShortDescText>
-                  모임 어플리케이션을 개발하는 프로젝트의 모임입니다.
-                </ClubShortDescText>
+                <ClubShortDescText>{shortDesc}</ClubShortDescText>
               </ClubShortDescView>
               <Break></Break>
               <DetailInfoView>

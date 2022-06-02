@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, useWindowDimensions, Animated } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Entypo, MaterialIcons } from "@expo/vector-icons";
+import { ClubHomeScreenProps, ClubHomeParamList } from "../../types/club";
 
 const Loader = styled.View`
   flex: 1;
@@ -46,11 +47,6 @@ const ContentText = styled.Text`
   font-size: 16px;
 `;
 
-const SectionSubTitle = styled.Text`
-  font-size: 18px;
-  color: #bababa;
-`;
-
 const MemberView = styled.View`
   margin-bottom: 150px;
 `;
@@ -58,14 +54,25 @@ const MemberView = styled.View`
 const MemberLineView = styled.View`
   flex-direction: row;
   justify-content: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 `;
 
-const MemberItem = styled.View`
+const MemberSubTitleView = styled.View`
+  margin-left: 5px;
+  margin-bottom: 10px;
+`;
+
+const MemberSubTitle = styled.Text`
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+  font-weight: 500;
+`;
+
+const MemberItem = styled.View<{ kerning: number }>`
   position: relative;
   justify-content: center;
   align-items: center;
-  margin-right: 15px;
+  margin-right: ${(props) => props.kerning}px; ;
 `;
 
 const Badge = styled.View`
@@ -77,10 +84,10 @@ const Badge = styled.View`
   border-radius: 10px;
 `;
 
-const MemberIcon = styled.TouchableOpacity`
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
+const MemberIcon = styled.TouchableOpacity<{ iconSize: number }>`
+  width: ${(props) => props.iconSize}px;
+  height: ${(props) => props.iconSize}px;
+  border-radius: ${(props) => Math.ceil(props.iconSize / 2)}px;
   justify-content: center;
   align-items: center;
   border: 1px;
@@ -91,20 +98,24 @@ const MemberIcon = styled.TouchableOpacity`
   elevation: 3;
 `;
 
-const MemberImage = styled.Image`
-  width: 45px;
-  height: 45px;
-  border-radius: 25px;
+const MemberImage = styled.Image<{ iconSize: number }>`
+  width: ${(props) => props.iconSize - 5}px;
+  height: ${(props) => props.iconSize - 5}px;
+  border-radius: ${(props) => Math.ceil(props.iconSize / 2)}px;
 `;
 
 const MemberName = styled.Text`
   font-weight: 600;
 `;
 
-const ClubHome = ({
+const MEMBER_ICON_KERNING = 25;
+const MEMBER_ICON_SIZE = 50;
+const SCREEN_PADDING_SIZE = 30;
+
+const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   navigation: { navigate },
   route: {
-    params: { item },
+    params: { clubData },
   },
   scrollY,
   headerDiff,
@@ -112,11 +123,19 @@ const ClubHome = ({
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const [loading, setLoading] = useState(true);
   const [memberData, setMemberData] = useState([[{}]]);
-  const longDesc =
-    "안녕하세요! 앱개발 스터디 온유 프로젝트 입니다. \n모바일, 웹 기반 종사자들의 자기 개발과 커리어 성장을 위해\n 진행하는 모임입니다. \n각자 주어진 파트와 분야에서 정해진 작업을 해나가고,\n서로 돕기도하며 프로젝트를 추진해 가고 있습니다. \n\n모임시간 | 매주 화요일 20:00 PM \n\n모임방식 | 온라인 화상 모임, 숙제 검사 및 피드백, 회의 \n\n신청방법 | 박종원 010-1234-5677";
+  const [managerData, setManagerData] = useState([[{}]]);
+  const [masterData, setMasterData] = useState({});
+  const memberCountPerLine = Math.floor(
+    (SCREEN_WIDTH - SCREEN_PADDING_SIZE) /
+      (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING)
+  );
 
   const getClubMembers = () => {
-    const result = [];
+    let master = {};
+    const members: { profilePath: string; name: string; role: string }[] = [];
+    const memberBundle = [];
+    const manager: { profilePath: string; name: string; role: string }[] = [];
+    const managerBundle = [];
     const items = [
       {
         profilePath:
@@ -128,7 +147,7 @@ const ClubHome = ({
         profilePath:
           "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cG9ydHJhaXR8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60",
         name: "장준용",
-        role: "member",
+        role: "manager",
       },
       {
         profilePath:
@@ -140,7 +159,7 @@ const ClubHome = ({
         profilePath:
           "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8cG9ydHJhaXR8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60",
         name: "김재광",
-        role: "manager",
+        role: "member",
       },
       {
         profilePath:
@@ -152,7 +171,7 @@ const ClubHome = ({
         profilePath:
           "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
         name: "이진규",
-        role: "member",
+        role: "manager",
       },
       {
         profilePath:
@@ -162,11 +181,27 @@ const ClubHome = ({
       },
     ];
 
-    for (var i = 0; i < items.length; i += 5) {
-      result.push(items.slice(i, i + 5));
+    items.forEach((item) => {
+      if (item.role.toUpperCase() === "MASTER") {
+        master = item;
+      } else if (item.role.toUpperCase() === "MANAGER") {
+        manager.push(item);
+      } else {
+        members.push(item);
+      }
+    });
+
+    for (var i = 0; i < members.length; i += memberCountPerLine) {
+      memberBundle.push(members.slice(i, i + memberCountPerLine));
     }
 
-    setMemberData(result);
+    for (var i = 0; i < manager.length; i += memberCountPerLine) {
+      managerBundle.push(manager.slice(i, i + memberCountPerLine));
+    }
+
+    setMemberData(memberBundle);
+    setManagerData(managerBundle);
+    setMasterData(master);
   };
 
   const getData = async () => {
@@ -176,6 +211,9 @@ const ClubHome = ({
 
   useEffect(() => {
     getData();
+
+    console.log("----Club Home----");
+    console.log(clubData);
   }, []);
 
   return loading ? (
@@ -190,9 +228,9 @@ const ClubHome = ({
       )}
       style={{
         flex: 1,
-        paddingTop: 30,
-        paddingLeft: 30,
-        paddingRight: 30,
+        paddingTop: SCREEN_PADDING_SIZE,
+        paddingLeft: SCREEN_PADDING_SIZE,
+        paddingRight: SCREEN_PADDING_SIZE,
         transform: [
           {
             translateY: scrollY.interpolate({
@@ -211,7 +249,7 @@ const ClubHome = ({
           <SectionTitle>ABOUT</SectionTitle>
         </TitleView>
         <ContentView>
-          <ContentText>{longDesc}</ContentText>
+          <ContentText>{clubData.clubLongDesc}</ContentText>
         </ContentView>
       </SectionView>
       <Break />
@@ -221,17 +259,62 @@ const ClubHome = ({
           <SectionTitle>MEMBER</SectionTitle>
         </TitleView>
         <MemberView>
+          <MemberSubTitleView>
+            <MemberSubTitle>Leader</MemberSubTitle>
+          </MemberSubTitleView>
+          <MemberLineView>
+            <MemberItem kerning={MEMBER_ICON_KERNING}>
+              <Badge>
+                <MaterialIcons name="stars" size={18} color="#FF714B" />
+              </Badge>
+              <MemberIcon iconSize={MEMBER_ICON_SIZE}>
+                <MemberImage
+                  source={{ uri: masterData.profilePath }}
+                  iconSize={MEMBER_ICON_SIZE}
+                />
+              </MemberIcon>
+              <MemberName>{masterData.name}</MemberName>
+            </MemberItem>
+          </MemberLineView>
+          <MemberSubTitleView>
+            <MemberSubTitle>Manager</MemberSubTitle>
+          </MemberSubTitleView>
+          {managerData.map((bundle, index) => {
+            return (
+              <MemberLineView key={index}>
+                {bundle.map((item, index) => {
+                  return (
+                    <MemberItem key={index} kerning={MEMBER_ICON_KERNING}>
+                      <Badge>
+                        <MaterialIcons name="check" size={18} color="#FF714B" />
+                      </Badge>
+                      <MemberIcon iconSize={MEMBER_ICON_SIZE}>
+                        <MemberImage
+                          source={{ uri: item.profilePath }}
+                          iconSize={MEMBER_ICON_SIZE}
+                        />
+                      </MemberIcon>
+                      <MemberName>{item.name}</MemberName>
+                    </MemberItem>
+                  );
+                })}
+              </MemberLineView>
+            );
+          })}
+          <MemberSubTitleView>
+            <MemberSubTitle>Member</MemberSubTitle>
+          </MemberSubTitleView>
           {memberData.map((bundle, index) => {
             return (
               <MemberLineView key={index}>
                 {bundle.map((item, index) => {
                   return (
-                    <MemberItem key={index}>
-                      <Badge>
-                        <MaterialIcons name="stars" size={18} color="#FF714B" />
-                      </Badge>
-                      <MemberIcon>
-                        <MemberImage source={{ uri: item.profilePath }} />
+                    <MemberItem key={index} kerning={MEMBER_ICON_KERNING}>
+                      <MemberIcon iconSize={MEMBER_ICON_SIZE}>
+                        <MemberImage
+                          source={{ uri: item.profilePath }}
+                          iconSize={MEMBER_ICON_SIZE}
+                        />
                       </MemberIcon>
                       <MemberName>{item.name}</MemberName>
                     </MemberItem>

@@ -1,4 +1,3 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import {
   Alert,
@@ -9,6 +8,7 @@ import {
 import styled from "styled-components/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { ClubCreationStepTwoScreenProps } from "../../types/club";
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -123,21 +123,7 @@ const ButtonText = styled.Text`
   color: white;
 `;
 
-type ParamList = {
-  StepTwo: { category1: number; category2: number };
-  StepThree: {
-    category1: number;
-    category2: number;
-    clubName: string;
-    clubMemberCount: Number;
-    approvalMethod: Number;
-    imageURI: string | null;
-  };
-};
-
-type StepTwoScreenProps = NativeStackScreenProps<ParamList, "StepTwo">;
-
-const StepTwo: React.FC<StepTwoScreenProps> = ({
+const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   route: {
     params: { category1, category2 },
   },
@@ -310,7 +296,7 @@ const StepTwo: React.FC<StepTwoScreenProps> = ({
             } else if (imageURI === null) {
               return Alert.alert("대표 이미지를 설정해주세요.");
             } else {
-              return navigate("StepThree", {
+              return navigate("ClubCreationStepThree", {
                 category1,
                 category2,
                 clubName,
@@ -328,4 +314,4 @@ const StepTwo: React.FC<StepTwoScreenProps> = ({
   );
 };
 
-export default StepTwo;
+export default ClubCreationStepTwo;

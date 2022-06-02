@@ -2,13 +2,16 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import StepOne from "../screens/ClubCreation/StepOne";
-import StepTwo from "../screens/ClubCreation/StepTwo";
-import StepThree from "../screens/ClubCreation/StepThree";
+import ClubCreationStepOne from "../screens/ClubCreation/ClubCreationStepOne";
+import ClubCreationStepTwo from "../screens/ClubCreation/ClubCreationStepTwo";
+import ClubCreationStepThree from "../screens/ClubCreation/ClubCreationStepThree";
+import { ClubCreationStackProps, RootStackParamList } from "../types/club";
 
-const NativeStack = createNativeStackNavigator();
+const NativeStack = createNativeStackNavigator<RootStackParamList>();
 
-const ClubCreationStack = ({ navigation: { navigate } }) => {
+const ClubCreationStack: React.FC<ClubCreationStackProps> = ({
+  navigation: { navigate },
+}) => {
   return (
     <NativeStack.Navigator
       screenOptions={{
@@ -17,8 +20,8 @@ const ClubCreationStack = ({ navigation: { navigate } }) => {
       }}
     >
       <NativeStack.Screen
-        name="StepOne"
-        component={StepOne}
+        name="ClubCreationStepOne"
+        component={ClubCreationStepOne}
         options={{
           title: "모임 개설",
           headerLeft: () => (
@@ -31,20 +34,22 @@ const ClubCreationStack = ({ navigation: { navigate } }) => {
         }}
       />
       <NativeStack.Screen
-        name="StepTwo"
-        component={StepTwo}
+        name="ClubCreationStepTwo"
+        component={ClubCreationStepTwo}
         options={{
           title: "모임 개설",
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("StepOne")}>
+            <TouchableOpacity
+              onPress={() => navigate("ClubCreationStepOne", {})}
+            >
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
       />
       <NativeStack.Screen
-        name="StepThree"
-        component={StepThree}
+        name="ClubCreationStepThree"
+        component={ClubCreationStepThree}
         options={({
           route: {
             params: { category1, category2 },
@@ -53,7 +58,9 @@ const ClubCreationStack = ({ navigation: { navigate } }) => {
           title: "모임 개설",
           headerLeft: () => (
             <TouchableOpacity
-              onPress={() => navigate("StepTwo", { category1, category2 })}
+              onPress={() =>
+                navigate("ClubCreationStepTwo", { category1, category2 })
+              }
             >
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>

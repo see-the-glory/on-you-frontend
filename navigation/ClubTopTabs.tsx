@@ -42,7 +42,7 @@ const HEADER_HEIGHT = 100;
 
 const ClubTopTabs = ({
   route: {
-    params: { item },
+    params: { clubData },
   },
   navigation,
 }) => {
@@ -80,9 +80,11 @@ const ClubTopTabs = ({
     <Container>
       <StatusBar barStyle={"light-content"} />
       <ClubHeader
-        imageURI={
-          "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?crop=entropy&cs=tinysrgb&fm=jpg&ixlib=rb-1.2.1&q=80&raw_url=true&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470"
-        }
+        imageURI={clubData.thumbnail}
+        name={clubData.name}
+        shortDesc={clubData.clubShortDesc}
+        category1Name={clubData.category1Name}
+        category2Name={clubData.category2Name}
         heightExpanded={heightExpanded}
         heightCollapsed={heightCollapsed}
         headerDiff={headerDiff}
@@ -112,7 +114,7 @@ const ClubTopTabs = ({
             options={{ tabBarLabel: "모임 정보" }}
             name="ClubHome"
             component={renderClubHome}
-            initialParams={{ item }}
+            initialParams={{ clubData }}
           />
           <TopTab.Screen
             options={{ tabBarLabel: "게시물" }}
@@ -152,7 +154,7 @@ const ClubTopTabs = ({
 
 const ClubStack = ({
   route: {
-    params: { item },
+    params: { clubData },
   },
   navigation,
 }) => {
@@ -161,7 +163,7 @@ const ClubStack = ({
       <NativeStack.Screen
         name="ClubTopTabs"
         component={ClubTopTabs}
-        initialParams={{ item }}
+        initialParams={{ clubData }}
         options={{
           headerShown: false,
         }}

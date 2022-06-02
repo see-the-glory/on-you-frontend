@@ -5,8 +5,9 @@ import Home from "../screens/Home";
 import Clubs from "../screens/Clubs";
 import Profile from "../screens/Profile";
 import { Ionicons } from "@expo/vector-icons";
+import { MainBottomTabParamList } from "../types/club";
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<MainBottomTabParamList>();
 
 const Tabs = () => (
   <Tab.Navigator
