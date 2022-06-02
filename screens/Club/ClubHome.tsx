@@ -171,7 +171,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         profilePath:
           "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
         name: "이진규",
-        role: "manager",
+        role: "member",
       },
       {
         profilePath:
@@ -286,7 +286,11 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
                   return (
                     <MemberItem key={index} kerning={MEMBER_ICON_KERNING}>
                       <Badge>
-                        <MaterialIcons name="check" size={18} color="#FF714B" />
+                        <MaterialIcons
+                          name="check-circle"
+                          size={18}
+                          color="#ff714b"
+                        />
                       </Badge>
                       <MemberIcon iconSize={MEMBER_ICON_SIZE}>
                         <MemberImage
