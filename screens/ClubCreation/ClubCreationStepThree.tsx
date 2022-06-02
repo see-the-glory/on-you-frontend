@@ -69,7 +69,7 @@ const DetailTextInput = styled.TextInput`
 const NextButton = styled.TouchableOpacity`
   width: 200px;
   height: 40px;
-  background-color: #40a798;
+  background-color: #295af5;
   border-radius: 10px;
   justify-content: center;
   align-items: center;

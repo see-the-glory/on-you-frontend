@@ -61,7 +61,7 @@ const CategoryIcon = styled.Image<{ selected: boolean }>`
   height: 140px;
   border-radius: 10px;
   opacity: ${(props) => (props.selected ? "1" : "0.3")};
-  ${(props) => (props.selected ? "background-color: #40a798;" : "")};
+  ${(props) => (props.selected ? "background-color: #295AF5;" : "")};
 `;
 
 const CategoryText = styled.Text`
@@ -74,7 +74,7 @@ const CategoryText = styled.Text`
 const NextButton = styled.TouchableOpacity`
   width: 200px;
   height: 40px;
-  background-color: ${(props) => (props.disabled ? "#c4c4c4" : "#40a798")};
+  background-color: ${(props) => (props.disabled ? "#c4c4c4" : "#295AF5")};
   border-radius: 10px;
   justify-content: center;
   align-items: center;
