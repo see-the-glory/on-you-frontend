@@ -4,6 +4,10 @@ import styled from "styled-components/native";
 import { Feather, Entypo, MaterialIcons } from "@expo/vector-icons";
 import { ClubHomeScreenProps, ClubHomeParamList } from "../../types/club";
 
+const MEMBER_ICON_KERNING = 25;
+const MEMBER_ICON_SIZE = 50;
+const SCREEN_PADDING_SIZE = 30;
+
 const Loader = styled.View`
   flex: 1;
   justify-content: center;
@@ -68,11 +72,11 @@ const MemberSubTitle = styled.Text`
   font-weight: 500;
 `;
 
-const MemberItem = styled.View<{ kerning: number }>`
+const MemberItem = styled.View`
   position: relative;
   justify-content: center;
   align-items: center;
-  margin-right: ${(props) => props.kerning}px; ;
+  margin-right: ${MEMBER_ICON_KERNING}px; ;
 `;
 
 const Badge = styled.View`
@@ -84,10 +88,10 @@ const Badge = styled.View`
   border-radius: 10px;
 `;
 
-const MemberIcon = styled.TouchableOpacity<{ iconSize: number }>`
-  width: ${(props) => props.iconSize}px;
-  height: ${(props) => props.iconSize}px;
-  border-radius: ${(props) => Math.ceil(props.iconSize / 2)}px;
+const MemberIcon = styled.TouchableOpacity`
+  width: ${MEMBER_ICON_SIZE}px;
+  height: ${MEMBER_ICON_SIZE}px;
+  border-radius: ${Math.ceil(MEMBER_ICON_SIZE / 2)}px;
   justify-content: center;
   align-items: center;
   border: 1px;
@@ -98,19 +102,15 @@ const MemberIcon = styled.TouchableOpacity<{ iconSize: number }>`
   elevation: 3;
 `;
 
-const MemberImage = styled.Image<{ iconSize: number }>`
-  width: ${(props) => props.iconSize - 5}px;
-  height: ${(props) => props.iconSize - 5}px;
-  border-radius: ${(props) => Math.ceil(props.iconSize / 2)}px;
+const MemberImage = styled.Image`
+  width: ${MEMBER_ICON_SIZE - 5}px;
+  height: ${MEMBER_ICON_SIZE - 5}px;
+  border-radius: ${Math.ceil(MEMBER_ICON_SIZE / 2)}px;
 `;
 
 const MemberName = styled.Text`
   font-weight: 600;
 `;
-
-const MEMBER_ICON_KERNING = 25;
-const MEMBER_ICON_SIZE = 50;
-const SCREEN_PADDING_SIZE = 30;
 
 const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   navigation: { navigate },
@@ -263,15 +263,12 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             <MemberSubTitle>Leader</MemberSubTitle>
           </MemberSubTitleView>
           <MemberLineView>
-            <MemberItem kerning={MEMBER_ICON_KERNING}>
+            <MemberItem>
               <Badge>
                 <MaterialIcons name="stars" size={18} color="#FF714B" />
               </Badge>
-              <MemberIcon iconSize={MEMBER_ICON_SIZE}>
-                <MemberImage
-                  source={{ uri: masterData.profilePath }}
-                  iconSize={MEMBER_ICON_SIZE}
-                />
+              <MemberIcon>
+                <MemberImage source={{ uri: masterData.profilePath }} />
               </MemberIcon>
               <MemberName>{masterData.name}</MemberName>
             </MemberItem>
@@ -284,7 +281,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
               <MemberLineView key={index}>
                 {bundle.map((item, index) => {
                   return (
-                    <MemberItem key={index} kerning={MEMBER_ICON_KERNING}>
+                    <MemberItem key={index}>
                       <Badge>
                         <MaterialIcons
                           name="check-circle"
@@ -292,11 +289,8 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
                           color="#ff714b"
                         />
                       </Badge>
-                      <MemberIcon iconSize={MEMBER_ICON_SIZE}>
-                        <MemberImage
-                          source={{ uri: item.profilePath }}
-                          iconSize={MEMBER_ICON_SIZE}
-                        />
+                      <MemberIcon>
+                        <MemberImage source={{ uri: item.profilePath }} />
                       </MemberIcon>
                       <MemberName>{item.name}</MemberName>
                     </MemberItem>
@@ -313,12 +307,9 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
               <MemberLineView key={index}>
                 {bundle.map((item, index) => {
                   return (
-                    <MemberItem key={index} kerning={MEMBER_ICON_KERNING}>
-                      <MemberIcon iconSize={MEMBER_ICON_SIZE}>
-                        <MemberImage
-                          source={{ uri: item.profilePath }}
-                          iconSize={MEMBER_ICON_SIZE}
-                        />
+                    <MemberItem key={index}>
+                      <MemberIcon>
+                        <MemberImage source={{ uri: item.profilePath }} />
                       </MemberIcon>
                       <MemberName>{item.name}</MemberName>
                     </MemberItem>
