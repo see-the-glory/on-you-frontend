@@ -83,6 +83,7 @@ export interface ClubHomeHaederProps extends ClubHomeParamList {
   shortDesc: string | null;
   category1Name: string;
   category2Name: string | null;
+  recruitStatus: string;
   heightExpanded: number;
   heightCollapsed: number;
 }

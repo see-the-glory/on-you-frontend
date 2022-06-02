@@ -101,7 +101,7 @@ const CollapsedView = styled.View`
   top: 40px;
 `;
 
-const TText = styled.Text`
+const ContentText = styled.Text`
   color: white;
 `;
 
@@ -114,6 +114,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({
   shortDesc,
   category1Name,
   category2Name,
+  recruitStatus,
   heightExpanded,
   heightCollapsed,
   headerDiff,
@@ -191,7 +192,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({
                     color="yellow"
                     style={{ marginRight: 5 }}
                   />
-                  <TText>May 7 | 14:00 PM</TText>
+                  <ContentText>May 7 | 14:00 PM</ContentText>
                 </DetailInfoContent>
                 <DetailInfoContent>
                   <Ionicons
@@ -200,7 +201,11 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({
                     color="yellow"
                     style={{ marginRight: 5 }}
                   />
-                  <TText>멤버 모집 기간 아님</TText>
+                  {recruitStatus.toUpperCase() === "RECRUIT" ? (
+                    <ContentText>멤버 모집 중!</ContentText>
+                  ) : (
+                    <ContentText>멤버 모집 기간 아님</ContentText>
+                  )}
                 </DetailInfoContent>
               </DetailInfoView>
             </InformationView>

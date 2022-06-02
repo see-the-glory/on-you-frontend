@@ -85,6 +85,7 @@ const ClubTopTabs = ({
         shortDesc={clubData.clubShortDesc}
         category1Name={clubData.category1Name}
         category2Name={clubData.category2Name}
+        recruitStatus={clubData.recruitStatus}
         heightExpanded={heightExpanded}
         heightCollapsed={heightCollapsed}
         headerDiff={headerDiff}
