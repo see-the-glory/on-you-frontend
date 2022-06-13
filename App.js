@@ -13,7 +13,7 @@ const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
 
 export default function App() {
   const [ready, setReady] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const onFinish = () => setReady(true);
 

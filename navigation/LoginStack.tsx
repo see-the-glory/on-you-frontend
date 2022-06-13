@@ -7,6 +7,8 @@ import React, { useState } from "react";
 // import ResultView from './IntroTemp';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 
 const Container = styled.View`
   flex: 1;
@@ -63,6 +65,7 @@ function Login() {
         console.log(resData.token);
       });
 
+
     console.log(token.accessToken);
   };
 
@@ -83,6 +86,7 @@ function Login() {
     </Container>
   );
 }
+
 
 const LoginStack = () => (
   <NativeStack.Navigator screenOptions={{ headerShown: false }}>
