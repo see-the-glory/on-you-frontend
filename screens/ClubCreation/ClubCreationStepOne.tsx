@@ -1,4 +1,3 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -8,7 +7,8 @@ import {
 } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
-import { Category, CategoryResponse } from "../../api";
+import { ClubCreationStepOneScreenProps } from "../../types/club";
+import { Category } from "../../api";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -61,7 +61,7 @@ const CategoryIcon = styled.Image<{ selected: boolean }>`
   height: 140px;
   border-radius: 10px;
   opacity: ${(props) => (props.selected ? "1" : "0.3")};
-  ${(props) => (props.selected ? "background-color: #40a798;" : "")};
+  ${(props) => (props.selected ? "background-color: #295AF5;" : "")};
 `;
 
 const CategoryText = styled.Text`
@@ -74,7 +74,7 @@ const CategoryText = styled.Text`
 const NextButton = styled.TouchableOpacity`
   width: 200px;
   height: 40px;
-  background-color: ${(props) => (props.disabled ? "#c4c4c4" : "#40a798")};
+  background-color: ${(props) => (props.disabled ? "#c4c4c4" : "#295AF5")};
   border-radius: 10px;
   justify-content: center;
   align-items: center;
@@ -86,12 +86,7 @@ const ButtonText = styled.Text`
   color: white;
 `;
 
-type ParamList = {
-  StepOne: { category: CategoryResponse };
-  StepTwo: { category1: number; category2: number };
-};
-
-const StepOne: React.FC<NativeStackScreenProps<ParamList, "StepOne">> = ({
+const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
   navigation: { navigate },
   route: {
     params: { category },
@@ -167,7 +162,7 @@ const StepOne: React.FC<NativeStackScreenProps<ParamList, "StepOne">> = ({
               if (selectCategory1 === null && selectCategory2 === null) {
                 return Alert.alert("카테고리를 선택하세요!");
               } else {
-                return navigate("StepTwo", {
+                return navigate("ClubCreationStepTwo", {
                   category1: selectCategory1,
                   category2: selectCategory2,
                 });
@@ -192,7 +187,9 @@ const StepOne: React.FC<NativeStackScreenProps<ParamList, "StepOne">> = ({
               >
                 <CategoryIcon
                   source={{
-                    uri: categoryItem.thumbnail,
+                    uri: categoryItem.thumbnail
+                      ? categoryItem.thumbnail
+                      : "undefined",
                   }}
                   selected={
                     categoryItem.id === selectCategory1 ||
@@ -209,4 +206,4 @@ const StepOne: React.FC<NativeStackScreenProps<ParamList, "StepOne">> = ({
   );
 };
 
-export default StepOne;
+export default ClubCreationStepOne;

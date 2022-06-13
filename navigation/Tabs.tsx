@@ -10,6 +10,7 @@ import Profile from "../screens/Profile";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated, Dimensions } from "react-native";
+import { MainBottomTabParamList } from "../types/club";
 
 const Container = styled.View`
   height: 60px;
@@ -30,7 +31,6 @@ const ShadowBox = styled.View`
   position: absolute;
   width: 100%;
   height: 60px;
-  background-color: gray;
   elevation: 5;
   box-shadow: 1px 1px 3px gray;
 `;
@@ -59,7 +59,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const TAB_WIDTH = SCREEN_WIDTH / 4;
 const AnimatedTab = Animated.createAnimatedComponent(SlidingTab);
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<MainBottomTabParamList>();
 
 const CustomTabBar: React.FC<BottomTabBarProps> = ({
   state,

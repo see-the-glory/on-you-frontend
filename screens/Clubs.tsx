@@ -18,6 +18,7 @@ import {
   Club,
   ClubsResponse,
 } from "../api";
+import { ClubListScreenProps } from "../types/club";
 
 const Loader = styled.View`
   flex: 1;
@@ -68,9 +69,7 @@ const FloatingButton = styled.TouchableOpacity`
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
-  navigation: { navigate },
-}) => {
+const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const queryClient = useQueryClient();
   const [categoryBundle, setCategoryBundle] = useState<Array<Array<Category>>>([
     [],
@@ -107,17 +106,19 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
     }
   );
 
-  const goToClub = (item: Club) => {
+  const goToClub = (clubData: Club) => {
     navigate("ClubStack", {
       screen: "ClubTopTabs",
-      item,
+      params: {
+        clubData,
+      },
     });
   };
 
   const goToCreation = () => {
     navigate("ClubCreationStack", {
-      screen: "StepOne",
-      category,
+      screen: "ClubCreationStepOne",
+      params: { category },
     });
   };
 
@@ -178,7 +179,7 @@ const Clubs: React.FC<NativeStackScreenProps<any, "Clubs">> = ({
             </Swiper>
           </>
         }
-        data={clubs?.data}
+        data={clubs?.data.values}
         keyExtractor={(item) => item.id + ""}
         renderItem={({ item }) => (
           <TouchableOpacity

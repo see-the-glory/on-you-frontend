@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Text, ActivityIndicator, useWindowDimensions } from "react-native";
-import Carousel from "react-native-snap-carousel";
+import { ActivityIndicator, useWindowDimensions, Animated } from "react-native";
 import styled from "styled-components/native";
+import { Feather, Entypo, MaterialIcons } from "@expo/vector-icons";
+import { ClubHomeScreenProps, ClubHomeParamList } from "../../types/club";
+
+const MEMBER_ICON_KERNING = 25;
+const MEMBER_ICON_SIZE = 50;
+const SCREEN_PADDING_SIZE = 30;
 
 const Loader = styled.View`
   flex: 1;
@@ -9,207 +14,140 @@ const Loader = styled.View`
   align-items: center;
 `;
 
-const Container = styled.ScrollView`
-  flex: 1;
+const Break = styled.View`
+  margin-bottom: 20px;
+  margin-top: 20px;
+  border-bottom-width: 1px;
+  border-bottom-color: rgba(0, 0, 0, 0.3);
+  opacity: 0.5;
 `;
 
-const Thumbnail = styled.Image<{ height: number }>`
+const SectionView = styled.View`
   width: 100%;
-  height: ${(props) => props.height}px;
-`;
-
-const IntroductionView = styled.View`
-  width: 100%;
-  margin-top: -40px;
-  justify-content: center;
-  align-items: center;
-`;
-
-const InstroductionCard = styled.View`
-  width: 85%;
-  height: 200px;
-  border-radius: 12px;
-  background-color: white;
-  elevation: 5;
-  box-shadow: 1px 1px 3px gray;
-  padding: 15px;
+  justify-content: flex-start;
+  align-items: flex-start;
 `;
 
 const TitleView = styled.View`
   width: 100%;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 `;
 
-const ContentView = styled.View``;
-
-const ClubTitle = styled.Text`
-  font-size: 24px;
-  font-weight: 800;
-  margin-bottom: 5px;
+const SectionTitle = styled.Text`
+  font-size: 18px;
+  font-weight: 600;
+  margin-left: 5px;
 `;
 
-const OrginizationTitle = styled.Text`
-  font-size: 12px;
-  font-weight: 300;
+const ContentView = styled.View`
+  padding-left: 5px;
+  padding-right: 5px;
 `;
 
 const ContentText = styled.Text`
   font-size: 16px;
 `;
 
-const SectionTitleView = styled.View`
-  flex-direction: row;
-  align-items: flex-end;
-  margin-top: 60px;
-  margin-left: 32px;
-`;
-
-const SectionTitle = styled.Text`
-  font-size: 24px;
-  font-weight: 500;
-`;
-
-const SectionSubTitle = styled.Text`
-  font-size: 18px;
-  margin-left: 5px;
-  color: #808080;
-`;
-
-const CalendarView = styled.View`
-  flex: 1;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  margin-top: 20px;
-`;
-
-const CalendarCard = styled.View`
-  flex: 1;
-  width: 350px;
-  background-color: white;
-  border: 1px;
-  border-color: #ddd;
-  border-radius: 12px;
-  padding: 15px;
-`;
-
-const CalendarContentScrollView = styled.ScrollView``;
-
-const CalendarItemView = styled.View`
-  flex: 1;
-  justify-content: space-evenly;
-  align-items: center;
-  flex-direction: row;
-  margin-bottom: 20px;
-`;
-
-const CalendarItemDateTitle = styled.Text`
-  font-size: 16px;
-  font-weight: 600;
-`;
-
-const CalendarItemDetailView = styled.View`
-  margin-left: 15px;
-`;
-
-const CalendarItemTitle = styled.Text`
-  margin-left: 15px;
-  font-weight: 600;
-`;
-
-const CalendarTitle = styled.Text`
-  font-size: 20px;
-  font-weight: 600;
-`;
-
 const MemberView = styled.View`
-  margin-top: 30px;
-  margin-bottom: 80px;
+  margin-bottom: 150px;
 `;
 
 const MemberLineView = styled.View`
   flex-direction: row;
-  justify-content: space-evenly;
-  margin-bottom: 20px;
+  justify-content: flex-start;
+  margin-bottom: 25px;
+`;
+
+const MemberSubTitleView = styled.View`
+  margin-left: 5px;
+  margin-bottom: 10px;
+`;
+
+const MemberSubTitle = styled.Text`
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+  font-weight: 500;
 `;
 
 const MemberItem = styled.View`
+  position: relative;
   justify-content: center;
   align-items: center;
+  margin-right: ${MEMBER_ICON_KERNING}px; ;
 `;
 
-const MemberIcon = styled.Image`
-  width: 45px;
-  height: 45px;
-  border-radius: 50px;
+const Badge = styled.View`
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0%;
+  background-color: white;
+  border-radius: 10px;
+`;
+
+const MemberIcon = styled.TouchableOpacity`
+  width: ${MEMBER_ICON_SIZE}px;
+  height: ${MEMBER_ICON_SIZE}px;
+  border-radius: ${Math.ceil(MEMBER_ICON_SIZE / 2)}px;
+  justify-content: center;
+  align-items: center;
+  border: 1px;
+  border-color: rgba(0, 0, 0, 0.1);
+  background-color: white;
   margin-bottom: 8px;
+  box-shadow: 1px 1px 1px gray;
+  elevation: 3;
 `;
 
-const MemberName = styled.Text``;
+const MemberImage = styled.Image`
+  width: ${MEMBER_ICON_SIZE - 5}px;
+  height: ${MEMBER_ICON_SIZE - 5}px;
+  border-radius: ${Math.ceil(MEMBER_ICON_SIZE / 2)}px;
+`;
 
-const ClubHome = ({
+const MemberName = styled.Text`
+  font-weight: 600;
+`;
+
+const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   navigation: { navigate },
   route: {
-    params: { item },
+    params: { clubData },
   },
+  scrollY,
+  headerDiff,
 }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
-  const imageHeight = Math.floor((SCREEN_WIDTH / 16) * 9);
   const [loading, setLoading] = useState(true);
-  const [calendarData, setCalendarData] = useState([{}]);
   const [memberData, setMemberData] = useState([[{}]]);
-
-  const getClubSchedules = () => {
-    const monthlySchedules = [];
-
-    for (var i = 0; i < 12; ++i) {
-      monthlySchedules.push({
-        month: i + 1,
-        schedules: [
-          {
-            day: 5,
-            place: "시광교회 302호",
-            dues: 5000,
-            time: "13:00",
-            title: "시편 1편 - 10편 읽기",
-          },
-          {
-            day: 12,
-            place: "시광교회 306호",
-            dues: 5000,
-            time: "16:00",
-            title: "시편 11편 - 20편 읽기",
-          },
-          {
-            day: 22,
-            place: "시광교회 306호",
-            dues: 5000,
-            time: "16:00",
-            title: "시편 21편 - 30편 읽기",
-          },
-          {
-            day: 26,
-            place: "시광교회 306호",
-            dues: 5000,
-            time: "16:00",
-            title: "시편 31편 - 40편 읽기",
-          },
-        ],
-      });
-    }
-    setCalendarData(monthlySchedules);
-  };
+  const [managerData, setManagerData] = useState([[{}]]);
+  const [masterData, setMasterData] = useState({});
+  const memberCountPerLine = Math.floor(
+    (SCREEN_WIDTH - SCREEN_PADDING_SIZE) /
+      (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING)
+  );
 
   const getClubMembers = () => {
-    const result = [];
+    let master = {};
+    const members: { profilePath: string; name: string; role: string }[] = [];
+    const memberBundle = [];
+    const manager: { profilePath: string; name: string; role: string }[] = [];
+    const managerBundle = [];
     const items = [
+      {
+        profilePath:
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fHBvcnRyYWl0fGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60",
+        name: "박종원",
+        role: "master",
+      },
       {
         profilePath:
           "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cG9ydHJhaXR8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60",
         name: "장준용",
-        role: "member",
+        role: "manager",
       },
       {
         profilePath:
@@ -221,13 +159,7 @@ const ClubHome = ({
         profilePath:
           "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8cG9ydHJhaXR8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60",
         name: "김재광",
-        role: "manager",
-      },
-      {
-        profilePath:
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fHBvcnRyYWl0fGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60",
-        name: "박종원",
-        role: "master",
+        role: "member",
       },
       {
         profilePath:
@@ -249,20 +181,39 @@ const ClubHome = ({
       },
     ];
 
-    for (var i = 0; i < items.length; i += 5) {
-      result.push(items.slice(i, i + 5));
+    items.forEach((item) => {
+      if (item.role.toUpperCase() === "MASTER") {
+        master = item;
+      } else if (item.role.toUpperCase() === "MANAGER") {
+        manager.push(item);
+      } else {
+        members.push(item);
+      }
+    });
+
+    for (var i = 0; i < members.length; i += memberCountPerLine) {
+      memberBundle.push(members.slice(i, i + memberCountPerLine));
     }
 
-    setMemberData(result);
+    for (var i = 0; i < manager.length; i += memberCountPerLine) {
+      managerBundle.push(manager.slice(i, i + memberCountPerLine));
+    }
+
+    setMemberData(memberBundle);
+    setManagerData(managerBundle);
+    setMasterData(master);
   };
 
   const getData = async () => {
-    await Promise.all([getClubSchedules(), getClubMembers()]);
+    await Promise.all([getClubMembers()]);
     setLoading(false);
   };
 
   useEffect(() => {
     getData();
+
+    console.log("----Club Home----");
+    console.log(clubData);
   }, []);
 
   return loading ? (
@@ -270,82 +221,106 @@ const ClubHome = ({
       <ActivityIndicator />
     </Loader>
   ) : (
-    <Container>
-      <Thumbnail
-        source={{ url: item.thumbnailPath }}
-        resizeMode="cover"
-        height={imageHeight}
-      />
-      <IntroductionView>
-        <InstroductionCard>
-          <TitleView>
-            <ClubTitle>{item.clubName}</ClubTitle>
-            <OrginizationTitle>{item.organizationName}</OrginizationTitle>
-          </TitleView>
-          <ContentView>
-            <ContentText>Hello World!</ContentText>
-          </ContentView>
-        </InstroductionCard>
-      </IntroductionView>
-
-      <SectionTitleView>
-        <SectionTitle>모임 일정</SectionTitle>
-      </SectionTitleView>
-
-      <CalendarView>
-        <Carousel
-          layout={"default"}
-          slideStyle={{ height: 220 }}
-          sliderWidth={SCREEN_WIDTH}
-          itemWidth={350}
-          data={calendarData}
-          renderItem={(data) => (
-            <CalendarCard key={data.month}>
-              <TitleView>
-                <CalendarTitle>{data.item.month} 월</CalendarTitle>
-              </TitleView>
-              <CalendarContentScrollView>
-                {data.item.schedules.map((s) => {
+    <Animated.ScrollView
+      onScroll={Animated.event(
+        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+        { useNativeDriver: true }
+      )}
+      style={{
+        flex: 1,
+        paddingTop: SCREEN_PADDING_SIZE,
+        paddingLeft: SCREEN_PADDING_SIZE,
+        paddingRight: SCREEN_PADDING_SIZE,
+        transform: [
+          {
+            translateY: scrollY.interpolate({
+              inputRange: [0, headerDiff],
+              outputRange: [-headerDiff, 0],
+              extrapolate: "clamp",
+            }),
+          },
+        ],
+      }}
+      contentContainerStyle={{ paddingTop: headerDiff }}
+    >
+      <SectionView>
+        <TitleView>
+          <Entypo name="megaphone" size={18} color="#295AF5" />
+          <SectionTitle>ABOUT</SectionTitle>
+        </TitleView>
+        <ContentView>
+          <ContentText>{clubData.clubLongDesc}</ContentText>
+        </ContentView>
+      </SectionView>
+      <Break />
+      <SectionView>
+        <TitleView>
+          <Feather name="users" size={18} color="#295AF5" />
+          <SectionTitle>MEMBER</SectionTitle>
+        </TitleView>
+        <MemberView>
+          <MemberSubTitleView>
+            <MemberSubTitle>Leader</MemberSubTitle>
+          </MemberSubTitleView>
+          <MemberLineView>
+            <MemberItem>
+              <Badge>
+                <MaterialIcons name="stars" size={18} color="#FF714B" />
+              </Badge>
+              <MemberIcon>
+                <MemberImage source={{ uri: masterData.profilePath }} />
+              </MemberIcon>
+              <MemberName>{masterData.name}</MemberName>
+            </MemberItem>
+          </MemberLineView>
+          <MemberSubTitleView>
+            <MemberSubTitle>Manager</MemberSubTitle>
+          </MemberSubTitleView>
+          {managerData.map((bundle, index) => {
+            return (
+              <MemberLineView key={index}>
+                {bundle.map((item, index) => {
                   return (
-                    <CalendarItemView key={s.day}>
-                      <CalendarItemDateTitle>{s.day} 일</CalendarItemDateTitle>
-                      <CalendarItemDetailView>
-                        <Text>{s.time}</Text>
-                        <Text>{s.place}</Text>
-                        <Text>{s.dues} 원</Text>
-                      </CalendarItemDetailView>
-                      <CalendarItemTitle>{s.title}</CalendarItemTitle>
-                    </CalendarItemView>
+                    <MemberItem key={index}>
+                      <Badge>
+                        <MaterialIcons
+                          name="check-circle"
+                          size={18}
+                          color="#ff714b"
+                        />
+                      </Badge>
+                      <MemberIcon>
+                        <MemberImage source={{ uri: item.profilePath }} />
+                      </MemberIcon>
+                      <MemberName>{item.name}</MemberName>
+                    </MemberItem>
                   );
                 })}
-              </CalendarContentScrollView>
-            </CalendarCard>
-          )}
-        />
-      </CalendarView>
-
-      <SectionTitleView>
-        <SectionTitle>멤버</SectionTitle>
-        <SectionSubTitle>({item.memberNum} 명)</SectionSubTitle>
-      </SectionTitleView>
-
-      <MemberView>
-        {memberData.map((bundle, index) => {
-          return (
-            <MemberLineView key={index}>
-              {bundle.map((item, index) => {
-                return (
-                  <MemberItem key={index}>
-                    <MemberIcon source={{ uri: item.profilePath }} />
-                    <MemberName>{item.name}</MemberName>
-                  </MemberItem>
-                );
-              })}
-            </MemberLineView>
-          );
-        })}
-      </MemberView>
-    </Container>
+              </MemberLineView>
+            );
+          })}
+          <MemberSubTitleView>
+            <MemberSubTitle>Member</MemberSubTitle>
+          </MemberSubTitleView>
+          {memberData.map((bundle, index) => {
+            return (
+              <MemberLineView key={index}>
+                {bundle.map((item, index) => {
+                  return (
+                    <MemberItem key={index}>
+                      <MemberIcon>
+                        <MemberImage source={{ uri: item.profilePath }} />
+                      </MemberIcon>
+                      <MemberName>{item.name}</MemberName>
+                    </MemberItem>
+                  );
+                })}
+              </MemberLineView>
+            );
+          })}
+        </MemberView>
+      </SectionView>
+    </Animated.ScrollView>
   );
 };
 
