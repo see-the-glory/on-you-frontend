@@ -5,6 +5,9 @@ import AppLoading from "expo-app-loading";
 import { NavigationContainer } from "@react-navigation/native";
 import Root from "./navigation/Root";
 import LoginStack from "./navigation/LoginStack";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
 
@@ -22,17 +25,19 @@ export default function App() {
 
   if (!ready) {
     return (
-        <AppLoading
-            startAsync={startLoading}
-            onFinish={onFinish}
-            onError={console.error}
-        />
+      <AppLoading
+        startAsync={startLoading}
+        onFinish={onFinish}
+        onError={console.error}
+      />
     );
   }
 
   return (
+    <QueryClientProvider client={queryClient}>
       <NavigationContainer>
         {isLoggedIn ? <Root /> : <LoginStack />}
       </NavigationContainer>
+    </QueryClientProvider>
   );
 }
