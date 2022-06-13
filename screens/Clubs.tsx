@@ -179,7 +179,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             </Swiper>
           </>
         }
-        data={clubs?.data}
+        data={clubs?.data.values}
         keyExtractor={(item) => item.id + ""}
         renderItem={({ item }) => (
           <TouchableOpacity

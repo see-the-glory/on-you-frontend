@@ -1,21 +1,11 @@
 import {
   KakaoOAuthToken,
-  KakaoProfile,
   getProfile as getKakaoProfile,
   login,
-  logout,
-  unlink,
 } from "@react-native-seoul/kakao-login";
 import React, { useState } from "react";
 // import ResultView from './IntroTemp';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  ImageBackground,
-} from "react-native";
 import styled from "styled-components/native";
 
 const Container = styled.View`
@@ -52,19 +42,28 @@ const Logo = styled.ImageBackground`
 
 const NativeStack = createNativeStackNavigator();
 
-// const API = axios.create({
-//   baseURL: "http://",
-//   headers:{
-//     "Content-Type":"application/json",
-//   },
-//   withCredentials: true,
-// })
-
 function Login() {
   const [result, setResult] = useState<string>("");
 
-  const signInWithKakao = async (): Promise<void> => {
+  const signInWithKakao = async () => {
     const token: KakaoOAuthToken = await login();
+
+    console.log(token);
+
+    let jwtToken = fetch("http://3.39.190.23:8080/login/kakao/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token: token.accessToken }),
+    })
+      .then((response) => response.json())
+      .then((resData) => {
+        console.log("--- log ---");
+        console.log(resData.token);
+      });
+
+    console.log(token.accessToken);
   };
 
   return (
