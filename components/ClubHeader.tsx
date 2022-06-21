@@ -133,7 +133,9 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({
   return (
     <Header>
       <HeaderImage
-        source={{ uri: imageURI ? imageURI : "" }}
+        source={
+          imageURI === null ? require("../assets/basic.jpg") : { uri: imageURI }
+        }
         height={heightExpanded}
       >
         <AnimatedBlurView

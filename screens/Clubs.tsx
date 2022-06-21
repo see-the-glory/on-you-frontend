@@ -188,7 +188,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             }}
           >
             <ClubList
-              thumbnailPath={item.thumbnail ? item.thumbnail : ""}
+              thumbnailPath={item.thumbnail}
               organizationName={item.organizationName}
               clubName={item.name}
               memberNum={item.members.length}

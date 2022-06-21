@@ -149,7 +149,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
           }
         : {
             image: {
-              uri: imageURI,
+              uri: imageURI.replace("file://", ""),
               type: "image/jpeg",
               name: splitedURI[splitedURI.length - 1],
             },

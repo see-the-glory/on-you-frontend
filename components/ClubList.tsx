@@ -51,7 +51,13 @@ const ClubList: React.FC<ClubListProps> = ({
   memberNum,
 }) => (
   <Club>
-    <ThumbnailImage source={{ uri: thumbnailPath }} />
+    <ThumbnailImage
+      source={
+        thumbnailPath === null
+          ? require("../assets/basic.jpg")
+          : { uri: thumbnailPath }
+      }
+    />
     <ClubInfo>
       <OrganizationNameText>
         <Text>{organizationName}</Text>
