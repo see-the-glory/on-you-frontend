@@ -18,8 +18,6 @@ const RootNavigation = () => {
   const token = useSelector((state) => state.AuthReducers.authToken);
   const dispatch = useDispatch();
 
-  useEffect(async () => {}, []);
-
   const onFinish = () => setReady(true);
 
   // PreLoading
