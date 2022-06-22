@@ -24,7 +24,7 @@ export interface Club {
   recruitNumber: number;
   thumbnail: string | null;
   recruitStatus: string | null;
-  applyStatus: string | null;
+  applyStatus?: string | null;
   creatorName: string;
   category1Name: string;
   category2Name: string | null;
@@ -42,6 +42,10 @@ export interface Member {
 
 export interface CategoryResponse extends BaseResponse {
   data: Category[];
+}
+
+export interface ClubResponse extends BaseResponse {
+  data: Club;
 }
 
 export interface ClubsResponse extends BaseResponse {
@@ -65,10 +69,23 @@ export interface ClubCreationRequest {
   };
 }
 
+export interface ClubSchedulesRequest {
+  id: number;
+}
+
+export interface ClubDataRequest {
+  id: number;
+}
+
 const getCategories = () =>
   fetch(`${BASE_URL}/categories`).then((res) => res.json());
 
 const getClubs = () => fetch(`${BASE_URL}/clubs`).then((res) => res.json());
+
+const getClub = ({ queryKey }) => {
+  const [_key, clubId] = queryKey;
+  return fetch(`${BASE_URL}/clubs/${clubId}`).then((res) => res.json());
+};
 
 const createClub = (req: ClubCreationRequest) => {
   const body = new FormData();
@@ -76,18 +93,31 @@ const createClub = (req: ClubCreationRequest) => {
   if (req.image !== null) {
     body.append("file", req.image);
   }
-  body.append("clubCreateRequest", JSON.stringify(req.data));
+
+  body.append("clubCreateRequest", {
+    string: JSON.stringify(req.data),
+    type: "application/json",
+  });
 
   return fetch(`${BASE_URL}/clubs`, {
     method: "POST",
     headers: {
       "content-type": "multipart/form-data",
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiLsnqXspIDsmqkiLCJzb2NpYWxJZCI6IjIxOTAwMzc4NTAiLCJpZCI6MzQsImV4cCI6MTY1MzQwNTc0NH0.gJEnm383IbZQ2QS0ldY4RNEmxhRb-hTtFSaeqSymIb8rKZyvMEmCCTLm5rSvur-dtTRpVPy-jLzz_dpKL-kXgA",
-      Accept: "application/json",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiLsnqXspIDsmqkiLCJzb2NpYWxJZCI6IjIxOTAwMzc4NTAiLCJpZCI6NCwiZXhwIjoxMDAwMDAxNjU0NjA3MDA4fQ.m8OBIZEcB5dZ339YvhnWgJIRatKoF-DVPk2RrbXirsQRnYdFaALwnjR4oNmHGE-OZDfhDfOITaYzWLqYnU2vcQ",
+      Accept: "*/*",
     },
     body,
   }).then((res) => res.json());
 };
 
-export const ClubApi = { getCategories, getClubs, createClub };
+const getClubSchedules = (req: ClubSchedulesRequest) =>
+  fetch(`${BASE_URL}/clubs/${req.id}/schedules`).then((res) => res.json());
+
+export const ClubApi = {
+  getCategories,
+  getClub,
+  getClubs,
+  createClub,
+  getClubSchedules,
+};

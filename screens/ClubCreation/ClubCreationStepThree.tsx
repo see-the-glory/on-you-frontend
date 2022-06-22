@@ -100,21 +100,15 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   const [detailIntroText, setDetailIntroText] = useState<string>("");
 
   const mutation = useMutation(ClubApi.createClub, {
-    onMutate: (data) => {
-      console.log("--- Mutate ---");
-      console.log(data);
-    },
-    onSuccess: (data) => {
-      console.log("--- Success ---");
-      console.log(data);
+    onSuccess: (res) => {
+      if (res.resultCode === "OK") {
+        return navigate("ClubCreationSuccess", {
+          clubId: res.data.split(" ")[1],
+        });
+      }
     },
     onError: (error) => {
       console.log("--- Error ---");
-      console.log(error);
-    },
-    onSettled: (data, error) => {
-      console.log("--- Settled ---");
-      console.log(data);
       console.log(error);
     },
   });
@@ -157,10 +151,6 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
           };
 
     mutation.mutate(requestData);
-
-    // 결과값 받아서 한번 더 화면 분기할 것.
-
-    return navigate("Tabs", { screen: "Clubs" });
   };
 
   return (

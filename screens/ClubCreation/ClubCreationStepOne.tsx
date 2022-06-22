@@ -96,7 +96,6 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
   const [categories, setCategories] = useState<Array<Array<Category>>>([[]]);
   const [selectCategory1, setCategory1] = useState<number>(-1);
   const [selectCategory2, setCategory2] = useState<number>(-1);
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
 
   const getCategories = () => {
     const result = [];

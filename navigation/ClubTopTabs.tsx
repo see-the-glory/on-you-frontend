@@ -1,6 +1,11 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Animated, StatusBar, TouchableOpacity } from "react-native";
+import {
+  Animated,
+  StatusBar,
+  TouchableOpacity,
+  useWindowDimensions,
+} from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import ClubHome from "../screens/Club/ClubHome";
@@ -9,7 +14,6 @@ import styled from "styled-components/native";
 import ClubHeader from "../components/ClubHeader";
 import ClubTabBar from "../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Dimensions } from "react-native";
 
 const NativeStack = createNativeStackNavigator();
 const TopTab = createMaterialTopTabNavigator();
@@ -50,7 +54,7 @@ const ClubTopTabs = ({
 
   // Header Height Definition
   const { top } = useSafeAreaInsets();
-  const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+  const { height: SCREEN_HEIGHT } = useWindowDimensions();
   const headerConfig = useMemo(
     () => ({
       heightCollapsed: top + HEADER_HEIGHT,
@@ -127,7 +131,7 @@ const ClubTopTabs = ({
 
       <HeaderView>
         <LeftHeaderView>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => navigation.popToTop()}>
             <Ionicons name="md-chevron-back-sharp" size={24} color="white" />
           </TouchableOpacity>
         </LeftHeaderView>

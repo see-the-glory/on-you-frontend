@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, useWindowDimensions, Animated } from "react-native";
 import styled from "styled-components/native";
-import { Feather, Entypo, MaterialIcons } from "@expo/vector-icons";
+import { Feather, Entypo, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { ClubHomeScreenProps, ClubHomeParamList } from "../../types/club";
+import { useQuery } from "react-query";
+import { ClubApi } from "../../api";
 
 const MEMBER_ICON_KERNING = 25;
 const MEMBER_ICON_SIZE = 50;
@@ -129,6 +131,14 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     (SCREEN_WIDTH - SCREEN_PADDING_SIZE) /
       (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING)
   );
+  // const {
+  //   isLoading: clubsLoading,
+  //   data: clubs,
+  //   isRefetching: isRefetchingClubs,
+  // } = useQuery<SchedulesResponse>(
+  //   ["clubs", "getClubSchedules"],
+  //   ClubApi.getClubSchedules
+  // );
 
   const getClubMembers = () => {
     let master = {};
@@ -211,9 +221,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
 
   useEffect(() => {
     getData();
-
-    console.log("----Club Home----");
-    console.log(clubData);
   }, []);
 
   return loading ? (
@@ -251,6 +258,14 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         <ContentView>
           <ContentText>{clubData.clubLongDesc}</ContentText>
         </ContentView>
+      </SectionView>
+      <Break />
+      <SectionView>
+        <TitleView>
+          <Ionicons name="calendar" size={18} color="#295AF5" />
+          <SectionTitle>SCHEDULE</SectionTitle>
+        </TitleView>
+        <ContentView></ContentView>
       </SectionView>
       <Break />
       <SectionView>

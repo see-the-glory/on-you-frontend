@@ -107,7 +107,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   );
 
   const goToClub = (clubData: Club) => {
-    navigate("ClubStack", {
+    return navigate("ClubStack", {
       screen: "ClubTopTabs",
       params: {
         clubData,
@@ -116,7 +116,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   };
 
   const goToCreation = () => {
-    navigate("ClubCreationStack", {
+    return navigate("ClubCreationStack", {
       screen: "ClubCreationStepOne",
       params: { category },
     });
