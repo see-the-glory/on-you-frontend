@@ -38,7 +38,7 @@ const MemberNumView = styled.View`
 `;
 
 interface ClubListProps {
-  thumbnailPath: string;
+  thumbnailPath: string | null;
   organizationName: string;
   clubName: string;
   memberNum: number;

@@ -180,8 +180,8 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
           </>
         }
         data={clubs?.data.values}
-        keyExtractor={(item) => item.id + ""}
-        renderItem={({ item }) => (
+        keyExtractor={(item: Club) => item.id + ""}
+        renderItem={({ item }: { item: Club }) => (
           <TouchableOpacity
             onPress={() => {
               goToClub(item);

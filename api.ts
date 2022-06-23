@@ -40,16 +40,31 @@ export interface Member {
   sex: string;
 }
 
+export interface Schedule {
+  id: number;
+  name: string;
+  content: string;
+  location: string;
+  startDate: string;
+  endDate: string | null;
+}
+
 export interface CategoryResponse extends BaseResponse {
   data: Category[];
 }
 
 export interface ClubResponse extends BaseResponse {
-  data: Club;
+  data: {
+    values: Club;
+  };
 }
 
 export interface ClubsResponse extends BaseResponse {
   data: Club[];
+}
+
+export interface ClubSchedulesResponse extends BaseResponse {
+  data: Schedule[];
 }
 
 export interface ClubCreationRequest {
@@ -69,14 +84,6 @@ export interface ClubCreationRequest {
   };
 }
 
-export interface ClubSchedulesRequest {
-  id: number;
-}
-
-export interface ClubDataRequest {
-  id: number;
-}
-
 const getCategories = () =>
   fetch(`${BASE_URL}/categories`).then((res) => res.json());
 
@@ -85,6 +92,13 @@ const getClubs = () => fetch(`${BASE_URL}/clubs`).then((res) => res.json());
 const getClub = ({ queryKey }) => {
   const [_key, clubId] = queryKey;
   return fetch(`${BASE_URL}/clubs/${clubId}`).then((res) => res.json());
+};
+
+const getClubSchedules = ({ queryKey }) => {
+  const [_key, clubId] = queryKey;
+  return fetch(`${BASE_URL}/clubs/${clubId}/schedules`).then((res) =>
+    res.json()
+  );
 };
 
 const createClub = (req: ClubCreationRequest) => {
@@ -110,9 +124,6 @@ const createClub = (req: ClubCreationRequest) => {
     body,
   }).then((res) => res.json());
 };
-
-const getClubSchedules = (req: ClubSchedulesRequest) =>
-  fetch(`${BASE_URL}/clubs/${req.id}/schedules`).then((res) => res.json());
 
 export const ClubApi = {
   getCategories,

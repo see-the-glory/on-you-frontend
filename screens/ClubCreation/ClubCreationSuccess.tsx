@@ -65,7 +65,7 @@ const ClubCreationSuccess: React.FC<ClubCreationSuccessScreenProps> = ({
   const {
     isLoading: clubDataLoading,
     data: clubData,
-    isRefetching: isRefetchingClubs,
+    isRefetching: isRefetchingClubData,
   } = useQuery<ClubResponse>(["getClubs", clubId], ClubApi.getClub);
 
   const goClubHome = () => {
