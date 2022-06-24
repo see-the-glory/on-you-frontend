@@ -133,6 +133,7 @@ const MemberItem = styled.View`
 const Badge = styled.View`
   position: absolute;
   z-index: 2;
+  elevation: 3;
   top: 0;
   right: 0%;
   background-color: white;
@@ -150,7 +151,7 @@ const MemberIcon = styled.TouchableOpacity`
   background-color: white;
   margin-bottom: 8px;
   box-shadow: 1px 1px 1px gray;
-  elevation: 3;
+  elevation: 2;
 `;
 
 const MemberImage = styled.Image`

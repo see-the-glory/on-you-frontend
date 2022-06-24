@@ -10,6 +10,7 @@ const FloatingActionView = styled.View`
   z-index: 2;
   right: 20px;
   bottom: 20px;
+  height: -100px;
 `;
 
 const FloatingMainButton = styled.TouchableOpacity`
@@ -26,7 +27,6 @@ const FloatingMainButton = styled.TouchableOpacity`
 `;
 
 const FloatingButton = styled.TouchableOpacity`
-  position: absolute;
   width: 40px;
   height: 40px;
   background-color: white;
@@ -52,11 +52,11 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({
   });
   const firstY = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -50],
+    outputRange: [0, -15],
   });
   const secondY = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -100],
+    outputRange: [0, -30],
   });
   const fade = animation.interpolate({
     inputRange: [0, 1],

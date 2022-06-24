@@ -5,7 +5,6 @@ import {
   StatusBar,
   TouchableOpacity,
   useWindowDimensions,
-  Text,
 } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
