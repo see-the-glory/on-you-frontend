@@ -1,0 +1,103 @@
+import React, { useRef, useState } from "react";
+import styled from "styled-components/native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Animated } from "react-native";
+import { ClubHomeFloatingButtonProps } from "../types/club";
+
+const FloatingActionView = styled.View`
+  position: absolute;
+  align-items: center;
+  z-index: 2;
+  right: 20px;
+  bottom: 20px;
+`;
+
+const FloatingMainButton = styled.TouchableOpacity`
+  width: 50px;
+  height: 50px;
+  background-color: #e77f67;
+  elevation: 5;
+  box-shadow: 1px 1px 3px gray;
+  border-radius: 25px;
+  justify-content: center;
+  align-items: center;
+  border: 1px;
+  border-color: white;
+`;
+
+const FloatingButton = styled.TouchableOpacity`
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  elevation: 5;
+  box-shadow: 1px 1px 3px gray;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const AnimatedFloatingMainButton =
+  Animated.createAnimatedComponent(FloatingMainButton);
+const AnimatedFloatingButton = Animated.createAnimatedComponent(FloatingButton);
+
+const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({
+  onPressEdit,
+}) => {
+  const [open, setOpen] = useState(0);
+  const animation = useRef(new Animated.Value(0)).current;
+  const rotation = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "45deg"],
+  });
+  const firstY = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -50],
+  });
+  const secondY = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -100],
+  });
+  const fade = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  });
+
+  const toggleMenu = () => {
+    Animated.spring(animation, {
+      toValue: open,
+      friction: 6,
+      useNativeDriver: true,
+    }).start();
+    setOpen((open + 1) % 2);
+  };
+
+  return (
+    <FloatingActionView>
+      <AnimatedFloatingButton
+        style={{ opacity: fade, transform: [{ translateY: secondY }] }}
+      >
+        <MaterialCommunityIcons name="image-plus" size={18} color="#e77f67" />
+      </AnimatedFloatingButton>
+      <AnimatedFloatingButton
+        onPress={onPressEdit}
+        style={{ opacity: fade, transform: [{ translateY: firstY }] }}
+      >
+        <MaterialCommunityIcons
+          name="pencil-outline"
+          size={18}
+          color="#e77f67"
+        />
+      </AnimatedFloatingButton>
+      <AnimatedFloatingMainButton
+        onPress={toggleMenu}
+        activeOpacity={1}
+        style={{ transform: [{ rotate: rotation }] }}
+      >
+        <MaterialCommunityIcons name="plus" size={28} color="white" />
+      </AnimatedFloatingMainButton>
+    </FloatingActionView>
+  );
+};
+
+export default FloatingActionButton;

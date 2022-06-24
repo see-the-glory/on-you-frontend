@@ -105,3 +105,7 @@ export type ClubTopTabProps = MaterialTopTabScreenProps<
   TopTabParamList,
   "ClubTopTabs"
 >;
+
+export interface ClubHomeFloatingButtonProps {
+  onPressEdit: object;
+}

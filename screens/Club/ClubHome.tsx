@@ -5,7 +5,6 @@ import {
   Animated,
   Text,
   FlatList,
-  View,
 } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Entypo, MaterialIcons, Ionicons } from "@expo/vector-icons";

@@ -5,6 +5,7 @@ import {
   StatusBar,
   TouchableOpacity,
   useWindowDimensions,
+  Text,
 } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,9 +15,7 @@ import styled from "styled-components/native";
 import ClubHeader from "../components/ClubHeader";
 import ClubTabBar from "../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-const NativeStack = createNativeStackNavigator();
-const TopTab = createMaterialTopTabNavigator();
+import FloatingActionButton from "../components/FloatingActionButton";
 
 const Container = styled.View`
   flex: 1;
@@ -40,6 +39,9 @@ const RightHeaderView = styled.View`
   flex-direction: row;
   margin-right: 10px;
 `;
+
+const NativeStack = createNativeStackNavigator();
+const TopTab = createMaterialTopTabNavigator();
 
 const HEADER_HEIGHT_EXPANDED = 210;
 const HEADER_HEIGHT = 100;
@@ -79,6 +81,10 @@ const ClubTopTabs = ({
     ),
     [headerDiff]
   );
+
+  const clubEdit = () => {
+    console.log("edit button click!");
+  };
 
   return (
     <Container>
@@ -153,6 +159,8 @@ const ClubTopTabs = ({
           </TouchableOpacity>
         </RightHeaderView>
       </HeaderView>
+
+      <FloatingActionButton onPressEdit={clubEdit} />
     </Container>
   );
 };
