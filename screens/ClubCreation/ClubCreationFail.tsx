@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
-import { ClubCreationSuccessScreenProps } from "../../types/club";
+import { ClubCreationFailScreenProps } from "../../types/club";
 import { Ionicons } from "@expo/vector-icons";
+
+const Loader = styled.SafeAreaView`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -44,35 +50,28 @@ const ButtonText = styled.Text`
   color: white;
 `;
 
-const ClubCreationSuccess: React.FC<ClubCreationSuccessScreenProps> = ({
+const ClubCreationFail: React.FC<ClubCreationFailScreenProps> = ({
   navigation: { navigate },
-  route: {
-    params: { clubData },
-  },
 }) => {
   const { height: SCREEN_HEIGHT } = useWindowDimensions();
   const mainHeight = (SCREEN_HEIGHT / 10) * 8;
   const footerHeight = SCREEN_HEIGHT - mainHeight;
 
-  const goClubHome = () => {
-    // Navigator stack reset 하는 거 찾아보기.
-    return navigate("ClubStack", {
-      screen: "ClubTopTabs",
-      params: {
-        clubData: clubData,
-      },
+  const goClubs = () => {
+    return navigate("Tabs", {
+      screen: "Clubs",
     });
   };
 
   return (
     <Container>
       <SectionView height={mainHeight}>
-        <Ionicons name="checkmark-circle" size={52} color="#FF714B" />
-        <H1>모임 개설이 완료되었습니다.</H1>
-        <H2>개설된 모임의 홈화면에서 상세 설정을 하실 수 있습니다.</H2>
+        <Ionicons name="warning" size={38} color="red" />
+        <H1>모임 개설에 실패했습니다.</H1>
+        <H2>다시 시도해주세요.</H2>
       </SectionView>
       <SectionView height={footerHeight}>
-        <NextButton onPress={goClubHome}>
+        <NextButton onPress={goClubs}>
           <ButtonText>완료</ButtonText>
         </NextButton>
       </SectionView>
@@ -80,4 +79,4 @@ const ClubCreationSuccess: React.FC<ClubCreationSuccessScreenProps> = ({
   );
 };
 
-export default ClubCreationSuccess;
+export default ClubCreationFail;

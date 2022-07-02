@@ -101,27 +101,34 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
 
   const mutation = useMutation(ClubApi.createClub, {
     onSuccess: (res) => {
-      if (res.resultCode === "OK") {
+      if (res.status === 200 && res.json?.resultCode === "OK") {
         return navigate("ClubCreationSuccess", {
-          clubId: res.data.split(" ")[1],
+          clubData: res.json?.data,
         });
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res.json);
+        return navigate("ClubCreationFail", {});
       }
     },
     onError: (error) => {
       console.log("--- Error ---");
-      console.log(error);
+      console.log(`error: ${error}`);
+      return navigate("ClubCreationFail", {});
     },
+    onSettled: (res, error) => {},
   });
 
   const onSubmit = () => {
-    console.log("category1: " + category1);
-    console.log("category2: " + category2);
-    console.log("clubName: " + clubName);
-    console.log("clubMemberCount: " + clubMemberCount);
-    console.log("briefIntroText: " + briefIntroText);
-    console.log("detailIntroText " + detailIntroText);
-    console.log("approvalMethod " + approvalMethod);
-    console.log("imageURI " + imageURI);
+    // console.log("category1: " + category1);
+    // console.log("category2: " + category2);
+    // console.log("clubName: " + clubName);
+    // console.log("clubMemberCount: " + clubMemberCount);
+    // console.log("briefIntroText: " + briefIntroText);
+    // console.log("detailIntroText " + detailIntroText);
+    // console.log("approvalMethod " + approvalMethod);
+    // console.log("imageURI " + imageURI);
 
     const data = {
       category1Id: category1,

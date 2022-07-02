@@ -101,7 +101,7 @@ const getClubSchedules = ({ queryKey }) => {
   );
 };
 
-const createClub = (req: ClubCreationRequest) => {
+const createClub = async (req: ClubCreationRequest) => {
   const body = new FormData();
 
   if (req.image !== null) {
@@ -122,7 +122,9 @@ const createClub = (req: ClubCreationRequest) => {
       Accept: "*/*",
     },
     body,
-  }).then((res) => res.json());
+  }).then(async (res) => {
+    return { status: res.status, json: await res.json() };
+  });
 };
 
 export const ClubApi = {

@@ -216,7 +216,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
               <FieldContentLine>
                 <Button
                   onPress={() => {
-                    if (!limitCheck) setClubMemberCount(-1);
+                    if (!limitCheck) setClubMemberCount(0);
                     setLimitCheck(!limitCheck);
                   }}
                   activeOpacity={0.5}

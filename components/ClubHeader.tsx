@@ -9,6 +9,7 @@ import { ClubHomeHaederProps } from "../types/club";
 const Header = styled.View`
   width: 100%;
   justify-content: center;
+  z-index: 2;
   align-items: center;
 `;
 
@@ -122,7 +123,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({
 }) => {
   const fadeIn = scrollY.interpolate({
     inputRange: [0, headerDiff],
-    outputRange: [-3, 1],
+    outputRange: [-1, 1],
   });
 
   const fadeOut = scrollY.interpolate({

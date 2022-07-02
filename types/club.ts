@@ -24,8 +24,9 @@ export type RootStackParamList = {
     imageURI: string | null;
   };
   ClubCreationSuccess: {
-    clubId: number;
+    clubData: Club;
   };
+  ClubCreationFail: {};
 
   Tabs: {};
 };
@@ -76,6 +77,11 @@ export type ClubCreationStepThreeScreenProps = NativeStackScreenProps<
 export type ClubCreationSuccessScreenProps = NativeStackScreenProps<
   RootStackParamList,
   "ClubCreationSuccess"
+>;
+
+export type ClubCreationFailScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  "ClubCreationFail"
 >;
 
 // ClubHome Param For Collapsed Scroll Animation

@@ -5,12 +5,15 @@ import {
   Animated,
   Text,
   FlatList,
+  View,
+  Modal,
 } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Entypo, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { ClubHomeScreenProps, ClubHomeParamList } from "../../types/club";
 import { useQuery } from "react-query";
 import { ClubApi, ClubSchedulesResponse, Schedule } from "../../api";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const MEMBER_ICON_KERNING = 25;
 const MEMBER_ICON_SIZE = 50;
@@ -172,6 +175,46 @@ interface RefinedSchedule extends Schedule {
   startTime: string;
 }
 
+const ModalPoup = ({ visible, children }) => {
+  const [showModal, setShowModal] = useState(visible);
+  useEffect(() => {
+    toggleModal();
+  }, [visible]);
+  const toggleModal = () => {
+    if (visible) {
+      setShowModal(true);
+    } else {
+      setShowModal(false);
+    }
+  };
+
+  return (
+    <Modal transparent visible={showModal}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <View
+          style={{
+            width: "80%",
+            backgroundColor: "white",
+            paddingHorizontal: 20,
+            paddingVertical: 20,
+            borderRadius: 10,
+            elevation: 20,
+          }}
+        >
+          {children}
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
 const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   navigation: { navigate },
   route: {
@@ -180,6 +223,8 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   scrollY,
   headerDiff,
 }) => {
+  const [visible, setVisible] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState(-1);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const [scheduleData, setScheduleData] = useState<Array<RefinedSchedule>>([]);
   const [memberLoading, setMemberLoading] = useState(true);
@@ -195,7 +240,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     data: schedules,
     isRefetching: isRefetchingSchedules,
   } = useQuery<ClubSchedulesResponse>(
-    ["getClubSchedules", clubData.id],
+    ["getClubSchedules", 4], //clubData.id],
     ClubApi.getClubSchedules,
     {
       onSuccess: (res) => {
@@ -362,8 +407,19 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             data={scheduleData}
             keyExtractor={(item: RefinedSchedule) => item.id + ""}
             ItemSeparatorComponent={ScheduleSeparator}
-            renderItem={({ item }: { item: RefinedSchedule }) => (
-              <ScheduleView>
+            renderItem={({
+              item,
+              index,
+            }: {
+              item: RefinedSchedule;
+              index: number;
+            }) => (
+              <ScheduleView
+                onPress={() => {
+                  setVisible(true);
+                  setSelectedSchedule(index);
+                }}
+              >
                 <ScheduleDateView>
                   <ScheduleText>{item.year}</ScheduleText>
                   <ScheduleTitle>
@@ -473,6 +529,21 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           })}
         </MemberView>
       </SectionView>
+
+      <ModalPoup visible={visible}>
+        {/* 스케쥴 캐러설 만들고, selectSchedule 보고 시작지점 설정. */}
+        <View style={{ alignItems: "center" }}>
+          <Text>{selectedSchedule}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              setVisible(false);
+              setSelectedSchedule(-1);
+            }}
+          >
+            <Ionicons name="close" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+      </ModalPoup>
     </Animated.ScrollView>
   );
 };
