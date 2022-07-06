@@ -40,7 +40,7 @@ const RightHeaderView = styled.View`
 
 const TopTab = createMaterialTopTabNavigator();
 
-const HEADER_HEIGHT_EXPANDED = 210;
+const HEADER_HEIGHT_EXPANDED = 270;
 const HEADER_HEIGHT = 100;
 
 const ClubTopTabs = ({
@@ -93,10 +93,7 @@ const ClubTopTabs = ({
         </LeftHeaderView>
         <RightHeaderView>
           <TouchableOpacity
-            onPress={() => {
-              setVisible(true);
-              console.log(visible);
-            }}
+            onPress={() => setHeartSelected(!heartSelected)}
             style={{ marginRight: 10 }}
           >
             {heartSelected ? (

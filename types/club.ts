@@ -1,7 +1,7 @@
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Animated } from "react-native";
-import { Club, CategoryResponse } from "../api";
+import { Club, CategoryResponse, Schedule } from "../api";
 
 // For Stack Navigation
 export type RootStackParamList = {
@@ -114,4 +114,12 @@ export type ClubTopTabProps = MaterialTopTabScreenProps<
 
 export interface ClubHomeFloatingButtonProps {
   onPressEdit: object;
+}
+
+export interface RefinedSchedule extends Schedule {
+  year: string;
+  month: string;
+  day: string;
+  dayOfWeek: string;
+  startTime: string;
 }

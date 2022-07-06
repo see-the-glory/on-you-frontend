@@ -5,15 +5,18 @@ import {
   Animated,
   Text,
   FlatList,
-  View,
-  Modal,
 } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Entypo, MaterialIcons, Ionicons } from "@expo/vector-icons";
-import { ClubHomeScreenProps, ClubHomeParamList } from "../../types/club";
+import {
+  ClubHomeScreenProps,
+  ClubHomeParamList,
+  RefinedSchedule,
+} from "../../types/club";
 import { useQuery } from "react-query";
-import { ClubApi, ClubSchedulesResponse, Schedule } from "../../api";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { ClubApi, ClubSchedulesResponse } from "../../api";
+import ScheduleModal from "./ClubScheduleModal";
+import CircleIcon from "../../components/CircleIcon";
 
 const MEMBER_ICON_KERNING = 25;
 const MEMBER_ICON_SIZE = 50;
@@ -126,94 +129,12 @@ const MemberSubTitle = styled.Text`
   font-weight: 500;
 `;
 
-const MemberItem = styled.View`
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  margin-right: ${MEMBER_ICON_KERNING}px; ;
-`;
-
-const Badge = styled.View`
+const ModalHeaderRight = styled.View`
   position: absolute;
-  z-index: 2;
-  elevation: 3;
-  top: 0;
-  right: 0%;
-  background-color: white;
-  border-radius: 10px;
+  right: 15px;
 `;
 
-const MemberIcon = styled.TouchableOpacity`
-  width: ${MEMBER_ICON_SIZE}px;
-  height: ${MEMBER_ICON_SIZE}px;
-  border-radius: ${Math.ceil(MEMBER_ICON_SIZE / 2)}px;
-  justify-content: center;
-  align-items: center;
-  border: 1px;
-  border-color: rgba(0, 0, 0, 0.1);
-  background-color: white;
-  margin-bottom: 8px;
-  box-shadow: 1px 1px 1px gray;
-  elevation: 2;
-`;
-
-const MemberImage = styled.Image`
-  width: ${MEMBER_ICON_SIZE - 5}px;
-  height: ${MEMBER_ICON_SIZE - 5}px;
-  border-radius: ${Math.ceil(MEMBER_ICON_SIZE / 2)}px;
-`;
-
-const MemberName = styled.Text`
-  font-weight: 600;
-`;
-
-interface RefinedSchedule extends Schedule {
-  year: string;
-  month: string;
-  day: string;
-  dayOfWeek: string;
-  startTime: string;
-}
-
-const ModalPoup = ({ visible, children }) => {
-  const [showModal, setShowModal] = useState(visible);
-  useEffect(() => {
-    toggleModal();
-  }, [visible]);
-  const toggleModal = () => {
-    if (visible) {
-      setShowModal(true);
-    } else {
-      setShowModal(false);
-    }
-  };
-
-  return (
-    <Modal transparent visible={showModal}>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "rgba(0,0,0,0.5)",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <View
-          style={{
-            width: "80%",
-            backgroundColor: "white",
-            paddingHorizontal: 20,
-            paddingVertical: 20,
-            borderRadius: 10,
-            elevation: 20,
-          }}
-        >
-          {children}
-        </View>
-      </View>
-    </Modal>
-  );
-};
+const ModalCloseButton = styled.TouchableOpacity``;
 
 const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   navigation: { navigate },
@@ -244,7 +165,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     ClubApi.getClubSchedules,
     {
       onSuccess: (res) => {
-        console.log(res);
         const week = ["일", "월", "화", "수", "목", "금", "토"];
         const result: RefinedSchedule[] = [];
         for (let i = 0; i < res.data.length; ++i) {
@@ -352,6 +272,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
 
   useEffect(() => {
     getData();
+    console.log(clubData);
   }, []);
 
   const loading = memberLoading || scheduleLoading;
@@ -472,15 +393,12 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             <MemberSubTitle>Leader</MemberSubTitle>
           </MemberSubTitleView>
           <MemberLineView>
-            <MemberItem>
-              <Badge>
-                <MaterialIcons name="stars" size={18} color="#FF714B" />
-              </Badge>
-              <MemberIcon>
-                <MemberImage source={{ uri: masterData.profilePath }} />
-              </MemberIcon>
-              <MemberName>{masterData.name}</MemberName>
-            </MemberItem>
+            <CircleIcon
+              size={MEMBER_ICON_SIZE}
+              uri={masterData.profilePath}
+              name={masterData.name}
+              badge={"stars"}
+            />
           </MemberLineView>
           <MemberSubTitleView>
             <MemberSubTitle>Manager</MemberSubTitle>
@@ -490,19 +408,13 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
               <MemberLineView key={index}>
                 {bundle.map((item, index) => {
                   return (
-                    <MemberItem key={index}>
-                      <Badge>
-                        <MaterialIcons
-                          name="check-circle"
-                          size={18}
-                          color="#ff714b"
-                        />
-                      </Badge>
-                      <MemberIcon>
-                        <MemberImage source={{ uri: item.profilePath }} />
-                      </MemberIcon>
-                      <MemberName>{item.name}</MemberName>
-                    </MemberItem>
+                    <CircleIcon
+                      key={index}
+                      size={MEMBER_ICON_SIZE}
+                      uri={item.profilePath}
+                      name={item.name}
+                      badge={"check-circle"}
+                    />
                   );
                 })}
               </MemberLineView>
@@ -516,12 +428,13 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
               <MemberLineView key={index}>
                 {bundle.map((item, index) => {
                   return (
-                    <MemberItem key={index}>
-                      <MemberIcon>
-                        <MemberImage source={{ uri: item.profilePath }} />
-                      </MemberIcon>
-                      <MemberName>{item.name}</MemberName>
-                    </MemberItem>
+                    <CircleIcon
+                      key={index}
+                      size={MEMBER_ICON_SIZE}
+                      uri={item.profilePath}
+                      name={item.name}
+                      kerning={MEMBER_ICON_KERNING}
+                    />
                   );
                 })}
               </MemberLineView>
@@ -530,20 +443,21 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         </MemberView>
       </SectionView>
 
-      <ModalPoup visible={visible}>
-        {/* 스케쥴 캐러설 만들고, selectSchedule 보고 시작지점 설정. */}
-        <View style={{ alignItems: "center" }}>
-          <Text>{selectedSchedule}</Text>
-          <TouchableOpacity
+      <ScheduleModal
+        visible={visible}
+        scheduleData={scheduleData}
+        selectIndex={selectedSchedule}
+      >
+        <ModalHeaderRight>
+          <ModalCloseButton
             onPress={() => {
               setVisible(false);
-              setSelectedSchedule(-1);
             }}
           >
             <Ionicons name="close" size={24} color="black" />
-          </TouchableOpacity>
-        </View>
-      </ModalPoup>
+          </ModalCloseButton>
+        </ModalHeaderRight>
+      </ScheduleModal>
     </Animated.ScrollView>
   );
 };

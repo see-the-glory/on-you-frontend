@@ -22,12 +22,12 @@ const FilterView = styled.View`
   flex: 1;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.6);
-  justify-content: flex-end;
+  padding-top: 30px;
+  justify-content: center;
   align-items: center;
 `;
 const InformationView = styled.View`
   justify-content: center;
-  margin-bottom: 25px;
 `;
 
 const CategoryView = styled.View`
