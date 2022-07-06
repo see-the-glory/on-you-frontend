@@ -161,7 +161,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     data: schedules,
     isRefetching: isRefetchingSchedules,
   } = useQuery<ClubSchedulesResponse>(
-    ["getClubSchedules", 4], //clubData.id],
+    ["getClubSchedules", clubData.id],
     ClubApi.getClubSchedules,
     {
       onSuccess: (res) => {
