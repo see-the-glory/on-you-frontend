@@ -1,4 +1,4 @@
-const BASE_URL = "http://3.39.190.23:8080/api";
+const BASE_URL = "http://3.39.190.23:8080";
 
 interface BaseResponse {
   resultCode: string;
@@ -84,10 +84,13 @@ export interface ClubCreationRequest {
   };
 }
 
-const getCategories = () =>
-  fetch(`${BASE_URL}/categories`).then((res) => res.json());
+export interface LoginRequest {
+  token: string;
+}
 
-const getClubs = () => fetch(`${BASE_URL}/clubs`).then((res) => res.json());
+const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
+
+const getClubs = () => fetch(`${BASE_URL}/api/clubs`).then((res) => res.json());
 
 const getClub = ({ queryKey }) => {
   const [_key, clubId] = queryKey;
@@ -113,7 +116,7 @@ const createClub = async (req: ClubCreationRequest) => {
     type: "application/json",
   });
 
-  return fetch(`${BASE_URL}/clubs`, {
+  return fetch(`${BASE_URL}/api/clubs`, {
     method: "POST",
     headers: {
       "content-type": "multipart/form-data",
@@ -127,6 +130,16 @@ const createClub = async (req: ClubCreationRequest) => {
   });
 };
 
+const getJWT = (req: LoginRequest) => {
+  return fetch(`${BASE_URL}/login/kakao/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(req),
+  }).then((res) => res.json());
+};
+
 export const ClubApi = {
   getCategories,
   getClub,
@@ -134,3 +147,4 @@ export const ClubApi = {
   createClub,
   getClubSchedules,
 };
+export const CommonApi = { getJWT };
