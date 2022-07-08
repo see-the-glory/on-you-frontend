@@ -6,6 +6,8 @@ import ClubCreationStepOne from "../screens/ClubCreation/ClubCreationStepOne";
 import ClubCreationStepTwo from "../screens/ClubCreation/ClubCreationStepTwo";
 import ClubCreationStepThree from "../screens/ClubCreation/ClubCreationStepThree";
 import { ClubCreationStackProps, RootStackParamList } from "../types/club";
+import ClubCreationSuccess from "../screens/ClubCreation/ClubCreationSuccess";
+import ClubCreationFail from "../screens/ClubCreation/ClubCreationFail";
 
 const NativeStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -67,6 +69,26 @@ const ClubCreationStack: React.FC<ClubCreationStackProps> = ({
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),
+        })}
+      />
+
+      <NativeStack.Screen
+        name="ClubCreationSuccess"
+        component={ClubCreationSuccess}
+        options={({
+          route: {
+            params: { clubId },
+          },
+        }) => ({
+          headerShown: false,
+        })}
+      />
+
+      <NativeStack.Screen
+        name="ClubCreationFail"
+        component={ClubCreationFail}
+        options={({}) => ({
+          headerShown: false,
         })}
       />
     </NativeStack.Navigator>
