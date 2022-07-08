@@ -94,12 +94,12 @@ const getClubs = () => fetch(`${BASE_URL}/api/clubs`).then((res) => res.json());
 
 const getClub = ({ queryKey }) => {
   const [_key, clubId] = queryKey;
-  return fetch(`${BASE_URL}/clubs/${clubId}`).then((res) => res.json());
+  return fetch(`${BASE_URL}/api/clubs/${clubId}`).then((res) => res.json());
 };
 
 const getClubSchedules = ({ queryKey }) => {
   const [_key, clubId] = queryKey;
-  return fetch(`${BASE_URL}/clubs/${clubId}/schedules`).then((res) =>
+  return fetch(`${BASE_URL}/api/clubs/${clubId}/schedules`).then((res) =>
     res.json()
   );
 };
