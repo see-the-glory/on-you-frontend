@@ -48,27 +48,27 @@ const CategoryView = styled.View`
   margin-top: 15px;
 `;
 
-const CategoryItem = styled.TouchableOpacity`
-  flex-direction: column;
+const CategoryItem = styled.TouchableOpacity<{ selected: boolean }>`
+  width: 100px;
+  height: 35px;
   align-items: center;
   justify-content: center;
-  background-color: #c4c4c4;
-  border-radius: 10px;
+  background-color: ${(props) => (props.selected ? "#295AF5" : "white")};
+  border-radius: 20px;
+  border: 1px solid #c3c3c3;
+  padding: 0px 15px 0px 15px;
 `;
 
 const CategoryIcon = styled.Image<{ selected: boolean }>`
-  width: 180px;
-  height: 140px;
   border-radius: 10px;
   opacity: ${(props) => (props.selected ? "1" : "0.3")};
   ${(props) => (props.selected ? "background-color: #295AF5;" : "")};
 `;
 
-const CategoryText = styled.Text`
-  position: absolute;
-  font-size: 21px;
-  color: white;
-  font-weight: 800;
+const CategoryText = styled.Text<{ selected: boolean }>`
+  font-size: 18px;
+  color: ${(props) => (props.selected ? "white" : "black")};
+  font-weight: 500;
 `;
 
 const NextButton = styled.TouchableOpacity`
@@ -99,7 +99,7 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
 
   const getCategories = () => {
     const result = [];
-    const categoryViewSize = 2;
+    const categoryViewSize = 3;
     let pos = 0;
 
     while (pos < category.data.length) {
@@ -183,19 +183,19 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
                 key={index}
                 activeOpacity={0.8}
                 onPress={() => onPressCategory(categoryItem.id)}
+                selected={
+                  categoryItem.id === selectCategory1 ||
+                  categoryItem.id === selectCategory2
+                }
               >
-                <CategoryIcon
-                  source={{
-                    uri: categoryItem.thumbnail
-                      ? categoryItem.thumbnail
-                      : "undefined",
-                  }}
+                <CategoryText
                   selected={
                     categoryItem.id === selectCategory1 ||
                     categoryItem.id === selectCategory2
                   }
-                />
-                <CategoryText>{categoryItem.name}</CategoryText>
+                >
+                  {categoryItem.name}
+                </CategoryText>
               </CategoryItem>
             );
           })}

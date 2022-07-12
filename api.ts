@@ -60,7 +60,18 @@ export interface ClubResponse extends BaseResponse {
 }
 
 export interface ClubsResponse extends BaseResponse {
-  data: Club[];
+  data: {
+    values: Club[];
+    hasNext: boolean;
+  };
+}
+
+export interface ClubsParams {
+  categoryId: number | null;
+  clubState: number | null;
+  minMember: number | null;
+  maxMember: number | null;
+  sort: string | null;
 }
 
 export interface ClubSchedulesResponse extends BaseResponse {
@@ -88,17 +99,25 @@ export interface LoginRequest {
   token: string;
 }
 
-const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
+const getCategories = () =>
+  fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
-const getClubs = () => fetch(`${BASE_URL}/api/clubs`).then((res) => res.json());
+const getClubs = ({ queryKey }: any) => {
+  const [_key, clubsParams]: [string, ClubsParams] = queryKey;
+  return fetch(
+    `${BASE_URL}/api/clubs?category1Id=${
+      clubsParams.categoryId ? clubsParams.categoryId : ""
+    }`
+  ).then((res) => res.json());
+};
 
-const getClub = ({ queryKey }) => {
-  const [_key, clubId] = queryKey;
+const getClub = ({ queryKey }: any) => {
+  const [_key, clubId]: [string, number] = queryKey;
   return fetch(`${BASE_URL}/api/clubs/${clubId}`).then((res) => res.json());
 };
 
-const getClubSchedules = ({ queryKey }) => {
-  const [_key, clubId] = queryKey;
+const getClubSchedules = ({ queryKey }: any) => {
+  const [_key, clubId]: [string, number] = queryKey;
   return fetch(`${BASE_URL}/api/clubs/${clubId}/schedules`).then((res) =>
     res.json()
   );

@@ -5,10 +5,12 @@ import {
   ActivityIndicator,
   Dimensions,
   FlatList,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
 import styled from "styled-components/native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
 import { useQuery, useQueryClient } from "react-query";
 import {
@@ -17,6 +19,7 @@ import {
   ClubApi,
   Club,
   ClubsResponse,
+  ClubsParams,
 } from "../api";
 import { ClubListScreenProps } from "../types/club";
 
@@ -26,35 +29,49 @@ const Loader = styled.View`
   align-items: center;
 `;
 
-// Category Slieder
-const CategoryView = styled.View`
-  flex: 1;
-  flex-direction: row;
-  justify-content: space-evenly;
+const CategoryButton = styled.TouchableOpacity`
+  justify-content: center;
   align-items: center;
 `;
-
-const CategoryItem = styled.TouchableOpacity`
-  flex-direction: column;
-  align-items: center;
+const CategoryName = styled.Text`
+  font-size: 18px;
+  color: gray;
 `;
 
-const CategoryIcon = styled.Image`
-  width: 45px;
-  height: 45px;
-  border-radius: 50px;
-  margin-bottom: 8px;
+const SelectedCategoryName = styled.Text`
+  font-weight: 700;
+  font-size: 18px;
+  color: black;
 `;
-const CategoryName = styled.Text``;
 
 // Club ScrollView
 
-const Wrapper = styled.View`
+const Container = styled.SafeAreaView`
   flex: 1;
 `;
 
 const HeaderView = styled.View`
-  height: 130px;
+  height: 100px;
+`;
+
+const HeaderSection = styled.View`
+  flex: 1;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
+const FilterView = styled.View`
+  flex: 0.5;
+  padding-left: 20px;
+  padding-right: 20px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-top-width: 1px;
+  border-top-color: #e9e9e9;
+  border-bottom-width: 1px;
+  border-bottom-color: #e9e9e9;
 `;
 
 const MainView = styled.View`
@@ -77,44 +94,48 @@ const FloatingButton = styled.TouchableOpacity`
   border-color: white;
 `;
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-
 const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const queryClient = useQueryClient();
-  const [categoryBundle, setCategoryBundle] = useState<Array<Array<Category>>>([
-    [],
-  ]);
+  const [params, setParams] = useState<ClubsParams>({
+    categoryId: null,
+    clubState: null,
+    minMember: null,
+    maxMember: null,
+    sort: null,
+  });
+  const [categoryData, setCategoryData] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<number>(0);
   const {
     isLoading: clubsLoading,
     data: clubs,
     isRefetching: isRefetchingClubs,
-  } = useQuery<ClubsResponse>(["clubs", "getClubs"], ClubApi.getClubs);
+  } = useQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
+    onSuccess: (res) => {},
+    onError: (err) => {
+      console.log(err);
+    },
+  });
 
   const {
     isLoading: categoryLoading,
     data: category,
     isRefetching: isRefetchingCategory,
-  } = useQuery<CategoryResponse>(
-    ["clubs", "getCategories"],
-    ClubApi.getCategories,
-    {
-      onSuccess: (res) => {
-        const result = [];
-        const categoryViewSize = 4;
-        let pos = 0;
-
-        while (pos < res.data.length) {
-          result.push(res.data.slice(pos, pos + categoryViewSize));
-          pos += categoryViewSize;
-        }
-
-        setCategoryBundle(result);
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-    }
-  );
+  } = useQuery<CategoryResponse>(["getCategories"], ClubApi.getCategories, {
+    onSuccess: (res) => {
+      setCategoryData([
+        {
+          description: "All Category",
+          id: 0,
+          name: "전체",
+          thumbnail: null,
+        },
+        ...res.data,
+      ]);
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
 
   const goToClub = (clubData: Club) => {
     return navigate("ClubStack", {
@@ -132,79 +153,117 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     });
   };
 
+  const setCategory = (categoryId: number) => {
+    let curParams = params;
+    curParams.categoryId = categoryId !== 0 ? categoryId : null;
+    setParams(curParams);
+    setSelectedCategory(categoryId);
+  };
+
   const onRefresh = async () => {
     queryClient.refetchQueries(["clubs"]);
   };
 
   const refreshing = isRefetchingCategory || isRefetchingClubs;
-  const loading = categoryLoading || clubsLoading;
+  const loading = categoryLoading && clubsLoading;
   return loading ? (
     <Loader>
       <ActivityIndicator />
     </Loader>
   ) : (
-    <Wrapper>
+    <Container>
       <HeaderView>
-        <Swiper
-          horizontal
-          showsButtons
-          showsPagination={false}
-          loop={false}
-          nextButton={
-            <Ionicons name="ios-chevron-forward" size={20} color="black" />
-          }
-          prevButton={
-            <Ionicons name="ios-chevron-back" size={20} color="black" />
-          }
-        >
-          {categoryBundle.map((bundle, index) => {
-            return (
-              <CategoryView key={index}>
-                {bundle.map((item, index) => {
-                  return (
-                    <CategoryItem key={index} onPress={onRefresh}>
-                      <CategoryIcon
-                        source={{
-                          uri: item.thumbnail
-                            ? item.thumbnail
-                            : "https://w7.pngwing.com/pngs/507/1014/png-transparent-computer-icons-board-game-video-game-dice-game-white-dice.png",
-                        }}
-                      />
-                      <CategoryName>{item.name}</CategoryName>
-                    </CategoryItem>
-                  );
-                })}
-              </CategoryView>
-            );
-          })}
-        </Swiper>
-      </HeaderView>
-      <MainView>
         <FlatList
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          data={clubs?.data.values}
-          keyExtractor={(item: Club) => item.id + ""}
-          renderItem={({ item }: { item: Club }) => (
-            <TouchableOpacity
-              onPress={() => {
-                goToClub(item);
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{}}
+          ItemSeparatorComponent={() => (
+            <View style={{ marginHorizontal: 10 }} />
+          )}
+          horizontal
+          data={categoryData}
+          keyExtractor={(item: Category) => item.id + ""}
+          renderItem={({ item, index }: { item: Category; index: number }) => (
+            <CategoryButton
+              style={{
+                paddingLeft: index === 0 ? 20 : 0,
+                paddingRight: index === Number(category?.data.length) ? 20 : 0,
               }}
+              onPress={() => setCategory(index)}
             >
-              <ClubList
-                thumbnailPath={item.thumbnail}
-                organizationName={item.organizationName}
-                clubName={item.name}
-                memberNum={item.members.length}
-              />
-            </TouchableOpacity>
+              {index === selectedCategory ? (
+                <SelectedCategoryName>{item.name}</SelectedCategoryName>
+              ) : (
+                <CategoryName>{item.name}</CategoryName>
+              )}
+            </CategoryButton>
           )}
         />
+        <HeaderSection>
+          <FilterView
+            style={{ borderRightColor: "#e9e9e9", borderRightWidth: 0.5 }}
+          >
+            <Text>상세 필터</Text>
+            <TouchableOpacity
+              style={{
+                height: 35,
+                justifyContent: "center",
+              }}
+            >
+              <Feather name="filter" size={14} color="black" />
+            </TouchableOpacity>
+          </FilterView>
+          <FilterView
+            style={{ borderLeftColor: "#e9e9e9", borderLeftWidth: 0.5 }}
+          >
+            <Text>최신순</Text>
+            <TouchableOpacity
+              style={{
+                height: 35,
+                justifyContent: "center",
+              }}
+            >
+              <MaterialCommunityIcons name="sort" size={14} color="black" />
+            </TouchableOpacity>
+          </FilterView>
+        </HeaderSection>
+      </HeaderView>
+      <MainView>
+        {clubsLoading || isRefetchingClubs ? (
+          <Loader>
+            <ActivityIndicator />
+          </Loader>
+        ) : (
+          <FlatList
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            data={clubs?.data.values}
+            columnWrapperStyle={{ justifyContent: "space-between" }}
+            numColumns={2}
+            keyExtractor={(item: Club, index: number) => String(index)}
+            renderItem={({ item }: { item: Club }) => (
+              <TouchableOpacity
+                onPress={() => {
+                  goToClub(item);
+                }}
+              >
+                <ClubList
+                  thumbnailPath={item.thumbnail}
+                  organizationName={item.organizationName}
+                  clubName={item.name}
+                  memberNum={item.members.length}
+                  clubShortDesc={item.clubShortDesc}
+                  category1Name={item.category1Name}
+                  category2Name={item.category2Name}
+                />
+              </TouchableOpacity>
+            )}
+          />
+        )}
       </MainView>
       <FloatingButton onPress={goToCreation}>
         <Ionicons name="ios-add-sharp" size={28} color="white" />
       </FloatingButton>
-    </Wrapper>
+    </Container>
   );
 };
 
