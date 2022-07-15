@@ -6,7 +6,9 @@ import CreateHomePeed from '../screens/HomeRelevant/CreateHomePeed'
 import Accusation from '../screens/HomeRelevant/Accusation'
 import ModifiyPeed from "../screens/HomeRelevant/ModifiyPeed";
 import ImageSelecter from '../screens/HomeRelevant/ImageSelecter'
-import {TouchableOpacity} from "react-native";
+import ReportComplete from '../screens/HomeRelevant/ReportComplete'
+import ReplyPage from '../screens/HomeRelevant/ReplyPage'
+import {Text, TouchableOpacity} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 
 const NativeStack = createNativeStackNavigator();
@@ -45,6 +47,7 @@ const HomeStack = ({ navigation: { navigate } }) => {
                             <Ionicons name="chevron-back" size={20} color="black" />
                         </TouchableOpacity>
                     ),
+                    headerShown:true
                 }}
             />
             <NativeStack.Screen
@@ -59,6 +62,22 @@ const HomeStack = ({ navigation: { navigate } }) => {
                             <Ionicons name="chevron-back" size={20} color="black" title="이미지선택"/>
                         </TouchableOpacity>
                     ),
+                    headerShown:true
+                }}
+            />
+            <NativeStack.Screen
+                name="ReplyPage"
+                component={ReplyPage}
+                options={{
+                    title: "새 게시물",
+                    headerLeft: () => (
+                        <TouchableOpacity
+                            onPress={() => navigate("Tabs", { screen: "Home" })}
+                        >
+                            <Ionicons name="chevron-back" size={20} color="black"/>
+                        </TouchableOpacity>
+                    ),
+                    headerShown:true
                 }}
             />
             <NativeStack.Screen
@@ -71,6 +90,13 @@ const HomeStack = ({ navigation: { navigate } }) => {
                             onPress={() => navigate("Tabs", { screen: "Home" })}
                         >
                             <Ionicons name="chevron-back" size={20} color="black" />
+                        </TouchableOpacity>
+                    ),
+                    headerRight: () => (
+                        <TouchableOpacity
+                            onPress={() => navigate("Tabs", { screen: "Home" })}
+                        >
+                            <Text>완료</Text>
                         </TouchableOpacity>
                     ),
                 }}
@@ -88,6 +114,23 @@ const HomeStack = ({ navigation: { navigate } }) => {
                             <Ionicons name="chevron-back" size={20} color="black" />
                         </TouchableOpacity>
                     ),
+                    headerShown:true
+                }}
+            />
+
+            <NativeStack.Screen
+                name="ReportComplete"
+                component={ReportComplete}
+                options={{
+                    title: "신고완료",
+                    headerRight: () => (
+                        <TouchableOpacity
+                            onPress={() => navigate("Tabs", { screen: "Home" })}
+                        >
+                            <Text>완료</Text>
+                        </TouchableOpacity>
+                    ),
+                    headerShown:true
                 }}
             />
         </NativeStack.Navigator>

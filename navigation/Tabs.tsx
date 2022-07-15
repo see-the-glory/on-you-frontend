@@ -31,7 +31,7 @@ const ShadowBox = styled.View`
   position: absolute;
   width: 100%;
   height: 60px;
-  background-color: white;
+  elevation: 5;
   box-shadow: 1px 1px 3px gray;
 `;
 
@@ -142,13 +142,13 @@ const Tabs = () => (
       name="Home"
       component={Home}
       initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }}
-      options={{}}
+      options={{headerShown: false}}
     />
     <Tab.Screen
       name="Search"
       component={Search}
       initialParams={{ activeIcon: "search", inActiveIcon: "search-outline" }}
-      options={{}}
+      options={{headerShown: false}}
     />
     <Tab.Screen
       name="Clubs"

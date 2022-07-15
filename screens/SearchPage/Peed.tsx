@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList,TouchableOpacity, Button, Text} from 'react-native';
+import {ActivityIndicator, FlatList, TouchableOpacity, Button, Text, Image} from 'react-native';
 import {StatusBar} from "expo-status-bar";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 //img
 import {Searchbar} from "react-native-paper";
 import styled from "styled-components/native";
+import axios from "axios";
 
 const Wrapper = styled.View`
   flex: 1;
@@ -37,10 +38,9 @@ const TabName=styled.Text`
 `
 const ImageScroll=styled.ScrollView`
   flex: 1;
-  flex-direction: column;
   width: 100%;
 `
-const ImageVIew=styled.View`
+const ImageVIew=styled.TouchableOpacity`
   flex-direction: row;
   width: 100%;
 `
@@ -59,12 +59,29 @@ export default function Peed(){
     const [loading, setLoading] = useState(true);
     const [Search, setSearch] = useState([{}]);
     const [data,setData]=useState();
-    const Stack = createNativeStackNavigator();
-    const onChangeSearch = query => setSearchQuery(query);
+
+    const getApi=async ()=>{
+        try{
+            setLoading(true);
+            const response= await axios.get(
+                `http://3.39.190.23:8080/api/clubs`
+            )
+            setData(response.data.data.values)
+            console.log(data)
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(()=>{
+        getApi();
+    },[]);
 
     const getSearch = () => {
         const result = [];
-        for (let i = 0; i < 10; ++i) {
+        for (let i = 0; i < 2; ++i) {
             result.push({
                 /* id: i,
                  img:
@@ -100,22 +117,12 @@ export default function Peed(){
                     <FlatList
                         refreshing={refreshing}
                         onRefresh={onRefresh}
-                        data={Search}
-                        renderItem={()=>(
+                        data={data}
+                        keyExtractor={(item, index) => index + ""}
+                        renderItem={({item})=>(
                             <ImageScroll>
                                 <ImageVIew>
-                                    <Img
-                                        source={{uri: 'https://i.pinimg.com/originals/c4/57/45/c45745edb7b5eace1a61fffec4785fc5.gif'}}
-                                    />
-                                    <Img
-                                        source={{uri: 'https://i.pinimg.com/originals/00/5a/55/005a555097c81720d3bcbabd150968fe.gif'}}
-                                    />
-                                    <Img
-                                        source={{uri: 'https://i.pinimg.com/originals/69/96/53/69965364cb740c83facb682de198f303.gif'}}
-                                    />
-                                    <Img
-                                        source={{uri: 'https://i.pinimg.com/originals/00/5a/55/005a555097c81720d3bcbabd150968fe.gif'}}
-                                    />
+                                    <Img source={{uri: item.thumbnail}}/>
                                 </ImageVIew>
                             </ImageScroll>
                         )}
