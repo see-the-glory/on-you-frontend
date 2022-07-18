@@ -8,14 +8,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import Carousel from "react-native-snap-carousel";
-import { RefinedSchedule } from "../../types/club";
-
-import { Feather, Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
-import { useMutation } from "react-query";
-import { ClubApi, ClubApplyRequest } from "../../api";
-import { useSelector } from "react-redux";
 
 const Container = styled.View`
   background-color: white;
@@ -124,18 +117,17 @@ const Break = styled.View<{ sep: number }>`
 
 interface ClubJoinModalProps {
   visible: boolean;
-  clubId: number;
   clubName: string;
+  clubSubmit: Function;
   children: object;
 }
 
 const ClubJoinModal: React.FC<ClubJoinModalProps> = ({
   visible,
-  clubId,
   clubName,
+  clubSubmit,
   children,
 }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
   const [showModal, setShowModal] = useState(visible);
   const [detailText, setDetailText] = useState<string>("");
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -160,31 +152,6 @@ const ClubJoinModal: React.FC<ClubJoinModalProps> = ({
       }).start();
       setTimeout(() => setShowModal(false), 200);
     }
-  };
-
-  const mutation = useMutation(ClubApi.applyClub, {
-    onSuccess: (res) => {
-      console.log("Success!");
-      setShowModal(false);
-    },
-    onError: (error) => {
-      console.log("--- Error ---");
-      console.log(`error: ${error}`);
-    },
-    onSettled: (res, error) => {},
-  });
-
-  const onSubmit = () => {
-    console.log(clubId);
-    console.log(detailText);
-    console.log(token);
-    const requestData: ClubApplyRequest = {
-      clubId,
-      memo: detailText,
-      token,
-    };
-
-    mutation.mutate(requestData);
   };
 
   return (
@@ -230,7 +197,11 @@ const ClubJoinModal: React.FC<ClubJoinModalProps> = ({
                 </DetailItem>
               </DetailItemView>
               <Footer>
-                <ApplyButton onPress={onSubmit}>
+                <ApplyButton
+                  onPress={() => {
+                    clubSubmit(detailText);
+                  }}
+                >
                   <ButtonText>제출</ButtonText>
                 </ApplyButton>
               </Footer>

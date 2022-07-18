@@ -83,7 +83,9 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({
         <MaterialCommunityIcons name="image-plus" size={18} color="#e77f67" />
       </AnimatedFloatingButton>
       <AnimatedFloatingButton
-        onPress={onPressEdit}
+        onPress={() => {
+          onPressEdit();
+        }}
         style={{ opacity: fade, transform: [{ translateY: firstY }] }}
       >
         <MaterialCommunityIcons
@@ -102,7 +104,12 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({
     </FloatingActionView>
   ) : (
     <FloatingActionView>
-      <FloatingMainButton onPress={onPressJoin} join={true}>
+      <FloatingMainButton
+        onPress={() => {
+          onPressJoin();
+        }}
+        join={true}
+      >
         <MaterialIcons name="group-add" size={28} color="whitesmoke" />
       </FloatingMainButton>
     </FloatingActionView>

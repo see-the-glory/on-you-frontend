@@ -14,8 +14,8 @@ import ClubHeader from "../../components/ClubHeader";
 import ClubTabBar from "../../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
-import { useQuery } from "react-query";
-import { ClubApi, ClubRoleResponse } from "../../api";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { ClubApi, ClubApplyRequest, ClubRoleResponse } from "../../api";
 import { useSelector } from "react-redux";
 import ClubJoinModal from "./ClubJoinModal";
 
@@ -60,7 +60,9 @@ const ClubTopTabs = ({
   },
   navigation,
 }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const queryClient = useQueryClient();
+  const token = useSelector((state) => state.AuthReducers.authToken);
+  const [joinModalVisible, setJoinModalVisible] = useState(false);
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
   // Header Height Definition
   const { top } = useSafeAreaInsets();
@@ -90,20 +92,30 @@ const ClubTopTabs = ({
     [headerDiff]
   );
 
+  // Function in Modal
   const clubEdit = () => {
     console.log("edit button click!");
   };
 
   const clubJoin = () => {
-    if (clubRole?.data.applyStatus !== "APPLIED") {
+    if (clubRole?.data.applyStatus === "APPLIED") {
       console.log("가입신청서가 이미 전달되었습니다.");
-      console.log(modalVisible);
     } else {
-      setModalVisible(!modalVisible);
+      setJoinModalVisible(true);
     }
   };
 
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const clubSubmit = (memo: string) => {
+    const requestData: ClubApplyRequest = {
+      clubId: clubData.id,
+      memo,
+      token,
+    };
+
+    mutation.mutate(requestData);
+    setJoinModalVisible(false);
+  };
+
   const {
     isLoading: clubRoleLoading,
     data: clubRole,
@@ -112,12 +124,24 @@ const ClubTopTabs = ({
     ["getClubRole", token, clubData.id],
     ClubApi.getClubRole,
     {
-      onSuccess: (res) => {
-        console.log(res);
-      },
+      onSuccess: (res) => {},
       onError: (err) => {},
     }
   );
+
+  const mutation = useMutation(ClubApi.applyClub, {
+    onSuccess: (res) => {
+      console.log("Success!");
+      // Toast Message 띄우기
+      // getclubRole refetching.
+      queryClient.refetchQueries(["getClubRole"]);
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+    },
+    onSettled: (res, error) => {},
+  });
 
   return (
     <Container>
@@ -207,14 +231,14 @@ const ClubTopTabs = ({
       )}
 
       <ClubJoinModal
-        visible={modalVisible}
-        clubId={clubData.id}
+        visible={joinModalVisible}
         clubName={clubData.name}
+        clubSubmit={clubSubmit}
       >
         <ModalHeaderRight>
           <ModalCloseButton
             onPress={() => {
-              setModalVisible(false);
+              setJoinModalVisible(false);
             }}
           >
             <Ionicons name="close" size={24} color="black" />

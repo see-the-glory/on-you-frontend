@@ -115,8 +115,8 @@ export type ClubTopTabProps = MaterialTopTabScreenProps<
 export interface ClubHomeFloatingButtonProps {
   role: "MASTER" | "MANAGER" | "MEMBER" | undefined;
   applyStatus: "APPLIED" | "APPROVED" | undefined;
-  onPressEdit?: ((event: GestureResponderEvent) => void) | undefined;
-  onPressJoin?: ((event: GestureResponderEvent) => void) | undefined;
+  onPressEdit: Function;
+  onPressJoin: Function;
 }
 
 export interface RefinedSchedule extends Schedule {
