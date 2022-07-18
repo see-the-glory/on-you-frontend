@@ -62,19 +62,19 @@ const HeaderSection = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  border-top-width: 1px;
+  border-top-color: #e9e9e9;
+  border-bottom-width: 1px;
+  border-bottom-color: #e9e9e9;
 `;
 
-const FilterView = styled.View`
-  flex: 0.5;
+const HeaderItem = styled.View`
+  flex: 1;
   padding-left: 20px;
   padding-right: 20px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border-top-width: 1px;
-  border-top-color: #e9e9e9;
-  border-bottom-width: 1px;
-  border-bottom-color: #e9e9e9;
 `;
 
 const MainView = styled.View`
@@ -226,9 +226,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
           )}
         />
         <HeaderSection>
-          <FilterView
-            style={{ borderRightColor: "#e9e9e9", borderRightWidth: 0.5 }}
-          >
+          <HeaderItem>
             <Text>상세 필터</Text>
             <TouchableOpacity
               style={{
@@ -238,10 +236,16 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             >
               <Feather name="filter" size={14} color="black" />
             </TouchableOpacity>
-          </FilterView>
-          <FilterView
-            style={{ borderLeftColor: "#e9e9e9", borderLeftWidth: 0.5 }}
-          >
+          </HeaderItem>
+          <View
+            style={{
+              borderLeftWidth: 0.5,
+              borderRightWidth: 0.5,
+              height: "100%",
+              borderColor: "#e9e9e9",
+            }}
+          ></View>
+          <HeaderItem>
             <Text>최신순</Text>
             <TouchableOpacity
               style={{
@@ -251,7 +255,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             >
               <MaterialCommunityIcons name="sort" size={14} color="black" />
             </TouchableOpacity>
-          </FilterView>
+          </HeaderItem>
         </HeaderSection>
       </HeaderView>
       <MainView>
