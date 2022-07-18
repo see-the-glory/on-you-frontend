@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Animated } from "react-native";
 import { ClubHomeFloatingButtonProps } from "../types/club";
 
@@ -13,10 +13,10 @@ const FloatingActionView = styled.View`
   height: -100px;
 `;
 
-const FloatingMainButton = styled.TouchableOpacity`
+const FloatingMainButton = styled.TouchableOpacity<{ join?: boolean }>`
   width: 50px;
   height: 50px;
-  background-color: #e77f67;
+  background-color: ${(props) => (props.join ? "#295af5" : "#e77f67")};
   elevation: 5;
   box-shadow: 1px 1px 3px gray;
   border-radius: 25px;
@@ -42,7 +42,10 @@ const AnimatedFloatingMainButton =
 const AnimatedFloatingButton = Animated.createAnimatedComponent(FloatingButton);
 
 const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({
+  role,
+  applyStatus,
   onPressEdit,
+  onPressJoin,
 }) => {
   const [open, setOpen] = useState(0);
   const animation = useRef(new Animated.Value(0)).current;
@@ -72,7 +75,7 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({
     setOpen((open + 1) % 2);
   };
 
-  return (
+  return role ? (
     <FloatingActionView>
       <AnimatedFloatingButton
         style={{ opacity: fade, transform: [{ translateY: secondY }] }}
@@ -96,6 +99,12 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({
       >
         <MaterialCommunityIcons name="plus" size={28} color="white" />
       </AnimatedFloatingMainButton>
+    </FloatingActionView>
+  ) : (
+    <FloatingActionView>
+      <FloatingMainButton onPress={onPressJoin} join={true}>
+        <MaterialIcons name="group-add" size={28} color="whitesmoke" />
+      </FloatingMainButton>
     </FloatingActionView>
   );
 };

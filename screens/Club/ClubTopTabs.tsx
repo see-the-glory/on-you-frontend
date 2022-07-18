@@ -14,6 +14,10 @@ import ClubHeader from "../../components/ClubHeader";
 import ClubTabBar from "../../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
+import { useQuery } from "react-query";
+import { ClubApi, ClubRoleResponse } from "../../api";
+import { useSelector } from "react-redux";
+import ClubJoinModal from "./ClubJoinModal";
 
 const Container = styled.View`
   flex: 1;
@@ -38,6 +42,13 @@ const RightHeaderView = styled.View`
   margin-right: 10px;
 `;
 
+const ModalHeaderRight = styled.View`
+  position: absolute;
+  right: 15px;
+`;
+
+const ModalCloseButton = styled.TouchableOpacity``;
+
 const TopTab = createMaterialTopTabNavigator();
 
 const HEADER_HEIGHT_EXPANDED = 270;
@@ -49,6 +60,7 @@ const ClubTopTabs = ({
   },
   navigation,
 }) => {
+  const [modalVisible, setModalVisible] = useState(false);
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
   // Header Height Definition
   const { top } = useSafeAreaInsets();
@@ -81,6 +93,31 @@ const ClubTopTabs = ({
   const clubEdit = () => {
     console.log("edit button click!");
   };
+
+  const clubJoin = () => {
+    if (clubRole?.data.applyStatus !== "APPLIED") {
+      console.log("가입신청서가 이미 전달되었습니다.");
+      console.log(modalVisible);
+    } else {
+      setModalVisible(!modalVisible);
+    }
+  };
+
+  const token = useSelector((state) => state.AuthReducers.authToken);
+  const {
+    isLoading: clubRoleLoading,
+    data: clubRole,
+    isRefetching: isRefetchingClubRole,
+  } = useQuery<ClubRoleResponse>(
+    ["getClubRole", token, clubData.id],
+    ClubApi.getClubRole,
+    {
+      onSuccess: (res) => {
+        console.log(res);
+      },
+      onError: (err) => {},
+    }
+  );
 
   return (
     <Container>
@@ -158,7 +195,32 @@ const ClubTopTabs = ({
         </TopTab.Navigator>
       </Animated.View>
 
-      <FloatingActionButton onPressEdit={clubEdit} />
+      {clubRoleLoading ? (
+        <></>
+      ) : (
+        <FloatingActionButton
+          role={clubRole?.data.role}
+          applyStatus={clubRole?.data.applyStatus}
+          onPressEdit={clubEdit}
+          onPressJoin={clubJoin}
+        />
+      )}
+
+      <ClubJoinModal
+        visible={modalVisible}
+        clubId={clubData.id}
+        clubName={clubData.name}
+      >
+        <ModalHeaderRight>
+          <ModalCloseButton
+            onPress={() => {
+              setModalVisible(false);
+            }}
+          >
+            <Ionicons name="close" size={24} color="black" />
+          </ModalCloseButton>
+        </ModalHeaderRight>
+      </ClubJoinModal>
     </Container>
   );
 };
