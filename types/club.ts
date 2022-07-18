@@ -1,7 +1,7 @@
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Animated } from "react-native";
-import { Club, CategoryResponse } from "../api";
+import { Club, CategoryResponse, Schedule } from "../api";
 
 // For Stack Navigation
 export type RootStackParamList = {
@@ -23,6 +23,10 @@ export type RootStackParamList = {
     approvalMethod: number;
     imageURI: string | null;
   };
+  ClubCreationSuccess: {
+    clubData: Club;
+  };
+  ClubCreationFail: {};
 
   Tabs: {};
 };
@@ -70,6 +74,16 @@ export type ClubCreationStepThreeScreenProps = NativeStackScreenProps<
   "ClubCreationStepThree"
 >;
 
+export type ClubCreationSuccessScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  "ClubCreationSuccess"
+>;
+
+export type ClubCreationFailScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  "ClubCreationFail"
+>;
+
 // ClubHome Param For Collapsed Scroll Animation
 export interface ClubHomeParamList {
   scrollY: Animated.Value;
@@ -97,3 +111,15 @@ export type ClubTopTabProps = MaterialTopTabScreenProps<
   TopTabParamList,
   "ClubTopTabs"
 >;
+
+export interface ClubHomeFloatingButtonProps {
+  onPressEdit: object;
+}
+
+export interface RefinedSchedule extends Schedule {
+  year: string;
+  month: string;
+  day: string;
+  dayOfWeek: string;
+  startTime: string;
+}

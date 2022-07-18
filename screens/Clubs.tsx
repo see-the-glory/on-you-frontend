@@ -53,6 +53,14 @@ const Wrapper = styled.View`
   flex: 1;
 `;
 
+const HeaderView = styled.View`
+  height: 130px;
+`;
+
+const MainView = styled.View`
+  flex: 1;
+`;
+
 const FloatingButton = styled.TouchableOpacity`
   position: absolute;
   right: 20px;
@@ -65,6 +73,8 @@ const FloatingButton = styled.TouchableOpacity`
   border-radius: 50px;
   justify-content: center;
   align-items: center;
+  border: 1px;
+  border-color: white;
 `;
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -107,7 +117,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   );
 
   const goToClub = (clubData: Club) => {
-    navigate("ClubStack", {
+    return navigate("ClubStack", {
       screen: "ClubTopTabs",
       params: {
         clubData,
@@ -116,7 +126,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   };
 
   const goToCreation = () => {
-    navigate("ClubCreationStack", {
+    return navigate("ClubCreationStack", {
       screen: "ClubCreationStepOne",
       params: { category },
     });
@@ -134,68 +144,63 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     </Loader>
   ) : (
     <Wrapper>
-      <FlatList
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        ListHeaderComponentStyle={{ marginBottom: 30 }}
-        ListHeaderComponent={
-          <>
-            <Swiper
-              horizontal
-              showsButtons
-              showsPagination={false}
-              loop={false}
-              nextButton={
-                <Ionicons name="ios-chevron-forward" size={20} color="black" />
-              }
-              prevButton={
-                <Ionicons name="ios-chevron-back" size={20} color="black" />
-              }
-              containerStyle={{
-                width: "100%",
-                height: SCREEN_HEIGHT / 6,
+      <HeaderView>
+        <Swiper
+          horizontal
+          showsButtons
+          showsPagination={false}
+          loop={false}
+          nextButton={
+            <Ionicons name="ios-chevron-forward" size={20} color="black" />
+          }
+          prevButton={
+            <Ionicons name="ios-chevron-back" size={20} color="black" />
+          }
+        >
+          {categoryBundle.map((bundle, index) => {
+            return (
+              <CategoryView key={index}>
+                {bundle.map((item, index) => {
+                  return (
+                    <CategoryItem key={index} onPress={onRefresh}>
+                      <CategoryIcon
+                        source={{
+                          uri: item.thumbnail
+                            ? item.thumbnail
+                            : "https://w7.pngwing.com/pngs/507/1014/png-transparent-computer-icons-board-game-video-game-dice-game-white-dice.png",
+                        }}
+                      />
+                      <CategoryName>{item.name}</CategoryName>
+                    </CategoryItem>
+                  );
+                })}
+              </CategoryView>
+            );
+          })}
+        </Swiper>
+      </HeaderView>
+      <MainView>
+        <FlatList
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          data={clubs?.data.values}
+          keyExtractor={(item: Club) => item.id + ""}
+          renderItem={({ item }: { item: Club }) => (
+            <TouchableOpacity
+              onPress={() => {
+                goToClub(item);
               }}
             >
-              {categoryBundle.map((bundle, index) => {
-                return (
-                  <CategoryView key={index}>
-                    {bundle.map((item, index) => {
-                      return (
-                        <CategoryItem key={index} onPress={onRefresh}>
-                          <CategoryIcon
-                            source={{
-                              uri: item.thumbnail
-                                ? item.thumbnail
-                                : "https://w7.pngwing.com/pngs/507/1014/png-transparent-computer-icons-board-game-video-game-dice-game-white-dice.png",
-                            }}
-                          />
-                          <CategoryName>{item.name}</CategoryName>
-                        </CategoryItem>
-                      );
-                    })}
-                  </CategoryView>
-                );
-              })}
-            </Swiper>
-          </>
-        }
-        data={clubs?.data.values}
-        keyExtractor={(item) => item.id + ""}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => {
-              goToClub(item);
-            }}
-          >
-            <ClubList
-              thumbnailPath={item.thumbnail ? item.thumbnail : ""}
-              organizationName={item.organizationName}
-              clubName={item.name}
-              memberNum={item.members.length}
-            />
-          </TouchableOpacity>
-        )}
-      />
+              <ClubList
+                thumbnailPath={item.thumbnail}
+                organizationName={item.organizationName}
+                clubName={item.name}
+                memberNum={item.members.length}
+              />
+            </TouchableOpacity>
+          )}
+        />
+      </MainView>
       <FloatingButton onPress={goToCreation}>
         <Ionicons name="ios-add-sharp" size={28} color="white" />
       </FloatingButton>

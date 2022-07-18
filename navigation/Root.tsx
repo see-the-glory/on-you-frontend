@@ -2,7 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Tabs from "./Tabs";
 import ClubCreationStack from "./ClubCreationStack";
-import ClubStack from "./ClubTopTabs";
+import ClubStack from "./ClubStack";
 import HomeStack from "./HomeStack";
 import ProfileStack from "./ProfileStack";
 

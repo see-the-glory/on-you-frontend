@@ -9,6 +9,7 @@ import { ClubHomeHaederProps } from "../types/club";
 const Header = styled.View`
   width: 100%;
   justify-content: center;
+  z-index: 2;
   align-items: center;
 `;
 
@@ -21,12 +22,12 @@ const FilterView = styled.View`
   flex: 1;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.6);
-  justify-content: flex-end;
+  padding-top: 30px;
+  justify-content: center;
   align-items: center;
 `;
 const InformationView = styled.View`
   justify-content: center;
-  margin-bottom: 25px;
 `;
 
 const CategoryView = styled.View`
@@ -122,7 +123,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({
 }) => {
   const fadeIn = scrollY.interpolate({
     inputRange: [0, headerDiff],
-    outputRange: [-3, 1],
+    outputRange: [-1, 1],
   });
 
   const fadeOut = scrollY.interpolate({
@@ -133,7 +134,9 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({
   return (
     <Header>
       <HeaderImage
-        source={{ uri: imageURI ? imageURI : "" }}
+        source={
+          imageURI === null ? require("../assets/basic.jpg") : { uri: imageURI }
+        }
         height={heightExpanded}
       >
         <AnimatedBlurView

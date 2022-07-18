@@ -1,18 +1,19 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Animated, StatusBar, TouchableOpacity } from "react-native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  Animated,
+  StatusBar,
+  TouchableOpacity,
+  useWindowDimensions,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import ClubHome from "../screens/Club/ClubHome";
-import ClubFeed from "../screens/Club/ClubFeed";
+import ClubHome from "../Club/ClubHome";
+import ClubFeed from "../Club/ClubFeed";
 import styled from "styled-components/native";
-import ClubHeader from "../components/ClubHeader";
-import ClubTabBar from "../components/ClubTabBar";
+import ClubHeader from "../../components/ClubHeader";
+import ClubTabBar from "../../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Dimensions } from "react-native";
-
-const NativeStack = createNativeStackNavigator();
-const TopTab = createMaterialTopTabNavigator();
+import FloatingActionButton from "../../components/FloatingActionButton";
 
 const Container = styled.View`
   flex: 1;
@@ -20,7 +21,7 @@ const Container = styled.View`
 
 const HeaderView = styled.View`
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   width: 100%;
   top: 40px;
   flex-direction: row;
@@ -37,7 +38,9 @@ const RightHeaderView = styled.View`
   margin-right: 10px;
 `;
 
-const HEADER_HEIGHT_EXPANDED = 210;
+const TopTab = createMaterialTopTabNavigator();
+
+const HEADER_HEIGHT_EXPANDED = 270;
 const HEADER_HEIGHT = 100;
 
 const ClubTopTabs = ({
@@ -47,10 +50,9 @@ const ClubTopTabs = ({
   navigation,
 }) => {
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
-
   // Header Height Definition
   const { top } = useSafeAreaInsets();
-  const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+  const { height: SCREEN_HEIGHT } = useWindowDimensions();
   const headerConfig = useMemo(
     () => ({
       heightCollapsed: top + HEADER_HEIGHT,
@@ -76,9 +78,40 @@ const ClubTopTabs = ({
     [headerDiff]
   );
 
+  const clubEdit = () => {
+    console.log("edit button click!");
+  };
+
   return (
     <Container>
       <StatusBar barStyle={"light-content"} />
+      <HeaderView>
+        <LeftHeaderView>
+          <TouchableOpacity onPress={() => navigation.popToTop()}>
+            <Ionicons name="md-chevron-back-sharp" size={24} color="white" />
+          </TouchableOpacity>
+        </LeftHeaderView>
+        <RightHeaderView>
+          <TouchableOpacity
+            onPress={() => setHeartSelected(!heartSelected)}
+            style={{ marginRight: 10 }}
+          >
+            {heartSelected ? (
+              <Ionicons name="md-heart" size={24} color="white" />
+            ) : (
+              <Ionicons name="md-heart-outline" size={24} color="white" />
+            )}
+          </TouchableOpacity>
+          {/* <TouchableOpacity>
+            <Ionicons
+              name="ellipsis-vertical"
+              size={24}
+              color="white"
+            />
+          </TouchableOpacity> */}
+        </RightHeaderView>
+      </HeaderView>
+
       <ClubHeader
         imageURI={clubData.thumbnail}
         name={clubData.name}
@@ -125,52 +158,9 @@ const ClubTopTabs = ({
         </TopTab.Navigator>
       </Animated.View>
 
-      <HeaderView>
-        <LeftHeaderView>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="md-chevron-back-sharp" size={24} color="white" />
-          </TouchableOpacity>
-        </LeftHeaderView>
-        <RightHeaderView>
-          <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)}>
-            {heartSelected ? (
-              <Ionicons name="md-heart" size={24} color="white" />
-            ) : (
-              <Ionicons name="md-heart-outline" size={24} color="white" />
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Ionicons
-              name="ellipsis-vertical"
-              size={24}
-              color="white"
-              style={{ marginLeft: 10 }}
-            />
-          </TouchableOpacity>
-        </RightHeaderView>
-      </HeaderView>
+      <FloatingActionButton onPressEdit={clubEdit} />
     </Container>
   );
 };
 
-const ClubStack = ({
-  route: {
-    params: { clubData },
-  },
-  navigation,
-}) => {
-  return (
-    <NativeStack.Navigator>
-      <NativeStack.Screen
-        name="ClubTopTabs"
-        component={ClubTopTabs}
-        initialParams={{ clubData }}
-        options={{
-          headerShown: false,
-        }}
-      />
-    </NativeStack.Navigator>
-  );
-};
-
-export default ClubStack;
+export default ClubTopTabs;

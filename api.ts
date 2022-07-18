@@ -24,7 +24,7 @@ export interface Club {
   recruitNumber: number;
   thumbnail: string | null;
   recruitStatus: string | null;
-  applyStatus: string | null;
+  applyStatus?: string | null;
   creatorName: string;
   category1Name: string;
   category2Name: string | null;
@@ -40,12 +40,31 @@ export interface Member {
   sex: string;
 }
 
+export interface Schedule {
+  id: number;
+  name: string;
+  content: string;
+  location: string;
+  startDate: string;
+  endDate: string | null;
+}
+
 export interface CategoryResponse extends BaseResponse {
   data: Category[];
 }
 
+export interface ClubResponse extends BaseResponse {
+  data: {
+    values: Club;
+  };
+}
+
 export interface ClubsResponse extends BaseResponse {
   data: Club[];
+}
+
+export interface ClubSchedulesResponse extends BaseResponse {
+  data: Schedule[];
 }
 
 export interface ClubCreationRequest {
@@ -73,24 +92,42 @@ const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => re
 
 const getClubs = () => fetch(`${BASE_URL}/api/clubs`).then((res) => res.json());
 
-const createClub = (req: ClubCreationRequest) => {
+const getClub = ({ queryKey }) => {
+  const [_key, clubId] = queryKey;
+  return fetch(`${BASE_URL}/api/clubs/${clubId}`).then((res) => res.json());
+};
+
+const getClubSchedules = ({ queryKey }) => {
+  const [_key, clubId] = queryKey;
+  return fetch(`${BASE_URL}/api/clubs/${clubId}/schedules`).then((res) =>
+    res.json()
+  );
+};
+
+const createClub = async (req: ClubCreationRequest) => {
   const body = new FormData();
 
   if (req.image !== null) {
     body.append("file", req.image);
   }
-  body.append("clubCreateRequest", JSON.stringify(req.data));
+
+  body.append("clubCreateRequest", {
+    string: JSON.stringify(req.data),
+    type: "application/json",
+  });
 
   return fetch(`${BASE_URL}/api/clubs`, {
     method: "POST",
     headers: {
       "content-type": "multipart/form-data",
       authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiLsnqXspIDsmqkiLCJzb2NpYWxJZCI6IjIxOTAwMzc4NTAiLCJpZCI6MzQsImV4cCI6MTY1MzQwNTc0NH0.gJEnm383IbZQ2QS0ldY4RNEmxhRb-hTtFSaeqSymIb8rKZyvMEmCCTLm5rSvur-dtTRpVPy-jLzz_dpKL-kXgA",
-      Accept: "application/json",
+        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiLsnqXspIDsmqkiLCJzb2NpYWxJZCI6IjIxOTAwMzc4NTAiLCJpZCI6NCwiZXhwIjoxMDAwMDAxNjU0NjA3MDA4fQ.m8OBIZEcB5dZ339YvhnWgJIRatKoF-DVPk2RrbXirsQRnYdFaALwnjR4oNmHGE-OZDfhDfOITaYzWLqYnU2vcQ",
+      Accept: "*/*",
     },
     body,
-  }).then((res) => res.json());
+  }).then(async (res) => {
+    return { status: res.status, json: await res.json() };
+  });
 };
 
 const getJWT = (req: LoginRequest) => {
@@ -103,5 +140,11 @@ const getJWT = (req: LoginRequest) => {
   }).then((res) => res.json());
 };
 
-export const ClubApi = { getCategories, getClubs, createClub };
+export const ClubApi = {
+  getCategories,
+  getClub,
+  getClubs,
+  createClub,
+  getClubSchedules,
+};
 export const CommonApi = { getJWT };

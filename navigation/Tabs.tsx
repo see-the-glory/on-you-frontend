@@ -31,7 +31,7 @@ const ShadowBox = styled.View`
   position: absolute;
   width: 100%;
   height: 60px;
-  elevation: 5;
+  background-color: white;
   box-shadow: 1px 1px 3px gray;
 `;
 
