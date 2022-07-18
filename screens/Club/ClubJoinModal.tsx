@@ -3,11 +3,13 @@ import {
   Animated,
   Keyboard,
   Modal,
+  StatusBar,
   Text,
   TouchableWithoutFeedback,
   useWindowDimensions,
   View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
 const Container = styled.View`
@@ -78,7 +80,8 @@ const DetailText = styled.Text`
 `;
 
 const DetailTextInput = styled.TextInput`
-  height: 130px;
+  width: 100%;
+  height: 150px;
   border-radius: 10px;
   background-color: #f3f3f3;
   font-size: 14px;
@@ -95,7 +98,7 @@ const Footer = styled.View`
 
 const ApplyButton = styled.TouchableOpacity`
   background-color: #295af5;
-  padding: 5px 30px 5px 30px;
+  padding: 10px 30px 10px 30px;
   border-radius: 12px;
 `;
 
@@ -170,6 +173,10 @@ const ClubJoinModal: React.FC<ClubJoinModalProps> = ({
             opacity: opacity,
           }}
         >
+          <StatusBar
+            backgroundColor="rgba(0,0,0,0.5)"
+            barStyle="light-content"
+          />
           <Container>
             <Header>
               {children}
@@ -183,7 +190,8 @@ const ClubJoinModal: React.FC<ClubJoinModalProps> = ({
               <Break sep={0} />
               <DetailItemView>
                 <DetailItem>
-                  <DetailText>본인소개</DetailText>
+                  <Ionicons name="checkmark-sharp" size={16} color="#8b8b8b" />
+                  <DetailText>{` 본인소개`}</DetailText>
                 </DetailItem>
                 <DetailItem style={{ paddingTop: 10 }}>
                   <DetailTextInput

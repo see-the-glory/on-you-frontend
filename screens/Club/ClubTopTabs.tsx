@@ -18,6 +18,7 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { ClubApi, ClubApplyRequest, ClubRoleResponse } from "../../api";
 import { useSelector } from "react-redux";
 import ClubJoinModal from "./ClubJoinModal";
+import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.View`
   flex: 1;
@@ -62,6 +63,7 @@ const ClubTopTabs = ({
 }) => {
   const queryClient = useQueryClient();
   const token = useSelector((state) => state.AuthReducers.authToken);
+  const toast = useToast();
   const [joinModalVisible, setJoinModalVisible] = useState(false);
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
   // Header Height Definition
@@ -99,7 +101,9 @@ const ClubTopTabs = ({
 
   const clubJoin = () => {
     if (clubRole?.data.applyStatus === "APPLIED") {
-      console.log("가입신청서가 이미 전달되었습니다.");
+      toast.show("가입신청서가 이미 전달되었습니다.", {
+        type: "warning",
+      });
     } else {
       setJoinModalVisible(true);
     }
@@ -132,8 +136,9 @@ const ClubTopTabs = ({
   const mutation = useMutation(ClubApi.applyClub, {
     onSuccess: (res) => {
       console.log("Success!");
-      // Toast Message 띄우기
-      // getclubRole refetching.
+      toast.show("가입신청이 완료되었습니다.", {
+        type: "success",
+      });
       queryClient.refetchQueries(["getClubRole"]);
     },
     onError: (error) => {

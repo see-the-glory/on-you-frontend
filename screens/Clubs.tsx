@@ -5,6 +5,8 @@ import {
   ActivityIndicator,
   Dimensions,
   FlatList,
+  Platform,
+  StatusBar,
   Text,
   TouchableOpacity,
   View,
@@ -23,7 +25,7 @@ import {
 } from "../api";
 import { ClubListScreenProps } from "../types/club";
 
-const Loader = styled.View`
+const Loader = styled.SafeAreaView`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -167,11 +169,19 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const refreshing = isRefetchingCategory || isRefetchingClubs;
   const loading = categoryLoading && clubsLoading;
   return loading ? (
-    <Loader>
+    <Loader
+      style={{
+        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+      }}
+    >
       <ActivityIndicator />
     </Loader>
   ) : (
-    <Container>
+    <Container
+      style={{
+        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+      }}
+    >
       <HeaderView>
         <FlatList
           showsHorizontalScrollIndicator={false}
