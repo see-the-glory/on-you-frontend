@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Swiper from "react-native-swiper";
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   FlatList,
   Platform,
@@ -14,7 +15,7 @@ import {
 import styled from "styled-components/native";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
-import { useQuery, useQueryClient } from "react-query";
+import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
 import {
   Category,
   CategoryResponse,
@@ -105,14 +106,25 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     maxMember: null,
     sort: null,
   });
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number>(0);
+  const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
   const {
     isLoading: clubsLoading,
     data: clubs,
     isRefetching: isRefetchingClubs,
-  } = useQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
-    onSuccess: (res) => {},
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
+    getNextPageParam: (currentPage) => {
+      return currentPage.data.hasNext === false
+        ? null
+        : currentPage.data.values[currentPage.data.values.length - 1].id;
+    },
+    onSuccess: (res) => {
+      setIsPageTransition(false);
+    },
     onError: (err) => {
       console.log(err);
     },
@@ -160,13 +172,18 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     curParams.categoryId = categoryId !== 0 ? categoryId : null;
     setParams(curParams);
     setSelectedCategory(categoryId);
+    setIsPageTransition(true);
   };
 
   const onRefresh = async () => {
-    queryClient.refetchQueries(["clubs"]);
+    setRefreshing(true);
+    await queryClient.refetchQueries(["clubs"]);
+    setRefreshing(false);
   };
 
-  const refreshing = isRefetchingCategory || isRefetchingClubs;
+  const loadMore = () => {
+    if (hasNextPage) fetchNextPage();
+  };
   const loading = categoryLoading && clubsLoading;
   return loading ? (
     <Loader
@@ -238,7 +255,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
         </HeaderSection>
       </HeaderView>
       <MainView>
-        {clubsLoading || isRefetchingClubs ? (
+        {clubsLoading || isPageTransition ? (
           <Loader>
             <ActivityIndicator />
           </Loader>
@@ -246,7 +263,8 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
           <FlatList
             refreshing={refreshing}
             onRefresh={onRefresh}
-            data={clubs?.data.values}
+            onEndReached={loadMore}
+            data={clubs?.pages.map((page) => page.data.values).flat()}
             columnWrapperStyle={{ justifyContent: "space-between" }}
             numColumns={2}
             keyExtractor={(item: Club, index: number) => String(index)}

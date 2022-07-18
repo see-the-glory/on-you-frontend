@@ -120,12 +120,12 @@ export interface LoginRequest {
 const getCategories = () =>
   fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
-const getClubs = ({ queryKey }: any) => {
+const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
   return fetch(
     `${BASE_URL}/api/clubs?category1Id=${
       clubsParams.categoryId ? clubsParams.categoryId : ""
-    }`
+    }&cursorId=${pageParam ? pageParam : ""}`
   ).then((res) => res.json());
 };
 
