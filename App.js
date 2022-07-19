@@ -10,6 +10,9 @@ import { store } from "./store";
 import { Init } from "./store/actions";
 import { ToastProvider } from "react-native-toast-notifications";
 import { Ionicons } from "@expo/vector-icons";
+import { LogBox } from "react-native";
+
+LogBox.ignoreLogs(["Setting a timer"]);
 
 const queryClient = new QueryClient();
 

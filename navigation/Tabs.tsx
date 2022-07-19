@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   BottomTabBarProps,
   createBottomTabNavigator,
@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated, useWindowDimensions } from "react-native";
 import { MainBottomTabParamList } from "../types/club";
+import { Shadow } from "react-native-shadow-2";
 
 const Container = styled.View`
   height: 60px;
@@ -43,10 +44,10 @@ const SlidingTabContainer = styled.View<{ tabWidth: number }>`
   box-shadow: 1px 1px 3px gray;
 `;
 
-const SlidingTab = styled.View`
+const Circle = styled.View`
   width: 100px;
   height: 100px;
-  bottom: 12px;
+  bottom: 7px;
   border-radius: 50px;
   background-color: white;
 `;
@@ -55,7 +56,7 @@ const IconButton = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const AnimatedTab = Animated.createAnimatedComponent(SlidingTab);
+const SlidingTab = Animated.createAnimatedComponent(Circle);
 const AnimatedIconButton = Animated.createAnimatedComponent(IconButton);
 
 const Tab = createBottomTabNavigator<MainBottomTabParamList>();
@@ -82,9 +83,15 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
   return (
     <>
       <Container>
-        <ShadowBox />
+        <Shadow distance={3}>
+          <ShadowBox />
+        </Shadow>
         <SlidingTabContainer tabWidth={TAB_WIDTH}>
-          <AnimatedTab style={{ transform: [{ translateX }] }} />
+          <SlidingTab style={{ transform: [{ translateX }] }}>
+            <Shadow distance={12} radius={50}>
+              <Circle />
+            </Shadow>
+          </SlidingTab>
         </SlidingTabContainer>
         <TabBarContainer>
           {state.routes.map((route, index) => {
