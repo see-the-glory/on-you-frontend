@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   BottomTabBarProps,
   createBottomTabNavigator,
@@ -9,8 +9,9 @@ import Clubs from "../screens/Clubs";
 import Profile from "../screens/Profile";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
-import { Animated, Dimensions } from "react-native";
+import { Animated, useWindowDimensions } from "react-native";
 import { MainBottomTabParamList } from "../types/club";
+import { Shadow } from "react-native-shadow-2";
 
 const Container = styled.View`
   height: 60px;
@@ -43,10 +44,10 @@ const SlidingTabContainer = styled.View<{ tabWidth: number }>`
   box-shadow: 1px 1px 3px gray;
 `;
 
-const SlidingTab = styled.View`
+const Circle = styled.View`
   width: 100px;
   height: 100px;
-  bottom: 12px;
+  bottom: 7px;
   border-radius: 50px;
   background-color: white;
 `;
@@ -55,9 +56,8 @@ const IconButton = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const TAB_WIDTH = SCREEN_WIDTH / 4;
-const AnimatedTab = Animated.createAnimatedComponent(SlidingTab);
+const SlidingTab = Animated.createAnimatedComponent(Circle);
+const AnimatedIconButton = Animated.createAnimatedComponent(IconButton);
 
 const Tab = createBottomTabNavigator<MainBottomTabParamList>();
 
@@ -66,8 +66,9 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
   descriptors,
   navigation,
 }) => {
-  const [translateX] = useState(new Animated.Value(0));
-
+  const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const TAB_WIDTH = SCREEN_WIDTH / 4;
+  const translateX = useRef(new Animated.Value(0)).current;
   const translateTab = (index: number) => {
     Animated.spring(translateX, {
       toValue: index * TAB_WIDTH,
@@ -77,14 +78,20 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
 
   useEffect(() => {
     translateTab(state.index);
-  }, [state.index]);
+  }, [state.index, SCREEN_WIDTH]);
 
   return (
     <>
       <Container>
-        <ShadowBox />
+        <Shadow distance={3}>
+          <ShadowBox />
+        </Shadow>
         <SlidingTabContainer tabWidth={TAB_WIDTH}>
-          <AnimatedTab style={{ transform: [{ translateX }] }} />
+          <SlidingTab style={{ transform: [{ translateX }] }}>
+            <Shadow distance={12} radius={50}>
+              <Circle />
+            </Shadow>
+          </SlidingTab>
         </SlidingTabContainer>
         <TabBarContainer>
           {state.routes.map((route, index) => {
@@ -106,12 +113,13 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
             };
 
             return (
-              <IconButton
+              <AnimatedIconButton
                 key={index}
                 accessibilityRole="button"
                 accessibilityState={isFocused ? { selected: true } : {}}
                 accessibilityLabel={options.tabBarAccessibilityLabel}
                 onPress={onPress}
+                style={{}}
               >
                 <Ionicons
                   name={
@@ -122,7 +130,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
                   size={24}
                   color={isFocused ? "black" : "gray"}
                 />
-              </IconButton>
+              </AnimatedIconButton>
             );
           })}
         </TabBarContainer>
@@ -135,7 +143,7 @@ const Tabs = () => (
   <Tab.Navigator
     initialRouteName="Home"
     sceneContainerStyle={{ backgroundColor: "white" }}
-    screenOptions={{ tabBarShowLabel: false, headerShown: true }}
+    screenOptions={{ tabBarShowLabel: false, headerShown: false }}
     tabBar={(props) => <CustomTabBar {...props} />}
   >
     <Tab.Screen

@@ -14,6 +14,11 @@ import ClubHeader from "../../components/ClubHeader";
 import ClubTabBar from "../../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { ClubApi, ClubApplyRequest, ClubRoleResponse } from "../../api";
+import { useSelector } from "react-redux";
+import ClubJoinModal from "./ClubJoinModal";
+import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.View`
   flex: 1;
@@ -38,6 +43,13 @@ const RightHeaderView = styled.View`
   margin-right: 10px;
 `;
 
+const ModalHeaderRight = styled.View`
+  position: absolute;
+  right: 15px;
+`;
+
+const ModalCloseButton = styled.TouchableOpacity``;
+
 const TopTab = createMaterialTopTabNavigator();
 
 const HEADER_HEIGHT_EXPANDED = 270;
@@ -49,6 +61,10 @@ const ClubTopTabs = ({
   },
   navigation,
 }) => {
+  const queryClient = useQueryClient();
+  const token = useSelector((state) => state.AuthReducers.authToken);
+  const toast = useToast();
+  const [joinModalVisible, setJoinModalVisible] = useState(false);
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
   // Header Height Definition
   const { top } = useSafeAreaInsets();
@@ -78,9 +94,59 @@ const ClubTopTabs = ({
     [headerDiff]
   );
 
+  // Function in Modal
   const clubEdit = () => {
     console.log("edit button click!");
   };
+
+  const clubJoin = () => {
+    if (clubRole?.data.applyStatus === "APPLIED") {
+      toast.show("가입신청서가 이미 전달되었습니다.", {
+        type: "warning",
+      });
+    } else {
+      setJoinModalVisible(true);
+    }
+  };
+
+  const clubSubmit = (memo: string) => {
+    const requestData: ClubApplyRequest = {
+      clubId: clubData.id,
+      memo,
+      token,
+    };
+
+    mutation.mutate(requestData);
+    setJoinModalVisible(false);
+  };
+
+  const {
+    isLoading: clubRoleLoading,
+    data: clubRole,
+    isRefetching: isRefetchingClubRole,
+  } = useQuery<ClubRoleResponse>(
+    ["getClubRole", token, clubData.id],
+    ClubApi.getClubRole,
+    {
+      onSuccess: (res) => {},
+      onError: (err) => {},
+    }
+  );
+
+  const mutation = useMutation(ClubApi.applyClub, {
+    onSuccess: (res) => {
+      console.log("Success!");
+      toast.show("가입신청이 완료되었습니다.", {
+        type: "success",
+      });
+      queryClient.refetchQueries(["getClubRole"]);
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+    },
+    onSettled: (res, error) => {},
+  });
 
   return (
     <Container>
@@ -158,7 +224,32 @@ const ClubTopTabs = ({
         </TopTab.Navigator>
       </Animated.View>
 
-      <FloatingActionButton onPressEdit={clubEdit} />
+      {clubRoleLoading ? (
+        <></>
+      ) : (
+        <FloatingActionButton
+          role={clubRole?.data.role}
+          applyStatus={clubRole?.data.applyStatus}
+          onPressEdit={clubEdit}
+          onPressJoin={clubJoin}
+        />
+      )}
+
+      <ClubJoinModal
+        visible={joinModalVisible}
+        clubName={clubData.name}
+        clubSubmit={clubSubmit}
+      >
+        <ModalHeaderRight>
+          <ModalCloseButton
+            onPress={() => {
+              setJoinModalVisible(false);
+            }}
+          >
+            <Ionicons name="close" size={24} color="black" />
+          </ModalCloseButton>
+        </ModalHeaderRight>
+      </ClubJoinModal>
     </Container>
   );
 };

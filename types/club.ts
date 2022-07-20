@@ -1,6 +1,6 @@
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Animated } from "react-native";
+import { Animated, GestureResponderEvent } from "react-native";
 import { Club, CategoryResponse, Schedule } from "../api";
 
 // For Stack Navigation
@@ -113,7 +113,10 @@ export type ClubTopTabProps = MaterialTopTabScreenProps<
 >;
 
 export interface ClubHomeFloatingButtonProps {
-  onPressEdit: object;
+  role: "MASTER" | "MANAGER" | "MEMBER" | undefined;
+  applyStatus: "APPLIED" | "APPROVED" | undefined;
+  onPressEdit: Function;
+  onPressJoin: Function;
 }
 
 export interface RefinedSchedule extends Schedule {
