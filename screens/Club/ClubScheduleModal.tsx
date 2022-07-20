@@ -6,11 +6,11 @@ import { RefinedSchedule } from "../../types/club";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
-const ModalContainer = styled.View`
+const Container = styled.View`
   background-color: white;
   border-radius: 10px;
 `;
-const ModalHeader = styled.View`
+const Header = styled.View`
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -30,13 +30,13 @@ const ScheduleTitle = styled.Text`
   font-weight: 600;
 `;
 
-const ModalDetailView = styled.View`
+const DetailView = styled.View`
   width: 100%;
   padding-left: 15px;
   padding-right: 15px;
 `;
 
-const ModalDetailHeader = styled.View`
+const DetailHeader = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
@@ -44,27 +44,27 @@ const ModalDetailHeader = styled.View`
   padding-bottom: 15px;
 `;
 
-const ModalDetailItemView = styled.View`
+const DetailItemView = styled.View`
   padding: 15px;
   justify-content: center;
 `;
 
-const ModalDetailItem = styled.View`
+const DetailItem = styled.View`
   flex-direction: row;
   align-items: center;
 `;
 
-const ModalDetailText = styled.Text`
+const DetailText = styled.Text`
   font-size: 14px;
 `;
 
-const ModalDetailTitle = styled.Text`
+const DetailTitle = styled.Text`
   font-size: 14px;
   color: #79a0ab;
   font-weight: 600;
 `;
 
-const ModalFooter = styled.View`
+const Footer = styled.View`
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -72,13 +72,13 @@ const ModalFooter = styled.View`
   padding-bottom: 20px;
 `;
 
-const ModalApplyButton = styled.TouchableOpacity`
+const ApplyButton = styled.TouchableOpacity`
   background-color: #ff714b;
   padding: 10px 15px 10px 15px;
   border-radius: 10px;
 `;
 
-const ModalButtonText = styled.Text`
+const ButtonText = styled.Text`
   color: white;
 `;
 
@@ -152,58 +152,58 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
           firstItem={selectIndex}
           inactiveSlideOpacity={1}
           renderItem={({ item }: { item: RefinedSchedule }) => (
-            <ModalContainer>
-              <ModalHeader>
+            <Container>
+              <Header>
                 {children}
                 <ScheduleText>{item.year}</ScheduleText>
                 <ScheduleTitle>
                   {item.month}/{item.day} {item.dayOfWeek}
                 </ScheduleTitle>
-              </ModalHeader>
-              <ModalDetailView>
-                <ModalDetailHeader>
-                  <ModalDetailItem>
+              </Header>
+              <DetailView>
+                <DetailHeader>
+                  <DetailItem>
                     <Feather
                       name="clock"
                       size={16}
                       color="#79A0AB"
                       style={{ marginRight: 7 }}
                     />
-                    <ModalDetailText>{item.startTime}시</ModalDetailText>
-                  </ModalDetailItem>
-                  <ModalDetailItem>
+                    <DetailText>{item.startTime}시</DetailText>
+                  </DetailItem>
+                  <DetailItem>
                     <Feather
                       name="map-pin"
                       size={16}
                       color="#79A0AB"
                       style={{ marginRight: 7 }}
                     />
-                    <ModalDetailText>{item.location}</ModalDetailText>
-                  </ModalDetailItem>
-                </ModalDetailHeader>
+                    <DetailText>{item.location}</DetailText>
+                  </DetailItem>
+                </DetailHeader>
                 <Break sep={0} />
-                <ModalDetailItemView>
-                  <ModalDetailItem style={{ paddingBottom: 15 }}>
+                <DetailItemView>
+                  <DetailItem style={{ paddingBottom: 15 }}>
                     <Ionicons
                       name="people-sharp"
                       size={16}
                       color="#79A0AB"
                       style={{ marginRight: 7 }}
                     />
-                    <ModalDetailTitle>참석 멤버</ModalDetailTitle>
-                  </ModalDetailItem>
-                  <ModalDetailItem>
+                    <DetailTitle>참석 멤버</DetailTitle>
+                  </DetailItem>
+                  <DetailItem>
                     <Text>전부 참석</Text>
-                  </ModalDetailItem>
-                </ModalDetailItemView>
+                  </DetailItem>
+                </DetailItemView>
                 <Break sep={0} />
-              </ModalDetailView>
-              <ModalFooter>
-                <ModalApplyButton>
-                  <ModalButtonText>참석하기</ModalButtonText>
-                </ModalApplyButton>
-              </ModalFooter>
-            </ModalContainer>
+              </DetailView>
+              <Footer>
+                <ApplyButton>
+                  <ButtonText>참석하기</ButtonText>
+                </ApplyButton>
+              </Footer>
+            </Container>
           )}
         />
       </Animated.View>
