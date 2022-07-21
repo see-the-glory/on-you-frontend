@@ -49,6 +49,13 @@ export interface Schedule {
   endDate: string | null;
 }
 
+export interface ClubRole {
+  clubId: number;
+  userId: number;
+  role: "MASTER" | "MANAGER" | "MEMBER" | undefined;
+  applyStatus: "APPLIED" | "APPROVED" | undefined;
+}
+
 export interface CategoryResponse extends BaseResponse {
   data: Category[];
 }
@@ -60,11 +67,26 @@ export interface ClubResponse extends BaseResponse {
 }
 
 export interface ClubsResponse extends BaseResponse {
-  data: Club[];
+  data: {
+    values: Club[];
+    hasNext: boolean;
+  };
+}
+
+export interface ClubsParams {
+  categoryId: number | null;
+  clubState: number | null;
+  minMember: number | null;
+  maxMember: number | null;
+  sort: string | null;
 }
 
 export interface ClubSchedulesResponse extends BaseResponse {
   data: Schedule[];
+}
+
+export interface ClubRoleResponse extends BaseResponse {
+  data: ClubRole;
 }
 
 export interface ClubCreationRequest {
@@ -82,26 +104,59 @@ export interface ClubCreationRequest {
     clubName: string;
     clubMaxMember: number;
   };
+  token: string;
+}
+
+export interface ClubApplyRequest {
+  clubId: number;
+  memo: string;
+  token: string;
 }
 
 export interface LoginRequest {
   token: string;
 }
 
-const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
+const getCategories = () =>
+  fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
-const getClubs = () => fetch(`${BASE_URL}/api/clubs`).then((res) => res.json());
+const getClubs = ({ queryKey, pageParam }: any) => {
+  const [_key, clubsParams]: [string, ClubsParams] = queryKey;
+  return fetch(
+    `${BASE_URL}/api/clubs?category1Id=${
+      clubsParams.categoryId ? clubsParams.categoryId : ""
+    }&cursorId=${pageParam ? pageParam : ""}`
+  ).then((res) => res.json());
+};
 
-const getClub = ({ queryKey }) => {
-  const [_key, clubId] = queryKey;
+const getClub = ({ queryKey }: any) => {
+  const [_key, clubId]: [string, number] = queryKey;
   return fetch(`${BASE_URL}/api/clubs/${clubId}`).then((res) => res.json());
 };
 
-const getClubSchedules = ({ queryKey }) => {
-  const [_key, clubId] = queryKey;
+const getClubSchedules = ({ queryKey }: any) => {
+  const [_key, clubId]: [string, number] = queryKey;
   return fetch(`${BASE_URL}/api/clubs/${clubId}/schedules`).then((res) =>
     res.json()
   );
+};
+
+const getClubRole = ({ queryKey }: any) => {
+  const [_key, token, clubId]: [string, string, number] = queryKey;
+  return fetch(`${BASE_URL}/api/clubs/${clubId}/role`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.resultCode !== "OK") new Error("API Response Error.");
+      else {
+        res.data.applyStatus = res.data.applyStatus ?? undefined;
+        res.data.role = res.data.role ?? undefined;
+      }
+      return res;
+    });
 };
 
 const createClub = async (req: ClubCreationRequest) => {
@@ -120,14 +175,32 @@ const createClub = async (req: ClubCreationRequest) => {
     method: "POST",
     headers: {
       "content-type": "multipart/form-data",
-      authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiLsnqXspIDsmqkiLCJzb2NpYWxJZCI6IjIxOTAwMzc4NTAiLCJpZCI6NCwiZXhwIjoxMDAwMDAxNjU0NjA3MDA4fQ.m8OBIZEcB5dZ339YvhnWgJIRatKoF-DVPk2RrbXirsQRnYdFaALwnjR4oNmHGE-OZDfhDfOITaYzWLqYnU2vcQ",
+      authorization: `Bearer ${req.token}`,
       Accept: "*/*",
     },
     body,
   }).then(async (res) => {
     return { status: res.status, json: await res.json() };
   });
+};
+
+const applyClub = (req: ClubApplyRequest) => {
+  return fetch(`${BASE_URL}/api/clubs/${req.clubId}/apply`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${req.token}`,
+    },
+    body: JSON.stringify({ memo: req.memo }),
+  })
+    .then((res) => {
+      if (res.status === 409) console.log("[ERROR] API 409");
+      return res.json();
+    })
+    .then((res) => {
+      if (res.resultCode !== "OK") new Error("applyClub API Response Error");
+      else return res;
+    });
 };
 
 const getJWT = (req: LoginRequest) => {
@@ -146,5 +219,7 @@ export const ClubApi = {
   getClubs,
   createClub,
   getClubSchedules,
+  getClubRole,
+  applyClub,
 };
 export const CommonApi = { getJWT };

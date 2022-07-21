@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { useMutation } from "react-query";
+import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { ClubApi, ClubCreationRequest } from "../../api";
 import { ClubCreationStepThreeScreenProps } from "../../types/club";
@@ -96,6 +97,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   },
   navigation: { navigate },
 }) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
   const [briefIntroText, setBriefIntroText] = useState<string>("");
   const [detailIntroText, setDetailIntroText] = useState<string>("");
 
@@ -147,6 +149,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
         ? {
             image: null,
             data,
+            token,
           }
         : {
             image: {
@@ -155,6 +158,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
               name: splitedURI[splitedURI.length - 1],
             },
             data,
+            token,
           };
 
     mutation.mutate(requestData);

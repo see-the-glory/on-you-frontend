@@ -1,61 +1,78 @@
 import React from "react";
-import { View, Text, ScrollView } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import { Logout } from "../store/actions";
 import { useDispatch } from "react-redux";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Container = styled.SafeAreaView`
-  position: relative;
-  flex-direction: column;
-  height: 100%;
+  flex: 1;
 `;
 
-const Screen = styled.View`
-  background-color: black;
-  height: 1000%;
+const Box = styled.View`
+  background-color: #fff;
+  box-shadow: 1px 1px 1px gray;
 `;
 
-const Header = styled.View`
-  flex-direction: row;
+const UserInfoSection = styled.View`
+  margin-top: 15px;
+  margin-bottom: -5px;
+  padding-horizontal: 30px;
+  padding-bottom: 20px;
 `;
 
-const ProfileImg = styled.Image`
-  width: 150px;
-  height: 150px;
+const LogoBox = styled.View`
+  width: 65px;
+  height: 65px;
+  border-radius: 50px;
+  justify-content: center;
+  align-items: center;
+  border: 1px;
+  border-color: rgb(255, 255, 255);
+  background-color: white;
+  box-shadow: 1px 2px 1px gray;
+`;
+
+const LogoImage = styled.Image`
+  width: 60px;
+  height: 60px;
   border-radius: 100px;
-  top: 40px;
-  left: 20px;
-`;
-const ProfileText = styled.View`
-  flex-direction: column;
-  left: 40px;
-  top: 40px;
+  z-index: 1;
 `;
 
-const Content = styled.Text`
-  color: white;
-  margin-top: 10px;
-  font-size: 20px;
-`;
-const Interest = styled.View`
-  position: relative;
-  top: 100px;
+const Title = styled.Text`
+  font-size: 18px;
+  font-weight: bold;
+  color: #000;
+  line-height: 30px;
 `;
 
-const InterestTitle = styled.Text`
-  color: white;
-  font-size: 30px;
+const Caption = styled.Text`
+  font-size: 11px;
+  font-weight: normal;
+  color: #878787;
 `;
 
-const InterestList = styled.Text`
-  color: white;
-  top: 10px;
-  font-size: 20px;
-  margin-top: 20px;
+const MenuWrapper = styled.View`
+  margin-top: 3px;
 `;
 
-const MyGroup = styled.Text`
-  top: 200px;
+const MenuItem = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding-vertical: 15px;
+  padding-horizontal: 30px;
+  border-bottom-width: 1px;
+  border-bottom-color: #dbdbdb;
+`;
+
+const MenuItemText = styled.Text`
+  color: #2e2e2e;
+  font-size: 16px;
+`;
+
+const TouchMenu = styled.TouchableOpacity`
+  height: 50px;
 `;
 
 const LogoutButton = styled.TouchableOpacity`
@@ -65,62 +82,160 @@ const LogoutButton = styled.TouchableOpacity`
   margin-left: 10px;
 `;
 
-export default function Profile() {
-  const [text, onChangeText] = React.useState("");
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [isPress, setIsPress] = React.useState(true);
+const LogoutText = styled.Text`
+  text-align: right;
+  margin-right: 20px;
+`;
 
-  const onChangeSearch = (query) => setSearchQuery(query);
+const View = styled.View``;
+
+const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
+  navigation: { navigate },
+}) => {
   const dispatch = useDispatch();
 
   const goLogout = () => {
     dispatch(Logout());
   };
+
+  const goToEditProfile = () => {
+    navigate("ProfileStack", {
+      screen: "EditProfile",
+    });
+  };
+
+  const goToMyClub = () => {
+    navigate("ProfileStack", {
+      screen: "MyClub",
+    });
+  };
+
+  const goToNotificationSettings = () => {
+    navigate("ProfileStack", {
+      screen: "NotificationSettings",
+    });
+  };
+
+  const goToNotice = () => {
+    navigate("ProfileStack", {
+      screen: "Notice",
+    });
+  };
+  const goToHelp = () => {
+    navigate("ProfileStack", {
+      screen: "Help",
+    });
+  };
+  const goToTerms = () => {
+    navigate("ProfileStack", {
+      screen: "Terms",
+    });
+  };
+
   return (
     <Container>
-      <ScrollView>
-        <LogoutButton onPress={goLogout}>
-          <Text>Logout</Text>
-        </LogoutButton>
-        <Screen>
-          <Header>
-            {/*<Image style={styles.logo} source={logo}/>*/}
-            <Text
-              style={{
-                color: "white",
-                fontSize: 40,
-                fontWeight: "bold",
-              }}
-            >
-              OnYou
-            </Text>
-          </Header>
-          <Header>
-            <View>
-              <ProfileImg source={{ uri: "https://i.pinimg.com/564x/79/3b/74/793b74d8d9852e6ac2adeca960debe5d.jpg" }} />
+      <Box>
+        <UserInfoSection>
+          <View style={{ flexDirection: "row" }}>
+            <LogoBox>
+              <LogoImage
+                source={{
+                  uri: "https://i.pinimg.com/564x/79/3b/74/793b74d8d9852e6ac2adeca960debe5d.jpg",
+                }}
+              />
+            </LogoBox>
+            <View style={{ marginTop: 20, marginLeft: 15 }}>
+              <Caption>ddd@naver.com</Caption>
+              <Title>꺄륵</Title>
             </View>
-            <ProfileText>
-              <Content>이름: 문규빈</Content>
-              <Content>성별: 남</Content>
-              <Content>생년월일: 1995.09.23</Content>
-              <Content>교회: 시광교회</Content>
-            </ProfileText>
-          </Header>
-          <Interest>
-            <View>
-              <InterestTitle>관심사</InterestTitle>
+            <Icon
+              name="pencil-outline"
+              color="#295AF5"
+              size={20}
+              style={{ marginTop: 30, marginLeft: 90 }}
+              onPress={goToEditProfile}
+            />
+          </View>
+        </UserInfoSection>
+      </Box>
+      <MenuWrapper>
+        <TouchMenu onPress={goToMyClub}>
+          <MenuItem>
+            <Icon
+              name="star-outline"
+              color="#2E2E2E"
+              size={16}
+              style={{ marginRight: 10 }}
+            />
+            <MenuItemText>나의 모임</MenuItemText>
+            <View style={{ marginLeft: 170 }}>
+              <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
             </View>
-            <View>
-              <InterestList>독서</InterestList>
-              <InterestList>코딩</InterestList>
-              <InterestList>운동</InterestList>
+          </MenuItem>
+        </TouchMenu>
+        <TouchMenu onPress={goToNotificationSettings}>
+          <MenuItem>
+            <Icon
+              name="bell-outline"
+              color="#2E2E2E"
+              size={16}
+              style={{ marginRight: 10 }}
+            />
+            <MenuItemText>알림설정</MenuItemText>
+            <View style={{ marginLeft: 175 }}>
+              <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
             </View>
-          </Interest>
-          <MyGroup>
-            <InterestTitle>내가 속한 모임</InterestTitle>
-          </MyGroup>
-        </Screen>
-      </ScrollView>
+          </MenuItem>
+        </TouchMenu>
+        <TouchMenu onPress={goToNotice}>
+          <MenuItem>
+            <Icon
+              name="gate-not"
+              color="#2E2E2E"
+              size={16}
+              style={{ marginRight: 10 }}
+            />
+            <MenuItemText>공지사항</MenuItemText>
+            <View style={{ marginLeft: 175 }}>
+              <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
+            </View>
+          </MenuItem>
+        </TouchMenu>
+        <TouchMenu onPress={goToHelp}>
+          <MenuItem>
+            <Icon
+              name="comment-question-outline"
+              color="#2E2E2E"
+              size={16}
+              style={{ marginRight: 10 }}
+            />
+            <MenuItemText>고객센터/도움말</MenuItemText>
+            <View style={{ marginLeft: 129 }}>
+              <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
+            </View>
+          </MenuItem>
+        </TouchMenu>
+        <TouchMenu onPress={goToTerms}>
+          <MenuItem>
+            <Icon
+              name="file-document-outline"
+              color="#2E2E2E"
+              size={16}
+              style={{ marginRight: 10 }}
+            />
+            <MenuItemText>약관</MenuItemText>
+            <View style={{ marginLeft: 202 }}>
+              <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
+            </View>
+          </MenuItem>
+        </TouchMenu>
+      </MenuWrapper>
+
+      <LogoutButton onPress={goLogout}>
+        <LogoutText>Logout</LogoutText>
+      </LogoutButton>
     </Container>
   );
-}
+};
+
+export default Profile;
