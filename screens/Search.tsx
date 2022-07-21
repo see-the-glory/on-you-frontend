@@ -1,47 +1,42 @@
-import React, {useState} from 'react';
-import {StyleSheet, View, Text, Image,FlatList ,SafeAreaView, TouchableOpacity} from 'react-native';
+import React, { useState, useRef, useEffect } from "react";
+import {
+    StyleSheet,
+    View,
+    Text,
+    Image,
+    FlatList,
+    SafeAreaView,
+    TouchableOpacity,
+    TextInput,
+    Pressable
+} from 'react-native';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
-import styled from "styled-components/native";
 
-import SearchHeader from "./SearchPage/SearchHeader";
+import * as Animatable from 'react-native-animatable'
 import IntroduceGroup from '../screens/SearchPage/IntroduceGroup'
 import Peed from '../screens/SearchPage/Peed'
-
+import PeedSelectPage from "./SearchPage/PeedSelectPage";
 const NativeStack = createNativeStackNavigator();
 const TopTab = createMaterialTopTabNavigator();
+import styled from "styled-components";
+import SearchTest from '../screens/Temp'
 
 const Wrapper = styled.View`
   flex: 1;
+  top: 4%;
 `;
-
-
-const SearchGroup=styled.View`
-  display: flex;
+const SearchArea=styled.View`
+  height: 40px;
+  margin: 15px 5px 5px 10px;
   flex-direction: row;
-  text-align: center;
-  justify-content: center;
-  margin: 1px;
+  background-color: transparent;
+  border-radius: 10px;
 `
-
-const GroupText=styled.Text`
-  display: flex;
-  text-align: center;
-  justify-content: center;
-  top: 250px;
-  color: red;
-  font-size: 20px;
+const SearchText=styled.TextInput`
+  font-size: 15px;
+  left: 5px;
 `
-
-const GroupImage=styled.Image`
-  width: 130px;
-  height: 110px;
-  margin: 1px;
-`
-
-const SearchArea=()=>(
-    <SearchHeader/>
-)
 
 const ClubHome = () => (
     <IntroduceGroup/>
@@ -50,24 +45,41 @@ const ClubHome = () => (
 const Feed = () => (
     <Peed/>
 );
+const Temp=()=>(
+    <SearchTest/>
+)
+const PeedSelect=()=>(
+    <PeedSelectPage/>
+)
 
 const ClubHomeTopTabs=()=>{
     return (
-        <TopTab.Navigator
-            initialRouteName="ClubHome"
-            screenOptions={{ swipeEnabled: true
-            }}
-        >
-            <TopTab.Screen
-                options={{ title: "최근검색어" }}
-                name="ClubHome"
-                component={ClubHome}
-            />
-            <TopTab.Screen
-                options={{ title: "피드" }}
-                name="Feed"
-                component={Feed} />
-        </TopTab.Navigator>
+        <Wrapper>
+            <SearchArea>
+                {/*<Icon name="md-search" size={20} style={{top: 10, left: 5}}/>*/}
+                <Temp/>
+                {/*<SearchText placeholder="검색"/>*/}
+            </SearchArea>
+            <TopTab.Navigator
+                initialRouteName="ClubHome"
+                screenOptions={{ swipeEnabled: true
+                }}
+            >
+                <TopTab.Screen
+                    options={{title: "모임"}}
+                    name="ClubHome"
+                    component={ClubHome}
+                />
+                <TopTab.Screen
+                    options={{title: "피드"}}
+                    name="Feed"
+                    component={Feed}/>
+                <TopTab.Screen
+                    options={{title: "태그"}}
+                    name="Tag"
+                    component={PeedSelect}/>
+            </TopTab.Navigator>
+        </Wrapper>
     );
 }
 
@@ -75,7 +87,7 @@ const Search = () => {
     return (
         <NativeStack.Navigator>
             <NativeStack.Screen
-                name="여기다가 어떻게 검색창 넣지"
+                name="."
                 component={ClubHomeTopTabs}
                 options={{
                     headerShown: false,

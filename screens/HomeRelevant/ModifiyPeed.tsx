@@ -1,10 +1,10 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-const  Accusation=()=> {
+const  ModifiyPeed=()=> {
     return (
         <Text>ModifyPeed</Text>
     );
 }
 
-export default Accusation;
+export default ModifiyPeed;

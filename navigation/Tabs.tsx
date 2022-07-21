@@ -31,7 +31,7 @@ const ShadowBox = styled.View`
   position: absolute;
   width: 100%;
   height: 60px;
-  background-color: white;
+  elevation: 5;
   box-shadow: 1px 1px 3px gray;
 `;
 
@@ -62,10 +62,10 @@ const AnimatedTab = Animated.createAnimatedComponent(SlidingTab);
 const Tab = createBottomTabNavigator<MainBottomTabParamList>();
 
 const CustomTabBar: React.FC<BottomTabBarProps> = ({
-  state,
-  descriptors,
-  navigation,
-}) => {
+                                                     state,
+                                                     descriptors,
+                                                     navigation,
+                                                   }) => {
   const [translateX] = useState(new Animated.Value(0));
 
   const translateTab = (index: number) => {
@@ -80,89 +80,89 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
   }, [state.index]);
 
   return (
-    <>
-      <Container>
-        <ShadowBox />
-        <SlidingTabContainer tabWidth={TAB_WIDTH}>
-          <AnimatedTab style={{ transform: [{ translateX }] }} />
-        </SlidingTabContainer>
-        <TabBarContainer>
-          {state.routes.map((route, index) => {
-            const { options } = descriptors[route.key];
+      <>
+        <Container>
+          <ShadowBox />
+          <SlidingTabContainer tabWidth={TAB_WIDTH}>
+            <AnimatedTab style={{ transform: [{ translateX }] }} />
+          </SlidingTabContainer>
+          <TabBarContainer>
+            {state.routes.map((route, index) => {
+              const { options } = descriptors[route.key];
 
-            const isFocused = state.index === index;
+              const isFocused = state.index === index;
 
-            const onPress = () => {
-              const event = navigation.emit({
-                type: "tabPress",
-                target: route.key,
-                canPreventDefault: true,
-              });
+              const onPress = () => {
+                const event = navigation.emit({
+                  type: "tabPress",
+                  target: route.key,
+                  canPreventDefault: true,
+                });
 
-              if (!isFocused && !event.defaultPrevented) {
-                // The `merge: true` option makes sure that the params inside the tab screen are preserved
-                navigation.navigate({ name: route.name, merge: true });
-              }
-            };
+                if (!isFocused && !event.defaultPrevented) {
+                  // The `merge: true` option makes sure that the params inside the tab screen are preserved
+                  navigation.navigate({ name: route.name, merge: true });
+                }
+              };
 
-            return (
-              <IconButton
-                key={index}
-                accessibilityRole="button"
-                accessibilityState={isFocused ? { selected: true } : {}}
-                accessibilityLabel={options.tabBarAccessibilityLabel}
-                onPress={onPress}
-              >
-                <Ionicons
-                  name={
-                    isFocused
-                      ? route.params.activeIcon
-                      : route.params.inActiveIcon
-                  }
-                  size={24}
-                  color={isFocused ? "black" : "gray"}
-                />
-              </IconButton>
-            );
-          })}
-        </TabBarContainer>
-      </Container>
-    </>
+              return (
+                  <IconButton
+                      key={index}
+                      accessibilityRole="button"
+                      accessibilityState={isFocused ? { selected: true } : {}}
+                      accessibilityLabel={options.tabBarAccessibilityLabel}
+                      onPress={onPress}
+                  >
+                    <Ionicons
+                        name={
+                          isFocused
+                              ? route.params.activeIcon
+                              : route.params.inActiveIcon
+                        }
+                        size={24}
+                        color={isFocused ? "black" : "gray"}
+                    />
+                  </IconButton>
+              );
+            })}
+          </TabBarContainer>
+        </Container>
+      </>
   );
 };
 
 const Tabs = () => (
-  <Tab.Navigator
-    initialRouteName="Home"
-    sceneContainerStyle={{ backgroundColor: "white" }}
-    screenOptions={{ tabBarShowLabel: false, headerShown: true }}
-    tabBar={(props) => <CustomTabBar {...props} />}
-  >
-    <Tab.Screen
-      name="Home"
-      component={Home}
-      initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }}
-      options={{}}
-    />
-    <Tab.Screen
-      name="Search"
-      component={Search}
-      initialParams={{ activeIcon: "search", inActiveIcon: "search-outline" }}
-      options={{}}
-    />
-    <Tab.Screen
-      name="Clubs"
-      component={Clubs}
-      initialParams={{ activeIcon: "grid", inActiveIcon: "grid-outline" }}
-      options={{}}
-    />
-    <Tab.Screen
-      name="Profile"
-      component={Profile}
-      initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }}
-      options={{}}
-    />
-  </Tab.Navigator>
+    <Tab.Navigator
+        initialRouteName="Home"
+        sceneContainerStyle={{ backgroundColor: "white" }}
+        screenOptions={{ tabBarShowLabel: false, headerShown: true }}
+        tabBar={(props) => <CustomTabBar {...props} />}
+    >
+      <Tab.Screen
+          name="Home"
+          component={Home}
+          initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }}
+          options={{headerShown: false}}
+      />
+      <Tab.Screen
+          name="Search"
+          component={Search}
+          initialParams={{ activeIcon: "search", inActiveIcon: "search-outline" }}
+          options={{headerShown: false}}
+      />
+      <Tab.Screen
+          name="Clubs"
+          component={Clubs}
+          initialParams={{ activeIcon: "grid", inActiveIcon: "grid-outline" }}
+          options={{}}
+      />
+      <Tab.Screen
+          name="Profile"
+          component={Profile}
+          initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }}
+          options={{}}
+      />
+    </Tab.Navigator>
 );
 
 export default Tabs;

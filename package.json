@@ -35,6 +35,8 @@
     "react-native-image-modal": "^2.0.4",
     "react-native-image-pan-zoom": "^2.1.12",
     "react-native-image-picker": "^4.7.3",
+    "react-native-image-slider-box": "^2.0.2",
+    "react-native-mention-hashtag-text": "^1.0.3",
     "react-native-modal": "^12.1.0",
     "react-native-pager-view": "5.4.9",
     "react-native-paper": "^4.11.2",
