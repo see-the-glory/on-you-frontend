@@ -150,13 +150,13 @@ const Tabs = () => (
       name="Home"
       component={Home}
       initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }}
-      options={{}}
+     options={{headerShown: false}}
     />
     <Tab.Screen
       name="Search"
       component={Search}
       initialParams={{ activeIcon: "search", inActiveIcon: "search-outline" }}
-      options={{}}
+      options={{headerShown: false}}
     />
     <Tab.Screen
       name="Clubs"

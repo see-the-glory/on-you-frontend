@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList,TouchableOpacity, Button, Text} from 'react-native';
+import {ActivityIndicator, FlatList, TouchableOpacity, Button, Text, ScrollView, View, Image} from 'react-native';
 import {StatusBar} from "expo-status-bar";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 //img
 import {Searchbar} from "react-native-paper";
 import styled from "styled-components/native";
+import axios from "axios";
 
 const Wrapper = styled.View`
   flex: 1;
@@ -61,6 +62,26 @@ export default function IntroduceGroup(){
     const [data,setData]=useState();
     const Stack = createNativeStackNavigator();
     const onChangeSearch = query => setSearchQuery(query);
+    const [searchVal, setSearchVal] = useState("");
+
+    const getApi=async ()=>{
+        try{
+            setLoading(true);
+            const response= await axios.get(
+                `http://3.39.190.23:8080/api/clubs`
+            )
+            setData(response.data.data.values)
+            console.log(data)
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(()=>{
+        getApi();
+    },[]);
 
     const getSearch = () => {
         const result = [];
@@ -82,9 +103,9 @@ export default function IntroduceGroup(){
         setLoading(false);
     };
 
-    useEffect(() => {
+    useEffect(()=>{
         getData();
-    }, []);
+    },[]);
 
     const onRefresh = async () => {
         setRefreshing(true);
@@ -92,11 +113,43 @@ export default function IntroduceGroup(){
         setRefreshing(false);
     };
 
+    const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+        const paddingToBottom = 0
+        return (
+            layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - paddingToBottom
+        )
+    }
+
     return (
         <Container>
             <StatusBar style="auto"/>
-            <Text>최근검색어</Text>
-            <Text>1. 퇴사를 2.하자 3.열심히</Text>
+            <ScrollView >
+                {loading ? <ActivityIndicator/> : (
+                    <ScrollView onScrollEndDrag={({nativeEvent})=>{
+                        if (isCloseToBottom(nativeEvent)) {
+                            { getApi() }
+                        }
+                    }}>
+                        <FlatList
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            data={data}
+                            keyExtractor={(item, index) => index + ""}
+                            renderItem={({ item }) => (
+                                <View style={{flexDirection: 'row'}}>
+                                    <Image style={{width: 50, height: 50}} source={{uri: item.thumbnail}}/>
+                                    <View style={{flexDirection: 'column'}}>
+                                        <Text>{item.name}</Text>
+                                        <Text>{item.clubShortDesc}</Text>
+                                    </View>
+                                    {/*<Ment text={text} numberOfLines={3} ellipsizeMode={"tail"}>{item.content}</Ment>*/}
+                                </View>
+                            )}
+                        />
+                    </ScrollView>
+                )}
+            </ScrollView>
         </Container>
     )
 }
