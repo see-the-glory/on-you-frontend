@@ -1,8 +1,13 @@
 import React, { useState } from "react";
+import {
+  Keyboard,
+  TouchableWithoutFeedback,
+  useWindowDimensions,
+} from "react-native";
 import { useTheme } from "react-native-paper";
 import styled from "styled-components/native";
-import { RadioButton } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 Date.prototype.format = function (f) {
@@ -68,13 +73,13 @@ const Container = styled.View`
   padding-right: 15px;
 `;
 
-const LogoWrap = styled.View`
+const ImagePickerView = styled.View`
+  width: 100%;
+  height: 130px;
   align-items: center;
 `;
 
-const LogoBtn = styled.TouchableOpacity``;
-
-const LogoBox = styled.View`
+const ImagePickerWrap = styled.View`
   width: 85px;
   height: 85px;
   border-radius: 50px;
@@ -84,20 +89,25 @@ const LogoBox = styled.View`
   border-color: rgb(255, 255, 255);
   background-color: white;
   box-shadow: 1px 1px 1px gray;
-  margin-top: 30px;
+  margin-top: 15px;
 `;
 
-const Logo = styled.Image`
+const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
   width: 80px;
   height: 80px;
   border-radius: 50px;
   justify-content: center;
   align-items: center;
-  background-color: #000;
+`;
+
+const PickedImage = styled.Image<{ height: number }>`
+  width: 100%;
+  height: 100%;
+  border-radius: 50px;
 `;
 
 const ProfileText = styled.Text`
-  margin: 10px 0 20px 0;
+  margin-top: 10px;
   font-size: 12px;
   font-weight: normal;
   color: #2995fa;
@@ -121,26 +131,47 @@ const Input = styled.TextInput`
 
 const TextBtn = styled.TouchableOpacity``;
 
-const CheckWrap = styled.View`
-  flex-direction: row;
+const FieldContentView = styled.View`
   border-bottom-width: 1px;
   border-bottom-color: #cecece;
-`;
-
-const CheckBox = styled.View`
+  padding-bottom: 5px;
   flex-direction: row;
-  justify-content: center;
+`;
+const FieldContentLine = styled.View`
+  flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
 `;
 
-const CheckText = styled.Text`
+const FieldContentText = styled.Text`
+  font-size: 14px;
   margin-right: 10px;
 `;
 
+const Button = styled.TouchableOpacity`
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
 const EditProfile = () => {
-  const [image, setImage] = useState(
-    "https://api.adorable.io/avatars/80/abott@adorable.png"
-  );
+  const [imageURI, setImageURI] = useState<string | null>(null);
+
+  const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 4) * 3);
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      aspect: [16, 9],
+      quality: 1,
+    });
+
+    if (result.cancelled === false) {
+      setImageURI(result.uri);
+    }
+  };
 
   const [checked, setChecked] = React.useState("first");
 
@@ -163,82 +194,107 @@ const EditProfile = () => {
     onChangeText(date.format("yyyy/MM/dd"));
   };
 
+  const [approvalMethod, setApprovalMethod] = useState<number>(0);
+
   const { colors } = useTheme();
 
   return (
-    <Container>
-      <LogoWrap>
-        <LogoBtn>
-          <LogoBox>
-            <Logo
-              source={{
-                uri: image,
-              }}
-            ></Logo>
-          </LogoBox>
-        </LogoBtn>
-        <ProfileText>프로필 사진 설정</ProfileText>
-      </LogoWrap>
-
-      <Form>
-        <Title>이름</Title>
-        <Input autoCorrect={false} />
-      </Form>
-      <Form>
-        <Title>성별</Title>
-        <CheckWrap>
-          <CheckBox>
-            <RadioButton
-              value="first"
-              status={checked === "first" ? "checked" : "unchecked"}
-              color="#FF714B"
-              onPress={() => setChecked("first")}
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <Container>
+        <ImagePickerView>
+          <ImagePickerWrap>
+            <ImagePickerButton
+              height={imageHeight}
+              onPress={pickImage}
+              activeOpacity={0.8}
+            >
+              <PickedImage height={imageHeight} source={{ uri: imageURI }} />
+            </ImagePickerButton>
+          </ImagePickerWrap>
+          <ProfileText onPress={pickImage}>프로필 사진 설정</ProfileText>
+        </ImagePickerView>
+        <Form>
+          <Title>이름</Title>
+          <Input autoCorrect={false} />
+        </Form>
+        <Form>
+          <Title>성별</Title>
+          <FieldContentView>
+            <FieldContentLine>
+              <Button onPress={() => setApprovalMethod(0)} activeOpacity={0.5}>
+                {approvalMethod ? (
+                  <MaterialCommunityIcons
+                    name="radiobox-blank"
+                    size={20}
+                    color="#E8E8E8"
+                  />
+                ) : (
+                  <MaterialCommunityIcons
+                    name="radiobox-marked"
+                    size={20}
+                    color="#ff714b"
+                  />
+                )}
+                <FieldContentText> 남자</FieldContentText>
+              </Button>
+            </FieldContentLine>
+            <FieldContentLine>
+              <Button onPress={() => setApprovalMethod(1)} activeOpacity={0.5}>
+                {approvalMethod ? (
+                  <MaterialCommunityIcons
+                    name="radiobox-marked"
+                    size={20}
+                    color="#ff714b"
+                  />
+                ) : (
+                  <MaterialCommunityIcons
+                    name="radiobox-blank"
+                    size={20}
+                    color="#E8E8E8"
+                  />
+                )}
+                <FieldContentText> 여자</FieldContentText>
+              </Button>
+            </FieldContentLine>
+          </FieldContentView>
+        </Form>
+        <Form>
+          <Title>생년월일</Title>
+          <TextBtn onPress={showDatePicker}>
+            <Input
+              pointerEvents="none"
+              placeholder={placeholder}
+              placeholderTextColor="#000000"
+              underlineColorAndroid="transparent"
+              editable={false}
+              value={text}
             />
-            <CheckText>남자</CheckText>
-          </CheckBox>
-          <CheckBox>
-            <RadioButton
-              value="second"
-              status={checked === "second" ? "checked" : "unchecked"}
-              color="#FF714B"
-              onPress={() => setChecked("second")}
+            <DateTimePickerModal
+              headerTextIOS={placeholder}
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
             />
-            <CheckText>여자</CheckText>
-          </CheckBox>
-        </CheckWrap>
-      </Form>
-      <Form>
-        <Title>생년월일</Title>
-        <TextBtn onPress={showDatePicker}>
-          <Input
-            pointerEvents="none"
-            placeholder={placeholder}
-            placeholderTextColor="#000000"
-            underlineColorAndroid="transparent"
-            editable={false}
-            value={text}
-          />
-          <DateTimePickerModal
-            headerTextIOS={placeholder}
-            isVisible={isDatePickerVisible}
-            mode="date"
-            onConfirm={handleConfirm}
-            onCancel={hideDatePicker}
-          />
-        </TextBtn>
-      </Form>
-      <Form>
-        <Title>연락처</Title>
-        <Input autoCorrect={false} />
-      </Form>
-      <Form>
-        <Title>교회</Title>
-        <Input autoCorrect={false} />
-      </Form>
-      <Form>
-        <Title>관심사(3개 이상 택)</Title>
-      </Form>
-    </Container>
+          </TextBtn>
+        </Form>
+        <Form>
+          <Title>연락처</Title>
+          <Input autoCorrect={false} />
+        </Form>
+        <Form>
+          <Title>교회</Title>
+          <Input autoCorrect={false} />
+        </Form>
+        <Form>
+          <Title>관심사(3개 이상 택)</Title>
+        </Form>
+      </Container>
+    </TouchableWithoutFeedback>
   );
 };
 
