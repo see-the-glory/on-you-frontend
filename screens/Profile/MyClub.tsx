@@ -95,7 +95,7 @@ const MyClub = (props) => {
         <Swipeable renderRightActions={rightSwipe}>
           <MyClubBox style={{ width: SCREEN_WIDTH }}>
             <MyClubImgBox>
-              <MyClubImg></MyClubImg>
+              <MyClubImg />
             </MyClubImgBox>
             <MyClubTextBox>
               <MyClubText>온유 프로젝트</MyClubText>
@@ -107,7 +107,7 @@ const MyClub = (props) => {
         <Swipeable renderRightActions={rightSwipe}>
           <MyClubBox style={{ width: SCREEN_WIDTH }}>
             <MyClubImgBox>
-              <MyClubImg></MyClubImg>
+              <MyClubImg />
             </MyClubImgBox>
             <MyClubTextBox>
               <MyClubText>덕 모임</MyClubText>

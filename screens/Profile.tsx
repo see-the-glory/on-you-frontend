@@ -12,13 +12,13 @@ const Container = styled.SafeAreaView`
 const Box = styled.View`
   background-color: #fff;
   box-shadow: 1px 1px 1px gray;
+  padding-horizontal: 20px;
 `;
 
 const UserInfoSection = styled.View`
-  margin-top: 15px;
-  margin-bottom: -5px;
-  padding-horizontal: 30px;
-  padding-bottom: 20px;
+  height: 100px;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const LogoBox = styled.View`
@@ -40,17 +40,24 @@ const LogoImage = styled.Image`
   z-index: 1;
 `;
 
+const InfoBox = styled.View`
+  flex: 1;
+  align-items: flex-start;
+  justify-content: center;
+  margin-left: 20px;
+`;
+
 const Title = styled.Text`
   font-size: 18px;
   font-weight: bold;
   color: #000;
-  line-height: 30px;
 `;
 
-const Caption = styled.Text`
+const Email = styled.Text`
   font-size: 11px;
   font-weight: normal;
   color: #878787;
+  margin-bottom: 5px;
 `;
 
 const MenuWrapper = styled.View`
@@ -61,7 +68,7 @@ const MenuItem = styled.View`
   flex-direction: row;
   align-items: center;
   padding-vertical: 15px;
-  padding-horizontal: 30px;
+  padding-horizontal: 20px;
   border-bottom-width: 1px;
   border-bottom-color: #dbdbdb;
 `;
@@ -88,6 +95,17 @@ const LogoutText = styled.Text`
 `;
 
 const View = styled.View``;
+
+const ChevronBox = styled.View`
+  flex: 1;
+  align-items: flex-end;
+`;
+
+const EditBox = styled.View`
+  flex: 1;
+  align-items: flex-end;
+  justify-content: center;
+`;
 
 const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
   navigation: { navigate },
@@ -136,26 +154,25 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
     <Container>
       <Box>
         <UserInfoSection>
-          <View style={{ flexDirection: "row" }}>
-            <LogoBox>
-              <LogoImage
-                source={{
-                  uri: "https://i.pinimg.com/564x/79/3b/74/793b74d8d9852e6ac2adeca960debe5d.jpg",
-                }}
-              />
-            </LogoBox>
-            <View style={{ marginTop: 20, marginLeft: 15 }}>
-              <Caption>ddd@naver.com</Caption>
-              <Title>꺄륵</Title>
-            </View>
+          <LogoBox>
+            <LogoImage
+              source={{
+                uri: "https://i.pinimg.com/564x/79/3b/74/793b74d8d9852e6ac2adeca960debe5d.jpg",
+              }}
+            />
+          </LogoBox>
+          <InfoBox>
+            <Email>ddd@naver.com</Email>
+            <Title>꺄륵</Title>
+          </InfoBox>
+          <EditBox>
             <Icon
               name="pencil-outline"
               color="#295AF5"
               size={20}
-              style={{ marginTop: 30, marginLeft: 90 }}
               onPress={goToEditProfile}
             />
-          </View>
+          </EditBox>
         </UserInfoSection>
       </Box>
       <MenuWrapper>
@@ -168,9 +185,9 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
               style={{ marginRight: 10 }}
             />
             <MenuItemText>나의 모임</MenuItemText>
-            <View style={{ marginLeft: 170 }}>
+            <ChevronBox>
               <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
-            </View>
+            </ChevronBox>
           </MenuItem>
         </TouchMenu>
         <TouchMenu onPress={goToNotificationSettings}>
@@ -182,9 +199,9 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
               style={{ marginRight: 10 }}
             />
             <MenuItemText>알림설정</MenuItemText>
-            <View style={{ marginLeft: 175 }}>
+            <ChevronBox>
               <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
-            </View>
+            </ChevronBox>
           </MenuItem>
         </TouchMenu>
         <TouchMenu onPress={goToNotice}>
@@ -196,9 +213,9 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
               style={{ marginRight: 10 }}
             />
             <MenuItemText>공지사항</MenuItemText>
-            <View style={{ marginLeft: 175 }}>
+            <ChevronBox>
               <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
-            </View>
+            </ChevronBox>
           </MenuItem>
         </TouchMenu>
         <TouchMenu onPress={goToHelp}>
@@ -210,9 +227,9 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
               style={{ marginRight: 10 }}
             />
             <MenuItemText>고객센터/도움말</MenuItemText>
-            <View style={{ marginLeft: 129 }}>
+            <ChevronBox>
               <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
-            </View>
+            </ChevronBox>
           </MenuItem>
         </TouchMenu>
         <TouchMenu onPress={goToTerms}>
@@ -224,9 +241,9 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
               style={{ marginRight: 10 }}
             />
             <MenuItemText>약관</MenuItemText>
-            <View style={{ marginLeft: 202 }}>
+            <ChevronBox>
               <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
-            </View>
+            </ChevronBox>
           </MenuItem>
         </TouchMenu>
       </MenuWrapper>
