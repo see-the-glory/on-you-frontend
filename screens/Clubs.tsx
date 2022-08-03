@@ -30,6 +30,7 @@ const Loader = styled.SafeAreaView`
   flex: 1;
   justify-content: center;
   align-items: center;
+  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0};
 `;
 
 const CategoryButton = styled.TouchableOpacity`
@@ -51,6 +52,7 @@ const SelectedCategoryName = styled.Text`
 
 const Container = styled.SafeAreaView`
   flex: 1;
+  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0};
 `;
 
 const HeaderView = styled.View`
@@ -104,7 +106,9 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     clubState: null,
     minMember: null,
     maxMember: null,
-    sort: null,
+    sort: "created",
+    showRecruiting: null,
+    showMy: null,
   });
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [categoryData, setCategoryData] = useState<Category[]>([]);
@@ -118,9 +122,11 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     fetchNextPage,
   } = useInfiniteQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
     getNextPageParam: (currentPage) => {
-      return currentPage.data.hasNext === false
-        ? null
-        : currentPage.data.values[currentPage.data.values.length - 1].id;
+      // if (currentPage)
+      //   return currentPage.data.hasNext === false
+      //     ? null
+      //     : currentPage.data.values[currentPage.data.values.length - 1].id;
+      return currentPage.content[currentPage.content.length - 1].customCursor;
     },
     onSuccess: (res) => {
       setIsPageTransition(false);
@@ -142,6 +148,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
           id: 0,
           name: "전체",
           thumbnail: null,
+          order: null,
         },
         ...res.data,
       ]);
@@ -185,20 +192,33 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     if (hasNextPage) fetchNextPage();
   };
   const loading = categoryLoading && clubsLoading;
+
+  const tempClubs = [
+    {
+      id: 104,
+      name: "온유 프로젝트",
+      clubShortDesc: "모임 어플리케이션을 개발하는 프로젝트의 모임입니다.",
+      clubLongDesc: "Temp Long Desc",
+      announcement: "Temp Announcement",
+      organizationName: "시광교회",
+      members: [],
+      maxNumber: 10,
+      recruitNumber: 5,
+      thumbnail:
+        "https://images.unsplash.com/photo-1603969072881-b0fc7f3d77d7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+      recruitStatus: "RECRUIT",
+      creatorName: "진규",
+      category1Name: "음식",
+      category2Name: "봉사",
+    },
+  ];
+
   return loading ? (
-    <Loader
-      style={{
-        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-      }}
-    >
+    <Loader>
       <ActivityIndicator />
     </Loader>
   ) : (
-    <Container
-      style={{
-        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-      }}
-    >
+    <Container>
       <HeaderView>
         <FlatList
           showsHorizontalScrollIndicator={false}
@@ -268,7 +288,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             refreshing={refreshing}
             onRefresh={onRefresh}
             onEndReached={loadMore}
-            data={clubs?.pages.map((page) => page.data.values).flat()}
+            data={clubs?.pages.map((page) => page.content).flat()}
             columnWrapperStyle={{ justifyContent: "space-between" }}
             numColumns={2}
             keyExtractor={(item: Club, index: number) => String(index)}
@@ -284,8 +304,8 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                   clubName={item.name}
                   memberNum={item.members.length}
                   clubShortDesc={item.clubShortDesc}
-                  category1Name={item.category1Name}
-                  category2Name={item.category2Name}
+                  categories={item.categories}
+                  recruitStatus={item.recruitStatus}
                 />
               </TouchableOpacity>
             )}

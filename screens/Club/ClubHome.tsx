@@ -5,22 +5,24 @@ import {
   Animated,
   Text,
   FlatList,
+  View,
 } from "react-native";
 import styled from "styled-components/native";
-import { Feather, Entypo, MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
 import {
   ClubHomeScreenProps,
   ClubHomeParamList,
   RefinedSchedule,
 } from "../../types/club";
 import { useQuery } from "react-query";
-import { ClubApi, ClubSchedulesResponse } from "../../api";
+import { ClubApi, ClubSchedulesResponse, Schedule } from "../../api";
 import ScheduleModal from "./ClubScheduleModal";
 import CircleIcon from "../../components/CircleIcon";
+import ScheduleAddModal from "./ClubScheduleAddModal";
 
 const MEMBER_ICON_KERNING = 25;
 const MEMBER_ICON_SIZE = 50;
-const SCREEN_PADDING_SIZE = 30;
+const SCREEN_PADDING_SIZE = 20;
 
 const Loader = styled.View`
   flex: 1;
@@ -29,6 +31,7 @@ const Loader = styled.View`
 `;
 
 const Break = styled.View<{ sep: number }>`
+  width: 100%;
   margin-bottom: ${(props) => props.sep}px;
   margin-top: ${(props) => props.sep}px;
   border-bottom-width: 1px;
@@ -51,7 +54,7 @@ const TitleView = styled.View`
 `;
 
 const SectionTitle = styled.Text`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   margin-left: 5px;
 `;
@@ -70,26 +73,43 @@ const ScheduleSeparator = styled.View`
 `;
 
 const ScheduleView = styled.TouchableOpacity`
-  width: 150px;
+  box-shadow: 1px 1px 2px gray;
+`;
+
+const ScheduleAddView = styled.TouchableOpacity`
+  background-color: white;
+  justify-content: center;
+  align-items: center;
   box-shadow: 1px 1px 2px gray;
   elevation: 3;
+  padding: 50px 15px 50px 15px;
+  border-radius: 5px;
 `;
 
 const ScheduleDateView = styled.View`
-  height: 50px;
   background-color: #eaff87;
   justify-content: center;
   align-items: center;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 25px;
+  padding-right: 25px;
+  elevation: 3;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 `;
 
 const ScheduleDetailView = styled.View`
-  height: 90px;
   background-color: white;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
   padding: 12px;
+  elevation: 3;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 100px;
 `;
 
 const ScheduleDetailItemView = styled.View`
@@ -105,7 +125,7 @@ const ScheduleText = styled.Text`
 
 const ScheduleTitle = styled.Text`
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
 `;
 
 const MemberView = styled.View`
@@ -144,7 +164,8 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   scrollY,
   headerDiff,
 }) => {
-  const [visible, setVisible] = useState(false);
+  const [scheduleVisible, setScheduleVisible] = useState(false);
+  const [scheduleAddVisible, setScheduleAddVisible] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(-1);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const [scheduleData, setScheduleData] = useState<Array<RefinedSchedule>>([]);
@@ -177,14 +198,17 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             startDate: res.data[i].startDate,
             endDate: res.data[i].endDate,
             content: res.data[i].content,
-            year: res.data[i].startDate.split("-")[0],
-            month: res.data[i].startDate.split("-")[1],
-            day: res.data[i].startDate.split("T")[0].split("-")[2],
+            year: res.data[i].startDate?.split("-")[0],
+            month: res.data[i].startDate?.split("-")[1],
+            day: res.data[i].startDate?.split("T")[0].split("-")[2],
             dayOfWeek: dayOfWeek,
-            startTime: res.data[i].startDate.split("T")[1].split(":")[0],
+            startTime: res.data[i].startDate?.split("T")[1].split(":")[0],
+            isEnd: false,
           };
           result.push(refined);
         }
+
+        result.push({ isEnd: true });
 
         setScheduleData(result);
       },
@@ -290,8 +314,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
       style={{
         flex: 1,
         paddingTop: SCREEN_PADDING_SIZE,
-        paddingLeft: SCREEN_PADDING_SIZE,
-        paddingRight: SCREEN_PADDING_SIZE,
         transform: [
           {
             translateY: scrollY.interpolate({
@@ -302,42 +324,47 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           },
         ],
       }}
-      contentContainerStyle={{ paddingTop: headerDiff }}
+      contentContainerStyle={{
+        paddingTop: headerDiff,
+        backgroundColor: "white",
+      }}
     >
-      <SectionView>
+      <SectionView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
         <TitleView>
-          <Entypo name="megaphone" size={18} color="#295AF5" />
+          <Entypo name="megaphone" size={16} color="#295AF5" />
           <SectionTitle>ABOUT</SectionTitle>
         </TitleView>
         <ContentView>
           <ContentText>{clubData.clubLongDesc}</ContentText>
         </ContentView>
+        <Break sep={20} />
       </SectionView>
-      <Break sep={20} />
       <SectionView>
-        <TitleView>
-          <Ionicons name="calendar" size={18} color="#295AF5" />
+        <TitleView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+          <Ionicons name="calendar" size={16} color="#295AF5" />
           <SectionTitle>SCHEDULE</SectionTitle>
         </TitleView>
-        {scheduleData.length === 0 ? (
-          <Text>등록된 일정이 없습니다.</Text>
-        ) : (
-          <FlatList
-            horizontal
-            contentContainerStyle={{ flex: 1, padding: 3 }}
-            data={scheduleData}
-            keyExtractor={(item: RefinedSchedule) => item.id + ""}
-            ItemSeparatorComponent={ScheduleSeparator}
-            renderItem={({
-              item,
-              index,
-            }: {
-              item: RefinedSchedule;
-              index: number;
-            }) => (
+        <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            padding: 3,
+            paddingHorizontal: SCREEN_PADDING_SIZE,
+          }}
+          data={scheduleData}
+          keyExtractor={(item: RefinedSchedule, index: number) => String(index)}
+          ItemSeparatorComponent={ScheduleSeparator}
+          renderItem={({
+            item,
+            index,
+          }: {
+            item: RefinedSchedule;
+            index: number;
+          }) =>
+            item.isEnd === false ? (
               <ScheduleView
                 onPress={() => {
-                  setVisible(true);
+                  setScheduleVisible(true);
                   setSelectedSchedule(index);
                 }}
               >
@@ -378,14 +405,21 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
                   </ScheduleDetailItemView>
                 </ScheduleDetailView>
               </ScheduleView>
-            )}
-          />
-        )}
+            ) : (
+              <ScheduleAddView onPress={() => setScheduleAddVisible(true)}>
+                <Ionicons name="ios-add-sharp" size={42} color="#6E6E6E" />
+                <ScheduleText
+                  style={{ textAlign: "center", color: "#6E6E6E" }}
+                >{`스케줄을 등록해\n멤버들과 공유해보세요.`}</ScheduleText>
+              </ScheduleAddView>
+            )
+          }
+        />
       </SectionView>
-      <Break sep={20} />
-      <SectionView>
+      <SectionView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+        <Break sep={20} />
         <TitleView>
-          <Feather name="users" size={18} color="#295AF5" />
+          <Feather name="users" size={16} color="#295AF5" />
           <SectionTitle>MEMBER</SectionTitle>
         </TitleView>
         <MemberView>
@@ -444,20 +478,32 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
       </SectionView>
 
       <ScheduleModal
-        visible={visible}
+        visible={scheduleVisible}
         scheduleData={scheduleData}
         selectIndex={selectedSchedule}
       >
         <ModalHeaderRight>
           <ModalCloseButton
             onPress={() => {
-              setVisible(false);
+              setScheduleVisible(false);
             }}
           >
             <Ionicons name="close" size={24} color="black" />
           </ModalCloseButton>
         </ModalHeaderRight>
       </ScheduleModal>
+
+      <ScheduleAddModal visible={scheduleAddVisible}>
+        <ModalHeaderRight>
+          <ModalCloseButton
+            onPress={() => {
+              setScheduleAddVisible(false);
+            }}
+          >
+            <Ionicons name="close" size={24} color="black" />
+          </ModalCloseButton>
+        </ModalHeaderRight>
+      </ScheduleAddModal>
     </Animated.ScrollView>
   );
 };
