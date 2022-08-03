@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import { Logout } from "../store/actions";
 import { useDispatch } from "react-redux";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { useSelector } from "react-redux";
+import { useQuery } from "react-query";
+import { UserApi, UserInfoResponse } from "../api";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -41,7 +44,6 @@ const LogoImage = styled.Image`
 `;
 
 const InfoBox = styled.View`
-  flex: 1;
   align-items: flex-start;
   justify-content: center;
   margin-left: 20px;
@@ -67,7 +69,8 @@ const MenuWrapper = styled.View`
 const MenuItem = styled.View`
   flex-direction: row;
   align-items: center;
-  padding-vertical: 15px;
+  padding-top: 15px;
+  padding-bottom: 15px;
   padding-horizontal: 20px;
   border-bottom-width: 1px;
   border-bottom-color: #dbdbdb;
@@ -107,9 +110,24 @@ const EditBox = styled.View`
   justify-content: center;
 `;
 
+// 알아볼 것
+// 1. 동기와 비동기 차이
+// 2. fetch / axios 차이 알아보기
+// 3. react query
+// 4. es5 / es6 차이 알아보기
+
 const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
   navigation: { navigate },
 }) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
+
+  const {
+    isLoading: userInfoLoading, // true or false
+    data: userInfo,
+  } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo);
+
+  console.log(userInfo);
+
   const dispatch = useDispatch();
 
   const goLogout = () => {
@@ -157,13 +175,13 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
           <LogoBox>
             <LogoImage
               source={{
-                uri: "https://i.pinimg.com/564x/79/3b/74/793b74d8d9852e6ac2adeca960debe5d.jpg",
+                uri: userInfo?.data.thumbnail,
               }}
             />
           </LogoBox>
           <InfoBox>
-            <Email>ddd@naver.com</Email>
-            <Title>꺄륵</Title>
+            <Email>{userInfo?.data.email}</Email>
+            <Title>{userInfo?.data.name}</Title>
           </InfoBox>
           <EditBox>
             <Icon

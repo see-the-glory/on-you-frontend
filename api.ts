@@ -73,6 +73,21 @@ export interface ClubsResponse extends BaseResponse {
   };
 }
 
+export interface UserInfoResponse extends BaseResponse {
+  data: {
+    applyStatus: string;
+    birthday: string;
+    created: string;
+    email: string;
+    id: number;
+    name: string;
+    organizationName: string;
+    role: string;
+    sex: string;
+    thumbnail: string;
+  };
+}
+
 export interface ClubsParams {
   categoryId: number | null;
   clubState: number | null;
@@ -213,6 +228,36 @@ const getJWT = (req: LoginRequest) => {
   }).then((res) => res.json());
 };
 
+const getUserInfo = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return fetch(`${BASE_URL}/api/user`, {
+    method: "GET",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((response) => response.json());
+};
+
+const registerUserInfo = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return fetch(`${BASE_URL}/api/user`, {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((response) => response.json());
+};
+
+const updateUserInfo = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return fetch(`${BASE_URL}/api/user`, {
+    method: "PUT",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((response) => response.json());
+};
+
 export const ClubApi = {
   getCategories,
   getClub,
@@ -221,5 +266,10 @@ export const ClubApi = {
   getClubSchedules,
   getClubRole,
   applyClub,
+};
+export const UserApi = {
+  getUserInfo,
+  registerUserInfo,
+  updateUserInfo,
 };
 export const CommonApi = { getJWT };
