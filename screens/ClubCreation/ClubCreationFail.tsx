@@ -4,12 +4,6 @@ import styled from "styled-components/native";
 import { ClubCreationFailScreenProps } from "../../types/club";
 import { Ionicons } from "@expo/vector-icons";
 
-const Loader = styled.SafeAreaView`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`;
-
 const Container = styled.SafeAreaView`
   flex: 1;
   justify-content: center;

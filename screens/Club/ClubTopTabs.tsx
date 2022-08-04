@@ -94,6 +94,13 @@ const ClubTopTabs = ({
     [headerDiff]
   );
 
+  const renderClubFeed = useCallback(
+    (props) => (
+      <ClubFeed {...props} scrollY={scrollY} headerDiff={headerDiff} />
+    ),
+    [headerDiff]
+  );
+
   // Function in Modal
   const clubEdit = () => {
     console.log("edit button click!");
@@ -128,8 +135,12 @@ const ClubTopTabs = ({
     ["getClubRole", token, clubData.id],
     ClubApi.getClubRole,
     {
-      onSuccess: (res) => {},
-      onError: (err) => {},
+      onSuccess: (res) => {
+        console.log(res);
+      },
+      onError: (error) => {
+        console.log(error);
+      },
     }
   );
 
@@ -182,8 +193,7 @@ const ClubTopTabs = ({
         imageURI={clubData.thumbnail}
         name={clubData.name}
         shortDesc={clubData.clubShortDesc}
-        category1Name={clubData.category1Name}
-        category2Name={clubData.category2Name}
+        categories={clubData.categories}
         recruitStatus={clubData.recruitStatus}
         heightExpanded={heightExpanded}
         heightCollapsed={heightCollapsed}
@@ -219,7 +229,7 @@ const ClubTopTabs = ({
           <TopTab.Screen
             options={{ tabBarLabel: "게시물" }}
             name="ClubFeed"
-            component={ClubFeed}
+            component={renderClubFeed}
           />
         </TopTab.Navigator>
       </Animated.View>
@@ -228,8 +238,8 @@ const ClubTopTabs = ({
         <></>
       ) : (
         <FloatingActionButton
-          role={clubRole?.data.role}
-          applyStatus={clubRole?.data.applyStatus}
+          role={clubRole?.data?.role}
+          applyStatus={clubRole?.data?.applyStatus}
           onPressEdit={clubEdit}
           onPressJoin={clubJoin}
         />

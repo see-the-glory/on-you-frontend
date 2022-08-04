@@ -1,10 +1,9 @@
 import {
   KakaoOAuthToken,
-  getProfile as getKakaoProfile,
   login as kakaoLogin,
 } from "@react-native-seoul/kakao-login";
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React from "react";
 import { useMutation } from "react-query";
 import { CommonApi } from "../../api";
 import { useDispatch } from "react-redux";
@@ -50,7 +49,6 @@ const KakaoAuth = () => {
   const mutation = useMutation(CommonApi.getJWT, {
     onSuccess: (res) => {
       // redux 저장
-      console.log(res);
       dispatch(Login(res.token));
     },
     onError: (error) => {

@@ -113,8 +113,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({
   imageURI,
   name,
   shortDesc,
-  category1Name,
-  category2Name,
+  categories,
   recruitStatus,
   heightExpanded,
   heightCollapsed,
@@ -165,19 +164,19 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({
           <AnimatedFadeOutBox style={{ opacity: fadeOut }}>
             <InformationView>
               <CategoryView>
-                {category2Name !== null ? (
-                  <>
-                    <CategoryBox>
-                      <Text>{category1Name}</Text>
-                    </CategoryBox>
-                    <CategoryBox>
-                      <Text>{category2Name}</Text>
-                    </CategoryBox>
-                  </>
-                ) : (
+                {categories[0] ? (
                   <CategoryBox>
-                    <Text>{category1Name}</Text>
+                    <Text>{categories[0].name}</Text>
                   </CategoryBox>
+                ) : (
+                  <></>
+                )}
+                {categories[1] ? (
+                  <CategoryBox>
+                    <Text>{categories[1].name}</Text>
+                  </CategoryBox>
+                ) : (
+                  <></>
                 )}
               </CategoryView>
               <ClubNameView>
