@@ -83,7 +83,6 @@ const UserImage = styled.Image`
   height: 42.5px;
   border-radius: 100px;
   flex-grow: 0;
-  border: solid 1.5px #fff;
   background-color: #c4c4c4;
 `;
 

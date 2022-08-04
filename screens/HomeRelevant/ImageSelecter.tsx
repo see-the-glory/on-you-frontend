@@ -5,7 +5,6 @@ import * as ImagePicker from "expo-image-picker";
 import styled from "styled-components/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SelectDropdown from "react-native-select-dropdown";
-import axios from "axios";
 import { ClubApi, ClubCreationRequest, FeedCreateRequest, HomeApi } from "../../api";
 import { ImageSelecterProps } from "../../types/home";
 import { useMutation } from "react-query";
@@ -337,21 +336,6 @@ const ImageSelecter: React.FC<ImageSelecterProps> = ({
     return navigate("Home");
 
     //홈화면 새로고침 기능 넣기
-  };
-
-  const createHomeFeed = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.post(`http://3.39.190.23:8080/api/clubs`);
-      setData(response.data.data);
-      Alert.alert("등록되었습니다.");
-      setRefreshing(true);
-      return navigate("Home");
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (

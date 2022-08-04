@@ -4,7 +4,6 @@ import { useTheme } from "react-native-paper";
 import styled from "styled-components/native";
 import * as ImagePicker from "expo-image-picker";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 Date.prototype.format = function (f) {
   if (!this.valueOf()) return " ";
@@ -226,7 +225,7 @@ const EditProfile = () => {
           <Title>생년월일</Title>
           <TextBtn onPress={showDatePicker}>
             <Input pointerEvents="none" placeholder={placeholder} placeholderTextColor="#000000" underlineColorAndroid="transparent" editable={false} value={text} />
-            <DateTimePickerModal headerTextIOS={placeholder} isVisible={isDatePickerVisible} mode="date" onConfirm={handleConfirm} onCancel={hideDatePicker} />
+            {/* <DateTimePickerModal headerTextIOS={placeholder} isVisible={isDatePickerVisible} mode="date" onConfirm={handleConfirm} onCancel={hideDatePicker} /> */}
           </TextBtn>
         </Form>
         <Form>

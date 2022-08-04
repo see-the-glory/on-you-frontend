@@ -191,7 +191,7 @@ const ReplyPage: React.FC<NativeStackScreenProps<any, "ReplyPage">> = ({ navigat
     try {
       setLoading(true);
       const response = await fetch(`http://3.39.190.23:8080/api/clubs`);
-      setData(response.data.data.values);
+      setData(response.responses.content);
       console.log(data);
     } catch (error) {
       console.error(error);
