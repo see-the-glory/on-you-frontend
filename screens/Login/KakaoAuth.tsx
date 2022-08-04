@@ -1,6 +1,9 @@
-import { KakaoOAuthToken, getProfile as getKakaoProfile, login as kakaoLogin } from "@react-native-seoul/kakao-login";
+import {
+  KakaoOAuthToken,
+  login as kakaoLogin,
+} from "@react-native-seoul/kakao-login";
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React from "react";
 import { useMutation } from "react-query";
 import { CommonApi } from "../../api";
 import { useDispatch } from "react-redux";
@@ -68,7 +71,10 @@ const KakaoAuth = () => {
         resizeMode="center" // 'cover', 'contain', 'stretch', 'repeat', 'center' 중 선택
       ></Logo>
       <KakaoButton onPress={signInWithKakao}>
-        <KakaoImage source={require("../../assets/kakao_logo.png")} resizeMode="cover" />
+        <KakaoImage
+          source={require("../../assets/kakao_logo.png")}
+          resizeMode="cover"
+        />
         <Title>카카오로 시작하기</Title>
       </KakaoButton>
     </Container>

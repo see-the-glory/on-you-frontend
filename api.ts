@@ -79,9 +79,8 @@ export interface ClubResponse extends BaseResponse {
 }
 
 export interface ClubsResponse extends BaseResponse {
-  content: Club[];
-  totalPages: number;
-  size: number;
+  hasNext: boolean;
+  responses: { content: Club[]; size: number };
 }
 
 export interface FeedsResponse extends BaseResponse {

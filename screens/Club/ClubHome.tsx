@@ -348,6 +348,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
+            width: "100%",
             padding: 3,
             paddingHorizontal: SCREEN_PADDING_SIZE,
           }}

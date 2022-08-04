@@ -122,11 +122,12 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     fetchNextPage,
   } = useInfiniteQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
     getNextPageParam: (currentPage) => {
-      // if (currentPage)
-      //   return currentPage.data.hasNext === false
-      //     ? null
-      //     : currentPage.data.values[currentPage.data.values.length - 1].id;
-      return currentPage.content[currentPage.content.length - 1].customCursor;
+      if (currentPage)
+        return currentPage.hasNext === false
+          ? null
+          : currentPage.responses.content[
+              currentPage.responses.content.length - 1
+            ].customCursor;
     },
     onSuccess: (res) => {
       setIsPageTransition(false);
@@ -192,26 +193,6 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     if (hasNextPage) fetchNextPage();
   };
   const loading = categoryLoading && clubsLoading;
-
-  const tempClubs = [
-    {
-      id: 104,
-      name: "온유 프로젝트",
-      clubShortDesc: "모임 어플리케이션을 개발하는 프로젝트의 모임입니다.",
-      clubLongDesc: "Temp Long Desc",
-      announcement: "Temp Announcement",
-      organizationName: "시광교회",
-      members: [],
-      maxNumber: 10,
-      recruitNumber: 5,
-      thumbnail:
-        "https://images.unsplash.com/photo-1603969072881-b0fc7f3d77d7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-      recruitStatus: "RECRUIT",
-      creatorName: "진규",
-      category1Name: "음식",
-      category2Name: "봉사",
-    },
-  ];
 
   return loading ? (
     <Loader>
@@ -288,7 +269,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             refreshing={refreshing}
             onRefresh={onRefresh}
             onEndReached={loadMore}
-            data={clubs?.pages.map((page) => page.content).flat()}
+            data={clubs?.pages.map((page) => page.responses.content).flat()}
             columnWrapperStyle={{ justifyContent: "space-between" }}
             numColumns={2}
             keyExtractor={(item: Club, index: number) => String(index)}

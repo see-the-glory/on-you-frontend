@@ -123,14 +123,6 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   });
 
   const onSubmit = () => {
-    // console.log("category1: " + category1);
-    // console.log("category2: " + category2);
-    // console.log("clubName: " + clubName);
-    // console.log("clubMemberCount: " + clubMemberCount);
-    // console.log("briefIntroText: " + briefIntroText);
-    // console.log("detailIntroText " + detailIntroText);
-    // console.log("approvalMethod " + approvalMethod);
-    // console.log("imageURI " + imageURI);
 
     const data = {
       category1Id: category1,
