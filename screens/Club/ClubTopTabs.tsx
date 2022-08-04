@@ -1,11 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import {
-  Animated,
-  StatusBar,
-  TouchableOpacity,
-  useWindowDimensions,
-} from "react-native";
+import { Animated, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
@@ -87,19 +82,9 @@ const ClubTopTabs = ({
     extrapolate: "clamp",
   });
 
-  const renderClubHome = useCallback(
-    (props) => (
-      <ClubHome {...props} scrollY={scrollY} headerDiff={headerDiff} />
-    ),
-    [headerDiff]
-  );
+  const renderClubHome = useCallback((props) => <ClubHome {...props} scrollY={scrollY} headerDiff={headerDiff} />, [headerDiff]);
 
-  const renderClubFeed = useCallback(
-    (props) => (
-      <ClubFeed {...props} scrollY={scrollY} headerDiff={headerDiff} />
-    ),
-    [headerDiff]
-  );
+  const renderClubFeed = useCallback((props) => <ClubFeed {...props} scrollY={scrollY} headerDiff={headerDiff} />, [headerDiff]);
 
   // Function in Modal
   const clubEdit = () => {
@@ -131,18 +116,14 @@ const ClubTopTabs = ({
     isLoading: clubRoleLoading,
     data: clubRole,
     isRefetching: isRefetchingClubRole,
-  } = useQuery<ClubRoleResponse>(
-    ["getClubRole", token, clubData.id],
-    ClubApi.getClubRole,
-    {
-      onSuccess: (res) => {
-        console.log(res);
-      },
-      onError: (error) => {
-        console.log(error);
-      },
-    }
-  );
+  } = useQuery<ClubRoleResponse>(["getClubRole", token, clubData.id], ClubApi.getClubRole, {
+    onSuccess: (res) => {
+      console.log(res);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
   const mutation = useMutation(ClubApi.applyClub, {
     onSuccess: (res) => {
@@ -169,15 +150,8 @@ const ClubTopTabs = ({
           </TouchableOpacity>
         </LeftHeaderView>
         <RightHeaderView>
-          <TouchableOpacity
-            onPress={() => setHeartSelected(!heartSelected)}
-            style={{ marginRight: 10 }}
-          >
-            {heartSelected ? (
-              <Ionicons name="md-heart" size={24} color="white" />
-            ) : (
-              <Ionicons name="md-heart-outline" size={24} color="white" />
-            )}
+          <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)} style={{ marginRight: 10 }}>
+            {heartSelected ? <Ionicons name="md-heart" size={24} color="white" /> : <Ionicons name="md-heart-outline" size={24} color="white" />}
           </TouchableOpacity>
           {/* <TouchableOpacity>
             <Ionicons
@@ -220,36 +194,14 @@ const ClubTopTabs = ({
           tabBar={(props) => <ClubTabBar {...props} />}
           sceneContainerStyle={{ position: "absolute", zIndex: 1 }}
         >
-          <TopTab.Screen
-            options={{ tabBarLabel: "모임 정보" }}
-            name="ClubHome"
-            component={renderClubHome}
-            initialParams={{ clubData }}
-          />
-          <TopTab.Screen
-            options={{ tabBarLabel: "게시물" }}
-            name="ClubFeed"
-            component={renderClubFeed}
-          />
+          <TopTab.Screen options={{ tabBarLabel: "모임 정보" }} name="ClubHome" component={renderClubHome} initialParams={{ clubData }} />
+          <TopTab.Screen options={{ tabBarLabel: "게시물" }} name="ClubFeed" component={renderClubFeed} />
         </TopTab.Navigator>
       </Animated.View>
 
-      {clubRoleLoading ? (
-        <></>
-      ) : (
-        <FloatingActionButton
-          role={clubRole?.data?.role}
-          applyStatus={clubRole?.data?.applyStatus}
-          onPressEdit={clubEdit}
-          onPressJoin={clubJoin}
-        />
-      )}
+      {clubRoleLoading ? <></> : <FloatingActionButton role={clubRole?.data?.role} applyStatus={clubRole?.data?.applyStatus} onPressEdit={clubEdit} onPressJoin={clubJoin} />}
 
-      <ClubJoinModal
-        visible={joinModalVisible}
-        clubName={clubData.name}
-        clubSubmit={clubSubmit}
-      >
+      <ClubJoinModal visible={joinModalVisible} clubName={clubData.name} clubSubmit={clubSubmit}>
         <ModalHeaderRight>
           <ModalCloseButton
             onPress={() => {

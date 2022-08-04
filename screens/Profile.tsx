@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import { Logout } from "../store/actions";
 import { useDispatch } from "react-redux";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
 import { UserApi, UserInfoResponse } from "../api";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -116,9 +116,7 @@ const EditBox = styled.View`
 // 3. react query
 // 4. es5 / es6 차이 알아보기
 
-const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
-  navigation: { navigate },
-}) => {
+const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation: { navigate } }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
 
   const {
@@ -184,83 +182,53 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
             <Title>{userInfo?.data.name}</Title>
           </InfoBox>
           <EditBox>
-            <Icon
-              name="pencil-outline"
-              color="#295AF5"
-              size={20}
-              onPress={goToEditProfile}
-            />
+            <MaterialCommunityIcons name="pencil-outline" color="#295AF5" size={20} onPress={goToEditProfile} />
           </EditBox>
         </UserInfoSection>
       </Box>
       <MenuWrapper>
         <TouchMenu onPress={goToMyClub}>
           <MenuItem>
-            <Icon
-              name="star-outline"
-              color="#2E2E2E"
-              size={16}
-              style={{ marginRight: 10 }}
-            />
+            <MaterialCommunityIcons name="star-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
             <MenuItemText>나의 모임</MenuItemText>
             <ChevronBox>
-              <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
+              <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
             </ChevronBox>
           </MenuItem>
         </TouchMenu>
         <TouchMenu onPress={goToNotificationSettings}>
           <MenuItem>
-            <Icon
-              name="bell-outline"
-              color="#2E2E2E"
-              size={16}
-              style={{ marginRight: 10 }}
-            />
+            <MaterialCommunityIcons name="bell-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
             <MenuItemText>알림설정</MenuItemText>
             <ChevronBox>
-              <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
+              <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
             </ChevronBox>
           </MenuItem>
         </TouchMenu>
         <TouchMenu onPress={goToNotice}>
           <MenuItem>
-            <Icon
-              name="gate-not"
-              color="#2E2E2E"
-              size={16}
-              style={{ marginRight: 10 }}
-            />
+            <MaterialCommunityIcons name="gate-not" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
             <MenuItemText>공지사항</MenuItemText>
             <ChevronBox>
-              <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
+              <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
             </ChevronBox>
           </MenuItem>
         </TouchMenu>
         <TouchMenu onPress={goToHelp}>
           <MenuItem>
-            <Icon
-              name="comment-question-outline"
-              color="#2E2E2E"
-              size={16}
-              style={{ marginRight: 10 }}
-            />
+            <MaterialCommunityIcons name="comment-question-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
             <MenuItemText>고객센터/도움말</MenuItemText>
             <ChevronBox>
-              <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
+              <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
             </ChevronBox>
           </MenuItem>
         </TouchMenu>
         <TouchMenu onPress={goToTerms}>
           <MenuItem>
-            <Icon
-              name="file-document-outline"
-              color="#2E2E2E"
-              size={16}
-              style={{ marginRight: 10 }}
-            />
+            <MaterialCommunityIcons name="file-document-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
             <MenuItemText>약관</MenuItemText>
             <ChevronBox>
-              <Icon name="chevron-right" color="#A0A0A0" size={24} style={{}} />
+              <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
             </ChevronBox>
           </MenuItem>
         </TouchMenu>

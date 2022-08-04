@@ -44,9 +44,7 @@ const ButtonText = styled.Text`
   color: white;
 `;
 
-const ClubCreationFail: React.FC<ClubCreationFailScreenProps> = ({
-  navigation: { navigate },
-}) => {
+const ClubCreationFail: React.FC<ClubCreationFailScreenProps> = ({ navigation: { navigate } }) => {
   const { height: SCREEN_HEIGHT } = useWindowDimensions();
   const mainHeight = (SCREEN_HEIGHT / 10) * 8;
   const footerHeight = SCREEN_HEIGHT - mainHeight;

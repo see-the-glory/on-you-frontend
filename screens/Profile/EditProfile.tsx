@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  Keyboard,
-  TouchableWithoutFeedback,
-  useWindowDimensions,
-} from "react-native";
+import { Keyboard, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import { useTheme } from "react-native-paper";
 import styled from "styled-components/native";
 import * as ImagePicker from "expo-image-picker";
@@ -13,15 +9,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 Date.prototype.format = function (f) {
   if (!this.valueOf()) return " ";
 
-  var weekName = [
-    "일요일",
-    "월요일",
-    "화요일",
-    "수요일",
-    "목요일",
-    "금요일",
-    "토요일",
-  ];
+  var weekName = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
   var d = this;
 
   return f.replace(/(yyyy|yy|MM|dd|E|hh|mm|ss|a\/p)/gi, function ($1) {
@@ -207,11 +195,7 @@ const EditProfile = () => {
       <Container>
         <ImagePickerView>
           <ImagePickerWrap>
-            <ImagePickerButton
-              height={imageHeight}
-              onPress={pickImage}
-              activeOpacity={0.8}
-            >
+            <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={0.8}>
               <PickedImage height={imageHeight} source={{ uri: imageURI }} />
             </ImagePickerButton>
           </ImagePickerWrap>
@@ -226,37 +210,13 @@ const EditProfile = () => {
           <FieldContentView>
             <FieldContentLine>
               <Button onPress={() => setApprovalMethod(0)} activeOpacity={0.5}>
-                {approvalMethod ? (
-                  <MaterialCommunityIcons
-                    name="radiobox-blank"
-                    size={20}
-                    color="#E8E8E8"
-                  />
-                ) : (
-                  <MaterialCommunityIcons
-                    name="radiobox-marked"
-                    size={20}
-                    color="#ff714b"
-                  />
-                )}
+                {approvalMethod ? <MaterialCommunityIcons name="radiobox-blank" size={20} color="#E8E8E8" /> : <MaterialCommunityIcons name="radiobox-marked" size={20} color="#ff714b" />}
                 <FieldContentText> 남자</FieldContentText>
               </Button>
             </FieldContentLine>
             <FieldContentLine>
               <Button onPress={() => setApprovalMethod(1)} activeOpacity={0.5}>
-                {approvalMethod ? (
-                  <MaterialCommunityIcons
-                    name="radiobox-marked"
-                    size={20}
-                    color="#ff714b"
-                  />
-                ) : (
-                  <MaterialCommunityIcons
-                    name="radiobox-blank"
-                    size={20}
-                    color="#E8E8E8"
-                  />
-                )}
+                {approvalMethod ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#ff714b" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#E8E8E8" />}
                 <FieldContentText> 여자</FieldContentText>
               </Button>
             </FieldContentLine>
@@ -265,21 +225,8 @@ const EditProfile = () => {
         <Form>
           <Title>생년월일</Title>
           <TextBtn onPress={showDatePicker}>
-            <Input
-              pointerEvents="none"
-              placeholder={placeholder}
-              placeholderTextColor="#000000"
-              underlineColorAndroid="transparent"
-              editable={false}
-              value={text}
-            />
-            <DateTimePickerModal
-              headerTextIOS={placeholder}
-              isVisible={isDatePickerVisible}
-              mode="date"
-              onConfirm={handleConfirm}
-              onCancel={hideDatePicker}
-            />
+            <Input pointerEvents="none" placeholder={placeholder} placeholderTextColor="#000000" underlineColorAndroid="transparent" editable={false} value={text} />
+            <DateTimePickerModal headerTextIOS={placeholder} isVisible={isDatePickerVisible} mode="date" onConfirm={handleConfirm} onCancel={hideDatePicker} />
           </TextBtn>
         </Form>
         <Form>

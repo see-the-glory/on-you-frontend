@@ -97,12 +97,7 @@ interface ScheduleModalProps {
   children: object;
 }
 
-const ScheduleModal: React.FC<ScheduleModalProps> = ({
-  visible,
-  scheduleData,
-  selectIndex,
-  children,
-}) => {
+const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, selectIndex, children }) => {
   const [showModal, setShowModal] = useState(visible);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const opacity = useRef(new Animated.Value(0)).current;
@@ -128,11 +123,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
   };
 
   return (
-    <Modal
-      transparent
-      visible={showModal}
-      supportedOrientations={["landscape", "portrait"]}
-    >
+    <Modal transparent visible={showModal} supportedOrientations={["landscape", "portrait"]}>
       <Animated.View
         style={{
           flex: 1,
@@ -163,33 +154,18 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
               <DetailView>
                 <DetailHeader>
                   <DetailItem>
-                    <Feather
-                      name="clock"
-                      size={16}
-                      color="#79A0AB"
-                      style={{ marginRight: 7 }}
-                    />
+                    <Feather name="clock" size={16} color="#79A0AB" style={{ marginRight: 7 }} />
                     <DetailText>{item.startTime}시</DetailText>
                   </DetailItem>
                   <DetailItem>
-                    <Feather
-                      name="map-pin"
-                      size={16}
-                      color="#79A0AB"
-                      style={{ marginRight: 7 }}
-                    />
+                    <Feather name="map-pin" size={16} color="#79A0AB" style={{ marginRight: 7 }} />
                     <DetailText>{item.location}</DetailText>
                   </DetailItem>
                 </DetailHeader>
                 <Break sep={0} />
                 <DetailItemView>
                   <DetailItem style={{ paddingBottom: 15 }}>
-                    <Ionicons
-                      name="people-sharp"
-                      size={16}
-                      color="#79A0AB"
-                      style={{ marginRight: 7 }}
-                    />
+                    <Ionicons name="people-sharp" size={16} color="#79A0AB" style={{ marginRight: 7 }} />
                     <DetailTitle>참석 멤버</DetailTitle>
                   </DetailItem>
                   <DetailItem>

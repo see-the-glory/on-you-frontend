@@ -86,14 +86,7 @@ const ButtonText = styled.Text`
 
 const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   route: {
-    params: {
-      category1,
-      category2,
-      clubName,
-      clubMemberCount,
-      approvalMethod,
-      imageURI,
-    },
+    params: { category1, category2, clubName, clubMemberCount, approvalMethod, imageURI },
   },
   navigation: { navigate },
 }) => {
@@ -123,7 +116,6 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   });
 
   const onSubmit = () => {
-
     const data = {
       category1Id: category1,
       category2Id: category2,
@@ -179,9 +171,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
               textAlignVertical="top"
               onChangeText={(text) => setBriefIntroText(text)}
             />
-            <ExampleText>
-              ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!
-            </ExampleText>
+            <ExampleText>ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!</ExampleText>
           </FieldView>
           <FieldView>
             <FieldNameText>상세 소개</FieldNameText>

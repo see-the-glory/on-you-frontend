@@ -1,14 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  Keyboard,
-  Modal,
-  StatusBar,
-  Text,
-  TouchableWithoutFeedback,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { Animated, Keyboard, Modal, StatusBar, Text, TouchableWithoutFeedback, useWindowDimensions, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
@@ -125,12 +116,7 @@ interface ClubJoinModalProps {
   children: object;
 }
 
-const ClubJoinModal: React.FC<ClubJoinModalProps> = ({
-  visible,
-  clubName,
-  clubSubmit,
-  children,
-}) => {
+const ClubJoinModal: React.FC<ClubJoinModalProps> = ({ visible, clubName, clubSubmit, children }) => {
   const [showModal, setShowModal] = useState(visible);
   const [detailText, setDetailText] = useState<string>("");
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -158,11 +144,7 @@ const ClubJoinModal: React.FC<ClubJoinModalProps> = ({
   };
 
   return (
-    <Modal
-      transparent
-      visible={showModal}
-      supportedOrientations={["landscape", "portrait"]}
-    >
+    <Modal transparent visible={showModal} supportedOrientations={["landscape", "portrait"]}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Animated.View
           style={{
@@ -173,10 +155,7 @@ const ClubJoinModal: React.FC<ClubJoinModalProps> = ({
             opacity: opacity,
           }}
         >
-          <StatusBar
-            backgroundColor="rgba(0,0,0,0.5)"
-            barStyle="light-content"
-          />
+          <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="light-content" />
           <Container>
             <Header>
               {children}

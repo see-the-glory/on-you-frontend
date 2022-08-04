@@ -1,29 +1,12 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import Swiper from "react-native-swiper";
-import {
-  ActivityIndicator,
-  Alert,
-  Dimensions,
-  FlatList,
-  Platform,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, Dimensions, FlatList, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
 import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
-import {
-  Category,
-  CategoryResponse,
-  ClubApi,
-  Club,
-  ClubsResponse,
-  ClubsParams,
-} from "../api";
+import { Category, CategoryResponse, ClubApi, Club, ClubsResponse, ClubsParams } from "../api";
 import { ClubListScreenProps } from "../types/club";
 
 const Loader = styled.SafeAreaView`
@@ -122,12 +105,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     fetchNextPage,
   } = useInfiniteQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
     getNextPageParam: (currentPage) => {
-      if (currentPage)
-        return currentPage.hasNext === false
-          ? null
-          : currentPage.responses.content[
-              currentPage.responses.content.length - 1
-            ].customCursor;
+      if (currentPage) return currentPage.hasNext === false ? null : currentPage.responses.content[currentPage.responses.content.length - 1].customCursor;
     },
     onSuccess: (res) => {
       setIsPageTransition(false);
@@ -204,9 +182,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
         <FlatList
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{}}
-          ItemSeparatorComponent={() => (
-            <View style={{ marginHorizontal: 10 }} />
-          )}
+          ItemSeparatorComponent={() => <View style={{ marginHorizontal: 10 }} />}
           horizontal
           data={categoryData}
           keyExtractor={(item: Category) => item.id + ""}
@@ -218,11 +194,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               }}
               onPress={() => setCategory(index)}
             >
-              {index === selectedCategory ? (
-                <SelectedCategoryName>{item.name}</SelectedCategoryName>
-              ) : (
-                <CategoryName>{item.name}</CategoryName>
-              )}
+              {index === selectedCategory ? <SelectedCategoryName>{item.name}</SelectedCategoryName> : <CategoryName>{item.name}</CategoryName>}
             </CategoryButton>
           )}
         />

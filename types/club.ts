@@ -39,50 +39,23 @@ export type MainBottomTabParamList = {
 };
 
 // For Screens
-export type ClubListScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "Clubs"
->;
+export type ClubListScreenProps = NativeStackScreenProps<RootStackParamList, "Clubs">;
 
-export type ClubStackScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "ClubStack"
->;
+export type ClubStackScreenProps = NativeStackScreenProps<RootStackParamList, "ClubStack">;
 
-export type ClubHomeScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "ClubHome"
->;
+export type ClubHomeScreenProps = NativeStackScreenProps<RootStackParamList, "ClubHome">;
 
-export type ClubCreationStackProps = NativeStackScreenProps<
-  RootStackParamList,
-  "ClubCreationStack"
->;
+export type ClubCreationStackProps = NativeStackScreenProps<RootStackParamList, "ClubCreationStack">;
 
-export type ClubCreationStepOneScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "ClubCreationStepOne"
->;
+export type ClubCreationStepOneScreenProps = NativeStackScreenProps<RootStackParamList, "ClubCreationStepOne">;
 
-export type ClubCreationStepTwoScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "ClubCreationStepTwo"
->;
+export type ClubCreationStepTwoScreenProps = NativeStackScreenProps<RootStackParamList, "ClubCreationStepTwo">;
 
-export type ClubCreationStepThreeScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "ClubCreationStepThree"
->;
+export type ClubCreationStepThreeScreenProps = NativeStackScreenProps<RootStackParamList, "ClubCreationStepThree">;
 
-export type ClubCreationSuccessScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "ClubCreationSuccess"
->;
+export type ClubCreationSuccessScreenProps = NativeStackScreenProps<RootStackParamList, "ClubCreationSuccess">;
 
-export type ClubCreationFailScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  "ClubCreationFail"
->;
+export type ClubCreationFailScreenProps = NativeStackScreenProps<RootStackParamList, "ClubCreationFail">;
 
 // ClubHome Param For Collapsed Scroll Animation
 export interface ClubHomeParamList {
@@ -106,10 +79,7 @@ export type TopTabParamList = {
   ClubTopTabs: { clubData: Club };
 };
 
-export type ClubTopTabProps = MaterialTopTabScreenProps<
-  TopTabParamList,
-  "ClubTopTabs"
->;
+export type ClubTopTabProps = MaterialTopTabScreenProps<TopTabParamList, "ClubTopTabs">;
 
 export interface ClubHomeFloatingButtonProps {
   role: "MASTER" | "MANAGER" | "MEMBER" | undefined;

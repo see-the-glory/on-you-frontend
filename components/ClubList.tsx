@@ -83,8 +83,7 @@ const Tag = styled.View<{ color: string }>`
   padding: 3px 5px 3px 5px;
   border-radius: 5px;
   margin-right: 5px;
-  border: 1px solid
-    ${(props) => (props.color === "white" ? "#A5A5A5" : "#B4B4B4")};
+  border: 1px solid ${(props) => (props.color === "white" ? "#A5A5A5" : "#B4B4B4")};
 `;
 const DescView = styled.View`
   width: 100%;
@@ -104,33 +103,14 @@ interface ClubListProps {
   recruitStatus: string;
 }
 
-const ClubList: React.FC<ClubListProps> = ({
-  thumbnailPath,
-  organizationName,
-  clubName,
-  memberNum,
-  clubShortDesc,
-  categories,
-  recruitStatus,
-}) => {
+const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, clubName, memberNum, clubShortDesc, categories, recruitStatus }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const colSize = Math.floor(SCREEN_WIDTH / 2) - 0.5;
   return (
     <Club>
       <ThumbnailView>
-        <ThumbnailImage
-          source={
-            thumbnailPath === null
-              ? require("../assets/basic.jpg")
-              : { uri: thumbnailPath }
-          }
-          size={colSize}
-        ></ThumbnailImage>
-        <Gradient
-          size={colSize}
-          colors={["transparent", "rgba(0, 0, 0, 0.8)"]}
-          start={{ x: 0.5, y: 0.65 }}
-        >
+        <ThumbnailImage source={thumbnailPath === null ? require("../assets/basic.jpg") : { uri: thumbnailPath }} size={colSize}></ThumbnailImage>
+        <Gradient size={colSize} colors={["transparent", "rgba(0, 0, 0, 0.8)"]} start={{ x: 0.5, y: 0.65 }}>
           {recruitStatus === "RECRUIT" ? (
             <RecruitView>
               <RecruitText>모집중</RecruitText>
@@ -159,9 +139,7 @@ const ClubList: React.FC<ClubListProps> = ({
         <TagView>
           <Tag color={"white"}>
             <FontAwesome5 name="cross" size={8} color="#A5A5A5" />
-            <Text style={{ color: "#A5A5A5", marginLeft: 3 }}>
-              {organizationName}
-            </Text>
+            <Text style={{ color: "#A5A5A5", marginLeft: 3 }}>{organizationName}</Text>
           </Tag>
           {categories[0] ? (
             <Tag color={"#B4B4B4"}>

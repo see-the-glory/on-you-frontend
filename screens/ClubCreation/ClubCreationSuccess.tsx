@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { ClubCreationSuccessScreenProps } from "../../types/club";
