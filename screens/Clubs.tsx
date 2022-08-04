@@ -30,6 +30,7 @@ const Loader = styled.SafeAreaView`
   flex: 1;
   justify-content: center;
   align-items: center;
+  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0};
 `;
 
 const CategoryButton = styled.TouchableOpacity`
@@ -51,6 +52,7 @@ const SelectedCategoryName = styled.Text`
 
 const Container = styled.SafeAreaView`
   flex: 1;
+  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0};
 `;
 
 const HeaderView = styled.View`
@@ -104,7 +106,9 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     clubState: null,
     minMember: null,
     maxMember: null,
-    sort: null,
+    sort: "created",
+    showRecruiting: null,
+    showMy: null,
   });
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [categoryData, setCategoryData] = useState<Category[]>([]);
@@ -118,9 +122,12 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     fetchNextPage,
   } = useInfiniteQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
     getNextPageParam: (currentPage) => {
-      return currentPage.data.hasNext === false
-        ? null
-        : currentPage.data.values[currentPage.data.values.length - 1].id;
+      if (currentPage)
+        return currentPage.hasNext === false
+          ? null
+          : currentPage.responses.content[
+              currentPage.responses.content.length - 1
+            ].customCursor;
     },
     onSuccess: (res) => {
       setIsPageTransition(false);
@@ -142,6 +149,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
           id: 0,
           name: "전체",
           thumbnail: null,
+          order: null,
         },
         ...res.data,
       ]);
@@ -185,20 +193,13 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     if (hasNextPage) fetchNextPage();
   };
   const loading = categoryLoading && clubsLoading;
+
   return loading ? (
-    <Loader
-      style={{
-        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-      }}
-    >
+    <Loader>
       <ActivityIndicator />
     </Loader>
   ) : (
-    <Container
-      style={{
-        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-      }}
-    >
+    <Container>
       <HeaderView>
         <FlatList
           showsHorizontalScrollIndicator={false}
@@ -268,7 +269,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             refreshing={refreshing}
             onRefresh={onRefresh}
             onEndReached={loadMore}
-            data={clubs?.pages.map((page) => page.data.values).flat()}
+            data={clubs?.pages.map((page) => page.responses.content).flat()}
             columnWrapperStyle={{ justifyContent: "space-between" }}
             numColumns={2}
             keyExtractor={(item: Club, index: number) => String(index)}
@@ -284,8 +285,8 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                   clubName={item.name}
                   memberNum={item.members.length}
                   clubShortDesc={item.clubShortDesc}
-                  category1Name={item.category1Name}
-                  category2Name={item.category2Name}
+                  categories={item.categories}
+                  recruitStatus={item.recruitStatus}
                 />
               </TouchableOpacity>
             )}

@@ -10,6 +10,7 @@ export interface Category {
   description: string;
   name: string;
   thumbnail: string | null;
+  order: number | null;
 }
 
 export interface Club {
@@ -23,11 +24,21 @@ export interface Club {
   maxNumber: number;
   recruitNumber: number;
   thumbnail: string | null;
-  recruitStatus: string | null;
+  recruitStatus: string;
   applyStatus?: string | null;
   creatorName: string;
-  category1Name: string;
-  category2Name: string | null;
+  created: string;
+  categories: Category[];
+  customCursor: string;
+}
+
+export interface Feed {
+  userName: string;
+  content: string;
+  imageUrls: string[];
+  hashtags: string[];
+  likeYn: boolean;
+  likesCount: number;
 }
 
 export interface Member {
@@ -38,6 +49,7 @@ export interface Member {
   name: string;
   organization: string;
   sex: string;
+  role: string | null;
 }
 
 export interface Schedule {
@@ -67,10 +79,12 @@ export interface ClubResponse extends BaseResponse {
 }
 
 export interface ClubsResponse extends BaseResponse {
-  data: {
-    values: Club[];
-    hasNext: boolean;
-  };
+  hasNext: boolean;
+  responses: { content: Club[]; size: number };
+}
+
+export interface FeedsResponse extends BaseResponse {
+  data: Feed[];
 }
 
 export interface ClubsParams {
@@ -79,6 +93,8 @@ export interface ClubsParams {
   minMember: number | null;
   maxMember: number | null;
   sort: string | null;
+  showRecruiting: boolean | null;
+  showMy: boolean | null;
 }
 
 export interface ClubSchedulesResponse extends BaseResponse {
@@ -96,8 +112,7 @@ export interface ClubCreationRequest {
     name: string | undefined;
   } | null;
   data: {
-    category1Id: number;
-    category2Id: number | null;
+    category: number[];
     isApproveRequired: string;
     clubShortDesc: string;
     clubLongDesc: string | null;
@@ -123,9 +138,9 @@ const getCategories = () =>
 const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
   return fetch(
-    `${BASE_URL}/api/clubs?category1Id=${
-      clubsParams.categoryId ? clubsParams.categoryId : ""
-    }&cursorId=${pageParam ? pageParam : ""}`
+    `${BASE_URL}/api/clubs?sort=${clubsParams.sort}&customCursor=${
+      pageParam ? pageParam : ""
+    }`
   ).then((res) => res.json());
 };
 
@@ -213,6 +228,15 @@ const getJWT = (req: LoginRequest) => {
   }).then((res) => res.json());
 };
 
+const getFeeds = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return fetch(`${BASE_URL}/api/feeds`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((res) => res.json());
+};
+
 export const ClubApi = {
   getCategories,
   getClub,
@@ -221,5 +245,8 @@ export const ClubApi = {
   getClubSchedules,
   getClubRole,
   applyClub,
+};
+export const FeedApi = {
+  getFeeds,
 };
 export const CommonApi = { getJWT };
