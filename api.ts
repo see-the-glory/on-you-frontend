@@ -87,6 +87,21 @@ export interface FeedsResponse extends BaseResponse {
   data: Feed[];
 }
 
+export interface UserInfoResponse extends BaseResponse {
+  data: {
+    applyStatus: string;
+    birthday: string;
+    created: string;
+    email: string;
+    id: number;
+    name: string;
+    organizationName: string;
+    role: string;
+    sex: string;
+    thumbnail: string;
+  };
+}
+
 export interface ClubsParams {
   categoryId: number | null;
   clubState: number | null;
@@ -228,6 +243,36 @@ const getJWT = (req: LoginRequest) => {
   }).then((res) => res.json());
 };
 
+const getUserInfo = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return fetch(`${BASE_URL}/api/user`, {
+    method: "GET",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((response) => response.json());
+};
+
+const registerUserInfo = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return fetch(`${BASE_URL}/api/user`, {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((response) => response.json());
+};
+
+const updateUserInfo = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return fetch(`${BASE_URL}/api/user`, {
+    method: "PUT",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((response) => response.json());
+};
+  
 const getFeeds = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
   return fetch(`${BASE_URL}/api/feeds`, {
@@ -246,7 +291,15 @@ export const ClubApi = {
   getClubRole,
   applyClub,
 };
+
+export const UserApi = {
+  getUserInfo,
+  registerUserInfo,
+  updateUserInfo,
+};
+
 export const FeedApi = {
   getFeeds,
 };
+
 export const CommonApi = { getJWT };
