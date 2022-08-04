@@ -24,8 +24,7 @@ const TextWrap = styled.View<{ isFocused: boolean; height: number }>`
   height: ${(props) => props.height}px;
   justify-content: center;
   border-bottom-width: 2px;
-  border-bottom-color: ${(props) =>
-    props.isFocused ? "black" : "transparent"};
+  border-bottom-color: ${(props) => (props.isFocused ? "black" : "transparent")};
 `;
 
 const TabText = styled.Text<{ isFocused: boolean }>`
@@ -35,21 +34,12 @@ const TabText = styled.Text<{ isFocused: boolean }>`
 
 const TAP_TAP_HEIGHT = 40;
 
-const ClubTabBar: React.FC<MaterialTopTabBarProps> = ({
-  state,
-  descriptors,
-  navigation,
-}) => {
+const ClubTabBar: React.FC<MaterialTopTabBarProps> = ({ state, descriptors, navigation }) => {
   return (
     <TabBarContainer height={TAP_TAP_HEIGHT}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-            ? options.title
-            : route.name;
+        const label = options.tabBarLabel !== undefined ? options.tabBarLabel : options.title !== undefined ? options.title : route.name;
 
         const isFocused = state.index === index;
 

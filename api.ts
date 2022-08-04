@@ -147,16 +147,11 @@ export interface LoginRequest {
   token: string;
 }
 
-const getCategories = () =>
-  fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
+const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
 const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
-  return fetch(
-    `${BASE_URL}/api/clubs?sort=${clubsParams.sort}&customCursor=${
-      pageParam ? pageParam : ""
-    }`
-  ).then((res) => res.json());
+  return fetch(`${BASE_URL}/api/clubs?sort=${clubsParams.sort}&customCursor=${pageParam ? pageParam : ""}`).then((res) => res.json());
 };
 
 const getClub = ({ queryKey }: any) => {
@@ -166,9 +161,7 @@ const getClub = ({ queryKey }: any) => {
 
 const getClubSchedules = ({ queryKey }: any) => {
   const [_key, clubId]: [string, number] = queryKey;
-  return fetch(`${BASE_URL}/api/clubs/${clubId}/schedules`).then((res) =>
-    res.json()
-  );
+  return fetch(`${BASE_URL}/api/clubs/${clubId}/schedules`).then((res) => res.json());
 };
 
 const getClubRole = ({ queryKey }: any) => {
@@ -272,7 +265,7 @@ const updateUserInfo = ({ queryKey }: any) => {
     },
   }).then((response) => response.json());
 };
-  
+
 const getFeeds = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
   return fetch(`${BASE_URL}/api/feeds`, {

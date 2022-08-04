@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  useWindowDimensions,
-} from "react-native";
+import { ActivityIndicator, Alert, FlatList, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { ClubCreationStepOneScreenProps } from "../../types/club";
@@ -143,8 +138,7 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
             <H1>카테고리</H1>
             <H2>개설하실 모임의 카테고리를 선택해주세요.</H2>
             <H3>
-              <Ionicons name="checkmark-sharp" size={16} color="#8b8b8b" />{" "}
-              중복선택 2개까지 가능
+              <Ionicons name="checkmark-sharp" size={16} color="#8b8b8b" /> 중복선택 2개까지 가능
             </H3>
           </HeaderView>
         </>
@@ -179,23 +173,8 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
         <CategoryView>
           {item.map((categoryItem, index) => {
             return (
-              <CategoryItem
-                key={index}
-                activeOpacity={0.8}
-                onPress={() => onPressCategory(categoryItem.id)}
-                selected={
-                  categoryItem.id === selectCategory1 ||
-                  categoryItem.id === selectCategory2
-                }
-              >
-                <CategoryText
-                  selected={
-                    categoryItem.id === selectCategory1 ||
-                    categoryItem.id === selectCategory2
-                  }
-                >
-                  {categoryItem.name}
-                </CategoryText>
+              <CategoryItem key={index} activeOpacity={0.8} onPress={() => onPressCategory(categoryItem.id)} selected={categoryItem.id === selectCategory1 || categoryItem.id === selectCategory2}>
+                <CategoryText selected={categoryItem.id === selectCategory1 || categoryItem.id === selectCategory2}>{categoryItem.name}</CategoryText>
               </CategoryItem>
             );
           })}

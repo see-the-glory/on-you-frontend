@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-  Alert,
-  Keyboard,
-  TouchableWithoutFeedback,
-  useWindowDimensions,
-} from "react-native";
+import { Alert, Keyboard, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -165,16 +160,8 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
         </HeaderView>
 
         <ImagePickerView>
-          <ImagePickerButton
-            height={imageHeight}
-            onPress={pickImage}
-            activeOpacity={0.8}
-          >
-            {imageURI ? (
-              <PickedImage height={imageHeight} source={{ uri: imageURI }} />
-            ) : (
-              <ImagePickerText>대표 사진 설정</ImagePickerText>
-            )}
+          <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={0.8}>
+            {imageURI ? <PickedImage height={imageHeight} source={{ uri: imageURI }} /> : <ImagePickerText>대표 사진 설정</ImagePickerText>}
           </ImagePickerButton>
         </ImagePickerView>
 
@@ -222,19 +209,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
                   activeOpacity={0.5}
                 >
                   <FieldContentText>인원 수 무제한으로 받기</FieldContentText>
-                  {limitCheck ? (
-                    <MaterialCommunityIcons
-                      name="checkbox-marked-outline"
-                      size={20}
-                      color="black"
-                    />
-                  ) : (
-                    <MaterialCommunityIcons
-                      name="checkbox-blank-outline"
-                      size={20}
-                      color="black"
-                    />
-                  )}
+                  {limitCheck ? <MaterialCommunityIcons name="checkbox-marked-outline" size={20} color="black" /> : <MaterialCommunityIcons name="checkbox-blank-outline" size={20} color="black" />}
                 </Button>
               </FieldContentLine>
             </FieldContentView>
@@ -243,44 +218,14 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
             <FieldNameText>가입 승인</FieldNameText>
             <FieldContentView>
               <FieldContentLine>
-                <Button
-                  onPress={() => setApprovalMethod(0)}
-                  activeOpacity={0.5}
-                >
-                  {approvalMethod ? (
-                    <MaterialCommunityIcons
-                      name="radiobox-blank"
-                      size={20}
-                      color="black"
-                    />
-                  ) : (
-                    <MaterialCommunityIcons
-                      name="radiobox-marked"
-                      size={20}
-                      color="black"
-                    />
-                  )}
+                <Button onPress={() => setApprovalMethod(0)} activeOpacity={0.5}>
+                  {approvalMethod ? <MaterialCommunityIcons name="radiobox-blank" size={20} color="black" /> : <MaterialCommunityIcons name="radiobox-marked" size={20} color="black" />}
                   <FieldContentText> 누구나 바로 가입</FieldContentText>
                 </Button>
               </FieldContentLine>
               <FieldContentLine>
-                <Button
-                  onPress={() => setApprovalMethod(1)}
-                  activeOpacity={0.5}
-                >
-                  {approvalMethod ? (
-                    <MaterialCommunityIcons
-                      name="radiobox-marked"
-                      size={20}
-                      color="black"
-                    />
-                  ) : (
-                    <MaterialCommunityIcons
-                      name="radiobox-blank"
-                      size={20}
-                      color="black"
-                    />
-                  )}
+                <Button onPress={() => setApprovalMethod(1)} activeOpacity={0.5}>
+                  {approvalMethod ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="black" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="black" />}
                   <FieldContentText> 관리자 승인 후 가입</FieldContentText>
                 </Button>
               </FieldContentLine>

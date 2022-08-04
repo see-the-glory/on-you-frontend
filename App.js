@@ -31,20 +31,10 @@ const RootNavigation = () => {
   };
 
   if (!ready) {
-    return (
-      <AppLoading
-        startAsync={startLoading}
-        onFinish={onFinish}
-        onError={console.error}
-      />
-    );
+    return <AppLoading startAsync={startLoading} onFinish={onFinish} onError={console.error} />;
   }
 
-  return (
-    <NavigationContainer>
-      {token === null ? <LoginStack /> : <Root />}
-    </NavigationContainer>
-  );
+  return <NavigationContainer>{token === null ? <LoginStack /> : <Root />}</NavigationContainer>;
 };
 
 export default function App() {

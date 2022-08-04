@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Text,
-  Alert,
-  Platform,
-  Pressable,
-  View,
-  ScrollView,
-  Button,
-} from "react-native";
+import { Text, Alert, Platform, Pressable, View, ScrollView, Button } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SelectDropdown from "react-native-select-dropdown";
 import RNPickerSelect from "react-native-picker-select";
@@ -72,34 +64,14 @@ export default function CreateHomePeed({ navigation: { navigate } }) {
 
   const [image, setImage] = useState(null);
 
-  const category = [
-    "독서",
-    "자기개발",
-    "음식",
-    "봉사",
-    "운동",
-    "문화생활",
-    "게임",
-    "창작",
-    "여행",
-    "경건생활",
-    "반려동물",
-    "기타",
-  ];
+  const category = ["독서", "자기개발", "음식", "봉사", "운동", "문화생활", "게임", "창작", "여행", "경건생활", "반려동물", "기타"];
 
   return (
     <Container>
       <ImageSelector>
-        <View
-          style={{ backgroundColor: "gray", height: 120, width: 120 }}
-        ></View>
+        <View style={{ backgroundColor: "gray", height: 120, width: 120 }}></View>
         <ScrollView>
-          <TextInPut
-            multiline
-            numberOfLines={5}
-            placeholder="문구 입력..."
-            keyboardType="email-address"
-          />
+          <TextInPut multiline numberOfLines={5} placeholder="문구 입력..." keyboardType="email-address" />
         </ScrollView>
       </ImageSelector>
       <PublicArea>

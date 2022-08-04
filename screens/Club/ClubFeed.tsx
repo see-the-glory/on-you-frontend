@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  useWindowDimensions,
-  Animated,
-} from "react-native";
+import { ActivityIndicator, FlatList, useWindowDimensions, Animated } from "react-native";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
@@ -27,10 +22,7 @@ const FeedImage = styled.Image<{ size: number }>`
 
 const ClubFeed = ({ navigation: { navigate }, scrollY, headerDiff }) => {
   const token = useSelector((state: any) => state.AuthReducers.authToken);
-  const { isLoading: feedsLoading, data: feeds } = useQuery<FeedsResponse>(
-    ["getFeeds", token],
-    FeedApi.getFeeds
-  );
+  const { isLoading: feedsLoading, data: feeds } = useQuery<FeedsResponse>(["getFeeds", token], FeedApi.getFeeds);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const numColumn = 3;
   const feedSize = Math.round(SCREEN_WIDTH / 3) - 1;
@@ -41,10 +33,7 @@ const ClubFeed = ({ navigation: { navigate }, scrollY, headerDiff }) => {
     </Loader>
   ) : (
     <Animated.FlatList
-      onScroll={Animated.event(
-        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-        { useNativeDriver: true }
-      )}
+      onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
       style={{
         flex: 1,
         transform: [
@@ -67,14 +56,7 @@ const ClubFeed = ({ navigation: { navigate }, scrollY, headerDiff }) => {
       keyExtractor={(item: Feed, index: number) => String(index)}
       renderItem={({ item, index }: { item: Feed; index: number }) => (
         <FeedBox>
-          <FeedImage
-            size={feedSize}
-            source={
-              item.imageUrls[0] === undefined
-                ? require("../../assets/basic.jpg")
-                : { uri: item.imageUrls[0] }
-            }
-          />
+          <FeedImage size={feedSize} source={item.imageUrls[0] === undefined ? require("../../assets/basic.jpg") : { uri: item.imageUrls[0] }} />
         </FeedBox>
       )}
     />

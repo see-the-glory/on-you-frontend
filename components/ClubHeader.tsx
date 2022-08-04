@@ -109,17 +109,7 @@ const ContentText = styled.Text`
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 const AnimatedFadeOutBox = Animated.createAnimatedComponent(View);
 
-const ClubHeader: React.FC<ClubHomeHaederProps> = ({
-  imageURI,
-  name,
-  shortDesc,
-  categories,
-  recruitStatus,
-  heightExpanded,
-  heightCollapsed,
-  headerDiff,
-  scrollY,
-}) => {
+const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, categories, recruitStatus, heightExpanded, heightCollapsed, headerDiff, scrollY }) => {
   const fadeIn = scrollY.interpolate({
     inputRange: [0, headerDiff],
     outputRange: [-1, 1],
@@ -132,12 +122,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({
 
   return (
     <Header>
-      <HeaderImage
-        source={
-          imageURI === null ? require("../assets/basic.jpg") : { uri: imageURI }
-        }
-        height={heightExpanded}
-      >
+      <HeaderImage source={imageURI === null ? require("../assets/basic.jpg") : { uri: imageURI }} height={heightExpanded}>
         <AnimatedBlurView
           intensity={70}
           tint="dark"
@@ -188,26 +173,12 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({
               <Break></Break>
               <DetailInfoView>
                 <DetailInfoContent>
-                  <Ionicons
-                    name="calendar"
-                    size={14}
-                    color="yellow"
-                    style={{ marginRight: 5 }}
-                  />
+                  <Ionicons name="calendar" size={14} color="yellow" style={{ marginRight: 5 }} />
                   <ContentText>May 7 | 14:00 PM</ContentText>
                 </DetailInfoContent>
                 <DetailInfoContent>
-                  <Ionicons
-                    name="md-person-circle-outline"
-                    size={14}
-                    color="yellow"
-                    style={{ marginRight: 5 }}
-                  />
-                  {recruitStatus.toUpperCase() === "RECRUIT" ? (
-                    <ContentText>멤버 모집 중!</ContentText>
-                  ) : (
-                    <ContentText>멤버 모집 기간 아님</ContentText>
-                  )}
+                  <Ionicons name="md-person-circle-outline" size={14} color="yellow" style={{ marginRight: 5 }} />
+                  {recruitStatus.toUpperCase() === "RECRUIT" ? <ContentText>멤버 모집 중!</ContentText> : <ContentText>멤버 모집 기간 아님</ContentText>}
                 </DetailInfoContent>
               </DetailInfoView>
             </InformationView>

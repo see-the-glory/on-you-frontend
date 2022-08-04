@@ -1,8 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import {
-  BottomTabBarProps,
-  createBottomTabNavigator,
-} from "@react-navigation/bottom-tabs";
+import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Search from "../screens/Search";
 import Home from "../screens/Home";
 import Clubs from "../screens/Clubs";
@@ -61,11 +58,7 @@ const AnimatedIconButton = Animated.createAnimatedComponent(IconButton);
 
 const Tab = createBottomTabNavigator<MainBottomTabParamList>();
 
-const CustomTabBar: React.FC<BottomTabBarProps> = ({
-  state,
-  descriptors,
-  navigation,
-}) => {
+const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigation }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const TAB_WIDTH = SCREEN_WIDTH / 4;
   const translateX = useRef(new Animated.Value(0)).current;
@@ -121,15 +114,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
                 onPress={onPress}
                 style={{}}
               >
-                <Ionicons
-                  name={
-                    isFocused
-                      ? route.params.activeIcon
-                      : route.params.inActiveIcon
-                  }
-                  size={24}
-                  color={isFocused ? "black" : "gray"}
-                />
+                <Ionicons name={isFocused ? route.params.activeIcon : route.params.inActiveIcon} size={24} color={isFocused ? "black" : "gray"} />
               </AnimatedIconButton>
             );
           })}
@@ -146,30 +131,10 @@ const Tabs = () => (
     screenOptions={{ tabBarShowLabel: false, headerShown: false }}
     tabBar={(props) => <CustomTabBar {...props} />}
   >
-    <Tab.Screen
-      name="Home"
-      component={Home}
-      initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }}
-     options={{headerShown: false}}
-    />
-    <Tab.Screen
-      name="Search"
-      component={Search}
-      initialParams={{ activeIcon: "search", inActiveIcon: "search-outline" }}
-      options={{headerShown: false}}
-    />
-    <Tab.Screen
-      name="Clubs"
-      component={Clubs}
-      initialParams={{ activeIcon: "grid", inActiveIcon: "grid-outline" }}
-      options={{}}
-    />
-    <Tab.Screen
-      name="Profile"
-      component={Profile}
-      initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }}
-      options={{}}
-    />
+    <Tab.Screen name="Home" component={Home} initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }} options={{ headerShown: false }} />
+    <Tab.Screen name="Search" component={Search} initialParams={{ activeIcon: "search", inActiveIcon: "search-outline" }} options={{ headerShown: false }} />
+    <Tab.Screen name="Clubs" component={Clubs} initialParams={{ activeIcon: "grid", inActiveIcon: "grid-outline" }} options={{}} />
+    <Tab.Screen name="Profile" component={Profile} initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }} options={{}} />
   </Tab.Navigator>
 );
 

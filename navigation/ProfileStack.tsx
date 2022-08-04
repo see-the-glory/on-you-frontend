@@ -26,16 +26,12 @@ const ProfileStack = ({ navigation: { navigate } }) => {
         options={{
           title: "프로필 수정",
           headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigate("Tabs", { screen: "Profile" })}
-            >
+            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),
           headerRight: () => (
-            <TouchableOpacity
-              onPress={() => navigate("Tabs", { screen: "Profile" })}
-            >
+            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
               <Text style={{ color: "#2995FA" }}>저장</Text>
             </TouchableOpacity>
           ),
@@ -47,9 +43,7 @@ const ProfileStack = ({ navigation: { navigate } }) => {
         options={{
           title: "나의 모임",
           headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigate("Tabs", { screen: "Profile" })}
-            >
+            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),
@@ -61,9 +55,7 @@ const ProfileStack = ({ navigation: { navigate } }) => {
         options={{
           title: "알림설정",
           headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigate("Tabs", { screen: "Profile" })}
-            >
+            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),
@@ -75,9 +67,7 @@ const ProfileStack = ({ navigation: { navigate } }) => {
         options={{
           title: "공지사항",
           headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigate("Tabs", { screen: "Profile" })}
-            >
+            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),
@@ -89,9 +79,7 @@ const ProfileStack = ({ navigation: { navigate } }) => {
         options={{
           title: "고객센터/도움말",
           headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigate("Tabs", { screen: "Profile" })}
-            >
+            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),
@@ -103,9 +91,7 @@ const ProfileStack = ({ navigation: { navigate } }) => {
         options={{
           title: "약관",
           headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigate("Tabs", { screen: "Profile" })}
-            >
+            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),

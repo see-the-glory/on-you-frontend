@@ -37,16 +37,10 @@ const FloatingButton = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const AnimatedFloatingMainButton =
-  Animated.createAnimatedComponent(FloatingMainButton);
+const AnimatedFloatingMainButton = Animated.createAnimatedComponent(FloatingMainButton);
 const AnimatedFloatingButton = Animated.createAnimatedComponent(FloatingButton);
 
-const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({
-  role,
-  applyStatus,
-  onPressEdit,
-  onPressJoin,
-}) => {
+const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, applyStatus, onPressEdit, onPressJoin }) => {
   const [open, setOpen] = useState(0);
   const animation = useRef(new Animated.Value(0)).current;
   const rotation = animation.interpolate({
@@ -77,9 +71,7 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({
 
   return role ? (
     <FloatingActionView>
-      <AnimatedFloatingButton
-        style={{ opacity: fade, transform: [{ translateY: secondY }] }}
-      >
+      <AnimatedFloatingButton style={{ opacity: fade, transform: [{ translateY: secondY }] }}>
         <MaterialCommunityIcons name="image-plus" size={18} color="#e77f67" />
       </AnimatedFloatingButton>
       <AnimatedFloatingButton
@@ -88,17 +80,9 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({
         }}
         style={{ opacity: fade, transform: [{ translateY: firstY }] }}
       >
-        <MaterialCommunityIcons
-          name="pencil-outline"
-          size={18}
-          color="#e77f67"
-        />
+        <MaterialCommunityIcons name="pencil-outline" size={18} color="#e77f67" />
       </AnimatedFloatingButton>
-      <AnimatedFloatingMainButton
-        onPress={toggleMenu}
-        activeOpacity={1}
-        style={{ transform: [{ rotate: rotation }] }}
-      >
+      <AnimatedFloatingMainButton onPress={toggleMenu} activeOpacity={1} style={{ transform: [{ rotate: rotation }] }}>
         <MaterialCommunityIcons name="plus" size={28} color="white" />
       </AnimatedFloatingMainButton>
     </FloatingActionView>

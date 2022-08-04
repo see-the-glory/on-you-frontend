@@ -51,13 +51,7 @@ interface CircleIconProps {
   kerning?: number;
 }
 
-const CircleIcon: React.FC<CircleIconProps> = ({
-  size,
-  uri,
-  name,
-  badge,
-  kerning,
-}) => {
+const CircleIcon: React.FC<CircleIconProps> = ({ size, uri, name, badge, kerning }) => {
   return (
     <Container kerning={kerning ? kerning : 0}>
       {badge ? (
