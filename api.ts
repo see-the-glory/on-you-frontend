@@ -10,7 +10,6 @@ export interface Category {
   description: string;
   name: string;
   thumbnail: string | null;
-  order: number | null;
 }
 
 export interface Club {
@@ -24,21 +23,11 @@ export interface Club {
   maxNumber: number;
   recruitNumber: number;
   thumbnail: string | null;
-  recruitStatus: string;
+  recruitStatus: string | null;
   applyStatus?: string | null;
   creatorName: string;
-  created: string;
-  categories: Category[];
-  customCursor: string;
-}
-
-export interface Feed {
-  userName: string;
-  content: string;
-  imageUrls: string[];
-  hashtags: string[];
-  likeYn: boolean;
-  likesCount: number;
+  category1Name: string;
+  category2Name: string | null;
 }
 
 export interface Member {
@@ -49,7 +38,6 @@ export interface Member {
   name: string;
   organization: string;
   sex: string;
-  role: string | null;
 }
 
 export interface Schedule {
@@ -59,6 +47,28 @@ export interface Schedule {
   location: string;
   startDate: string;
   endDate: string | null;
+}
+
+export interface Feed {
+  feedId: number;
+  clubId: number;
+  clubName: string;
+  userId: number;
+  userName: string;
+  content: string;
+  imageUrls: string | null;
+  hashtags: string | null;
+  likeYn: boolean;
+  likesCount: number;
+  commentCount: number;
+}
+
+export interface Reply {
+  userId: number;
+  userName: string;
+  content: string;
+  created: string;
+  updated: string;
 }
 
 export interface ClubRole {
@@ -79,27 +89,18 @@ export interface ClubResponse extends BaseResponse {
 }
 
 export interface ClubsResponse extends BaseResponse {
-  hasNext: boolean;
-  responses: { content: Club[]; size: number };
+  data: {
+    values: Club[];
+    hasNext: boolean;
+  };
 }
 
 export interface FeedsResponse extends BaseResponse {
   data: Feed[];
 }
 
-export interface UserInfoResponse extends BaseResponse {
-  data: {
-    applyStatus: string;
-    birthday: string;
-    created: string;
-    email: string;
-    id: number;
-    name: string;
-    organizationName: string;
-    role: string;
-    sex: string;
-    thumbnail: string;
-  };
+export interface ReplyReponse extends BaseResponse {
+  data: Reply[];
 }
 
 export interface ClubsParams {
@@ -108,8 +109,6 @@ export interface ClubsParams {
   minMember: number | null;
   maxMember: number | null;
   sort: string | null;
-  showRecruiting: boolean | null;
-  showMy: boolean | null;
 }
 
 export interface ClubSchedulesResponse extends BaseResponse {
@@ -127,7 +126,8 @@ export interface ClubCreationRequest {
     name: string | undefined;
   } | null;
   data: {
-    category: number[];
+    category1Id: number;
+    category2Id: number | null;
     isApproveRequired: string;
     clubShortDesc: string;
     clubLongDesc: string | null;
@@ -151,7 +151,7 @@ const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => re
 
 const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
-  return fetch(`${BASE_URL}/api/clubs?sort=${clubsParams.sort}&customCursor=${pageParam ? pageParam : ""}`).then((res) => res.json());
+  return fetch(`${BASE_URL}/api/clubs?category1Id=${clubsParams.categoryId ? clubsParams.categoryId : ""}&cursorId=${pageParam ? pageParam : ""}`).then((res) => res.json());
 };
 
 const getClub = ({ queryKey }: any) => {
@@ -236,45 +236,6 @@ const getJWT = (req: LoginRequest) => {
   }).then((res) => res.json());
 };
 
-const getUserInfo = ({ queryKey }: any) => {
-  const [_key, token]: [string, string] = queryKey;
-  return fetch(`${BASE_URL}/api/user`, {
-    method: "GET",
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  }).then((response) => response.json());
-};
-
-const registerUserInfo = ({ queryKey }: any) => {
-  const [_key, token]: [string, string] = queryKey;
-  return fetch(`${BASE_URL}/api/user`, {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  }).then((response) => response.json());
-};
-
-const updateUserInfo = ({ queryKey }: any) => {
-  const [_key, token]: [string, string] = queryKey;
-  return fetch(`${BASE_URL}/api/user`, {
-    method: "PUT",
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  }).then((response) => response.json());
-};
-
-const getFeeds = ({ queryKey }: any) => {
-  const [_key, token]: [string, string] = queryKey;
-  return fetch(`${BASE_URL}/api/feeds`, {
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  }).then((res) => res.json());
-};
-
 export const ClubApi = {
   getCategories,
   getClub,
@@ -284,15 +245,4 @@ export const ClubApi = {
   getClubRole,
   applyClub,
 };
-
-export const UserApi = {
-  getUserInfo,
-  registerUserInfo,
-  updateUserInfo,
-};
-
-export const FeedApi = {
-  getFeeds,
-};
-
 export const CommonApi = { getJWT };
