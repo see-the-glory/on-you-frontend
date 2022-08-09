@@ -3,7 +3,7 @@ import { Animated, Modal, Text, useWindowDimensions, View } from "react-native";
 import Carousel from "react-native-snap-carousel";
 import { RefinedSchedule } from "../../types/club";
 
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons, Entypo } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
 const Container = styled.View`
@@ -30,62 +30,81 @@ const ScheduleTitle = styled.Text`
   font-weight: 600;
 `;
 
-const DetailView = styled.View`
+const ContentView = styled.View`
   width: 100%;
-  padding-left: 15px;
-  padding-right: 15px;
+  padding: 10px 25px 10px 25px;
+  align-items: flex-start;
 `;
 
-const DetailHeader = styled.View`
+const ContentItemView = styled.View`
   flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-  padding-top: 15px;
-  padding-bottom: 15px;
-`;
-
-const DetailItemView = styled.View`
-  padding: 15px;
-  justify-content: center;
-`;
-
-const DetailItem = styled.View`
-  flex-direction: row;
+  padding: 10px;
   align-items: center;
 `;
 
-const DetailText = styled.Text`
+const ContentText = styled.Text`
+  padding-left: 10px;
+  padding-right: 10px;
   font-size: 14px;
 `;
-
-const DetailTitle = styled.Text`
-  font-size: 14px;
-  color: #79a0ab;
-  font-weight: 600;
+const MemoScrollView = styled.ScrollView`
+  width: 100%;
+  height: 150px;
+  padding: 10px;
 `;
+const Memo = styled.Text``;
 
 const Footer = styled.View`
   align-items: center;
-  justify-content: center;
   width: 100%;
   padding-top: 20px;
   padding-bottom: 20px;
 `;
 
 const ApplyButton = styled.TouchableOpacity`
-  background-color: #ff714b;
-  padding: 10px 15px 10px 15px;
-  border-radius: 10px;
+  background-color: white;
+  padding: 8px 60px 8px 60px;
+  border: 1px solid #ff714b;
 `;
 
 const ButtonText = styled.Text`
-  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ff714b;
+`;
+
+const Button = styled.TouchableOpacity`
+  position: absolute;
+  z-index: 1;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background-color: #295af5;
+  border: 1px solid white;
+  elevation: 5;
+  box-shadow: 1px 1px 3px gray;
+`;
+
+const NextButton = styled(Button)`
+  right: 0px;
+  bottom: 48%;
+  margin-right: -30px;
+`;
+
+const PrevButton = styled(Button)`
+  left: 0px;
+  bottom: 48%;
+  margin-left: -30px;
 `;
 
 const Break = styled.View<{ sep: number }>`
+  width: 100%;
+  height: 3px;
   margin-bottom: ${(props) => props.sep}px;
   margin-top: ${(props) => props.sep}px;
-  border-bottom-width: 1px;
+  border-bottom-width: 0.5px;
   border-bottom-color: rgba(0, 0, 0, 0.3);
   opacity: 0.5;
 `;
@@ -98,8 +117,9 @@ interface ScheduleModalProps {
 }
 
 const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, selectIndex, children }) => {
+  const [carousel, setCarousel] = useState<Carousel<RefinedSchedule> | null>();
   const [showModal, setShowModal] = useState(visible);
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const opacity = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     toggleModal();
@@ -134,16 +154,45 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
         }}
       >
         <Carousel
-          data={scheduleData}
+          ref={(c) => {
+            setCarousel(c);
+          }}
+          data={scheduleData.slice(0, -1)}
           sliderWidth={SCREEN_WIDTH}
-          itemWidth={SCREEN_WIDTH * 0.8}
+          sliderHeight={SCREEN_HEIGHT}
+          itemWidth={SCREEN_WIDTH}
+          slideStyle={{ paddingHorizontal: 40 }}
           contentContainerCustomStyle={{
             alignItems: "center",
           }}
           firstItem={selectIndex}
           inactiveSlideOpacity={1}
-          renderItem={({ item }: { item: RefinedSchedule }) => (
+          inactiveSlideScale={1}
+          renderItem={({ item, index }: { item: RefinedSchedule; index: number }) => (
             <Container>
+              {index !== 0 ? (
+                <PrevButton
+                  onPress={() => {
+                    carousel?.snapToPrev();
+                  }}
+                >
+                  <Entypo name="chevron-left" size={34} color="white" />
+                </PrevButton>
+              ) : (
+                <></>
+              )}
+              {index !== scheduleData.length - 2 ? (
+                <NextButton
+                  onPress={() => {
+                    carousel?.snapToNext();
+                  }}
+                >
+                  <Entypo name="chevron-right" size={34} color="white" />
+                </NextButton>
+              ) : (
+                <></>
+              )}
+
               <Header>
                 {children}
                 <ScheduleText>{item.year}</ScheduleText>
@@ -151,34 +200,34 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
                   {item.month}/{item.day} {item.dayOfWeek}
                 </ScheduleTitle>
               </Header>
-              <DetailView>
-                <DetailHeader>
-                  <DetailItem>
-                    <Feather name="clock" size={16} color="#79A0AB" style={{ marginRight: 7 }} />
-                    <DetailText>{item.startTime}시</DetailText>
-                  </DetailItem>
-                  <DetailItem>
-                    <Feather name="map-pin" size={16} color="#79A0AB" style={{ marginRight: 7 }} />
-                    <DetailText>{item.location}</DetailText>
-                  </DetailItem>
-                </DetailHeader>
+              <ContentView>
+                <ContentItemView>
+                  <Feather name="clock" size={16} color="#6F6F6F" />
+                  <ContentText>{item.startDate}</ContentText>
+                </ContentItemView>
                 <Break sep={0} />
-                <DetailItemView>
-                  <DetailItem style={{ paddingBottom: 15 }}>
-                    <Ionicons name="people-sharp" size={16} color="#79A0AB" style={{ marginRight: 7 }} />
-                    <DetailTitle>참석 멤버</DetailTitle>
-                  </DetailItem>
-                  <DetailItem>
-                    <Text>전부 참석</Text>
-                  </DetailItem>
-                </DetailItemView>
+                <ContentItemView>
+                  <Feather name="map-pin" size={16} color="#6F6F6F" />
+                  <ContentText>{item.location}</ContentText>
+                </ContentItemView>
                 <Break sep={0} />
-              </DetailView>
-              <Footer>
-                <ApplyButton>
-                  <ButtonText>참석하기</ButtonText>
-                </ApplyButton>
-              </Footer>
+                <ContentItemView>
+                  <Feather name="user-check" size={16} color="#6F6F6F" />
+                </ContentItemView>
+                <Break sep={0} />
+                <ContentItemView>
+                  <Ionicons name="checkmark-sharp" size={16} color="#6F6F6F" />
+                  <ContentText>{`메모`}</ContentText>
+                </ContentItemView>
+                <MemoScrollView>
+                  <Memo>{item.content}</Memo>
+                </MemoScrollView>
+                <Footer>
+                  <ApplyButton>
+                    <ButtonText>참석</ButtonText>
+                  </ApplyButton>
+                </Footer>
+              </ContentView>
             </Container>
           )}
         />
