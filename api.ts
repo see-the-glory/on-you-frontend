@@ -50,12 +50,14 @@ export interface Member {
   organization: string;
   sex: string;
   role: string | null;
+  thumbnail: string | null;
 }
 
 export interface Schedule {
   id: number;
   name: string;
   content: string;
+  members: Member[];
   location: string;
   startDate: string;
   endDate: string | null;
