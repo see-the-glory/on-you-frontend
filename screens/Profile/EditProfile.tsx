@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { TouchableOpacity, Text, NativeModules } from "react-native";
 import { Keyboard, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
-import { useTheme } from "react-native-paper";
 import styled from "styled-components/native";
 import * as ImagePicker from "expo-image-picker";
+import { useMutation, useQuery } from "react-query";
+import { useSelector, useDispatch } from "react-redux";
+import { UserApi, UserInfoRequest, User, Category, ClubApi, CategoryResponse } from "../../api";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { EditProfileScreenProps } from "../../types/user";
+import { NavigationRouteContext } from "@react-navigation/native";
 
 Date.prototype.format = function (f) {
   if (!this.valueOf()) return " ";
@@ -141,7 +146,84 @@ const Button = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const EditProfile = () => {
+const CategoryView = styled.View`
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-bottom: 15px;
+  margin-top: 15px;
+`;
+
+const CategoryItem = styled.TouchableOpacity<{ selected: boolean }>`
+  width: 100px;
+  height: 35px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${(props) => (props.selected ? "#295AF5" : "white")};
+  border-radius: 20px;
+  border: 1px solid #c3c3c3;
+  padding: 0px 15px 0px 15px;
+`;
+
+const CategoryText = styled.Text<{ selected: boolean }>`
+  font-size: 18px;
+  color: ${(props) => (props.selected ? "white" : "black")};
+  font-weight: 500;
+`;
+
+const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userData }, navigation: { navigate, setOptions, goBack } }) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
+
+  const {
+    isLoading: getCategoryLoading, // true or false
+    data: category,
+  } = useQuery<CategoryResponse>(["getCategories", token], ClubApi.getCategories);
+
+  console.log("category" + category?.data);
+
+  const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [thumbnail, setThumbnail] = useState("");
+  const [organizationName, setOrganizationName] = useState("");
+
+  const mutation = useMutation(UserApi.updateUserInfo, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.json?.resultCode === "OK") {
+        return goBack();
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res.json);
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+    },
+    onSettled: (res, error) => {},
+  });
+
+  const onSubmit = () => {
+    const data = { phone, name, birthday, thumbnail, organizationName };
+
+    console.log(data);
+
+    const requestData: UserInfoRequest = { data, token };
+
+    mutation.mutate(requestData);
+  };
+
+  useEffect(() => {
+    setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })} onPressIn={onSubmit}>
+          <Text style={{ color: "#2995FA" }}>저장</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
   const [imageURI, setImageURI] = useState<string | null>(null);
 
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -159,8 +241,6 @@ const EditProfile = () => {
       setImageURI(result.uri);
     }
   };
-
-  const [checked, setChecked] = React.useState("first");
 
   const placeholder = "날짜를 입력해주세요";
 
@@ -183,7 +263,22 @@ const EditProfile = () => {
 
   const [approvalMethod, setApprovalMethod] = useState<number>(0);
 
-  const { colors } = useTheme();
+  const [categories, setCategories] = useState<Array<Array<Category>>>([[]]);
+  const [selectCategory1, setCategory1] = useState<number>(-1);
+  const [selectCategory2, setCategory2] = useState<number>(-1);
+
+  const onPressCategory = (id: number) => {
+    if (selectCategory1 === id) {
+      return setCategory1(-1);
+    } else if (selectCategory2 === id) {
+      return setCategory2(-1);
+    }
+    if (selectCategory1 === -1) {
+      return setCategory1(id);
+    } else if (selectCategory2 === -1) {
+      return setCategory2(id);
+    }
+  };
 
   return (
     <TouchableWithoutFeedback
@@ -195,14 +290,17 @@ const EditProfile = () => {
         <ImagePickerView>
           <ImagePickerWrap>
             <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={0.8}>
-              <PickedImage height={imageHeight} source={{ uri: imageURI }} />
+              <PickedImage
+                height={imageHeight}
+                source={{ uri: userData.thumbnail === null ? "http://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userData.thumbnail }}
+              />
             </ImagePickerButton>
           </ImagePickerWrap>
           <ProfileText onPress={pickImage}>프로필 사진 설정</ProfileText>
         </ImagePickerView>
         <Form>
           <Title>이름</Title>
-          <Input autoCorrect={false} />
+          <Input autoCorrect={false} defaultValue={userData.name} onChangeText={(text) => setName(text)} />
         </Form>
         <Form>
           <Title>성별</Title>
@@ -224,20 +322,32 @@ const EditProfile = () => {
         <Form>
           <Title>생년월일</Title>
           <TextBtn onPress={showDatePicker}>
-            <Input pointerEvents="none" placeholder={placeholder} placeholderTextColor="#000000" underlineColorAndroid="transparent" editable={false} value={text} />
-            {/* <DateTimePickerModal headerTextIOS={placeholder} isVisible={isDatePickerVisible} mode="date" onConfirm={handleConfirm} onCancel={hideDatePicker} /> */}
+            <Input
+              pointerEvents="none"
+              placeholder={placeholder}
+              placeholderTextColor="#000000"
+              underlineColorAndroid="transparent"
+              editable={false}
+              defaultValue={userData.birthday}
+              onChangeText={(text) => setBirthday(text)}
+            />
           </TextBtn>
         </Form>
         <Form>
           <Title>연락처</Title>
-          <Input autoCorrect={false} />
+          <Input keyboardType="phone-pad" autoCorrect={false} defaultValue="" /* onChangeText={(data) => setPhone(data)} */ maxLength={11} />
         </Form>
         <Form>
           <Title>교회</Title>
-          <Input autoCorrect={false} />
+          <Input autoCorrect={false} defaultValue={userData.organizationName} onChangeText={(text) => setOrganizationName(text)} />
         </Form>
         <Form>
           <Title>관심사(3개 이상 택)</Title>
+          {/* <CategoryView>
+            <CategoryItem activeOpacity={0.8} onPress={() => onPressCategory}>
+              <CategoryText>독서</CategoryText>
+            </CategoryItem>
+          </CategoryView> */}
         </Form>
       </Container>
     </TouchableWithoutFeedback>

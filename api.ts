@@ -61,6 +61,19 @@ export interface Schedule {
   endDate: string | null;
 }
 
+export interface User {
+  applyStatus: string;
+  birthday: string;
+  created: string;
+  email: string;
+  id: number;
+  name: string;
+  organizationName: string;
+  role: string;
+  sex: string;
+  thumbnail: string | null;
+}
+
 export interface ClubRole {
   clubId: number;
   userId: number;
@@ -88,18 +101,7 @@ export interface FeedsResponse extends BaseResponse {
 }
 
 export interface UserInfoResponse extends BaseResponse {
-  data: {
-    applyStatus: string;
-    birthday: string;
-    created: string;
-    email: string;
-    id: number;
-    name: string;
-    organizationName: string;
-    role: string;
-    sex: string;
-    thumbnail: string;
-  };
+  data: User;
 }
 
 export interface ClubsParams {
@@ -145,6 +147,16 @@ export interface ClubApplyRequest {
 
 export interface LoginRequest {
   token: string;
+}
+
+export interface UserInfoRequest {
+  token: string;
+  data: {
+    birthday?: string;
+    name?: string;
+    organizationName?: string;
+    thumbnail?: string;
+  };
 }
 
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
@@ -246,20 +258,21 @@ const getUserInfo = ({ queryKey }: any) => {
   }).then((response) => response.json());
 };
 
+const updateUserInfo = (req: UserInfoRequest) => {
+  return fetch(`${BASE_URL}/api/user`, {
+    method: "PUT",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${req.token}`,
+    },
+    body: JSON.stringify(req.data),
+  }).then((res) => res.json());
+};
+
 const registerUserInfo = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
   return fetch(`${BASE_URL}/api/user`, {
     method: "POST",
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  }).then((response) => response.json());
-};
-
-const updateUserInfo = ({ queryKey }: any) => {
-  const [_key, token]: [string, string] = queryKey;
-  return fetch(`${BASE_URL}/api/user`, {
-    method: "PUT",
     headers: {
       authorization: `Bearer ${token}`,
     },
