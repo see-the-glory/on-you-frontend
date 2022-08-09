@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, FlatList, Button, TextInput, Alert, Animated, ActivityIndicator, Image } from "react-native";
 import styled from "styled-components/native";
-import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
 import { Dimensions } from "react-native";
+import { Reply, ReplyReponse } from "../../api";
 const Container = styled.SafeAreaView`
   flex: 1;
   height: 100%;
@@ -152,6 +154,7 @@ const ReplyPage: React.FC<NativeStackScreenProps<any, "ReplyPage">> = ({ navigat
   const [isModalVisible, setModalVisible] = useState(false);
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
   const [data, setData] = useState([]);
+
   const [number, onChangeNumber] = React.useState(null);
   const [news, setNews] = useState("");
   const [loading, setLoading] = useState(false);
@@ -187,22 +190,24 @@ const ReplyPage: React.FC<NativeStackScreenProps<any, "ReplyPage">> = ({ navigat
     setRefreshing(false);
   };
 
-  const getReplyApi = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`http://3.39.190.23:8080/api/clubs`);
-      setData(response.responses.content);
-      console.log(data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+  const getReply = () => {
+    return fetch(`http://3.39.190.23:8080/api/comments/1`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((res) => res.json());
   };
-
-  useEffect(() => {
-    getReplyApi();
-  }, []);
+  const token = useSelector((state) => state.AuthReducers.authToken);
+  const { data: replys, isLoading: replysLoading } = useQuery<ReplyReponse>(["getReply"], getReply, {
+    //useQuery(["getFeeds", token], FeedApi.getFeeds, {
+    onSuccess: (res) => {
+      // 성공했을 때, 데이터를 조작하면 된다.
+    },
+    onError: (err) => {
+      console.log(`[getFeeds error] ${err}`);
+    },
+  });
 
   const goToHome = () => {
     navigate("Tabs", {
@@ -219,16 +224,16 @@ const ReplyPage: React.FC<NativeStackScreenProps<any, "ReplyPage">> = ({ navigat
           <FlatList
             refreshing={refreshing}
             onRefresh={onRefresh}
-            data={data}
-            keyExtractor={(item, index) => index + ""}
-            renderItem={({ item }) => (
+            keyExtractor={(item: Reply, index: number) => String(index)}
+            data={replys?.data}
+            renderItem={({ item, index }: { item: Reply; index: number }) => (
               <CommentArea>
                 {/*<CommentImg source={{uri: 'https://i.pinimg.com/564x/13/05/7c/13057c33d7ad3f50ea99bc44b388ebcb.jpg'}}/>*/}
                 <CommentImg source={{ uri: item.thumbnail }} />
                 <View style={{ marginBottom: 20, top: 7 }}>
                   <CommentMent>
-                    <CommentId>{item.name}</CommentId>
-                    <Comment>{item.creatorName}</Comment>
+                    <CommentId>{item.userName}</CommentId>
+                    <Comment>{item.content}</Comment>
                   </CommentMent>
                   <CommentRemainder>
                     <Time>{rand(1, 60)}분 전</Time>
