@@ -117,9 +117,7 @@ const ClubTopTabs = ({
     data: clubRole,
     isRefetching: isRefetchingClubRole,
   } = useQuery<ClubRoleResponse>(["getClubRole", token, clubData.id], ClubApi.getClubRole, {
-    onSuccess: (res) => {
-      console.log(res);
-    },
+    onSuccess: (res) => {},
     onError: (error) => {
       console.log(error);
     },

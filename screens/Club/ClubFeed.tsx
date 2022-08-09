@@ -36,6 +36,7 @@ const ClubFeed = ({ navigation: { navigate }, scrollY, headerDiff }) => {
       onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
       style={{
         flex: 1,
+        backgroundColor: "white",
         transform: [
           {
             translateY: scrollY.interpolate({

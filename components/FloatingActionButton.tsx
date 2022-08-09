@@ -53,7 +53,7 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, app
   });
   const secondY = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -30],
+    outputRange: [0, -25],
   });
   const fade = animation.interpolate({
     inputRange: [0, 1],

@@ -58,7 +58,7 @@ const ContentText = styled.Text`
 `;
 
 const ScheduleSeparator = styled.View`
-  width: 20px;
+  width: 25px;
 `;
 
 const ScheduleView = styled.TouchableOpacity`
@@ -71,12 +71,28 @@ const ScheduleAddView = styled.TouchableOpacity`
   align-items: center;
   box-shadow: 1px 1px 2px gray;
   elevation: 3;
-  padding: 50px 15px 50px 15px;
+  padding: 40px 15px 40px 15px;
   border-radius: 5px;
 `;
 
-const ScheduleDateView = styled.View`
-  background-color: #eaff87;
+const ScheduleBadge = styled.View`
+  position: absolute;
+  z-index: 1;
+  right: -10px;
+  top: -18px;
+  border-radius: 100px;
+  background-color: #ff714b;
+  padding: 6px 8px 6px 8px;
+`;
+
+const ScheduleBadgeText = styled.Text`
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+`;
+
+const ScheduleDateView = styled.View<{ index: number }>`
+  background-color: ${(props) => (props.index === 0 ? "#eaff87" : "#CCCCCC")};
   justify-content: center;
   align-items: center;
   border-top-left-radius: 5px;
@@ -98,7 +114,6 @@ const ScheduleDetailView = styled.View`
   elevation: 3;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
-  height: 100px;
 `;
 
 const ScheduleDetailItemView = styled.View`
@@ -110,6 +125,12 @@ const ScheduleDetailItemView = styled.View`
 
 const ScheduleText = styled.Text`
   font-size: 12px;
+`;
+
+const ScheduleSubText = styled.Text`
+  font-size: 10px;
+  font-weight: 300;
+  color: #939393;
 `;
 
 const ScheduleTitle = styled.Text`
@@ -169,6 +190,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     isRefetching: isRefetchingSchedules,
   } = useQuery<ClubSchedulesResponse>(["getClubSchedules", clubData.id], ClubApi.getClubSchedules, {
     onSuccess: (res) => {
+      console.log(res);
       const week = ["일", "월", "화", "수", "목", "금", "토"];
       const result: RefinedSchedule[] = [];
       for (let i = 0; i < res.data.length; ++i) {
@@ -178,6 +200,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           id: res.data[i].id,
           location: res.data[i].location,
           name: res.data[i].name,
+          members: res.data[i].members,
           startDate: res.data[i].startDate,
           endDate: res.data[i].endDate,
           content: res.data[i].content,
@@ -272,7 +295,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
 
   useEffect(() => {
     getData();
-    console.log(clubData);
   }, []);
 
   const loading = memberLoading || scheduleLoading;
@@ -287,6 +309,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
       style={{
         flex: 1,
         paddingTop: SCREEN_PADDING_SIZE,
+        backgroundColor: "white",
         transform: [
           {
             translateY: scrollY.interpolate({
@@ -313,7 +336,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         <Break sep={20} />
       </SectionView>
       <SectionView>
-        <TitleView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+        <TitleView style={{ paddingHorizontal: SCREEN_PADDING_SIZE, marginBottom: 5 }}>
           <Ionicons name="calendar" size={16} color="#295AF5" />
           <SectionTitle>SCHEDULE</SectionTitle>
         </TitleView>
@@ -321,9 +344,9 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
-            width: "100%",
             padding: 3,
             paddingHorizontal: SCREEN_PADDING_SIZE,
+            marginTop: 20,
           }}
           data={scheduleData}
           keyExtractor={(item: RefinedSchedule, index: number) => String(index)}
@@ -336,7 +359,14 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
                   setSelectedSchedule(index);
                 }}
               >
-                <ScheduleDateView>
+                {index === 0 ? (
+                  <ScheduleBadge>
+                    <ScheduleBadgeText>{`다음\n모임`}</ScheduleBadgeText>
+                  </ScheduleBadge>
+                ) : (
+                  <></>
+                )}
+                <ScheduleDateView index={index}>
                   <ScheduleText>{item.year}</ScheduleText>
                   <ScheduleTitle>
                     {item.month}/{item.day} {item.dayOfWeek}
@@ -354,7 +384,11 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
                   <Break sep={10} />
                   <ScheduleDetailItemView>
                     <Ionicons name="people-sharp" size={12} color="#CCCCCC" style={{ marginRight: 7 }} />
-                    <ScheduleText>7명 참석</ScheduleText>
+                    <ScheduleText>{item.members.length}명 참석</ScheduleText>
+                  </ScheduleDetailItemView>
+                  <Break sep={10} />
+                  <ScheduleDetailItemView style={{ justifyContent: "center" }}>
+                    <ScheduleSubText>더보기</ScheduleSubText>
                   </ScheduleDetailItemView>
                 </ScheduleDetailView>
               </ScheduleView>
