@@ -5,20 +5,16 @@ import { Logout } from "../store/actions";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
-import { UserApi, UserInfoResponse } from "../api";
+import { UserApi, UserInfoResponse, ClubApi, CategoryResponse } from "../api";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Container = styled.SafeAreaView`
   flex: 1;
 `;
-
-const Box = styled.View`
+const UserInfoSection = styled.View`
   background-color: #fff;
   box-shadow: 1px 1px 1px gray;
   padding-horizontal: 20px;
-`;
-
-const UserInfoSection = styled.View`
   height: 100px;
   flex-direction: row;
   align-items: center;
@@ -66,14 +62,12 @@ const MenuWrapper = styled.View`
   margin-top: 3px;
 `;
 
-const MenuItem = styled.View`
+const MenuItem = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   padding-top: 15px;
   padding-bottom: 15px;
   padding-horizontal: 20px;
-  border-bottom-width: 1px;
-  border-bottom-color: #dbdbdb;
 `;
 
 const MenuItemText = styled.Text`
@@ -81,8 +75,10 @@ const MenuItemText = styled.Text`
   font-size: 16px;
 `;
 
-const TouchMenu = styled.TouchableOpacity`
+const TouchMenu = styled.View`
   height: 50px;
+  border-bottom-width: 1px;
+  border-bottom-color: #dbdbdb;
 `;
 
 const LogoutButton = styled.TouchableOpacity`
@@ -124,8 +120,6 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     data: userInfo,
   } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo);
 
-  console.log(userInfo);
-
   const dispatch = useDispatch();
 
   const goLogout = () => {
@@ -135,6 +129,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   const goToEditProfile = () => {
     navigate("ProfileStack", {
       screen: "EditProfile",
+      params: userInfo?.data,
     });
   };
 
@@ -168,27 +163,25 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
 
   return (
     <Container>
-      <Box>
-        <UserInfoSection>
-          <LogoBox>
-            <LogoImage
-              source={{
-                uri: userInfo?.data.thumbnail,
-              }}
-            />
-          </LogoBox>
-          <InfoBox>
-            <Email>{userInfo?.data.email}</Email>
-            <Title>{userInfo?.data.name}</Title>
-          </InfoBox>
-          <EditBox>
-            <MaterialCommunityIcons name="pencil-outline" color="#295AF5" size={20} onPress={goToEditProfile} />
-          </EditBox>
-        </UserInfoSection>
-      </Box>
+      <UserInfoSection>
+        <LogoBox>
+          <LogoImage
+            source={{
+              uri: userInfo?.data.thumbnail === null ? "http://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userInfo?.data.thumbnail,
+            }}
+          />
+        </LogoBox>
+        <InfoBox>
+          <Email>{userInfo?.data.email}</Email>
+          <Title>{userInfo?.data.name}</Title>
+        </InfoBox>
+        <EditBox>
+          <MaterialCommunityIcons name="pencil-outline" color="#295AF5" size={20} onPress={goToEditProfile} />
+        </EditBox>
+      </UserInfoSection>
       <MenuWrapper>
-        <TouchMenu onPress={goToMyClub}>
-          <MenuItem>
+        <TouchMenu>
+          <MenuItem onPress={goToMyClub}>
             <MaterialCommunityIcons name="star-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
             <MenuItemText>나의 모임</MenuItemText>
             <ChevronBox>
@@ -196,8 +189,8 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
             </ChevronBox>
           </MenuItem>
         </TouchMenu>
-        <TouchMenu onPress={goToNotificationSettings}>
-          <MenuItem>
+        <TouchMenu>
+          <MenuItem onPress={goToNotificationSettings}>
             <MaterialCommunityIcons name="bell-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
             <MenuItemText>알림설정</MenuItemText>
             <ChevronBox>
@@ -205,8 +198,8 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
             </ChevronBox>
           </MenuItem>
         </TouchMenu>
-        <TouchMenu onPress={goToNotice}>
-          <MenuItem>
+        <TouchMenu>
+          <MenuItem onPress={goToNotice}>
             <MaterialCommunityIcons name="gate-not" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
             <MenuItemText>공지사항</MenuItemText>
             <ChevronBox>
@@ -214,8 +207,8 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
             </ChevronBox>
           </MenuItem>
         </TouchMenu>
-        <TouchMenu onPress={goToHelp}>
-          <MenuItem>
+        <TouchMenu>
+          <MenuItem onPress={goToHelp}>
             <MaterialCommunityIcons name="comment-question-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
             <MenuItemText>고객센터/도움말</MenuItemText>
             <ChevronBox>
@@ -223,8 +216,8 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
             </ChevronBox>
           </MenuItem>
         </TouchMenu>
-        <TouchMenu onPress={goToTerms}>
-          <MenuItem>
+        <TouchMenu>
+          <MenuItem onPress={goToTerms}>
             <MaterialCommunityIcons name="file-document-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
             <MenuItemText>약관</MenuItemText>
             <ChevronBox>

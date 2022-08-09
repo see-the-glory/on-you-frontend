@@ -8,11 +8,15 @@ import Help from "../screens/Profile/Help";
 import Terms from "../screens/Profile/Terms";
 import { TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { color } from "react-native-reanimated";
 
 const NativeStack = createNativeStackNavigator();
 
-const ProfileStack = ({ navigation: { navigate } }) => {
+const ProfileStack = ({
+  route: {
+    params: { userData, category },
+  },
+  navigation: { navigate },
+}) => {
   return (
     <NativeStack.Navigator
       screenOptions={{
@@ -23,16 +27,12 @@ const ProfileStack = ({ navigation: { navigate } }) => {
       <NativeStack.Screen
         name="EditProfile"
         component={EditProfile}
+        initialParams={{ userData, category }}
         options={{
           title: "프로필 수정",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
               <Ionicons name="chevron-back" size={20} color="black" />
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
-              <Text style={{ color: "#2995FA" }}>저장</Text>
             </TouchableOpacity>
           ),
         }}

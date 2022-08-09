@@ -52,6 +52,18 @@ export interface Schedule {
   endDate: string | null;
 }
 
+export interface User {
+  applyStatus: string;
+  birthday: string;
+  created: string;
+  email: string;
+  id: number;
+  name: string;
+  organizationName: string;
+  role: string;
+  sex: string;
+  thumbnail: string | null;
+  
 export interface Feed {
   feedId: number;
   clubId: number;
@@ -102,6 +114,10 @@ export interface FeedsResponse extends BaseResponse {
   data: Feed[];
 }
 
+
+export interface UserInfoResponse extends BaseResponse {
+  data: User;
+
 export interface ReplyReponse extends BaseResponse {
   data: Reply[];
 }
@@ -148,6 +164,16 @@ export interface ClubApplyRequest {
 
 export interface LoginRequest {
   token: string;
+}
+
+export interface UserInfoRequest {
+  token: string;
+  data: {
+    birthday?: string;
+    name?: string;
+    organizationName?: string;
+    thumbnail?: string;
+  };
 }
 
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
@@ -236,6 +262,46 @@ const getJWT = (req: LoginRequest) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(req),
+  }).then((res) => res.json());
+};
+
+const getUserInfo = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return fetch(`${BASE_URL}/api/user`, {
+    method: "GET",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((response) => response.json());
+};
+
+const updateUserInfo = (req: UserInfoRequest) => {
+  return fetch(`${BASE_URL}/api/user`, {
+    method: "PUT",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${req.token}`,
+    },
+    body: JSON.stringify(req.data),
+  }).then((res) => res.json());
+};
+
+const registerUserInfo = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return fetch(`${BASE_URL}/api/user`, {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((response) => response.json());
+};
+
+const getFeeds = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return fetch(`${BASE_URL}/api/feeds`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
   }).then((res) => res.json());
 };
 
