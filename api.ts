@@ -63,7 +63,7 @@ export interface User {
   role: string;
   sex: string;
   thumbnail: string | null;
-  
+}
 export interface Feed {
   feedId: number;
   clubId: number;
@@ -114,10 +114,9 @@ export interface FeedsResponse extends BaseResponse {
   data: Feed[];
 }
 
-
 export interface UserInfoResponse extends BaseResponse {
   data: User;
-
+}
 export interface ReplyReponse extends BaseResponse {
   data: Reply[];
 }
@@ -313,5 +312,6 @@ export const ClubApi = {
   getClubSchedules,
   getClubRole,
   applyClub,
+  getFeeds,
 };
 export const CommonApi = { getJWT };

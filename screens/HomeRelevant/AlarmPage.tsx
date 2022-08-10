@@ -5,7 +5,8 @@ import styled from "styled-components/native";
 const Container = styled.SafeAreaView`
   position: relative;
   height: 100%;
-  padding: 0 20px 0 20px;
+  margin: 0 20px 0 20px;
+  top: 2%;
 `;
 
 const AlarmArea = styled.View`
@@ -30,7 +31,28 @@ const AlarmTime = styled.Text`
 
 const AlarmText = styled.Text``;
 
-export default function AlarmPage() {
+const AlarmUserName = styled.Text`
+  font-weight: bold;
+  font-size: 14px;
+`;
+const AlramUserClub = styled.Text`
+  font-weight: bold;
+  font-size: 14px;
+`;
+
+const AlarmPage = ({ navigation: { navigate } }) => {
+  const goToProfile = () => {
+    navigate("HomeStack", {
+      screen: "Profile",
+    });
+  };
+
+  const goToReply = () => {
+    navigate("HomeStack", {
+      screen: "ReplyPage",
+    });
+  };
+
   return (
     <Container>
       <AlarmArea>
@@ -40,23 +62,49 @@ export default function AlarmPage() {
         </AlarmHeader>
         <View>
           <AlarmText>
-            <Text style={{ fontWeight: "bold", fontSize: 15 }}>김재광</Text>님의
-            <Text style={{ fontWeight: "bold", fontSize: 15 }}>온유프로젝트</Text> 가입 요청이 수락되었습니다.
+            <AlarmUserName>김재광</AlarmUserName>님의 &nbsp;
+            <AlramUserClub onPress={goToReply}>온유프로젝트</AlramUserClub>가입 요청이 수락되었습니다.
           </AlarmText>
         </View>
       </AlarmArea>
       <AlarmArea>
         <AlarmHeader>
           <AlarmType>가입결과</AlarmType>
-          <AlarmTime>1시간전</AlarmTime>
+          <AlarmTime>30분전</AlarmTime>
         </AlarmHeader>
         <View>
           <AlarmText>
-            <Text style={{ fontWeight: "bold", fontSize: 15 }}>이진규</Text>님의
-            <Text style={{ fontWeight: "bold", fontSize: 15 }}>온유프로젝트</Text> 가입 요청이 거절되었습니다.
+            <AlarmUserName>김재광</AlarmUserName>님의 &nbsp;
+            <AlramUserClub onPress={goToReply}>온유프로젝트</AlramUserClub>가입 요청이 수락되었습니다.
+          </AlarmText>
+        </View>
+      </AlarmArea>
+      <AlarmArea>
+        <AlarmHeader>
+          <AlarmType>가입결과</AlarmType>
+          <AlarmTime>30분전</AlarmTime>
+        </AlarmHeader>
+        <View>
+          <AlarmText>
+            <AlarmUserName>김재광</AlarmUserName>님의 &nbsp;
+            <AlramUserClub onPress={goToReply}>온유프로젝트</AlramUserClub>가입 요청이 수락되었습니다.
+          </AlarmText>
+        </View>
+      </AlarmArea>
+      <AlarmArea>
+        <AlarmHeader>
+          <AlarmType>가입결과</AlarmType>
+          <AlarmTime>30분전</AlarmTime>
+        </AlarmHeader>
+        <View>
+          <AlarmText>
+            <AlarmUserName>김재광</AlarmUserName>님의 &nbsp;
+            <AlramUserClub onPress={goToReply}>온유프로젝트</AlramUserClub>가입 요청이 수락되었습니다.
           </AlarmText>
         </View>
       </AlarmArea>
     </Container>
   );
-}
+};
+
+export default AlarmPage;
