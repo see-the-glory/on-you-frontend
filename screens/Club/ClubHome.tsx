@@ -190,7 +190,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     isRefetching: isRefetchingSchedules,
   } = useQuery<ClubSchedulesResponse>(["getClubSchedules", clubData.id], ClubApi.getClubSchedules, {
     onSuccess: (res) => {
-      console.log(res);
       const week = ["일", "월", "화", "수", "목", "금", "토"];
       const result: RefinedSchedule[] = [];
       for (let i = 0; i < res.data.length; ++i) {
