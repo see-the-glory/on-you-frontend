@@ -1,12 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, FlatList, Button, TextInput, Alert, Animated, ActivityIndicator, Image } from "react-native";
-import styled from "styled-components/native";
-import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Dimensions } from "react-native";
-import { useQuery } from "react-query";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, View, Text } from "react-native";
+import { useInfiniteQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
-import { Club, MyClubResponse, MyClub, ClubResponse, ClubApi, ClubsResponse } from "../../api";
+import styled from "styled-components/native";
+import { Club, ClubApi, ClubsParams, ClubsResponse } from "../../api";
 const Container = styled.SafeAreaView`
   flex: 1;
   height: 100%;
@@ -16,7 +14,7 @@ const Container = styled.SafeAreaView`
 
 const IntroText = styled.Text`
   text-align: right;
-  padding: 10px 14px 0 0;
+  padding: 5px 14px 0 0;
   font-size: 10px;
   color: #b0b0b0;
 `;
@@ -31,10 +29,6 @@ const LogoImage = styled.Image`
   border-radius: 100px;
   left: 10px;
   top: 10px;
-`;
-const ContentMent = styled.View`
-  flex: 1;
-  flex-direction: row;
 `;
 const MentId = styled.Text`
   color: black;
@@ -57,30 +51,31 @@ const TitleView = styled.SafeAreaView`
 `;
 
 const ClubArea = styled.TouchableOpacity`
-  flex: 1;
   flex-direction: row;
   width: 100%;
-  padding: 10px 20px 0 20px;
+  height: auto;
+  padding: 5px 15px 0 15px;
   border-style: solid;
   border-bottom-color: #e9e9e9;
   border-bottom-width: 1px;
   align-self: flex-start;
-  height: 100%;
 `;
 
 const ClubImg = styled.Image`
-  width: 37.2px;
-  height: 36.1px;
-  border-radius: 100px;
-  flex-grow: 0;
-  background-color: #c4c4c4;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  margin: 5px;
 `;
 
-const ClubMy = styled.View``;
+const ClubMy = styled.View`
+  justify-content: center;
+  padding-top: 3%;
+`;
 const ClubId = styled.Text`
+  padding-left: 2%;
   color: black;
   font-size: 12px;
-  left: 8px;
   font-weight: bold;
 `;
 
@@ -88,7 +83,6 @@ const Comment = styled.Text`
   color: black;
   margin-left: 10px;
   width: 200px;
-  left: 5px;
   font-size: 12px;
   font-weight: 300;
 `;
@@ -144,57 +138,79 @@ const ReplyDone = styled.Text`
 `;
 
 const CtrgArea = styled.View`
-  width: 50px;
-  height: 15px;
-  flex-grow: 0;
+  width: auto;
+  height: auto;
   margin: 0.1px 6px 13.9px 8px;
   border-radius: 3px;
   background-color: #c4c4c4;
 `;
 
 const CtgrText = styled.View`
+  display: flex;
+  flex-direction: row;
   margin: 3px 5px 3px 5px;
 `;
 
-const ProjectNm = styled.Text`
+const OrganizationName = styled.Text`
   width: auto;
-  height: 15px;
-  top: -2px;
-  flex-grow: 0;
-  font-size: 9px;
+  height: auto;
+  font-size: 12px;
   font-weight: 500;
-  font-style: normal;
   text-align: center;
   color: #fff;
 `;
+const CreatorName = styled.Text`
+  width: auto;
+  height: auto;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  color: #fff;
+  padding-left: 6px;
+`;
+
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const MyClubSelector: React.FC<NativeStackScreenProps<any, "MyClubSelector">> = ({ navigation: { navigate } }) => {
+const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { navigate } }) => {
+  const queryClient = useQueryClient();
+  const [params, setParams] = useState<ClubsParams>({
+    categoryId: null,
+    clubState: null,
+    minMember: null,
+    maxMember: null,
+    sort: "created",
+    showRecruiting: null,
+    showMy: null,
+  });
   const [refreshing, setRefreshing] = useState(false);
   const [Home, setHome] = useState([{}]);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const getmyClubs = () => {
-    return fetch(`http://3.39.190.23:8080/api/clubs`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res) => res.json());
-  };
-
+  const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
   const token = useSelector((state) => state.AuthReducers.authToken);
-  const { data: myClubs, isLoading: myClubsLoading } = useQuery<MyClubResponse>(["getmyClubs"], getmyClubs, {
-    //useQuery(["getFeeds", token], FeedApi.getFeeds, {
+
+  const {
+    isLoading: clubsLoading,
+    data: clubs,
+    isRefetching: isRefetchingClubs,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
+    getNextPageParam: (currentPage) => {
+      if (currentPage) return currentPage.hasNext === false ? null : currentPage.responses.content[currentPage.responses.content.length - 1].customCursor;
+    },
     onSuccess: (res) => {
-      // 성공했을 때, 데이터를 조작하면 된다..
+      setIsPageTransition(false);
       console.log(res);
     },
     onError: (err) => {
-      console.log(`[getmyClubs error] ${err}`);
+      console.log(err);
     },
   });
+
+  const loadMore = () => {
+    if (hasNextPage) fetchNextPage();
+  };
 
   const getHome = () => {
     const result = [];
@@ -240,7 +256,7 @@ const MyClubSelector: React.FC<NativeStackScreenProps<any, "MyClubSelector">> = 
 
   return (
     <Container>
-      <IntroText>가입한 모임 List</IntroText>
+      <IntroText>가입한 모임 Lis1t</IntroText>
       <ReplyContainer>
         {loading ? (
           <ActivityIndicator />
@@ -249,11 +265,10 @@ const MyClubSelector: React.FC<NativeStackScreenProps<any, "MyClubSelector">> = 
             refreshing={refreshing}
             onRefresh={onRefresh}
             keyExtractor={(item: Club, index: number) => String(index)}
-            data={myClubs?.data}
+            data={clubs?.pages.map((page) => page.responses.content).flat()}
             renderItem={({ item, index }: { item: Club; index: number }) => (
-              <ClubArea onPress={goToImage}>
-                {/*<CommentImg source={{uri: 'https://i.pinimg.com/564x/13/05/7c/13057c33d7ad3f50ea99bc44b388ebcb.jpg'}}/>*/}
-                {/*<ClubImg source={{uri:item.thumbnail}}/>*/}
+              <ClubArea onPress={() => goToImage()}>
+                <ClubImg source={{ uri: item.thumbnail }} />
                 <ClubMy>
                   <CommentMent>
                     <ClubId>{item.clubShortDesc}</ClubId>
@@ -261,16 +276,10 @@ const MyClubSelector: React.FC<NativeStackScreenProps<any, "MyClubSelector">> = 
                   <CommentRemainder>
                     <CtrgArea>
                       <CtgrText>
-                        <ProjectNm>{item.clubShortDesc}</ProjectNm>
+                        <OrganizationName>{item.organizationName}</OrganizationName>
+                        <CreatorName>{item.creatorName}</CreatorName>
                       </CtgrText>
                     </CtrgArea>
-                    {/*<CtrgArea>
-                      <CtgrText>
-                        <ProjectNm>
-                          {item.clubLongDesc}
-                        </ProjectNm>
-                      </CtgrText>
-                    </CtrgArea>*/}
                   </CommentRemainder>
                 </ClubMy>
               </ClubArea>
