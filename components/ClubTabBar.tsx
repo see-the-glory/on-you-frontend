@@ -13,18 +13,18 @@ const TabBarContainer = styled.View<{ height: number }>`
   border-bottom-color: rgba(0, 0, 0, 0.2);
 `;
 
-const TabButton = styled.TouchableOpacity<{ height: number }>`
+const TabButton = styled.TouchableOpacity<{ isFocused: boolean; height: number }>`
   flex: 1;
   height: ${(props) => props.height}px;
   justify-content: center;
   align-items: center;
-`;
-
-const TextWrap = styled.View<{ isFocused: boolean; height: number }>`
-  height: ${(props) => props.height}px;
-  justify-content: center;
   border-bottom-width: 2px;
   border-bottom-color: ${(props) => (props.isFocused ? "black" : "transparent")};
+`;
+
+const TextWrap = styled.View<{ height: number }>`
+  height: ${(props) => props.height}px;
+  justify-content: center;
 `;
 
 const TabText = styled.Text<{ isFocused: boolean }>`
@@ -64,8 +64,9 @@ const ClubTabBar: React.FC<MaterialTopTabBarProps> = ({ state, descriptors, navi
             accessibilityLabel={options.tabBarAccessibilityLabel}
             onPress={onPress}
             height={TAP_TAP_HEIGHT}
+            isFocused={isFocused}
           >
-            <TextWrap isFocused={isFocused} height={TAP_TAP_HEIGHT}>
+            <TextWrap height={TAP_TAP_HEIGHT}>
               <TabText isFocused={isFocused}>{label}</TabText>
             </TextWrap>
           </TabButton>

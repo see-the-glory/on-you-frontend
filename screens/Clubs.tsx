@@ -72,7 +72,7 @@ const FloatingButton = styled.TouchableOpacity`
   bottom: 20px;
   width: 50px;
   height: 50px;
-  background-color: #e77f67;
+  background-color: #295af5;
   elevation: 5;
   box-shadow: 1px 1px 3px gray;
   border-radius: 50px;

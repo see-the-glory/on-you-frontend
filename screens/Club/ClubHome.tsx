@@ -72,7 +72,8 @@ const ScheduleAddView = styled.TouchableOpacity`
   box-shadow: 1px 1px 2px gray;
   elevation: 3;
   padding: 40px 15px 40px 15px;
-  border-radius: 5px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 `;
 
 const ScheduleBadge = styled.View`
@@ -102,18 +103,14 @@ const ScheduleDateView = styled.View<{ index: number }>`
   padding-left: 25px;
   padding-right: 25px;
   elevation: 3;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 `;
 
 const ScheduleDetailView = styled.View`
   background-color: white;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
   padding: 12px;
   elevation: 3;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
 `;
 
 const ScheduleDetailItemView = styled.View`
