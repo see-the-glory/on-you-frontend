@@ -88,7 +88,10 @@ const ClubTopTabs = ({
 
   // Function in Modal
   const clubEdit = () => {
-    console.log("edit button click!");
+    return navigation.navigate("ClubManagementStack", {
+      screen: "ClubManagementMain",
+      clubData,
+    });
   };
 
   const clubJoin = () => {

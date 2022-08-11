@@ -28,6 +28,13 @@ export type RootStackParamList = {
   };
   ClubCreationFail: {};
 
+  ClubManagementStack: { clubData: Club };
+  ClubManagementMain: { clubData: Club };
+  ClubEditBasics: { clubData: Club };
+  ClubEditIntroduction: { clubData: Club };
+  ClubEditMembers: { clubData: Club };
+  ClubDelete: { clubData: Club };
+
   Tabs: {};
 };
 
@@ -46,16 +53,17 @@ export type ClubStackScreenProps = NativeStackScreenProps<RootStackParamList, "C
 export type ClubHomeScreenProps = NativeStackScreenProps<RootStackParamList, "ClubHome">;
 
 export type ClubCreationStackProps = NativeStackScreenProps<RootStackParamList, "ClubCreationStack">;
-
 export type ClubCreationStepOneScreenProps = NativeStackScreenProps<RootStackParamList, "ClubCreationStepOne">;
-
 export type ClubCreationStepTwoScreenProps = NativeStackScreenProps<RootStackParamList, "ClubCreationStepTwo">;
-
 export type ClubCreationStepThreeScreenProps = NativeStackScreenProps<RootStackParamList, "ClubCreationStepThree">;
-
 export type ClubCreationSuccessScreenProps = NativeStackScreenProps<RootStackParamList, "ClubCreationSuccess">;
-
 export type ClubCreationFailScreenProps = NativeStackScreenProps<RootStackParamList, "ClubCreationFail">;
+
+export type ClubManagementStackProps = NativeStackScreenProps<RootStackParamList, "ClubManagementStack">;
+export type ClubmanagementMainProps = NativeStackScreenProps<RootStackParamList, "ClubManagementMain">;
+export type ClubEditBasicsProps = NativeStackScreenProps<RootStackParamList, "ClubEditBasics">;
+export type ClubEditIntroductionProps = NativeStackScreenProps<RootStackParamList, "ClubEditIntroduction">;
+export type ClubDeleteProps = NativeStackScreenProps<RootStackParamList, "ClubDelete">;
 
 // ClubHome Param For Collapsed Scroll Animation
 export interface ClubHomeParamList {

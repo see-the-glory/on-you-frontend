@@ -28,7 +28,6 @@ const Backplate = styled.TouchableOpacity<{ size: number }>`
   border: 1px;
   border-color: rgba(0, 0, 0, 0.1);
   background-color: white;
-  margin-bottom: 8px;
   box-shadow: 1px 1px 1px gray;
   elevation: 2;
 `;
@@ -40,12 +39,13 @@ const IconImage = styled.Image<{ size: number }>`
 `;
 
 const CircleName = styled.Text`
+  margin-top: 8px;
   font-weight: 600;
 `;
 
 interface CircleIconProps {
   size: number;
-  uri: string;
+  uri?: string | null;
   name?: string;
   badge?: "check-circle" | "stars";
   kerning?: number;
@@ -62,7 +62,7 @@ const CircleIcon: React.FC<CircleIconProps> = ({ size, uri, name, badge, kerning
         <></>
       )}
       <Backplate size={size}>
-        <IconImage source={{ uri: uri }} size={size} />
+        <IconImage source={uri ? { uri: uri } : require("../assets/basic.jpg")} size={size} />
       </Backplate>
       {name ? <CircleName>{name}</CircleName> : <></>}
     </Container>

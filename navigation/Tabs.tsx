@@ -11,7 +11,7 @@ import { MainBottomTabParamList } from "../types/club";
 import { Shadow } from "react-native-shadow-2";
 
 const Container = styled.View`
-  height: 60px;
+  height: 70px;
 `;
 
 const TabBarContainer = styled.View`
@@ -19,7 +19,7 @@ const TabBarContainer = styled.View`
   bottom: 0px;
   flex-direction: row;
   width: 100%;
-  height: 60px;
+  height: 70px;
   justify-content: space-around;
   align-items: center;
   background-color: white;
@@ -28,7 +28,7 @@ const TabBarContainer = styled.View`
 const ShadowBox = styled.View`
   position: absolute;
   width: 100%;
-  height: 60px;
+  height: 70px;
   background-color: white;
   box-shadow: 1px 1px 3px gray;
 `;
@@ -44,7 +44,7 @@ const SlidingTabContainer = styled.View<{ tabWidth: number }>`
 const Circle = styled.View`
   width: 100px;
   height: 100px;
-  bottom: 7px;
+  bottom: 8px;
   border-radius: 50px;
   background-color: white;
 `;
@@ -66,6 +66,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
     Animated.spring(translateX, {
       toValue: index * TAB_WIDTH,
       useNativeDriver: true,
+      restSpeedThreshold: 5,
     }).start();
   };
 
@@ -114,7 +115,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
                 onPress={onPress}
                 style={{}}
               >
-                <Ionicons name={isFocused ? route.params.activeIcon : route.params.inActiveIcon} size={24} color={isFocused ? "black" : "gray"} />
+                <Ionicons name={isFocused ? route.params.activeIcon : route.params.inActiveIcon} size={24} color={isFocused ? "black" : "gray"} style={{ padding: 15 }} />
               </AnimatedIconButton>
             );
           })}
