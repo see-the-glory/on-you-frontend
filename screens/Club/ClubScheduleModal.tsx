@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Modal, Text, useWindowDimensions, View } from "react-native";
+import { Animated, Modal, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import Carousel from "react-native-snap-carousel";
-import { RefinedSchedule } from "../../types/club";
+import { RefinedSchedule } from "../../Types/Club";
 
 import { Feather, Ionicons, Entypo } from "@expo/vector-icons";
 import styled from "styled-components/native";
 
 const Container = styled.View`
   background-color: white;
-  border-radius: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  elevation: 1;
 `;
 const Header = styled.View`
   align-items: center;
@@ -73,30 +75,20 @@ const ButtonText = styled.Text`
   color: #ff714b;
 `;
 
-const Button = styled.TouchableOpacity`
+const NextButton = styled(Entypo)`
   position: absolute;
-  z-index: 1;
-  justify-content: center;
-  align-items: center;
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-  background-color: #295af5;
-  border: 1px solid white;
-  elevation: 5;
-  box-shadow: 1px 1px 3px gray;
-`;
-
-const NextButton = styled(Button)`
+  box-shadow: 1px 3px 2px black;
   right: 0px;
   bottom: 48%;
-  margin-right: -30px;
+  margin-right: -40px;
 `;
 
-const PrevButton = styled(Button)`
+const PrevButton = styled(Entypo)`
+  position: absolute;
+  box-shadow: 1px 3px 2px black;
   left: 0px;
   bottom: 48%;
-  margin-left: -30px;
+  margin-left: -40px;
 `;
 
 const Break = styled.View<{ sep: number }>`
@@ -124,6 +116,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
   useEffect(() => {
     toggleModal();
   }, [visible]);
+
   const toggleModal = () => {
     if (visible) {
       setShowModal(true);
@@ -151,6 +144,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
           justifyContent: "center",
           alignItems: "center",
           opacity: opacity,
+          zIndex: 1,
         }}
       >
         <Carousel
@@ -161,7 +155,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
           sliderWidth={SCREEN_WIDTH}
           sliderHeight={SCREEN_HEIGHT}
           itemWidth={SCREEN_WIDTH}
-          slideStyle={{ paddingHorizontal: 40 }}
+          slideStyle={{ paddingHorizontal: 50 }}
           contentContainerCustomStyle={{
             alignItems: "center",
           }}
@@ -172,23 +166,25 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
             <Container>
               {index !== 0 ? (
                 <PrevButton
+                  name="chevron-left"
+                  size={34}
+                  color="white"
                   onPress={() => {
                     carousel?.snapToPrev();
                   }}
-                >
-                  <Entypo name="chevron-left" size={34} color="white" />
-                </PrevButton>
+                />
               ) : (
                 <></>
               )}
               {index !== scheduleData.length - 2 ? (
                 <NextButton
+                  name="chevron-right"
+                  size={34}
+                  color="white"
                   onPress={() => {
                     carousel?.snapToNext();
                   }}
-                >
-                  <Entypo name="chevron-right" size={34} color="white" />
-                </NextButton>
+                />
               ) : (
                 <></>
               )}
@@ -203,7 +199,10 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
               <ContentView>
                 <ContentItemView>
                   <Feather name="clock" size={16} color="#6F6F6F" />
-                  <ContentText>{item.startDate}</ContentText>
+                  <ContentText>
+                    {`${item.year}/${item.month}/${item.day} ${item.ampm} ${item.hour}시`}
+                    {item.minute !== "0" ? ` ${item.minute}분` : ""}
+                  </ContentText>
                 </ContentItemView>
                 <Break sep={0} />
                 <ContentItemView>
@@ -223,7 +222,11 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
                   <Memo>{item.content}</Memo>
                 </MemoScrollView>
                 <Footer>
-                  <ApplyButton>
+                  <ApplyButton
+                    onPress={() => {
+                      console.log("attend");
+                    }}
+                  >
                     <ButtonText>참석</ButtonText>
                   </ApplyButton>
                 </Footer>

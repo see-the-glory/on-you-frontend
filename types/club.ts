@@ -1,7 +1,7 @@
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Animated, GestureResponderEvent } from "react-native";
-import { Club, CategoryResponse, Schedule, Category } from "../api";
+import { Club, CategoryResponse, Schedule, Category, ClubRole } from "../api";
 
 // For Stack Navigation
 export type RootStackParamList = {
@@ -101,6 +101,8 @@ export interface RefinedSchedule extends Schedule {
   month: string;
   day: string;
   dayOfWeek: string;
-  startTime: string;
+  hour: string;
+  minute: string;
+  ampm: string;
   isEnd: boolean;
 }

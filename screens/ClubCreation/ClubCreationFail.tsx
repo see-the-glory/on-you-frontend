@@ -1,7 +1,7 @@
 import React from "react";
 import { useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
-import { ClubCreationFailScreenProps } from "../../types/club";
+import { ClubCreationFailScreenProps } from "../../Types/Club";
 import { Ionicons } from "@expo/vector-icons";
 
 const Container = styled.SafeAreaView`

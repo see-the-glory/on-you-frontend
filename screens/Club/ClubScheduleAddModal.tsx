@@ -1,62 +1,64 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Keyboard, Modal, StatusBar, Text, TouchableWithoutFeedback, useWindowDimensions, View } from "react-native";
+import { Animated, Keyboard, Modal, StatusBar, TouchableWithoutFeedback, useWindowDimensions, View, Platform, TouchableOpacity, Text } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import styled from "styled-components/native";
+import moment from "moment-timezone";
+import { ClubScheduleCreationRequest } from "../../api";
+import { useSelector } from "react-redux";
+import DateTimePicker, { DateTimePickerAndroid, DateTimePickerEvent } from "@react-native-community/datetimepicker";
 
 const Container = styled.View`
   background-color: white;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   width: 80%;
-  height: 63%;
 `;
 const Header = styled.View`
   align-items: center;
   justify-content: center;
   width: 100%;
   background-color: #eaff87;
-  padding-top: 15px;
-  padding-bottom: 15px;
+  padding: 15px 0px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 `;
 
 const HeaderTitle = styled.Text`
-  font-size: 21px;
+  font-size: 16px;
   font-weight: 700;
   color: black;
+  padding: 5px 0px;
 `;
 
 const ContentView = styled.View`
   width: 100%;
-  padding: 10px 20px 10px 20px;
+  padding: 0px 20px;
   align-items: flex-start;
 `;
 
 const ContentItemView = styled.View`
   flex-direction: row;
-  padding: 10px;
+  padding: 5px;
   align-items: center;
 `;
 
 const ContentText = styled.Text`
-  padding-left: 10px;
-  padding-right: 10px;
+  margin: 15px 0px;
   font-size: 12px;
   color: #6f6f6f;
 `;
 
 const ContentTextInput = styled.TextInput`
   width: 100%;
-  padding-left: 10px;
-  padding-right: 10px;
+  font-size: 12px;
+  margin: 10px 0px;
+  padding: 0px 10px;
 `;
 
 const MemoInput = styled.TextInput`
   width: 100%;
-  height: 40%;
+  height: 150px;
   border-radius: 10px;
-  background-color: #f3f3f3;
   font-size: 14px;
   padding: 8px;
 `;
@@ -64,25 +66,23 @@ const MemoInput = styled.TextInput`
 const Footer = styled.View`
   align-items: center;
   width: 100%;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 20px 0px;
 `;
 
-const ApplyButton = styled.TouchableOpacity`
+const ApplyButton = styled.TouchableOpacity<{ disabled: boolean }>`
   background-color: white;
   padding: 8px 60px 8px 60px;
-  border: 1px solid #295af5;
+  border: 1px solid ${(props) => (props.disabled ? "#D3D3D3" : "#295af5")};
 `;
 
-const ButtonText = styled.Text`
+const ButtonText = styled.Text<{ disabled: boolean }>`
   font-size: 18px;
   font-weight: 700;
-  color: #295af5;
+  color: ${(props) => (props.disabled ? "#D3D3D3" : "#295af5")};
 `;
 
 const Break = styled.View<{ sep: number }>`
   width: 100%;
-  height: 3px;
   margin-bottom: ${(props) => props.sep}px;
   margin-top: ${(props) => props.sep}px;
   border-bottom-width: 0.5px;
@@ -92,15 +92,17 @@ const Break = styled.View<{ sep: number }>`
 
 interface ScheduleAddModalProps {
   visible: boolean;
+  mutation: any;
+  clubId: number;
   children: object;
 }
 
-const ScheduleAddModal: React.FC<ScheduleAddModalProps> = ({ visible, children }) => {
+const ScheduleAddModal: React.FC<ScheduleAddModalProps> = ({ visible, mutation, clubId, children }) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
   const [showModal, setShowModal] = useState(visible);
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [place, setPlace] = useState("");
-  const [memo, setMemo] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [location, setLocation] = useState("");
+  const [content, setContent] = useState("");
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -125,66 +127,102 @@ const ScheduleAddModal: React.FC<ScheduleAddModalProps> = ({ visible, children }
     }
   };
 
+  const onSubmit = () => {
+    const startDate = moment(selectedDate).format("YYYY-MM-DDTHH:mm:ss");
+    const endDate = `${startDate.split("T")[0]}T23:59:59`;
+
+    const requestData: ClubScheduleCreationRequest = {
+      token,
+      body: {
+        clubId,
+        content,
+        location,
+        name: "test",
+        startDate,
+        endDate,
+      },
+    };
+    mutation.mutate(requestData);
+  };
+
+  const showDateTimePicker = (mode: "date" | "time") => {
+    DateTimePickerAndroid.open({
+      value: selectedDate,
+      onChange: onChangeDate,
+      mode,
+      is24Hour: true,
+    });
+  };
+
+  const onChangeDate = (event: DateTimePickerEvent, date?: Date) => {
+    if (date) setSelectedDate(date);
+  };
+
   return (
     <Modal transparent visible={showModal} supportedOrientations={["landscape", "portrait"]}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <Animated.View
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            justifyContent: "center",
-            alignItems: "center",
-            opacity: opacity,
-          }}
-        >
-          <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="light-content" />
-          <Container>
-            <Header>
-              {children}
-              <HeaderTitle>일정 등록하기</HeaderTitle>
-            </Header>
-            <ContentView>
-              <ContentItemView>
-                <Ionicons name="calendar" size={16} color="#6F6F6F" />
-                <ContentTextInput placeholder="모이는 날짜" onChangeText={(text) => setDate(text)} />
-              </ContentItemView>
-              <Break sep={0} />
-              <ContentItemView>
-                <Feather name="clock" size={16} color="#6F6F6F" />
-                <ContentTextInput placeholder="모이는 시간" onChangeText={(text) => setTime(text)} />
-              </ContentItemView>
-              <Break sep={0} />
-              <ContentItemView>
-                <Feather name="map-pin" size={16} color="#6F6F6F" />
-                <ContentTextInput placeholder="모이는 장소" onChangeText={(text) => setPlace(text)} />
-              </ContentItemView>
-              <Break sep={0} />
-              <ContentItemView>
-                <Ionicons name="checkmark-sharp" size={16} color="#6F6F6F" />
-                <ContentText>{`메모`}</ContentText>
-              </ContentItemView>
-
-              <MemoInput
-                placeholder="모이는 날까지 해야하는 숙제 또는 당일 할 일을 메모해보세요."
-                textAlign="left"
-                multiline={true}
-                maxLength={500}
-                textAlignVertical="top"
-                onChangeText={(text) => setMemo(text)}
-              />
-              <Footer>
-                <ApplyButton
-                  onPress={() => {
-                    console.log(`${date} ${time} ${place} ${memo}`);
-                  }}
-                >
-                  <ButtonText>저장</ButtonText>
-                </ApplyButton>
-              </Footer>
-            </ContentView>
-          </Container>
-        </Animated.View>
-      </TouchableWithoutFeedback>
+      <Animated.View
+        style={{
+          flex: 1,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          justifyContent: "center",
+          alignItems: "center",
+          opacity: opacity,
+        }}
+      >
+        <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="light-content" />
+        <Container>
+          <Header>
+            {children}
+            <HeaderTitle>일정 등록하기</HeaderTitle>
+          </Header>
+          <ContentView>
+            <ContentItemView>
+              <Ionicons name="calendar" size={16} color="#6F6F6F" style={{ marginRight: 10 }} />
+              {Platform.OS === "android" ? (
+                <TouchableOpacity onPress={() => showDateTimePicker("date")}>
+                  <ContentText>{moment(selectedDate).format("YYYY-MM-DD")}</ContentText>
+                </TouchableOpacity>
+              ) : (
+                <DateTimePicker value={selectedDate} mode="date" display="default" locale="ko-KR" onChange={onChangeDate} style={{ width: "100%" }} />
+              )}
+            </ContentItemView>
+            <Break sep={0} />
+            <ContentItemView>
+              <Feather name="clock" size={16} color="#6F6F6F" style={{ marginRight: 10 }} />
+              {Platform.OS === "android" ? (
+                <TouchableOpacity onPress={() => showDateTimePicker("time")}>
+                  <ContentText>{moment(selectedDate).format("A hh:mm")}</ContentText>
+                </TouchableOpacity>
+              ) : (
+                <DateTimePicker value={selectedDate} mode="time" display="default" locale="ko-KR" onChange={onChangeDate} style={{ width: "100%" }} />
+              )}
+            </ContentItemView>
+            <Break sep={0} />
+            <ContentItemView>
+              <Feather name="map-pin" size={16} color="#6F6F6F" />
+              <ContentTextInput placeholder="모이는 장소" onChangeText={(value: string) => setLocation(value)} />
+            </ContentItemView>
+            <Break sep={0} />
+            <ContentItemView>
+              <Ionicons name="checkmark-sharp" size={16} color="#6F6F6F" style={{ marginRight: 10 }} />
+              <ContentText>{`메모`}</ContentText>
+            </ContentItemView>
+            <MemoInput
+              placeholder="모이는 날까지 해야하는 숙제 또는 당일 할 일을 메모해보세요."
+              textAlign="left"
+              multiline={true}
+              maxLength={500}
+              textAlignVertical="top"
+              onChangeText={(value: string) => setContent(value)}
+            />
+            <Footer>
+              <ApplyButton disabled={location === "" || content === ""} onPress={onSubmit}>
+                <ButtonText disabled={location === "" || content === ""}>저장</ButtonText>
+              </ApplyButton>
+            </Footer>
+          </ContentView>
+        </Container>
+      </Animated.View>
     </Modal>
   );
 };

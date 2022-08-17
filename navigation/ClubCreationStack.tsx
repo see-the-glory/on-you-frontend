@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import ClubCreationStepOne from "../screens/ClubCreation/ClubCreationStepOne";
 import ClubCreationStepTwo from "../screens/ClubCreation/ClubCreationStepTwo";
 import ClubCreationStepThree from "../screens/ClubCreation/ClubCreationStepThree";
-import { ClubCreationStackProps, RootStackParamList } from "../types/club";
+import { ClubCreationStackProps, RootStackParamList } from "../Types/Club";
 import ClubCreationSuccess from "../screens/ClubCreation/ClubCreationSuccess";
 import ClubCreationFail from "../screens/ClubCreation/ClubCreationFail";
 
