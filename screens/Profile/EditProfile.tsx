@@ -69,6 +69,7 @@ const ImagePickerView = styled.View`
   width: 100%;
   height: 130px;
   align-items: center;
+  margin: 20px 0;
 `;
 
 const ImagePickerWrap = styled.View`
@@ -80,7 +81,7 @@ const ImagePickerWrap = styled.View`
   border: 1px;
   border-color: rgb(255, 255, 255);
   background-color: white;
-  box-shadow: 1px 1px 1px gray;
+  box-shadow: 1px 2px 1px rgba(0, 0, 0, 0.25);
   margin-top: 15px;
 `;
 
@@ -106,7 +107,7 @@ const ProfileText = styled.Text`
 `;
 
 const Form = styled.View`
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 `;
 
 const Title = styled.Text`
@@ -148,27 +149,27 @@ const Button = styled.TouchableOpacity`
 
 const CategoryView = styled.View`
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   align-items: center;
-  margin-bottom: 15px;
-  margin-top: 15px;
+  margin-top: 10px;
 `;
 
 const CategoryItem = styled.TouchableOpacity<{ selected: boolean }>`
-  width: 100px;
-  height: 35px;
+  min-width: 60px;
+  height: 22px;
   align-items: center;
   justify-content: center;
   background-color: ${(props) => (props.selected ? "#295AF5" : "white")};
-  border-radius: 20px;
-  border: 1px solid #c3c3c3;
-  padding: 0px 15px 0px 15px;
+  border-radius: 30px;
+  border: 0.5px solid #bbbbbb;
+  margin-right: 10px;
+  padding: 0px 8px;
 `;
 
 const CategoryText = styled.Text<{ selected: boolean }>`
-  font-size: 18px;
+  font-size: 14px;
   color: ${(props) => (props.selected ? "white" : "black")};
-  font-weight: 500;
+  font-weight: 300;
 `;
 
 const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userData }, navigation: { navigate, setOptions, goBack } }) => {
@@ -267,7 +268,7 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
   const [selectCategory1, setCategory1] = useState<number>(-1);
   const [selectCategory2, setCategory2] = useState<number>(-1);
 
-  const onPressCategory = (id: number) => {
+  /* const onPressCategory = (id: number) => {
     if (selectCategory1 === id) {
       return setCategory1(-1);
     } else if (selectCategory2 === id) {
@@ -278,7 +279,7 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
     } else if (selectCategory2 === -1) {
       return setCategory2(id);
     }
-  };
+  }; */
 
   return (
     <TouchableWithoutFeedback
@@ -343,11 +344,17 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
         </Form>
         <Form>
           <Title>관심사(3개 이상 택)</Title>
-          {/* <CategoryView>
-            <CategoryItem activeOpacity={0.8} onPress={() => onPressCategory}>
-              <CategoryText>독서</CategoryText>
+          <CategoryView>
+            <CategoryItem activeOpacity={0.8} selected={true || false}>
+              <CategoryText selected={true || false}>📚 독서</CategoryText>
             </CategoryItem>
-          </CategoryView> */}
+            <CategoryItem activeOpacity={0.8}>
+              <CategoryText>🙏 경건생활</CategoryText>
+            </CategoryItem>
+            <CategoryItem activeOpacity={0.8}>
+              <CategoryText>💗 봉사</CategoryText>
+            </CategoryItem>
+          </CategoryView>
         </Form>
       </Container>
     </TouchableWithoutFeedback>

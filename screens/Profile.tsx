@@ -13,7 +13,7 @@ const Container = styled.SafeAreaView`
 `;
 const UserInfoSection = styled.View`
   background-color: #fff;
-  box-shadow: 1px 1px 1px gray;
+  box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.25);
   padding-horizontal: 20px;
   height: 100px;
   flex-direction: row;
@@ -29,7 +29,7 @@ const LogoBox = styled.View`
   border: 1px;
   border-color: rgb(255, 255, 255);
   background-color: white;
-  box-shadow: 1px 2px 1px gray;
+  box-shadow: 1px 2px 1px rgba(0, 0, 0, 0.25);
 `;
 
 const LogoImage = styled.Image`
