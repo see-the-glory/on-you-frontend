@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, useWindowDimensions, View } from "react-native";
+import { Text, useWindowDimensions, View, Platform } from "react-native";
 import styled from "styled-components/native";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -100,7 +100,7 @@ interface ClubListProps {
   memberNum: number;
   clubShortDesc: string | null;
   categories: Category[];
-  recruitStatus: string;
+  recruitStatus: string | null;
 }
 
 const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, clubName, memberNum, clubShortDesc, categories, recruitStatus }) => {
@@ -110,7 +110,7 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
     <Club>
       <ThumbnailView>
         <ThumbnailImage source={thumbnailPath === null ? require("../assets/basic.jpg") : { uri: thumbnailPath }} size={colSize}></ThumbnailImage>
-        <Gradient size={colSize} colors={["transparent", "rgba(0, 0, 0, 0.8)"]} start={{ x: 0.5, y: 0.65 }}>
+        <Gradient size={colSize} colors={["transparent", "rgba(0, 0, 0, 0.8)"]} start={Platform.OS === "android" ? { x: 0, y: 0.65 } : { x: 0.5, y: 0.65 }}>
           {recruitStatus === "RECRUIT" ? (
             <RecruitView>
               <RecruitText>모집중</RecruitText>

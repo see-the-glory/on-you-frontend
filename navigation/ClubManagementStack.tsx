@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
-import { ClubManagementStackProps, RootStackParamList } from "../types/club";
+import { ClubManagementStackProps, RootStackParamList } from "../Types/Club";
 import ClubEditBasics from "../screens/ClubManagement/ClubEditBasics";
 import ClubManagementMain from "../screens/ClubManagement/ClubManagementMain";
 import ClubEditIntroduction from "../screens/ClubManagement/ClubEditIntroduction";

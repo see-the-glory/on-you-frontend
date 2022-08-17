@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, useWindowDimensions } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
-import { ClubEditBasicsProps } from "../../types/club";
+import { ClubEditBasicsProps } from "../../Types/Club";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "react-query";
@@ -42,17 +42,35 @@ const Content = styled.View`
   padding: 20px;
   margin-bottom: 50px;
 `;
-const Item = styled.View`
+const ContentItem = styled.View`
   border-bottom-width: 1px;
   border-bottom-color: #cecece;
   margin-bottom: 30px;
 `;
+
+const Item = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
 const ItemTitle = styled.Text`
   font-size: 12px;
   font-weight: 400;
   color: #b0b0b0;
   margin-bottom: 15px;
 `;
+
+const CheckButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const CheckBox = styled.View<{ check: boolean }>`
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: ${(props) => (props.check ? "white" : "#E8E8E8")};
+`;
+
 const ItemText = styled.Text<{ selected?: boolean }>`
   font-size: 16px;
   font-weight: 500;
@@ -81,7 +99,8 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   },
 }) => {
   const [clubName, setClubName] = useState("");
-  const [maxNumber, setMaxNumber] = useState(0);
+  const [maxNumber, setMaxNumber] = useState(String(clubData.maxNumber) + " 명");
+  const [maxNumberInfinity, setMaxNumberInfinity] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [selectCategory1, setCategory1] = useState(clubData.categories[0]?.id ?? -1);
@@ -100,7 +119,6 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
       setCategoryBundle(bundle);
     },
   });
-
   useEffect(() => {
     setOptions({
       headerLeft: () => (
@@ -170,7 +188,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
             </ImagePickerButton>
           </Header>
           <Content>
-            <Item>
+            <ContentItem>
               <ItemTitle>모임 이름</ItemTitle>
               <TextInput
                 defaultValue={clubData.name}
@@ -181,34 +199,47 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                 returnKeyLabel="done"
                 style={{ fontSize: 16, padding: 3 }}
               />
-            </Item>
-            <Item>
-              <ItemTitle>모임 정원</ItemTitle>
-              <TextInput
-                defaultValue={String(clubData.maxNumber)}
-                keyboardType="numeric"
-                placeholder="최대 수용가능 정원 수"
-                maxLength={2}
-                onChangeText={(num) => setMaxNumber(Number(num))}
-                style={{ fontSize: 16, padding: 3 }}
-              />
-            </Item>
-            <Item>
+            </ContentItem>
+            <ContentItem>
+              <ItemTitle>모집 정원</ItemTitle>
+              <Item>
+                <TextInput
+                  keyboardType="number-pad"
+                  placeholder="최대 수용가능 정원 수"
+                  onPressIn={() => setMaxNumber((prev) => prev.split(" ")[0])}
+                  onEndEditing={() => setMaxNumber((prev) => (prev === "" ? "0 명" : `${prev} 명`))}
+                  value={maxNumber}
+                  maxLength={2}
+                  onChangeText={(num) => setMaxNumber(num)}
+                  style={{ fontSize: 16, padding: 3 }}
+                  editable={!maxNumberInfinity}
+                />
+                <CheckButton
+                  onPress={() => {
+                    if (maxNumberInfinity) {
+                      setMaxNumberInfinity(false);
+                      setMaxNumber(String(clubData.maxNumber));
+                    } else {
+                      setMaxNumberInfinity(true);
+                      setMaxNumber("무제한 정원");
+                    }
+                  }}
+                >
+                  <Text style={{ marginRight: 5 }}>인원 수 무제한으로 받기</Text>
+                  <CheckBox check={maxNumberInfinity}>
+                    <Ionicons name="checkmark-sharp" size={16} color={maxNumberInfinity ? "#FF714B" : "#e8e8e8"} />
+                  </CheckBox>
+                </CheckButton>
+              </Item>
+            </ContentItem>
+            <ContentItem>
               <ItemTitle>가입 승인 방법</ItemTitle>
-              <TextInput
-                defaultValue={String(clubData.maxNumber)}
-                keyboardType="numeric"
-                placeholder="최대 수용가능 정원 수"
-                maxLength={2}
-                onChangeText={(num) => setMaxNumber(Number(num))}
-                style={{ fontSize: 16, padding: 3 }}
-              />
-            </Item>
-            <Item>
+            </ContentItem>
+            <ContentItem>
               <ItemTitle>모임 담당자 연락처</ItemTitle>
               <TextInput keyboardType="numeric" placeholder="010-0000-0000" maxLength={13} onChangeText={(phone) => setPhoneNumber(phone)} value={phoneNumber} style={{ fontSize: 16, padding: 3 }} />
-            </Item>
-            <Item>
+            </ContentItem>
+            <ContentItem>
               <ItemTitle>모임 소속 교회</ItemTitle>
               <TextInput
                 defaultValue={clubData.organizationName}
@@ -219,11 +250,11 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                 returnKeyLabel="done"
                 style={{ fontSize: 16, padding: 3 }}
               />
-            </Item>
+            </ContentItem>
             {categoryLoading ? (
               <></>
             ) : (
-              <Item style={{ borderBottomWidth: 0 }}>
+              <ContentItem style={{ borderBottomWidth: 0 }}>
                 <ItemTitle>모임 카테고리</ItemTitle>
                 {categoryBundle?.map((bundle, index) => (
                   <CategoryView key={index}>
@@ -234,7 +265,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                     ))}
                   </CategoryView>
                 ))}
-              </Item>
+              </ContentItem>
             )}
           </Content>
         </MainView>

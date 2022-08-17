@@ -1,21 +1,16 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { ImageBackground, Platform, StatusBar, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
 import { BlurView } from "expo-blur";
-import { ClubHomeHaederProps } from "../types/club";
+import { ClubHomeHaederProps } from "../Types/Club";
 
 const Header = styled.View`
   width: 100%;
   justify-content: center;
   z-index: 2;
   align-items: center;
-`;
-
-const HeaderImage = styled.ImageBackground<{ height: number }>`
-  width: 100%;
-  height: ${(props) => props.height}px;
 `;
 
 const FilterView = styled.View`
@@ -98,8 +93,8 @@ const ButtonText = styled.Text`
   font-weight: 800;
 `;
 
-const CollapsedView = styled.View`
-  top: 40px;
+const CollapsedView = styled.View<{ top: number }>`
+  top: ${(props) => props.top}px;
 `;
 
 const ContentText = styled.Text`
@@ -122,7 +117,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
 
   return (
     <Header>
-      <HeaderImage source={imageURI === null ? require("../assets/basic.jpg") : { uri: imageURI }} height={heightExpanded}>
+      <ImageBackground style={{ width: "100%", height: heightExpanded }} source={imageURI === null ? require("../assets/basic.jpg") : { uri: imageURI }} height={heightExpanded}>
         <AnimatedBlurView
           intensity={70}
           tint="dark"
@@ -135,7 +130,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
             justifyContent: "flex-start",
           }}
         >
-          <CollapsedView>
+          <CollapsedView top={Platform.OS === "ios" ? 40 : 40 - (StatusBar.currentHeight ?? 0)}>
             <ClubNameView>
               <ClubNameText>{name}</ClubNameText>
             </ClubNameView>
@@ -184,7 +179,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
             </InformationView>
           </AnimatedFadeOutBox>
         </FilterView>
-      </HeaderImage>
+      </ImageBackground>
     </Header>
   );
 };

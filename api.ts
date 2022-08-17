@@ -10,6 +10,7 @@ export interface Category {
   description: string;
   name: string;
   thumbnail: string | null;
+  order: number | null;
 }
 
 export interface Club {
@@ -24,22 +25,24 @@ export interface Club {
   recruitNumber: number;
   thumbnail: string | null;
   recruitStatus: string | null;
-  applyStatus?: string | null;
   creatorName: string;
-  category1Name: string;
-  category2Name: string | null;
+  created: string;
+  categories: Category[];
+  contactPhone: string | null;
+  customCursor: string;
 }
 
 export interface Member {
-  birthday: string;
-  created: string;
-  email: string;
   id: number;
-  name: string;
-  organization: string;
-  sex: string;
-  role: string | null;
+  organizationName: string;
   thumbnail: string | null;
+  name: string;
+  birthday: string;
+  applyStatus?: string | null;
+  sex: string;
+  email: string;
+  created: string;
+  role: string | null;
 }
 
 export interface Schedule {
@@ -104,10 +107,11 @@ export interface ClubResponse extends BaseResponse {
 }
 
 export interface ClubsResponse extends BaseResponse {
-  data: {
-    values: Club[];
-    hasNext: boolean;
+  hasNext: boolean;
+  responses: {
+    content: Club[];
   };
+  size: number;
 }
 
 export interface FeedsResponse extends BaseResponse {
@@ -122,11 +126,14 @@ export interface ReplyReponse extends BaseResponse {
 }
 
 export interface ClubsParams {
+  token: string;
   categoryId: number | null;
   clubState: number | null;
   minMember: number | null;
   maxMember: number | null;
+  showRecruiting: boolean | null;
   sort: string | null;
+  showMy: null;
 }
 
 export interface ClubSchedulesResponse extends BaseResponse {
@@ -155,6 +162,18 @@ export interface ClubCreationRequest {
   token: string;
 }
 
+export interface ClubScheduleCreationRequest {
+  token: string;
+  body: {
+    clubId: number;
+    content: string;
+    location: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+  };
+}
+
 export interface ClubApplyRequest {
   clubId: number;
   memo: string;
@@ -175,21 +194,21 @@ export interface UserInfoRequest {
   };
 }
 
+// Categories
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
 const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
-  return fetch(`${BASE_URL}/api/clubs?category1Id=${clubsParams.categoryId ? clubsParams.categoryId : ""}&cursorId=${pageParam ? pageParam : ""}`).then((res) => res.json());
+  return fetch(`${BASE_URL}/api/clubs?customCursor=${pageParam ?? ""}`, {
+    headers: {
+      authorization: `Bearer ${clubsParams.token}`,
+    },
+  }).then((res) => res.json());
 };
 
 const getClub = ({ queryKey }: any) => {
   const [_key, clubId]: [string, number] = queryKey;
   return fetch(`${BASE_URL}/api/clubs/${clubId}`).then((res) => res.json());
-};
-
-const getClubSchedules = ({ queryKey }: any) => {
-  const [_key, clubId]: [string, number] = queryKey;
-  return fetch(`${BASE_URL}/api/clubs/${clubId}/schedules`).then((res) => res.json());
 };
 
 const getClubRole = ({ queryKey }: any) => {
@@ -254,6 +273,25 @@ const applyClub = (req: ClubApplyRequest) => {
     });
 };
 
+const getClubSchedules = ({ queryKey }: any) => {
+  const [_key, clubId]: [string, number] = queryKey;
+  return fetch(`${BASE_URL}/api/clubs/${clubId}/schedules`).then((res) => res.json());
+};
+
+const createClubSchedule = async (req: ClubScheduleCreationRequest) => {
+  return fetch(`${BASE_URL}/api/clubs/schedules`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${req.token}`,
+      Accept: "*/*",
+    },
+    body: JSON.stringify(req.body),
+  }).then(async (res) => {
+    return { status: res.status, json: await res.json() };
+  });
+};
+
 const getJWT = (req: LoginRequest) => {
   return fetch(`${BASE_URL}/login/kakao/`, {
     method: "POST",
@@ -310,8 +348,13 @@ export const ClubApi = {
   getClubs,
   createClub,
   getClubSchedules,
+  createClubSchedule,
   getClubRole,
   applyClub,
+};
+
+export const FeedApi = {
   getFeeds,
 };
+
 export const CommonApi = { getJWT };

@@ -4,7 +4,7 @@ import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { ClubApi, ClubCreationRequest } from "../../api";
-import { ClubCreationStepThreeScreenProps } from "../../types/club";
+import { ClubCreationStepThreeScreenProps } from "../../Types/Club";
 
 const Container = styled.ScrollView`
   flex: 1;

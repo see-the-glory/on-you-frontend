@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Animated, StatusBar, Text, View } from "react-native";
 import styled from "styled-components/native";
 import { Feather, AntDesign, FontAwesome5 } from "@expo/vector-icons";
-import { ClubmanagementMainProps, RootStackParamList } from "../../types/club";
+import { ClubmanagementMainProps, RootStackParamList } from "../../Types/Club";
 import CircleIcon from "../../components/CircleIcon";
 
 const Container = styled.SafeAreaView`

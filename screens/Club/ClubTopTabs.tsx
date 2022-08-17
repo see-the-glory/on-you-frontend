@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Animated, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
+import { Animated, Platform, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
@@ -19,11 +19,11 @@ const Container = styled.View`
   flex: 1;
 `;
 
-const HeaderView = styled.View`
+const HeaderView = styled.View<{ top: number }>`
   position: absolute;
   z-index: 3;
   width: 100%;
-  top: 40px;
+  top: ${(props) => props.top}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -81,11 +81,6 @@ const ClubTopTabs = ({
     outputRange: [0, -headerDiff],
     extrapolate: "clamp",
   });
-
-  const renderClubHome = useCallback((props) => <ClubHome {...props} scrollY={scrollY} headerDiff={headerDiff} />, [headerDiff]);
-
-  const renderClubFeed = useCallback((props) => <ClubFeed {...props} scrollY={scrollY} headerDiff={headerDiff} />, [headerDiff]);
-
   // Function in Modal
   const clubEdit = () => {
     return navigation.navigate("ClubManagementStack", {
@@ -141,10 +136,13 @@ const ClubTopTabs = ({
     onSettled: (res, error) => {},
   });
 
+  const renderClubHome = useCallback((props) => <ClubHome {...props} scrollY={scrollY} headerDiff={headerDiff} />, [headerDiff]);
+  const renderClubFeed = useCallback((props) => <ClubFeed {...props} scrollY={scrollY} headerDiff={headerDiff} />, [headerDiff]);
+
   return (
     <Container>
       <StatusBar barStyle={"light-content"} />
-      <HeaderView>
+      <HeaderView top={Platform.OS === "ios" ? 55 : 55 - (StatusBar.currentHeight ?? 0)}>
         <LeftHeaderView>
           <TouchableOpacity onPress={() => navigation.popToTop()}>
             <Ionicons name="md-chevron-back-sharp" size={24} color="white" />
