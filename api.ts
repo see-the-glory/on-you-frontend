@@ -33,15 +33,13 @@ export interface Club {
 }
 
 export interface Member {
-  id: number;
-  organizationName: string;
-  thumbnail: string | null;
-  name: string;
   birthday: string;
-  applyStatus?: string | null;
-  sex: string;
-  email: string;
   created: string;
+  email: string;
+  id: number;
+  name: string;
+  organization: string;
+  sex: string;
   role: string | null;
 }
 
@@ -186,6 +184,11 @@ export interface LoginRequest {
 
 export interface UserInfoRequest {
   token: string;
+  image: {
+    uri: string;
+    type: string;
+    name: string | undefined;
+  } | null;
   data: {
     birthday?: string;
     name?: string;
@@ -313,20 +316,44 @@ const getUserInfo = ({ queryKey }: any) => {
 };
 
 const updateUserInfo = (req: UserInfoRequest) => {
+  const body = new FormData();
+
+  if (req.image !== null) {
+    body.append("file", req.image);
+  }
+
+  body.append("UserInfoRequest", {
+    string: JSON.stringify(req.data),
+    type: "application/json",
+  });
+
   return fetch(`${BASE_URL}/api/user`, {
     method: "PUT",
     headers: {
-      "content-type": "application/json",
+      "content-type": "multipart/form-data",
       authorization: `Bearer ${req.token}`,
+      Accept: "*/*",
     },
-    body: JSON.stringify(req.data),
-  }).then((res) => res.json());
+    body,
+  }).then(async (res) => {
+    return { status: res.status, json: await res.json() };
+  });
 };
 
 const registerUserInfo = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
   return fetch(`${BASE_URL}/api/user`, {
     method: "POST",
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
+  }).then((response) => response.json());
+};
+
+const selectUserClubResponse = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return fetch(`${BASE_URL}/api/user/{clubId}`, {
+    method: "GET",
     headers: {
       authorization: `Bearer ${token}`,
     },
@@ -351,6 +378,13 @@ export const ClubApi = {
   createClubSchedule,
   getClubRole,
   applyClub,
+};
+
+export const UserApi = {
+  getUserInfo,
+  registerUserInfo,
+  updateUserInfo,
+  selectUserClubResponse,
 };
 
 export const FeedApi = {
