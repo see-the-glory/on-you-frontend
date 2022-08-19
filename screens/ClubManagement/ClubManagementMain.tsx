@@ -12,7 +12,6 @@ const Container = styled.SafeAreaView`
 const MainView = styled.ScrollView``;
 
 const Header = styled.View`
-  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   background-color: white;
@@ -20,20 +19,22 @@ const Header = styled.View`
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 `;
 const HeaderLeft = styled.View`
-  flex-direction: row;
   align-items: center;
+  justify-content: center;
 `;
 const InformationView = styled.View`
-  margin-left: 15px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Title = styled.Text`
-  font-size: 21px;
-  font-weight: 800;
+  font-size: 18px;
+  font-weight: 700;
 `;
 
 const HeaderText = styled.Text`
-  font-size: 16px;
+  font-size: 12px;
+  color: #b7b7b7;
   font-weight: 600;
   padding-left: 5px;
   padding-right: 5px;
@@ -42,8 +43,6 @@ const HeaderText = styled.Text`
 const TagView = styled.View`
   width: 100%;
   flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
   margin-bottom: 5px;
 `;
 
@@ -51,10 +50,14 @@ const Tag = styled.View<{ color: string }>`
   flex-direction: row;
   align-items: center;
   background-color: ${(props) => props.color};
-  padding: 3px 5px 3px 5px;
+  padding: 2px 3px;
   border-radius: 5px;
   margin-right: 5px;
   border: 1px solid ${(props) => (props.color === "white" ? "#A5A5A5" : "#B4B4B4")};
+`;
+
+const TagText = styled.Text`
+  font-size: 9px;
 `;
 
 const HeaderRight = styled.View`
@@ -63,19 +66,19 @@ const HeaderRight = styled.View`
 `;
 
 const ToggleButton = styled.TouchableOpacity<{ isToggle: boolean }>`
-  width: 45px;
-  height: 25px;
+  width: 35px;
+  height: 20px;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  padding: 3px;
+  padding: 0px 2px;
   border-radius: 25px;
   background-color: ${(props) => (props.isToggle ? "#295AF5" : "#a5a5a5")};
 `;
 const Dot = styled.View`
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 10px;
   background-color: white;
 `;
@@ -86,7 +89,7 @@ const ListView = styled.View`
   border-bottom-width: 1px;
 `;
 const ListItem = styled.TouchableOpacity`
-  padding: 20px;
+  padding: 15px 20px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -101,7 +104,7 @@ const ItemRight = styled.View`
 `;
 const ItemText = styled.Text`
   margin-left: 10px;
-  font-size: 18px;
+  font-size: 14px;
 `;
 
 const AnimatedDot = Animated.createAnimatedComponent(Dot);
@@ -125,9 +128,9 @@ const ClubManagementMain: React.FC<ClubmanagementMainProps> = ({
   useEffect(() => {
     if (clubData.recruitStatus === "RECRUIT") {
       setIsToggle(true);
-      X.setValue(18);
+      X.setValue(13);
     }
-    const iconSize = 16;
+    const iconSize = 14;
     setItems([
       {
         icon: <Feather name="tool" size={iconSize} color="black" />,
@@ -165,7 +168,7 @@ const ClubManagementMain: React.FC<ClubmanagementMainProps> = ({
       }).start();
     } else {
       Animated.timing(X, {
-        toValue: 18,
+        toValue: 13,
         duration: 300,
         useNativeDriver: true,
       }).start();
@@ -179,23 +182,22 @@ const ClubManagementMain: React.FC<ClubmanagementMainProps> = ({
       <MainView>
         <Header>
           <HeaderLeft>
-            <CircleIcon size={70} uri={clubData.thumbnail} />
             <InformationView>
               <TagView>
                 <Tag color={"white"}>
                   <FontAwesome5 name="cross" size={8} color="#A5A5A5" />
-                  <Text style={{ color: "#A5A5A5", marginLeft: 3, fontSize: 11 }}>{clubData.organizationName}</Text>
+                  <TagText style={{ color: "#A5A5A5", marginLeft: 3 }}>{clubData.organizationName}</TagText>
                 </Tag>
                 {clubData.categories[0] ? (
                   <Tag color={"#B4B4B4"}>
-                    <Text style={{ color: "white", fontSize: 11 }}>{clubData.categories[0].name}</Text>
+                    <TagText style={{ color: "white" }}>{clubData.categories[0].name}</TagText>
                   </Tag>
                 ) : (
                   <></>
                 )}
                 {clubData.categories[1] ? (
                   <Tag color={"#B4B4B4"}>
-                    <Text style={{ color: "white", fontSize: 11 }}>{clubData.categories[1].name}</Text>
+                    <TagText style={{ color: "white" }}>{clubData.categories[1].name}</TagText>
                   </Tag>
                 ) : (
                   <></>
@@ -203,14 +205,15 @@ const ClubManagementMain: React.FC<ClubmanagementMainProps> = ({
               </TagView>
               <Title>{clubData.name}</Title>
             </InformationView>
+            <CircleIcon size={70} uri={clubData.thumbnail} />
           </HeaderLeft>
           <HeaderRight>
-            <AntDesign name="user" size={12} color="black" />
+            <AntDesign name="user" size={10} color="#B7B7B7" />
             <HeaderText>멤버모집</HeaderText>
             <ToggleButton onPress={onPressToggle} isToggle={isToggle} activeOpacity={1}>
               <AnimatedDot style={{ transform: [{ translateX: X }] }} />
-              <AntDesign name="adduser" size={12} color="#FFFFFF" />
-              <AntDesign name="deleteuser" size={12} color="#FFFFFF" />
+              <AntDesign name="adduser" size={10} color="#FFFFFF" />
+              <AntDesign name="deleteuser" size={10} color="#FFFFFF" />
             </ToggleButton>
           </HeaderRight>
         </Header>

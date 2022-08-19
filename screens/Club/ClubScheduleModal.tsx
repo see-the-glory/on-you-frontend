@@ -40,7 +40,7 @@ const ContentView = styled.View`
 
 const ContentItemView = styled.View`
   flex-direction: row;
-  padding: 10px;
+  padding: 8px;
   align-items: center;
 `;
 
@@ -48,10 +48,11 @@ const ContentText = styled.Text`
   padding-left: 10px;
   padding-right: 10px;
   font-size: 14px;
+  color: #a5a5a5;
 `;
 const MemoScrollView = styled.ScrollView`
   width: 100%;
-  height: 150px;
+  height: 210px;
   padding: 10px;
 `;
 const Memo = styled.Text``;
@@ -59,13 +60,12 @@ const Memo = styled.Text``;
 const Footer = styled.View`
   align-items: center;
   width: 100%;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 10px 0px;
 `;
 
 const ApplyButton = styled.TouchableOpacity`
   background-color: white;
-  padding: 8px 60px 8px 60px;
+  padding: 8px 60px;
   border: 1px solid #ff714b;
 `;
 
@@ -198,7 +198,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
               </Header>
               <ContentView>
                 <ContentItemView>
-                  <Feather name="clock" size={16} color="#6F6F6F" />
+                  <Feather name="clock" size={16} color="black" />
                   <ContentText>
                     {`${item.year}/${item.month}/${item.day} ${item.ampm} ${item.hour}시`}
                     {item.minute !== "0" ? ` ${item.minute}분` : ""}
@@ -206,16 +206,16 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
                 </ContentItemView>
                 <Break sep={0} />
                 <ContentItemView>
-                  <Feather name="map-pin" size={16} color="#6F6F6F" />
+                  <Feather name="map-pin" size={16} color="black" />
                   <ContentText>{item.location}</ContentText>
                 </ContentItemView>
                 <Break sep={0} />
                 <ContentItemView>
-                  <Feather name="user-check" size={16} color="#6F6F6F" />
+                  <Feather name="user-check" size={16} color="black" />
                 </ContentItemView>
                 <Break sep={0} />
                 <ContentItemView>
-                  <Ionicons name="checkmark-sharp" size={16} color="#6F6F6F" />
+                  <Ionicons name="checkmark-sharp" size={16} color="black" />
                   <ContentText>{`메모`}</ContentText>
                 </ContentItemView>
                 <MemoScrollView>

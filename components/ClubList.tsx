@@ -1,9 +1,10 @@
 import React from "react";
-import { Text, useWindowDimensions, View, Platform } from "react-native";
+import { useWindowDimensions, Platform } from "react-native";
 import styled from "styled-components/native";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Category } from "../api";
+import CustomText from "./CustomText";
 
 const Club = styled.View`
   /* background-color: orange; */
@@ -29,25 +30,27 @@ const Gradient = styled(LinearGradient)<{ size: number }>`
 
 const RecruitView = styled.View`
   background-color: #ff714b;
-  padding: 2px 5px 2px 5px;
+  padding: 2px 3px;
   border-radius: 5px;
 `;
 
-const RecruitText = styled.Text`
+const RecruitText = styled(CustomText)`
+  font-size: 9px;
   color: white;
+  line-height: 12px;
 `;
 
 const TitleView = styled.View`
   width: 100%;
-  padding: 6px 0px 6px 0px;
+  padding: 5px 0px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 `;
 
-const ClubNameText = styled.Text`
-  font-size: 18px;
-  font-weight: 800;
+const ClubNameText = styled(CustomText)`
+  font-size: 15px;
+  font-family: "NotoSansKR-Bold";
   color: white;
 `;
 
@@ -57,10 +60,11 @@ const TitleViewRight = styled.View`
   align-items: flex-end;
 `;
 
-const Number = styled.Text`
+const Number = styled(CustomText)`
   margin-left: 3px;
   color: white;
-  font-size: 12px;
+  font-size: 9px;
+  line-height: 12px;
 `;
 
 const ClubInfo = styled.View`
@@ -80,17 +84,24 @@ const Tag = styled.View<{ color: string }>`
   flex-direction: row;
   align-items: center;
   background-color: ${(props) => props.color};
-  padding: 3px 5px 3px 5px;
+  padding: 0px 3px;
   border-radius: 5px;
   margin-right: 5px;
   border: 1px solid ${(props) => (props.color === "white" ? "#A5A5A5" : "#B4B4B4")};
 `;
+
+const TagText = styled(CustomText)`
+  font-size: 9px;
+  line-height: 15px;
+`;
+
 const DescView = styled.View`
   width: 100%;
   padding-bottom: 5px;
 `;
-const ShortDescText = styled.Text`
+const ShortDescText = styled(CustomText)`
   color: #6f6f6f;
+  font-size: 12px;
 `;
 
 interface ClubListProps {
@@ -105,7 +116,7 @@ interface ClubListProps {
 
 const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, clubName, memberNum, clubShortDesc, categories, recruitStatus }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
-  const colSize = Math.floor(SCREEN_WIDTH / 2) - 0.5;
+  const colSize = Math.round(SCREEN_WIDTH / 2) - 0.5;
   return (
     <Club>
       <ThumbnailView>
@@ -138,19 +149,19 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
         )}
         <TagView>
           <Tag color={"white"}>
-            <FontAwesome5 name="cross" size={8} color="#A5A5A5" />
-            <Text style={{ color: "#A5A5A5", marginLeft: 3 }}>{organizationName}</Text>
+            <FontAwesome5 name="cross" size={6} color="#A5A5A5" />
+            <TagText style={{ color: "#A5A5A5", marginLeft: 3 }}>{organizationName}</TagText>
           </Tag>
           {categories[0] ? (
             <Tag color={"#B4B4B4"}>
-              <Text style={{ color: "white" }}>{categories[0].name}</Text>
+              <TagText style={{ color: "white" }}>{categories[0].name}</TagText>
             </Tag>
           ) : (
             <></>
           )}
           {categories[1] ? (
             <Tag color={"#B4B4B4"}>
-              <Text style={{ color: "white" }}>{categories[1].name}</Text>
+              <TagText style={{ color: "white" }}>{categories[1].name}</TagText>
             </Tag>
           ) : (
             <></>

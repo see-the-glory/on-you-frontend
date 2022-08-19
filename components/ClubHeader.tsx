@@ -5,6 +5,7 @@ import styled from "styled-components/native";
 import { Animated } from "react-native";
 import { BlurView } from "expo-blur";
 import { ClubHomeHaederProps } from "../Types/Club";
+import CustomText from "./CustomText";
 
 const Header = styled.View`
   width: 100%;
@@ -39,21 +40,29 @@ const CategoryBox = styled.View`
   margin-right: 3px;
 `;
 
+const CategoryNameText = styled(CustomText)`
+  font-size: 10px;
+  line-height: 14px;
+`;
+
 const ClubNameView = styled.View`
   align-items: center;
   margin-bottom: 5px;
 `;
 
-const ClubNameText = styled.Text`
+const ClubNameText = styled(CustomText)`
   color: white;
-  font-size: 28px;
-  font-weight: 800;
+  font-size: 22px;
+  font-family: "NotoSansKR-Bold";
+  line-height: 31px;
 `;
 
 const ClubShortDescView = styled.View`
   align-items: center;
 `;
-const ClubShortDescText = styled.Text`
+const ClubShortDescText = styled(CustomText)`
+  font-size: 11px;
+  line-height: 14px;
   color: white;
 `;
 
@@ -87,17 +96,13 @@ const ApplyButton = styled.TouchableOpacity`
   margin-bottom: 25px;
 `;
 
-const ButtonText = styled.Text`
-  color: white;
-  font-size: 14px;
-  font-weight: 800;
-`;
-
 const CollapsedView = styled.View<{ top: number }>`
   top: ${(props) => props.top}px;
 `;
 
-const ContentText = styled.Text`
+const ContentText = styled(CustomText)`
+  font-size: 11px;
+  line-height: 14px;
   color: white;
 `;
 
@@ -130,7 +135,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
             justifyContent: "flex-start",
           }}
         >
-          <CollapsedView top={Platform.OS === "ios" ? 40 : 40 - (StatusBar.currentHeight ?? 0)}>
+          <CollapsedView top={Platform.OS === "ios" ? 45 : 45 - (StatusBar.currentHeight ?? 0)}>
             <ClubNameView>
               <ClubNameText>{name}</ClubNameText>
             </ClubNameView>
@@ -146,14 +151,14 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
               <CategoryView>
                 {categories[0] ? (
                   <CategoryBox>
-                    <Text>{categories[0].name}</Text>
+                    <CategoryNameText>{categories[0].name}</CategoryNameText>
                   </CategoryBox>
                 ) : (
                   <></>
                 )}
                 {categories[1] ? (
                   <CategoryBox>
-                    <Text>{categories[1].name}</Text>
+                    <CategoryNameText>{categories[1].name}</CategoryNameText>
                   </CategoryBox>
                 ) : (
                   <></>
