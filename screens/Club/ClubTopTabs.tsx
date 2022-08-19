@@ -90,7 +90,7 @@ const ClubTopTabs = ({
   };
 
   const clubJoin = () => {
-    if (clubRole?.data.applyStatus === "APPLIED") {
+    if (clubRole?.data?.applyStatus === "APPLIED") {
       toast.show("가입신청서가 이미 전달되었습니다.", {
         type: "warning",
       });
