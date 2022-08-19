@@ -1,16 +1,16 @@
 import React from "react";
-import { Text, StyleSheet, Platform, TextProps } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 
-export default class CustomText extends React.Component {
+export default class CustomTextInput extends React.Component {
   constructor(props) {
     super(props);
   }
 
   render() {
     return (
-      <Text style={[styles.defaultStyle, this.props.style]} {...this.props} allowFontScaling={false}>
+      <TextInput style={[styles.defaultStyle, this.props.style]} {...this.props} allowFontScaling={false}>
         {this.props.children}
-      </Text>
+      </TextInput>
     );
   }
 }

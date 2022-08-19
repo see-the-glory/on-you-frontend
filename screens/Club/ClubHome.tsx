@@ -73,7 +73,7 @@ const ScheduleView = styled.TouchableOpacity`
 
 const ScheduleAddView = styled.TouchableOpacity`
   background-color: white;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
   box-shadow: 1px 1px 2px gray;
   elevation: 3;
@@ -398,9 +398,8 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{
-              padding: 3,
+              paddingVertical: 15,
               paddingHorizontal: SCREEN_PADDING_SIZE,
-              paddingTop: 15,
             }}
             data={scheduleData}
             keyExtractor={(item: RefinedSchedule, index: number) => String(index)}
@@ -460,7 +459,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         )}
       </SectionView>
       <SectionView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
-        <Break sep={20} />
+        <Break sep={7} />
         <TitleView>
           <Feather name="users" size={16} color="#295AF5" />
           <SectionTitle>MEMBER</SectionTitle>
