@@ -203,7 +203,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     onSuccess: (res) => {
       const week = ["일", "월", "화", "수", "목", "금", "토"];
       const result: RefinedSchedule[] = [];
-      for (let i = 0; i < res.data.length; ++i) {
+      for (let i = 0; i < res?.data?.length; ++i) {
         const date = new Date(res.data[i].startDate);
         const dayOfWeek = week[date.getDay()];
         let refined: RefinedSchedule = {
@@ -338,7 +338,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   };
 
   const getData = async () => {
-    await Promise.all([getClubMembers()]);
+    getClubMembers();
     setMemberLoading(false);
   };
 

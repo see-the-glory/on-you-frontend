@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, StatusBar, Text, View } from "react-native";
+import { Animated, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
-import { Feather, AntDesign, FontAwesome5 } from "@expo/vector-icons";
-import { ClubmanagementMainProps, RootStackParamList } from "../../Types/Club";
+import { Feather, AntDesign, FontAwesome5, Entypo } from "@expo/vector-icons";
+import { ClubManagementMainProps, RootStackParamList } from "../../Types/Club";
 import CircleIcon from "../../components/CircleIcon";
+import CustomText from "../../components/CustomText";
+import { Shadow } from "react-native-shadow-2";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -15,27 +17,45 @@ const Header = styled.View`
   align-items: center;
   justify-content: space-between;
   background-color: white;
-  padding: 20px;
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  padding: 25px 0px 20px 0px;
 `;
-const HeaderLeft = styled.View`
+
+const NavigationView = styled.SafeAreaView<{ height: number }>`
+  position: absolute;
+  z-index: 3;
+  width: 100%;
+  height: ${(props) => props.height}px;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
 `;
+
+const LeftNavigationView = styled.View`
+  flex-direction: row;
+  padding-left: 10px;
+`;
+const RightNavigationView = styled.View`
+  flex-direction: row;
+  padding-right: 10px;
+  background-color: green;
+`;
+
 const InformationView = styled.View`
   justify-content: center;
   align-items: center;
+  margin-bottom: 5px;
 `;
 
-const Title = styled.Text`
+const Title = styled(CustomText)`
+  font-family: "NotoSansKR-Medium";
   font-size: 18px;
-  font-weight: 700;
+  line-height: 28px;
 `;
 
-const HeaderText = styled.Text`
+const HeaderText = styled(CustomText)`
+  font-family: "NotoSansKR-Medium";
   font-size: 12px;
   color: #b7b7b7;
-  font-weight: 600;
   padding-left: 5px;
   padding-right: 5px;
 `;
@@ -43,24 +63,27 @@ const HeaderText = styled.Text`
 const TagView = styled.View`
   width: 100%;
   flex-direction: row;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
 `;
 
 const Tag = styled.View<{ color: string }>`
   flex-direction: row;
   align-items: center;
   background-color: ${(props) => props.color};
-  padding: 2px 3px;
+  padding: 0px 3px;
   border-radius: 5px;
   margin-right: 5px;
   border: 1px solid ${(props) => (props.color === "white" ? "#A5A5A5" : "#B4B4B4")};
 `;
 
-const TagText = styled.Text`
-  font-size: 9px;
+const TagText = styled(CustomText)`
+  font-family: "NotoSansKR-Medium";
+  font-size: 10px;
+  line-height: 14px;
 `;
 
-const HeaderRight = styled.View`
+const ButtonView = styled.View`
+  margin-top: 20px;
   flex-direction: row;
   align-items: center;
 `;
@@ -89,7 +112,7 @@ const ListView = styled.View`
   border-bottom-width: 1px;
 `;
 const ListItem = styled.TouchableOpacity`
-  padding: 15px 20px;
+  padding: 12px 20px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -102,7 +125,7 @@ const ItemRight = styled.View`
   flex-direction: row;
   align-items: center;
 `;
-const ItemText = styled.Text`
+const ItemText = styled(CustomText)`
   margin-left: 10px;
   font-size: 14px;
 `;
@@ -115,8 +138,8 @@ interface ClubEditItem {
   screen: keyof RootStackParamList;
 }
 
-const ClubManagementMain: React.FC<ClubmanagementMainProps> = ({
-  navigation: { navigate },
+const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
+  navigation: { navigate, goBack },
   route: {
     params: { clubData },
   },
@@ -163,13 +186,13 @@ const ClubManagementMain: React.FC<ClubmanagementMainProps> = ({
     if (isToggle) {
       Animated.timing(X, {
         toValue: 0,
-        duration: 300,
+        duration: 250,
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(X, {
         toValue: 13,
-        duration: 300,
+        duration: 250,
         useNativeDriver: true,
       }).start();
     }
@@ -180,12 +203,21 @@ const ClubManagementMain: React.FC<ClubmanagementMainProps> = ({
     <Container>
       <StatusBar barStyle={"default"} />
       <MainView>
-        <Header>
-          <HeaderLeft>
+        <Shadow distance={3} viewStyle={{ width: "100%" }}>
+          <Header>
+            <NavigationView height={100}>
+              <LeftNavigationView>
+                <TouchableOpacity onPress={goBack}>
+                  <Entypo name="chevron-thin-left" size={24} color="black" />
+                </TouchableOpacity>
+              </LeftNavigationView>
+              <RightNavigationView></RightNavigationView>
+            </NavigationView>
+
             <InformationView>
               <TagView>
                 <Tag color={"white"}>
-                  <FontAwesome5 name="cross" size={8} color="#A5A5A5" />
+                  <FontAwesome5 name="cross" size={6} color="#A5A5A5" />
                   <TagText style={{ color: "#A5A5A5", marginLeft: 3 }}>{clubData.organizationName}</TagText>
                 </Tag>
                 {clubData.categories[0] ? (
@@ -206,17 +238,17 @@ const ClubManagementMain: React.FC<ClubmanagementMainProps> = ({
               <Title>{clubData.name}</Title>
             </InformationView>
             <CircleIcon size={70} uri={clubData.thumbnail} />
-          </HeaderLeft>
-          <HeaderRight>
-            <AntDesign name="user" size={10} color="#B7B7B7" />
-            <HeaderText>멤버모집</HeaderText>
-            <ToggleButton onPress={onPressToggle} isToggle={isToggle} activeOpacity={1}>
-              <AnimatedDot style={{ transform: [{ translateX: X }] }} />
-              <AntDesign name="adduser" size={10} color="#FFFFFF" />
-              <AntDesign name="deleteuser" size={10} color="#FFFFFF" />
-            </ToggleButton>
-          </HeaderRight>
-        </Header>
+            <ButtonView>
+              <AntDesign name="user" size={10} color="#B7B7B7" />
+              <HeaderText>멤버모집</HeaderText>
+              <ToggleButton onPress={onPressToggle} isToggle={isToggle} activeOpacity={1}>
+                <AnimatedDot style={{ transform: [{ translateX: X }] }} />
+                <AntDesign name="adduser" size={10} color="#FFFFFF" />
+                <AntDesign name="deleteuser" size={10} color="#FFFFFF" />
+              </ToggleButton>
+            </ButtonView>
+          </Header>
+        </Shadow>
         <Content>
           {items?.map((item, index) => (
             <ListView key={index}>

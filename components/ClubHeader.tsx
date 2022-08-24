@@ -1,5 +1,5 @@
 import React from "react";
-import { ImageBackground, Platform, StatusBar, Text, View } from "react-native";
+import { ImageBackground, Platform, SafeAreaView, StatusBar, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
@@ -33,9 +33,9 @@ const CategoryView = styled.View`
 `;
 
 const CategoryBox = styled.View`
-  background-color: rgba(255, 255, 255, 0.6);
-  padding: 3px;
-  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 1px 3px;
+  border-radius: 3px;
   margin-left: 3px;
   margin-right: 3px;
 `;
@@ -96,8 +96,10 @@ const ApplyButton = styled.TouchableOpacity`
   margin-bottom: 25px;
 `;
 
-const CollapsedView = styled.View<{ top: number }>`
-  top: ${(props) => props.top}px;
+const CollapsedView = styled.SafeAreaView<{ height: number }>`
+  justify-content: center;
+  align-items: center;
+  height: ${(props) => props.height}px;
 `;
 
 const ContentText = styled(CustomText)`
@@ -135,7 +137,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
             justifyContent: "flex-start",
           }}
         >
-          <CollapsedView top={Platform.OS === "ios" ? 45 : 45 - (StatusBar.currentHeight ?? 0)}>
+          <CollapsedView height={heightCollapsed}>
             <ClubNameView>
               <ClubNameText>{name}</ClubNameText>
             </ClubNameView>

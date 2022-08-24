@@ -251,13 +251,16 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             onEndReached={loadMore}
             data={clubs?.pages.map((page) => page?.responses?.content).flat()}
             columnWrapperStyle={{ justifyContent: "space-between" }}
+            ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
+            ListFooterComponent={() => <View style={{ height: 60 }} />}
             numColumns={2}
             keyExtractor={(item: Club, index: number) => String(index)}
-            renderItem={({ item }: { item: Club }) => (
+            renderItem={({ item, index }: { item: Club; index: number }) => (
               <TouchableOpacity
                 onPress={() => {
                   goToClub(item);
                 }}
+                style={index % 2 === 0 ? { marginRight: 0.5 } : { marginLeft: 0.5 }}
               >
                 <ClubList
                   thumbnailPath={item.thumbnail}

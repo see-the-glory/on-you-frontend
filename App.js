@@ -28,6 +28,7 @@ const RootNavigation = () => {
     await Font.loadAsync({
       "NotoSansKR-Bold": require("./assets/fonts/NotoSansKR-Bold.otf"),
       "NotoSansKR-Regular": require("./assets/fonts/NotoSansKR-Regular.otf"),
+      "NotoSansKR-Medium": require("./assets/fonts/NotoSansKR-Medium.otf"),
     });
 
     const texts = [Text, TextInput];
@@ -61,7 +62,7 @@ export default function App() {
           warningColor="#8E8E8E"
           duration={3000}
           animationType="zoom-in"
-          style={{ borderRadius: 20, paddingHorizontal: 25 }}
+          style={{ borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8, fontFamily: "NotoSansKR-Regular" }}
           icon={<Ionicons name="checkmark-circle" size={18} color="white" />}
         >
           <RootNavigation />

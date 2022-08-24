@@ -54,7 +54,7 @@ const IconButton = styled.TouchableOpacity`
 `;
 
 const SlidingTab = Animated.createAnimatedComponent(Circle);
-const AnimatedIconButton = Animated.createAnimatedComponent(IconButton);
+const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
 const Tab = createBottomTabNavigator<MainBottomTabParamList>();
 
@@ -107,16 +107,9 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
             };
 
             return (
-              <AnimatedIconButton
-                key={index}
-                accessibilityRole="button"
-                accessibilityState={isFocused ? { selected: true } : {}}
-                accessibilityLabel={options.tabBarAccessibilityLabel}
-                onPress={onPress}
-                style={{}}
-              >
-                <Ionicons name={isFocused ? route.params.activeIcon : route.params.inActiveIcon} size={24} color={isFocused ? "black" : "gray"} style={{ padding: 15 }} />
-              </AnimatedIconButton>
+              <IconButton key={index} accessibilityRole="button" accessibilityState={isFocused ? { selected: true } : {}} accessibilityLabel={options.tabBarAccessibilityLabel} onPress={onPress}>
+                <AnimatedIcon name={isFocused ? route.params.activeIcon : route.params.inActiveIcon} size={24} color={isFocused ? "black" : "gray"} style={{ bottom: 6, padding: 10 }} />
+              </IconButton>
             );
           })}
         </TabBarContainer>

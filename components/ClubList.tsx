@@ -1,5 +1,5 @@
 import React from "react";
-import { useWindowDimensions, Platform } from "react-native";
+import { useWindowDimensions, Platform, PixelRatio } from "react-native";
 import styled from "styled-components/native";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -7,9 +7,7 @@ import { Category } from "../api";
 import CustomText from "./CustomText";
 
 const Club = styled.View`
-  /* background-color: orange; */
   align-items: flex-start;
-  padding-bottom: 15px;
 `;
 
 const ThumbnailView = styled.View``;
@@ -30,8 +28,8 @@ const Gradient = styled(LinearGradient)<{ size: number }>`
 
 const RecruitView = styled.View`
   background-color: #ff714b;
-  padding: 2px 3px;
-  border-radius: 5px;
+  padding: 1px 3px;
+  border-radius: 3px;
 `;
 
 const RecruitText = styled(CustomText)`
@@ -69,8 +67,8 @@ const Number = styled(CustomText)`
 `;
 
 const ClubInfo = styled.View`
-  width: 200px;
-  padding: 5px 10px 15px 10px;
+  width: 100%;
+  padding: 0px 10px;
   justify-content: space-evenly;
 `;
 
@@ -92,17 +90,19 @@ const Tag = styled.View<{ color: string }>`
 `;
 
 const TagText = styled(CustomText)`
-  font-size: 9px;
-  line-height: 15px;
+  font-family: "NotoSansKR-Medium";
+  font-size: 10px;
+  line-height: 14px;
 `;
 
 const DescView = styled.View`
   width: 100%;
-  padding-bottom: 5px;
+  margin: 5px 0px;
 `;
 const ShortDescText = styled(CustomText)`
   color: #6f6f6f;
   font-size: 12px;
+  line-height: 19px;
 `;
 
 interface ClubListProps {
@@ -117,7 +117,7 @@ interface ClubListProps {
 
 const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, clubName, memberNum, clubShortDesc, categories, recruitStatus }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
-  const colSize = Math.round(SCREEN_WIDTH / 2) - 0.5;
+  const colSize = Math.round(SCREEN_WIDTH / 2);
   return (
     <Club>
       <ThumbnailView>
