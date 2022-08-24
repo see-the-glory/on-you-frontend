@@ -4,7 +4,7 @@ import React from "react";
 import { useMutation } from "react-query";
 import { CommonApi } from "../../api";
 import { useDispatch } from "react-redux";
-import { Login } from "../../Store/Actions";
+import { Login } from "../../store/Actions";
 import styled from "styled-components/native";
 
 const Container = styled.View`

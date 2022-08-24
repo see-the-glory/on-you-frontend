@@ -1,7 +1,7 @@
 import React from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
-import { Logout } from "../Store/Actions";
+import { Logout } from "../store/Actions";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
