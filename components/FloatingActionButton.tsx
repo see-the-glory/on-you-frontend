@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components/native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Animated } from "react-native";
-import { ClubHomeFloatingButtonProps } from "../Types/Club";
+import { ClubHomeFloatingButtonProps } from "../types/Club";
 
 const FloatingActionView = styled.View`
   position: absolute;

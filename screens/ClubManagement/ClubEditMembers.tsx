@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import { Member } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
-import { ClubEditMembersProps, MemberBundle } from "../../Types/Club";
+import { ClubEditMembersProps, MemberBundle } from "../../types/Club";
 
 const Container = styled.SafeAreaView`
   flex: 1;

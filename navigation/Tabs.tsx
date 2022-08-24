@@ -7,7 +7,7 @@ import Profile from "../screens/Profile";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated, useWindowDimensions } from "react-native";
-import { MainBottomTabParamList } from "../Types/Club";
+import { MainBottomTabParamList } from "../types/Club";
 import { Shadow } from "react-native-shadow-2";
 
 const Container = styled.View`
