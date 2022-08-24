@@ -1,33 +1,36 @@
 import React, { useState } from "react";
-import { ActivityIndicator, FlatList, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Platform, StatusBar, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
-import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
 import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
 import { Category, CategoryResponse, ClubApi, Club, ClubsResponse, ClubsParams } from "../api";
 import { ClubListScreenProps } from "../Types/Club";
 import { useSelector } from "react-redux";
+import CustomText from "../components/CustomText";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
   justify-content: center;
   align-items: center;
-  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0};
+  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
 `;
 
 const CategoryButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
 `;
-const CategoryName = styled.Text`
-  font-size: 18px;
+const CategoryName = styled(CustomText)`
+  font-size: 15px;
   color: gray;
+  line-height: 21px;
 `;
 
-const SelectedCategoryName = styled.Text`
-  font-weight: 700;
-  font-size: 18px;
+const SelectedCategoryName = styled(CustomText)`
+  font-family: "NotoSansKR-Bold";
+  font-size: 15px;
   color: black;
+  line-height: 21px;
 `;
 
 // Club ScrollView
@@ -37,7 +40,7 @@ const Container = styled.SafeAreaView`
 `;
 
 const HeaderView = styled.View`
-  height: 100px;
+  height: 80px;
 `;
 
 const HeaderSection = styled.View`
@@ -53,11 +56,15 @@ const HeaderSection = styled.View`
 
 const HeaderItem = styled.View`
   flex: 1;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 0px 20px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+`;
+
+const HeaderItemText = styled(CustomText)`
+  font-size: 11px;
+  line-height: 15px;
 `;
 
 const MainView = styled.View`
@@ -68,8 +75,8 @@ const FloatingButton = styled.TouchableOpacity`
   position: absolute;
   right: 20px;
   bottom: 20px;
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   background-color: #295af5;
   elevation: 5;
   box-shadow: 1px 1px 3px gray;
@@ -170,6 +177,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const loadMore = () => {
     if (hasNextPage) fetchNextPage();
   };
+
   const loading = categoryLoading && clubsLoading;
 
   return loading ? (
@@ -200,7 +208,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
         />
         <HeaderSection>
           <HeaderItem>
-            <Text>상세 필터</Text>
+            <HeaderItemText>상세 필터</HeaderItemText>
             <TouchableOpacity
               style={{
                 height: 35,
@@ -219,7 +227,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             }}
           ></View>
           <HeaderItem>
-            <Text>최신순</Text>
+            <HeaderItemText>최신순</HeaderItemText>
             <TouchableOpacity
               style={{
                 height: 35,
@@ -243,13 +251,16 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             onEndReached={loadMore}
             data={clubs?.pages.map((page) => page?.responses?.content).flat()}
             columnWrapperStyle={{ justifyContent: "space-between" }}
+            ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
+            ListFooterComponent={() => <View style={{ height: 60 }} />}
             numColumns={2}
             keyExtractor={(item: Club, index: number) => String(index)}
-            renderItem={({ item }: { item: Club }) => (
+            renderItem={({ item, index }: { item: Club; index: number }) => (
               <TouchableOpacity
                 onPress={() => {
                   goToClub(item);
                 }}
+                style={index % 2 === 0 ? { marginRight: 0.5 } : { marginLeft: 0.5 }}
               >
                 <ClubList
                   thumbnailPath={item.thumbnail}
@@ -266,7 +277,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
         )}
       </MainView>
       <FloatingButton onPress={goToCreation}>
-        <Ionicons name="ios-add-sharp" size={28} color="white" />
+        <Feather name="plus" size={30} color="white" />
       </FloatingButton>
     </Container>
   );

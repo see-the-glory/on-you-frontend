@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import * as Font from "expo-font";
+import React, { useState } from "react";
 import AppLoading from "expo-app-loading";
 import { NavigationContainer } from "@react-navigation/native";
 import Root from "./navigation/Root";
@@ -10,24 +9,40 @@ import { store } from "./Store/Index";
 import { Init } from "./Store/Actions";
 import { ToastProvider } from "react-native-toast-notifications";
 import { Ionicons } from "@expo/vector-icons";
-import { LogBox } from "react-native";
+import { LogBox, Platform, Text, TextInput } from "react-native";
+import * as Font from "expo-font";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
 const queryClient = new QueryClient();
 
-const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
-
 const RootNavigation = () => {
   const [ready, setReady] = useState(false);
   const token = useSelector((state) => state.AuthReducers.authToken);
   const dispatch = useDispatch();
-
   const onFinish = () => setReady(true);
 
   // PreLoading
   const startLoading = async () => {
     await dispatch(Init());
+    await Font.loadAsync({
+      "NotoSansKR-Bold": require("./assets/fonts/NotoSansKR-Bold.otf"),
+      "NotoSansKR-Regular": require("./assets/fonts/NotoSansKR-Regular.otf"),
+      "NotoSansKR-Medium": require("./assets/fonts/NotoSansKR-Medium.otf"),
+    });
+
+    const texts = [Text, TextInput];
+
+    texts.forEach((v) => {
+      v.defaultProps = {
+        ...(v.defaultProps || {}),
+        allowFontScaling: false,
+        style: {
+          fontFamily: "NotoSansKR-Regular",
+          lineHeight: Platform.OS === "ios" ? 19 : 21,
+        },
+      };
+    });
   };
 
   if (!ready) {
@@ -47,7 +62,7 @@ export default function App() {
           warningColor="#8E8E8E"
           duration={3000}
           animationType="zoom-in"
-          style={{ borderRadius: 20, paddingHorizontal: 25 }}
+          style={{ borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8, fontFamily: "NotoSansKR-Regular" }}
           icon={<Ionicons name="checkmark-circle" size={18} color="white" />}
         >
           <RootNavigation />

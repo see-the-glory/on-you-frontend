@@ -33,14 +33,17 @@ export interface Club {
 }
 
 export interface Member {
-  birthday: string;
-  created: string;
-  email: string;
   id: number;
+  organizationName: string;
+  thumbnail: string;
   name: string;
-  organization: string;
+  birthday: string;
+  applyStatus: string;
   sex: string;
+  email: string;
+  created: string;
   role: string | null;
+  phoneNumber: string | null;
 }
 
 export interface Schedule {

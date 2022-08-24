@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Modal, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Animated, Modal, useWindowDimensions } from "react-native";
 import Carousel from "react-native-snap-carousel";
 import { RefinedSchedule } from "../../Types/Club";
-
 import { Feather, Ionicons, Entypo } from "@expo/vector-icons";
 import styled from "styled-components/native";
+import CustomText from "../../components/CustomText";
 
 const Container = styled.View`
   background-color: white;
@@ -12,66 +12,74 @@ const Container = styled.View`
   border-top-right-radius: 10px;
   elevation: 1;
 `;
-const Header = styled.View`
+const Header = styled.View<{ index: number }>`
   align-items: center;
   justify-content: center;
   width: 100%;
-  background-color: #eaff87;
+  background-color: ${(props) => (props.index === 0 ? "#eaff87" : "#CCCCCC")};
   padding-top: 10px;
   padding-bottom: 10px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 `;
 
-const ScheduleText = styled.Text`
+const ScheduleText = styled(CustomText)`
   font-size: 16px;
+  line-height: 21px;
 `;
 
-const ScheduleTitle = styled.Text`
+const ScheduleTitle = styled(CustomText)`
   font-size: 26px;
-  font-weight: 600;
+  font-family: "NotoSansKR-Bold";
+  line-height: 32px;
 `;
 
 const ContentView = styled.View`
   width: 100%;
-  padding: 10px 25px 10px 25px;
+  padding: 10px 20px;
   align-items: flex-start;
 `;
 
 const ContentItemView = styled.View`
   flex-direction: row;
-  padding: 10px;
+  padding: 6px 8px;
   align-items: center;
 `;
 
-const ContentText = styled.Text`
-  padding-left: 10px;
-  padding-right: 10px;
-  font-size: 14px;
+const ContentText = styled(CustomText)`
+  padding: 0px 10px;
+  font-size: 10px;
+  line-height: 15px;
+  color: #6f6f6f;
 `;
 const MemoScrollView = styled.ScrollView`
   width: 100%;
-  height: 150px;
+  height: 210px;
   padding: 10px;
 `;
-const Memo = styled.Text``;
+const Memo = styled(CustomText)`
+  color: #6f6f6f;
+  font-size: 10px;
+  line-height: 15px;
+`;
 
 const Footer = styled.View`
   align-items: center;
   width: 100%;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 10px 0px;
 `;
 
 const ApplyButton = styled.TouchableOpacity`
   background-color: white;
-  padding: 8px 60px 8px 60px;
+  padding: 5px 50px;
   border: 1px solid #ff714b;
 `;
 
-const ButtonText = styled.Text`
-  font-size: 18px;
-  font-weight: 700;
+const ButtonText = styled(CustomText)`
+  font-size: 12px;
+  line-height: 16px;
+  font-family: "NotoSansKR-Bold";
+
   color: #ff714b;
 `;
 
@@ -189,7 +197,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
                 <></>
               )}
 
-              <Header>
+              <Header index={selectIndex}>
                 {children}
                 <ScheduleText>{item.year}</ScheduleText>
                 <ScheduleTitle>
@@ -198,24 +206,24 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
               </Header>
               <ContentView>
                 <ContentItemView>
-                  <Feather name="clock" size={16} color="#6F6F6F" />
+                  <Feather name="clock" size={16} color="black" />
                   <ContentText>
-                    {`${item.year}/${item.month}/${item.day} ${item.ampm} ${item.hour}시`}
+                    {`${item.ampm} ${item.hour}시`}
                     {item.minute !== "0" ? ` ${item.minute}분` : ""}
                   </ContentText>
                 </ContentItemView>
                 <Break sep={0} />
                 <ContentItemView>
-                  <Feather name="map-pin" size={16} color="#6F6F6F" />
+                  <Feather name="map-pin" size={16} color="black" />
                   <ContentText>{item.location}</ContentText>
                 </ContentItemView>
                 <Break sep={0} />
                 <ContentItemView>
-                  <Feather name="user-check" size={16} color="#6F6F6F" />
+                  <Feather name="user-check" size={16} color="black" />
                 </ContentItemView>
                 <Break sep={0} />
                 <ContentItemView>
-                  <Ionicons name="checkmark-sharp" size={16} color="#6F6F6F" />
+                  <Ionicons name="checkmark-sharp" size={16} color="black" />
                   <ContentText>{`메모`}</ContentText>
                 </ContentItemView>
                 <MemoScrollView>

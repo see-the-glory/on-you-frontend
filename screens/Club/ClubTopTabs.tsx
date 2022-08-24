@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { Animated, Platform, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
 import styled from "styled-components/native";
@@ -19,23 +19,23 @@ const Container = styled.View`
   flex: 1;
 `;
 
-const HeaderView = styled.View<{ top: number }>`
+const NavigationView = styled.SafeAreaView<{ height: number }>`
   position: absolute;
   z-index: 3;
   width: 100%;
-  top: ${(props) => props.top}px;
+  height: ${(props) => props.height}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 `;
 
-const LeftHeaderView = styled.View`
+const LeftNavigationView = styled.View`
   flex-direction: row;
-  margin-left: 10px;
+  padding-left: 10px;
 `;
-const RightHeaderView = styled.View`
+const RightNavigationView = styled.View`
   flex-direction: row;
-  margin-right: 10px;
+  padding-right: 10px;
 `;
 
 const ModalHeaderRight = styled.View`
@@ -90,7 +90,7 @@ const ClubTopTabs = ({
   };
 
   const clubJoin = () => {
-    if (clubRole?.data.applyStatus === "APPLIED") {
+    if (clubRole?.data?.applyStatus === "APPLIED") {
       toast.show("가입신청서가 이미 전달되었습니다.", {
         type: "warning",
       });
@@ -114,6 +114,7 @@ const ClubTopTabs = ({
     isLoading: clubRoleLoading,
     data: clubRole,
     isRefetching: isRefetchingClubRole,
+    refetch: clubRoleRefetch,
   } = useQuery<ClubRoleResponse>(["getClubRole", token, clubData.id], ClubApi.getClubRole, {
     onSuccess: (res) => {},
     onError: (error) => {
@@ -142,25 +143,18 @@ const ClubTopTabs = ({
   return (
     <Container>
       <StatusBar barStyle={"light-content"} />
-      <HeaderView top={Platform.OS === "ios" ? 55 : 55 - (StatusBar.currentHeight ?? 0)}>
-        <LeftHeaderView>
+      <NavigationView height={heightCollapsed}>
+        <LeftNavigationView>
           <TouchableOpacity onPress={() => navigation.popToTop()}>
-            <Ionicons name="md-chevron-back-sharp" size={24} color="white" />
+            <Entypo name="chevron-thin-left" size={24} color="white" />
           </TouchableOpacity>
-        </LeftHeaderView>
-        <RightHeaderView>
+        </LeftNavigationView>
+        <RightNavigationView>
           <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)} style={{ marginRight: 10 }}>
             {heartSelected ? <Ionicons name="md-heart" size={24} color="white" /> : <Ionicons name="md-heart-outline" size={24} color="white" />}
           </TouchableOpacity>
-          {/* <TouchableOpacity>
-            <Ionicons
-              name="ellipsis-vertical"
-              size={24}
-              color="white"
-            />
-          </TouchableOpacity> */}
-        </RightHeaderView>
-      </HeaderView>
+        </RightNavigationView>
+      </NavigationView>
 
       <ClubHeader
         imageURI={clubData.thumbnail}

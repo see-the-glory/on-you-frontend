@@ -1,7 +1,7 @@
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Animated, GestureResponderEvent } from "react-native";
-import { Club, CategoryResponse, Schedule, Category, ClubRole } from "../api";
+import { Club, CategoryResponse, Schedule, Category, ClubRole, Member } from "../api";
 
 // For Stack Navigation
 export type RootStackParamList = {
@@ -60,9 +60,10 @@ export type ClubCreationSuccessScreenProps = NativeStackScreenProps<RootStackPar
 export type ClubCreationFailScreenProps = NativeStackScreenProps<RootStackParamList, "ClubCreationFail">;
 
 export type ClubManagementStackProps = NativeStackScreenProps<RootStackParamList, "ClubManagementStack">;
-export type ClubmanagementMainProps = NativeStackScreenProps<RootStackParamList, "ClubManagementMain">;
+export type ClubManagementMainProps = NativeStackScreenProps<RootStackParamList, "ClubManagementMain">;
 export type ClubEditBasicsProps = NativeStackScreenProps<RootStackParamList, "ClubEditBasics">;
 export type ClubEditIntroductionProps = NativeStackScreenProps<RootStackParamList, "ClubEditIntroduction">;
+export type ClubEditMembersProps = NativeStackScreenProps<RootStackParamList, "ClubEditMembers">;
 export type ClubDeleteProps = NativeStackScreenProps<RootStackParamList, "ClubDelete">;
 
 // ClubHome Param For Collapsed Scroll Animation

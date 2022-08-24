@@ -6,6 +6,8 @@ import moment from "moment-timezone";
 import { ClubScheduleCreationRequest } from "../../api";
 import { useSelector } from "react-redux";
 import DateTimePicker, { DateTimePickerAndroid, DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import CustomText from "../../components/CustomText";
+import CustomTextInput from "../../components/CustomTextInput";
 
 const Container = styled.View`
   background-color: white;
@@ -23,9 +25,10 @@ const Header = styled.View`
   border-top-right-radius: 10px;
 `;
 
-const HeaderTitle = styled.Text`
+const HeaderTitle = styled(CustomText)`
   font-size: 16px;
-  font-weight: 700;
+  line-height: 22px;
+  font-family: "NotoSansKR-Bold";
   color: black;
   padding: 5px 0px;
 `;
@@ -37,29 +40,32 @@ const ContentView = styled.View`
 `;
 
 const ContentItemView = styled.View`
+  height: 35px;
   flex-direction: row;
-  padding: 5px;
+  padding: 6px 8px;
   align-items: center;
 `;
 
-const ContentText = styled.Text`
-  margin: 15px 0px;
-  font-size: 12px;
+const ContentText = styled(CustomText)`
+  padding: 0px 10px;
+  font-size: 10px;
+  line-height: 14px;
   color: #6f6f6f;
 `;
 
-const ContentTextInput = styled.TextInput`
+const ContentTextInput = styled(CustomTextInput)`
   width: 100%;
-  font-size: 12px;
-  margin: 10px 0px;
+  font-size: 10px;
+  line-height: 14px;
   padding: 0px 10px;
 `;
 
-const MemoInput = styled.TextInput`
+const MemoInput = styled(CustomTextInput)`
   width: 100%;
-  height: 150px;
+  height: 180px;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 10px;
+  line-height: 12px;
   padding: 8px;
 `;
 
@@ -71,13 +77,13 @@ const Footer = styled.View`
 
 const ApplyButton = styled.TouchableOpacity<{ disabled: boolean }>`
   background-color: white;
-  padding: 8px 60px 8px 60px;
+  padding: 5px 50px;
   border: 1px solid ${(props) => (props.disabled ? "#D3D3D3" : "#295af5")};
 `;
 
-const ButtonText = styled.Text<{ disabled: boolean }>`
-  font-size: 18px;
-  font-weight: 700;
+const ButtonText = styled(CustomText)<{ disabled: boolean }>`
+  font-size: 12px;
+  line-height: 16px;
   color: ${(props) => (props.disabled ? "#D3D3D3" : "#295af5")};
 `;
 
@@ -85,9 +91,9 @@ const Break = styled.View<{ sep: number }>`
   width: 100%;
   margin-bottom: ${(props) => props.sep}px;
   margin-top: ${(props) => props.sep}px;
-  border-bottom-width: 0.5px;
-  border-bottom-color: rgba(0, 0, 0, 0.3);
-  opacity: 0.5;
+  border-bottom-width: 1px;
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+  opacity: 1;
 `;
 
 interface ScheduleAddModalProps {
@@ -177,7 +183,7 @@ const ScheduleAddModal: React.FC<ScheduleAddModalProps> = ({ visible, mutation, 
           </Header>
           <ContentView>
             <ContentItemView>
-              <Ionicons name="calendar" size={16} color="#6F6F6F" style={{ marginRight: 10 }} />
+              <Ionicons name="calendar" size={16} color="black" style={{ marginRight: 10 }} />
               {Platform.OS === "android" ? (
                 <TouchableOpacity onPress={() => showDateTimePicker("date")}>
                   <ContentText>{moment(selectedDate).format("YYYY-MM-DD")}</ContentText>
@@ -188,7 +194,7 @@ const ScheduleAddModal: React.FC<ScheduleAddModalProps> = ({ visible, mutation, 
             </ContentItemView>
             <Break sep={0} />
             <ContentItemView>
-              <Feather name="clock" size={16} color="#6F6F6F" style={{ marginRight: 10 }} />
+              <Feather name="clock" size={16} color="black" style={{ marginRight: 10 }} />
               {Platform.OS === "android" ? (
                 <TouchableOpacity onPress={() => showDateTimePicker("time")}>
                   <ContentText>{moment(selectedDate).format("A hh:mm")}</ContentText>
@@ -199,12 +205,12 @@ const ScheduleAddModal: React.FC<ScheduleAddModalProps> = ({ visible, mutation, 
             </ContentItemView>
             <Break sep={0} />
             <ContentItemView>
-              <Feather name="map-pin" size={16} color="#6F6F6F" />
+              <Feather name="map-pin" size={16} color="black" style={{ marginRight: 10 }} />
               <ContentTextInput placeholder="모이는 장소" onChangeText={(value: string) => setLocation(value)} />
             </ContentItemView>
             <Break sep={0} />
             <ContentItemView>
-              <Ionicons name="checkmark-sharp" size={16} color="#6F6F6F" style={{ marginRight: 10 }} />
+              <Ionicons name="checkmark-sharp" size={16} color="black" style={{ marginRight: 10 }} />
               <ContentText>{`메모`}</ContentText>
             </ContentItemView>
             <MemoInput

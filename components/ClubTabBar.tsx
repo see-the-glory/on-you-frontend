@@ -1,6 +1,7 @@
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import React from "react";
 import styled from "styled-components/native";
+import CustomText from "./CustomText";
 
 const TabBarContainer = styled.View<{ height: number }>`
   width: 100%;
@@ -27,8 +28,9 @@ const TextWrap = styled.View<{ height: number }>`
   justify-content: center;
 `;
 
-const TabText = styled.Text<{ isFocused: boolean }>`
-  font-weight: ${(props) => (props.isFocused ? "800" : "normal")};
+const TabText = styled(CustomText)<{ isFocused: boolean }>`
+  font-size: 12px;
+  ${(props) => (props.isFocused ? "font-family: NotoSansKR-Bold" : "")};
   color: ${(props) => (props.isFocused ? "black" : "gray")};
 `;
 

@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Keyboard, Modal, StatusBar, Text, TouchableWithoutFeedback, useWindowDimensions, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import CustomText from "../../components/CustomText";
 import styled from "styled-components/native";
+import CustomTextInput from "../../components/CustomTextInput";
 
 const Container = styled.View`
   background-color: white;
@@ -19,15 +21,16 @@ const Header = styled.View`
   border-top-right-radius: 10px;
 `;
 
-const HeaderText = styled.Text`
-  font-size: 14px;
+const HeaderText = styled(CustomText)`
+  font-size: 12px;
   color: white;
 `;
 
-const HeaderTitle = styled.Text`
-  font-size: 21px;
-  font-weight: 700;
+const HeaderTitle = styled(CustomText)`
+  font-size: 17px;
   color: white;
+  font-family: "NotoSansKR-Bold";
+  line-height: 24px;
 `;
 
 const DetailView = styled.View`
@@ -42,11 +45,11 @@ const DetailHeader = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
-  padding: 15px;
+  padding: 10px;
 `;
 
 const DetailItemView = styled.View`
-  padding: 15px;
+  padding: 10px;
   justify-content: center;
 `;
 
@@ -55,28 +58,24 @@ const DetailItem = styled.View`
   align-items: center;
 `;
 
-const DetailTitle = styled.Text`
-  font-size: 15px;
-  font-weight: 600;
-`;
-
-const DetailSubTitle = styled.Text`
-  font-size: 14px;
-  color: #5f83f7;
-`;
-
-const DetailText = styled.Text`
+const DetailTitle = styled(CustomText)`
   font-size: 12px;
+  font-family: "NotoSansKR-Bold";
+  line-height: 20px;
+`;
+
+const DetailText = styled(CustomText)`
+  font-size: 10px;
   color: #555555;
 `;
 
-const DetailTextInput = styled.TextInput`
+const DetailTextInput = styled(CustomTextInput)`
   width: 100%;
-  height: 150px;
+  height: 170px;
   border-radius: 10px;
   background-color: #f3f3f3;
-  font-size: 14px;
-  padding: 15px;
+  font-size: 11px;
+  padding: 10px;
 `;
 
 const Footer = styled.View`
@@ -89,24 +88,24 @@ const Footer = styled.View`
 
 const ApplyButton = styled.TouchableOpacity`
   background-color: #295af5;
-  padding: 10px 30px 10px 30px;
-  border-radius: 12px;
+  padding: 5px 30px;
+  border-radius: 10px;
 `;
 
-const ButtonText = styled.Text`
-  font-size: 18px;
-  font-weight: 700;
+const ButtonText = styled(CustomText)`
+  font-size: 14px;
+  font-family: "NotoSansKR-Bold";
+  line-height: 19px;
   color: white;
 `;
 
 const Break = styled.View<{ sep: number }>`
   width: 100%;
-  height: 3px;
   margin-bottom: ${(props) => props.sep}px;
   margin-top: ${(props) => props.sep}px;
-  border-bottom-width: 0.5px;
-  border-bottom-color: rgba(0, 0, 0, 0.3);
-  opacity: 0.5;
+  border-bottom-width: 1px;
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+  opacity: 1;
 `;
 
 interface ClubJoinModalProps {
