@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, StatusBar, Text, View } from "react-native";
+import { Animated, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
-import { Feather, AntDesign, FontAwesome5 } from "@expo/vector-icons";
-import { ClubmanagementMainProps, RootStackParamList } from "../../types/club";
+import { Feather, AntDesign, FontAwesome5, Entypo } from "@expo/vector-icons";
+import { ClubManagementMainProps, RootStackParamList } from "../../types/Club";
 import CircleIcon from "../../components/CircleIcon";
+import CustomText from "../../components/CustomText";
+import { Shadow } from "react-native-shadow-2";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -12,29 +14,48 @@ const Container = styled.SafeAreaView`
 const MainView = styled.ScrollView``;
 
 const Header = styled.View`
-  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   background-color: white;
-  padding: 20px;
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  padding: 25px 0px 20px 0px;
 `;
-const HeaderLeft = styled.View`
+
+const NavigationView = styled.SafeAreaView<{ height: number }>`
+  position: absolute;
+  z-index: 3;
+  width: 100%;
+  height: ${(props) => props.height}px;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
 `;
+
+const LeftNavigationView = styled.View`
+  flex-direction: row;
+  padding-left: 10px;
+`;
+const RightNavigationView = styled.View`
+  flex-direction: row;
+  padding-right: 10px;
+  background-color: green;
+`;
+
 const InformationView = styled.View`
-  margin-left: 15px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
 `;
 
-const Title = styled.Text`
-  font-size: 21px;
-  font-weight: 800;
+const Title = styled(CustomText)`
+  font-family: "NotoSansKR-Medium";
+  font-size: 18px;
+  line-height: 28px;
 `;
 
-const HeaderText = styled.Text`
-  font-size: 16px;
-  font-weight: 600;
+const HeaderText = styled(CustomText)`
+  font-family: "NotoSansKR-Medium";
+  font-size: 12px;
+  color: #b7b7b7;
   padding-left: 5px;
   padding-right: 5px;
 `;
@@ -42,40 +63,45 @@ const HeaderText = styled.Text`
 const TagView = styled.View`
   width: 100%;
   flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
 `;
 
 const Tag = styled.View<{ color: string }>`
   flex-direction: row;
   align-items: center;
   background-color: ${(props) => props.color};
-  padding: 3px 5px 3px 5px;
+  padding: 0px 3px;
   border-radius: 5px;
   margin-right: 5px;
   border: 1px solid ${(props) => (props.color === "white" ? "#A5A5A5" : "#B4B4B4")};
 `;
 
-const HeaderRight = styled.View`
+const TagText = styled(CustomText)`
+  font-family: "NotoSansKR-Medium";
+  font-size: 10px;
+  line-height: 14px;
+`;
+
+const ButtonView = styled.View`
+  margin-top: 20px;
   flex-direction: row;
   align-items: center;
 `;
 
 const ToggleButton = styled.TouchableOpacity<{ isToggle: boolean }>`
-  width: 45px;
-  height: 25px;
+  width: 35px;
+  height: 20px;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  padding: 3px;
+  padding: 0px 2px;
   border-radius: 25px;
   background-color: ${(props) => (props.isToggle ? "#295AF5" : "#a5a5a5")};
 `;
 const Dot = styled.View`
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 10px;
   background-color: white;
 `;
@@ -86,7 +112,7 @@ const ListView = styled.View`
   border-bottom-width: 1px;
 `;
 const ListItem = styled.TouchableOpacity`
-  padding: 20px;
+  padding: 12px 20px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -99,9 +125,9 @@ const ItemRight = styled.View`
   flex-direction: row;
   align-items: center;
 `;
-const ItemText = styled.Text`
+const ItemText = styled(CustomText)`
   margin-left: 10px;
-  font-size: 18px;
+  font-size: 14px;
 `;
 
 const AnimatedDot = Animated.createAnimatedComponent(Dot);
@@ -112,8 +138,8 @@ interface ClubEditItem {
   screen: keyof RootStackParamList;
 }
 
-const ClubManagementMain: React.FC<ClubmanagementMainProps> = ({
-  navigation: { navigate },
+const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
+  navigation: { navigate, goBack },
   route: {
     params: { clubData },
   },
@@ -125,9 +151,9 @@ const ClubManagementMain: React.FC<ClubmanagementMainProps> = ({
   useEffect(() => {
     if (clubData.recruitStatus === "RECRUIT") {
       setIsToggle(true);
-      X.setValue(18);
+      X.setValue(13);
     }
-    const iconSize = 16;
+    const iconSize = 14;
     setItems([
       {
         icon: <Feather name="tool" size={iconSize} color="black" />,
@@ -160,13 +186,13 @@ const ClubManagementMain: React.FC<ClubmanagementMainProps> = ({
     if (isToggle) {
       Animated.timing(X, {
         toValue: 0,
-        duration: 300,
+        duration: 250,
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(X, {
-        toValue: 18,
-        duration: 300,
+        toValue: 13,
+        duration: 250,
         useNativeDriver: true,
       }).start();
     }
@@ -177,25 +203,33 @@ const ClubManagementMain: React.FC<ClubmanagementMainProps> = ({
     <Container>
       <StatusBar barStyle={"default"} />
       <MainView>
-        <Header>
-          <HeaderLeft>
-            <CircleIcon size={70} uri={clubData.thumbnail} />
+        <Shadow distance={3} viewStyle={{ width: "100%" }}>
+          <Header>
+            <NavigationView height={100}>
+              <LeftNavigationView>
+                <TouchableOpacity onPress={goBack}>
+                  <Entypo name="chevron-thin-left" size={24} color="black" />
+                </TouchableOpacity>
+              </LeftNavigationView>
+              <RightNavigationView></RightNavigationView>
+            </NavigationView>
+
             <InformationView>
               <TagView>
                 <Tag color={"white"}>
-                  <FontAwesome5 name="cross" size={8} color="#A5A5A5" />
-                  <Text style={{ color: "#A5A5A5", marginLeft: 3, fontSize: 11 }}>{clubData.organizationName}</Text>
+                  <FontAwesome5 name="cross" size={6} color="#A5A5A5" />
+                  <TagText style={{ color: "#A5A5A5", marginLeft: 3 }}>{clubData.organizationName}</TagText>
                 </Tag>
                 {clubData.categories[0] ? (
                   <Tag color={"#B4B4B4"}>
-                    <Text style={{ color: "white", fontSize: 11 }}>{clubData.categories[0].name}</Text>
+                    <TagText style={{ color: "white" }}>{clubData.categories[0].name}</TagText>
                   </Tag>
                 ) : (
                   <></>
                 )}
                 {clubData.categories[1] ? (
                   <Tag color={"#B4B4B4"}>
-                    <Text style={{ color: "white", fontSize: 11 }}>{clubData.categories[1].name}</Text>
+                    <TagText style={{ color: "white" }}>{clubData.categories[1].name}</TagText>
                   </Tag>
                 ) : (
                   <></>
@@ -203,17 +237,18 @@ const ClubManagementMain: React.FC<ClubmanagementMainProps> = ({
               </TagView>
               <Title>{clubData.name}</Title>
             </InformationView>
-          </HeaderLeft>
-          <HeaderRight>
-            <AntDesign name="user" size={12} color="black" />
-            <HeaderText>멤버모집</HeaderText>
-            <ToggleButton onPress={onPressToggle} isToggle={isToggle} activeOpacity={1}>
-              <AnimatedDot style={{ transform: [{ translateX: X }] }} />
-              <AntDesign name="adduser" size={12} color="#FFFFFF" />
-              <AntDesign name="deleteuser" size={12} color="#FFFFFF" />
-            </ToggleButton>
-          </HeaderRight>
-        </Header>
+            <CircleIcon size={70} uri={clubData.thumbnail} />
+            <ButtonView>
+              <AntDesign name="user" size={10} color="#B7B7B7" />
+              <HeaderText>멤버모집</HeaderText>
+              <ToggleButton onPress={onPressToggle} isToggle={isToggle} activeOpacity={1}>
+                <AnimatedDot style={{ transform: [{ translateX: X }] }} />
+                <AntDesign name="adduser" size={10} color="#FFFFFF" />
+                <AntDesign name="deleteuser" size={10} color="#FFFFFF" />
+              </ToggleButton>
+            </ButtonView>
+          </Header>
+        </Shadow>
         <Content>
           {items?.map((item, index) => (
             <ListView key={index}>

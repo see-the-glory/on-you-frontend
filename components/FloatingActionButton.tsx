@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components/native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Animated } from "react-native";
-import { ClubHomeFloatingButtonProps } from "../types/club";
+import { ClubHomeFloatingButtonProps } from "../types/Club";
 
 const FloatingActionView = styled.View`
   position: absolute;
@@ -49,11 +49,11 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, app
   });
   const firstY = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -15],
+    outputRange: [50, -15],
   });
   const secondY = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -25],
+    outputRange: [80, -25],
   });
   const fade = animation.interpolate({
     inputRange: [0, 1],

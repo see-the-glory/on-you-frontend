@@ -1,6 +1,7 @@
 import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import styled from "styled-components/native";
+import CustomText from "./CustomText";
 
 const Container = styled.View<{ kerning: number }>`
   position: relative;
@@ -38,9 +39,11 @@ const IconImage = styled.Image<{ size: number }>`
   border-radius: ${(props) => Math.ceil(props.size / 2)}px;
 `;
 
-const CircleName = styled.Text`
-  margin-top: 8px;
-  font-weight: 600;
+const CircleName = styled(CustomText)`
+  font-size: 10px;
+  margin-top: 7px;
+  font-family: "NotoSansKR-Bold";
+  line-height: 13px;
 `;
 
 interface CircleIconProps {

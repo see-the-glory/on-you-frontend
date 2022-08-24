@@ -1,21 +1,17 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { ImageBackground, Platform, SafeAreaView, StatusBar, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
 import { BlurView } from "expo-blur";
-import { ClubHomeHaederProps } from "../types/club";
+import { ClubHomeHaederProps } from "../types/Club";
+import CustomText from "./CustomText";
 
 const Header = styled.View`
   width: 100%;
   justify-content: center;
   z-index: 2;
   align-items: center;
-`;
-
-const HeaderImage = styled.ImageBackground<{ height: number }>`
-  width: 100%;
-  height: ${(props) => props.height}px;
 `;
 
 const FilterView = styled.View`
@@ -37,11 +33,16 @@ const CategoryView = styled.View`
 `;
 
 const CategoryBox = styled.View`
-  background-color: rgba(255, 255, 255, 0.6);
-  padding: 3px;
-  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 1px 3px;
+  border-radius: 3px;
   margin-left: 3px;
   margin-right: 3px;
+`;
+
+const CategoryNameText = styled(CustomText)`
+  font-size: 10px;
+  line-height: 14px;
 `;
 
 const ClubNameView = styled.View`
@@ -49,16 +50,19 @@ const ClubNameView = styled.View`
   margin-bottom: 5px;
 `;
 
-const ClubNameText = styled.Text`
+const ClubNameText = styled(CustomText)`
   color: white;
-  font-size: 28px;
-  font-weight: 800;
+  font-size: 22px;
+  font-family: "NotoSansKR-Bold";
+  line-height: 31px;
 `;
 
 const ClubShortDescView = styled.View`
   align-items: center;
 `;
-const ClubShortDescText = styled.Text`
+const ClubShortDescText = styled(CustomText)`
+  font-size: 11px;
+  line-height: 14px;
   color: white;
 `;
 
@@ -92,17 +96,15 @@ const ApplyButton = styled.TouchableOpacity`
   margin-bottom: 25px;
 `;
 
-const ButtonText = styled.Text`
-  color: white;
-  font-size: 14px;
-  font-weight: 800;
+const CollapsedView = styled.SafeAreaView<{ height: number }>`
+  justify-content: center;
+  align-items: center;
+  height: ${(props) => props.height}px;
 `;
 
-const CollapsedView = styled.View`
-  top: 40px;
-`;
-
-const ContentText = styled.Text`
+const ContentText = styled(CustomText)`
+  font-size: 11px;
+  line-height: 14px;
   color: white;
 `;
 
@@ -122,7 +124,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
 
   return (
     <Header>
-      <HeaderImage source={imageURI === null ? require("../assets/basic.jpg") : { uri: imageURI }} height={heightExpanded}>
+      <ImageBackground style={{ width: "100%", height: heightExpanded }} source={imageURI === null ? require("../assets/basic.jpg") : { uri: imageURI }} height={heightExpanded}>
         <AnimatedBlurView
           intensity={70}
           tint="dark"
@@ -135,7 +137,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
             justifyContent: "flex-start",
           }}
         >
-          <CollapsedView>
+          <CollapsedView height={heightCollapsed}>
             <ClubNameView>
               <ClubNameText>{name}</ClubNameText>
             </ClubNameView>
@@ -151,14 +153,14 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
               <CategoryView>
                 {categories[0] ? (
                   <CategoryBox>
-                    <Text>{categories[0].name}</Text>
+                    <CategoryNameText>{categories[0].name}</CategoryNameText>
                   </CategoryBox>
                 ) : (
                   <></>
                 )}
                 {categories[1] ? (
                   <CategoryBox>
-                    <Text>{categories[1].name}</Text>
+                    <CategoryNameText>{categories[1].name}</CategoryNameText>
                   </CategoryBox>
                 ) : (
                   <></>
@@ -184,7 +186,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
             </InformationView>
           </AnimatedFadeOutBox>
         </FilterView>
-      </HeaderImage>
+      </ImageBackground>
     </Header>
   );
 };

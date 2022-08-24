@@ -1,11 +1,11 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import ClubCreationStepOne from "../screens/ClubCreation/ClubCreationStepOne";
 import ClubCreationStepTwo from "../screens/ClubCreation/ClubCreationStepTwo";
 import ClubCreationStepThree from "../screens/ClubCreation/ClubCreationStepThree";
-import { ClubCreationStackProps, RootStackParamList } from "../types/club";
+import { ClubCreationStackProps, RootStackParamList } from "../types/Club";
 import ClubCreationSuccess from "../screens/ClubCreation/ClubCreationSuccess";
 import ClubCreationFail from "../screens/ClubCreation/ClubCreationFail";
 
@@ -17,6 +17,8 @@ const ClubCreationStack: React.FC<ClubCreationStackProps> = ({ navigation: { nav
       screenOptions={{
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
+        headerTitleAlign: "center",
+        headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
       }}
     >
       <NativeStack.Screen
@@ -27,7 +29,7 @@ const ClubCreationStack: React.FC<ClubCreationStackProps> = ({ navigation: { nav
           title: "모임 개설",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Clubs" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -39,7 +41,7 @@ const ClubCreationStack: React.FC<ClubCreationStackProps> = ({ navigation: { nav
           title: "모임 개설",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("ClubCreationStepOne", { category })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -55,7 +57,7 @@ const ClubCreationStack: React.FC<ClubCreationStackProps> = ({ navigation: { nav
           title: "모임 개설",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("ClubCreationStepTwo", { category1, category2 })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         })}
