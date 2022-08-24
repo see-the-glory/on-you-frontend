@@ -82,18 +82,21 @@ const TouchMenu = styled.View`
 `;
 
 const LogoutButton = styled.TouchableOpacity`
-  background-color: white;
-  height: 50px;
   justify-content: center;
-  margin-left: 10px;
+  align-self: flex-end;
+  width: 80px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 25px;
+  border-radius: 15px;
+  background-color: #000;
 `;
 
 const LogoutText = styled.Text`
-  text-align: right;
-  margin-right: 20px;
+  text-align: center;
+  font-size: 16px;
+  color: #fff;
 `;
-
-const View = styled.View``;
 
 const ChevronBox = styled.View`
   flex: 1;
@@ -119,6 +122,8 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     isLoading: userInfoLoading, // true or false
     data: userInfo,
   } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo);
+
+  console.log(userInfo?.data);
 
   const dispatch = useDispatch();
 

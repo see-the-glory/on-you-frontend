@@ -72,6 +72,8 @@ export interface User {
   role: string;
   sex: string;
   thumbnail: string | null;
+  phoneNumber: string;
+  interests: [];
 }
 
 export interface ClubRole {
@@ -161,6 +163,9 @@ export interface UserInfoRequest {
     name?: string;
     organizationName?: string;
     thumbnail?: string;
+    sex?: string;
+    phoneNumber?: string;
+    interests?: [];
   };
 }
 
@@ -298,14 +303,14 @@ const registerUserInfo = ({ queryKey }: any) => {
   }).then((response) => response.json());
 };
 
-const selectUserClubResponse = ({ queryKey }: any) => {
+const selectMyClubs = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
-  return fetch(`${BASE_URL}/api/user/{clubId}`, {
+  return fetch(`${BASE_URL}/api/clubs/my`, {
     method: "GET",
     headers: {
       authorization: `Bearer ${token}`,
     },
-  }).then((response) => response.json());
+  }).then((res) => res.json());
 };
 
 const getFeeds = ({ queryKey }: any) => {
@@ -325,13 +330,15 @@ export const ClubApi = {
   getClubSchedules,
   getClubRole,
   applyClub,
+  selectMyClubs,
 };
 
 export const UserApi = {
+  getCategories,
   getUserInfo,
   registerUserInfo,
   updateUserInfo,
-  selectUserClubResponse,
+  selectMyClubs,
 };
 
 export const FeedApi = {
