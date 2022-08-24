@@ -12,7 +12,7 @@ const LoginStack = (/* { navigation: { navigate } } */) => {
   return (
     <NativeStack.Navigator screenOptions={{ presentation: "card", contentStyle: { backgroundColor: "white" }, headerShown: false }}>
       <NativeStack.Screen name="KakaoAuth" component={KakaoAuth} />
-      <NativeStack.Screen
+      {/* <NativeStack.Screen
         name="Login"
         component={Login}
         options={{
@@ -23,7 +23,7 @@ const LoginStack = (/* { navigation: { navigate } } */) => {
             </TouchableOpacity>
           ),
         }}
-      />
+      /> */}
     </NativeStack.Navigator>
   );
 };

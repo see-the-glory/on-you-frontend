@@ -7,7 +7,7 @@ import LoginStack from "./navigation/LoginStack";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider, useSelector, useDispatch } from "react-redux";
 import { store } from "./store";
-import { Init } from "./store/actions";
+import { Init } from "./store/Actions";
 import { ToastProvider } from "react-native-toast-notifications";
 import { Ionicons } from "@expo/vector-icons";
 import { LogBox } from "react-native";
