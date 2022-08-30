@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AppLoading from "expo-app-loading";
 import { NavigationContainer } from "@react-navigation/native";
 import Root from "./navigation/Root";
-import LoginStack from "./navigation/LoginStack";
+import AuthStack from "./navigation/AuthStack";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider, useSelector, useDispatch } from "react-redux";
 import { store } from "./store/Index";
@@ -49,7 +49,7 @@ const RootNavigation = () => {
     return <AppLoading startAsync={startLoading} onFinish={onFinish} onError={console.error} />;
   }
 
-  return <NavigationContainer>{token === null ? <LoginStack /> : <Root />}</NavigationContainer>;
+  return <NavigationContainer>{token === null ? <AuthStack /> : <Root />}</NavigationContainer>;
 };
 
 export default function App() {

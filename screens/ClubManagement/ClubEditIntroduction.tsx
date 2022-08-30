@@ -3,7 +3,7 @@ import { KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
-import { ClubEditIntroductionProps } from "../../types/Club";
+import { ClubEditIntroductionProps } from "../../Types/Club";
 
 const Container = styled.SafeAreaView`
   flex: 1;

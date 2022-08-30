@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
 import { BlurView } from "expo-blur";
-import { ClubHomeHaederProps } from "../types/Club";
+import { ClubHomeHaederProps } from "../Types/Club";
 import CustomText from "./CustomText";
 
 const Header = styled.View`
