@@ -136,7 +136,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   const token = useSelector((state) => state.AuthReducers.authToken);
   const toast = useToast();
   const [clubName, setClubName] = useState(clubData.name);
-  const [maxNumber, setMaxNumber] = useState(`${String(clubData.maxNumber)} 명`);
+  const [maxNumber, setMaxNumber] = useState(clubData.maxNumber === 0 ? "무제한 정원" : `${String(clubData.maxNumber)} 명`);
   const [maxNumberInfinity, setMaxNumberInfinity] = useState<Boolean>(clubData.maxNumber ? false : true);
   const [phoneNumber, setPhoneNumber] = useState(clubData.contactPhone ?? "");
   const [organizationName, setOrganizationName] = useState(clubData.organizationName ?? "");
@@ -205,15 +205,14 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   }, [phoneNumber]);
 
   const save = () => {
+    const contactPhone = phoneNumber.replace(/-/g, "");
     const data = {
       clubName,
       clubMaxMember: maxNumberInfinity ? 0 : Number(maxNumber.split(" ")[0]),
       isApproveRequired,
       organizationName,
-      contactPhone: phoneNumber.replace(/-/g, ""),
+      contactPhone: contactPhone === "" ? null : contactPhone,
     };
-
-    console.log(data);
 
     const splitedURI = new String(imageURI).split("/");
 
@@ -303,7 +302,9 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                 <ItemTextInput
                   keyboardType="number-pad"
                   placeholder="최대 수용가능 정원 수"
-                  onPressIn={() => setMaxNumber((prev) => prev.split(" ")[0])}
+                  onPressIn={() => {
+                    if (maxNumberInfinity === false) setMaxNumber((prev) => prev.split(" ")[0]);
+                  }}
                   onEndEditing={() =>
                     setMaxNumber((prev) => {
                       if (prev === "" || prev === "0") return `${clubData.maxNumber} 명`;
