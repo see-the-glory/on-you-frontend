@@ -4,7 +4,7 @@ import { Dimensions, Animated } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
-import { UserApi, ClubApi, ClubResponse } from "../../api";
+import { UserApi, Club, ClubResponse } from "../../api";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -66,24 +66,15 @@ const DeleteBox = styled.View`
   background-color: #ff714b;
 `;
 
-/* const getMyClubs = async () => {
-  const res = await fetch("http://3.39.190.23:8080/api/clubs/my");
-  return res.json();
-}; */
-
 const MyClub = (props) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
 
-  // const { data, status } = useQuery(["myClubs", token], getMyClubs);
-
   const {
-    status: status,
     isLoading: myClubInfoLoading, // true or false
     data: myClub,
-  } = useQuery<ClubResponse>(["selectMyClubs", token], UserApi.selectMyClubs);
+  } = useQuery<Club>(["selectMyClubs", token], UserApi.selectMyClubs);
 
-  console.log("status " + status);
-  console.log("myclub " + myClub?.data);
+  console.log(myClub);
 
   const rightSwipe = (progress, dragX) => {
     const scale = dragX.interpolate({
@@ -120,18 +111,6 @@ const MyClub = (props) => {
             </MyClubImgBox>
             <MyClubTextBox>
               <MyClubText>온유 프로젝트</MyClubText>
-            </MyClubTextBox>
-          </MyClubBox>
-        </Swipeable>
-      </MyClubWrap>
-      <MyClubWrap>
-        <Swipeable renderRightActions={rightSwipe}>
-          <MyClubBox style={{ width: SCREEN_WIDTH }}>
-            <MyClubImgBox>
-              <MyClubImg />
-            </MyClubImgBox>
-            <MyClubTextBox>
-              <MyClubText>덕 모임</MyClubText>
             </MyClubTextBox>
           </MyClubBox>
         </Swipeable>

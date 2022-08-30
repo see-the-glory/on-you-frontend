@@ -30,19 +30,7 @@ const Input = styled.TextInput`
   font-size: 18px;
 `;
 
-const View = styled.TouchableOpacity`
-  width: 147px;
-  margin-top: 10px;
-  border-bottom-width: 1px;
-  border-bottom-color: #6f6f6f;
-`;
-
-const ForgetText = styled.Text`
-  color: #6f6f6f;
-  font-size: 12px;
-`;
-
-const LoginButton = styled.TouchableOpacity`
+const Button = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -52,19 +40,13 @@ const LoginButton = styled.TouchableOpacity`
   margin-top: 10%;
 `;
 
-const LoginTitle = styled.Text`
+const ButtonTitle = styled.Text`
   color: #fff;
   font-size: 18px;
   font-weight: 700;
 `;
 
-const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { navigate } }) => {
-  const goToFindLoginInfo = () => {
-    navigate("LoginStack", {
-      screen: "FindLoginInfo",
-    });
-  };
-
+const FindPw: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { navigate } }) => {
   return (
     <Container>
       <Form>
@@ -72,17 +54,14 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
         <Input placeholder="example@email.com" />
       </Form>
       <Form>
-        <Title>비밀번호</Title>
-        <Input placeholder="비밀번호를 입력해주세요." />
-        <View onPress={goToFindLoginInfo}>
-          <ForgetText>로그인 정보가 기억나지 않을때</ForgetText>
-        </View>
+        <Title>등록된 전화번호</Title>
+        <Input placeholder="010-1234-1234" />
       </Form>
-      <LoginButton>
-        <LoginTitle>로그인</LoginTitle>
-      </LoginButton>
+      <Button>
+        <ButtonTitle>확인</ButtonTitle>
+      </Button>
     </Container>
   );
 };
 
-export default Login;
+export default FindPw;
