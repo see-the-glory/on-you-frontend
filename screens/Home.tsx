@@ -1,43 +1,18 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  View,
-  Text,
-  TouchableOpacity,
-  Button,
-  Dimensions,
-  Modal,
-  TouchableWithoutFeedback,
-  Alert,
-  Slider,
-  Image,
-  ScrollView,
-  useWindowDimensions,
-  Pressable,
-  Share,
-  Platform,
-  StyleSheet,
-  Animated,
-  Easing,
-  ImageBackground,
-} from "react-native";
+import { ActivityIndicator, FlatList, TouchableOpacity, Dimensions, Modal, Alert, Slider, useWindowDimensions, Platform, View, Text } from "react-native";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
 import { SliderBox } from "react-native-image-slider-box";
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import MentionHashtagTextView from "react-native-mention-hashtag-text";
-import CircleIcon from "../components/CircleIcon";
-import { useQuery } from "react-query";
+import { useQuery, useInfiniteQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
-import { Feed, FeedsResponse } from "../api";
+import { Feed, FeedsResponse, FeedsParams, getFeeds, FeedApi, Reply } from "../api";
+import { gql } from "apollo-boost";
+import CustomText from "../components/CustomText";
+import { useMutation } from "react-apollo-hooks";
+import * as url from "url";
 
-interface ValueInfo {
-  str: string;
-  isHT: boolean;
-  idxArr: number[];
-}
 const Container = styled.SafeAreaView`
   flex: 1;
 `;
@@ -63,10 +38,11 @@ const LogoImage = styled.Image`
   margin-right: 15px;
   border-radius: 14px;
 `;
-const LogoText = styled.Text`
+const LogoText = styled(CustomText)`
   font-size: 26px;
   font-weight: bold;
   color: #020202;
+  line-height: 30px;
 `;
 
 const Loader = styled.View`
@@ -127,7 +103,6 @@ const ClubName = styled.Text`
 `;
 
 //ModalStyle
-
 const PeedId = styled.Text`
   color: black;
   font-size: 15px;
@@ -200,7 +175,6 @@ const OptionArea = styled.View`
   position: relative;
 `;
 //ModalStyle
-
 const ModalArea = styled.View``;
 
 const ModalIcon = styled.TouchableOpacity``;
@@ -263,7 +237,9 @@ const FeedContainer = styled.View`
   flex: 1;
   width: 100%;
   margin-bottom: 30px;
+  padding: 0 20px 0 20px;
 `;
+
 const FeedHeader = styled.View`
   flex-direction: row;
   justify-content: space-between;
@@ -320,22 +296,23 @@ const Ment = styled.Text`
 //Number
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-// fetch / axios / react query
-// fetch / axios 차이를 알아볼 것
-// react query 는 위의 것과 무엇이 다른가?
-// 비동기 함수, Promise 는 무엇인가?
-// await async
-
 const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { navigate } }) => {
-  const [refreshing, setRefreshing] = useState(false);
-  const [Home, setHome] = useState([{}]);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [isSelect, setSelect] = useState([false, false, false]);
-  const [number, setNumber] = useState(rand(1, 100));
+  const [Home, setHome] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [number, setNumber] = useState(rand(1, 100));
+  const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
+  const queryClient = useQueryClient();
+  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
+  const SCREEN_PADDING_SIZE = 20;
+  const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
+  const token = useSelector((state) => state.AuthReducers.authToken);
 
-  //현재시간
-  let today = new Date("2022-08-03T13:26:43.005981"); // today 객체에 Date()의 결과를 넣어줬다
+  const [isLiked, setIsLiked]=useState();
+  const [likeCount, setLikeCount]=useState();
+  /**현재시간*/
+  let today = new Date("2022-08-03T13:26:43.005981");
   let time = {
     year: today.getFullYear(), //현재 년도
     month: today.getMonth() + 1, // 현재 월
@@ -344,6 +321,44 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     minutes: today.getMinutes(), //현재 분
   };
   let timestring = `${time.year}년 ${time.month}월 ${time.date}일`;
+
+  const [params, setParams] = useState<FeedsParams>({
+    token,
+  });
+
+  // const fetchBlacklist = async ({ pageParam = 1 }) => {
+  //   const response = await axiosInstance.get(`http://3.39.190.23:8080/api/feeds/${pageParam}`);
+  //   const result = response.data;
+  //   // axios로 받아온 데이터를 다음과 같이 변경!
+
+  //   return {
+  //     result: result.blacklist,
+  //     nextPage: pageParam + 1,
+  //     isLast: result.is_last,
+  //   };
+  // };
+  // const {
+  //   isLoading: feedsLoading,
+  //   data: feeds,
+  //   isRefetching: isRefetchingClubs,
+  //   hasNextPage,
+  //   fetchNextPage,
+  // } = useInfiniteQuery<FeedsResponse>(["getFeeds", fetchBlacklist], FeedApi.getFeeds, {
+  //   //useQuery(["getFeeds", token], FeedApi.getFeeds, {
+  //   getNextPageParam: (lastPage, pages) => {
+  //     if (!lastPage.isLast) return lastPage.nextPage;
+  //     return undefined;
+  //   },
+  //   onSuccess: (res) => {
+  //     setIsPageTransition(false);
+  //     console.log(res);
+  //   },
+  //   onError: (err) => {
+  //     console.log(err);
+  //   },
+  // });
+
+
 
   const getFeeds = () => {
     return fetch(`http://3.39.190.23:8080/api/feeds`, {
@@ -354,19 +369,23 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     }).then((res) => res.json());
   };
 
-  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
-  const SCREEN_PADDING_SIZE = 20;
-  const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
-  const token = useSelector((state) => state.AuthReducers.authToken);
-  const { data: feeds, isLoading: feedsLoading } = useQuery<FeedsResponse>(["getFeeds"], getFeeds, {
+  const {
+    isLoading: feedsLoading,
+    data: feeds,
+    isRefetching: isRefetchingClubs,
+  } = useQuery<FeedsResponse>(["getFeeds", token], getFeeds, {
     //useQuery(["getFeeds", token], FeedApi.getFeeds, {
     onSuccess: (res) => {
-      // 성공했을 때, 데이터를 조작하면 된다.
+      console.log(res+'realasdgsdagsdf@@@@@@@@@@@@@@@@@@@@@');
     },
     onError: (err) => {
-      console.log(`[getFeeds error] ${err}`);
+      console.log(err);
     },
   });
+
+  useEffect(()=>{
+    getFeeds();
+  },[])
 
   //heart선택
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
@@ -387,9 +406,10 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     });
   };
 
-  const goToReply = () => {
+  const goToReply = (replyData: Reply) => {
     navigate("HomeStack", {
       screen: "ReplyPage",
+      replyData,
     });
   };
 
@@ -403,12 +423,6 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
   const goToClub = () => {
     navigate("HomeStack", {
       screen: "MyClubSelector",
-    });
-  };
-
-  const goToAlarm = () => {
-    navigate("HomeStack", {
-      screen: "AlarmPage",
     });
   };
 
@@ -440,14 +454,14 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     setModalVisible(!isModalVisible);
   };
 
-  const getHome = () => {
+/*  const getHome = () => {
     const result = [];
     for (let i = 0; i < 1; ++i) {
       result.push({
         id: i,
         img: "https://i.pinimg.com/564x/96/a1/11/96a111a649dd6d19fbde7bcbbb692216.jpg",
         name: "문규빈",
-        content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+        content: "",
         memberNum: Math.ceil(Math.random() * 10),
       });
     }
@@ -462,45 +476,19 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
 
   useEffect(() => {
     getData();
-  }, []);
+  }, []);*/
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await getData();
+     await queryClient.refetchQueries(["feeds"]);
     setRefreshing(false);
   };
 
-  const onIncrease = () => {
-    setNumber(number + 1);
-  };
+  // const loadMore = () => {
+  //   if (hasNextPage) fetchNextPage();
+  // };
 
-  const onDecrease = () => {
-    setNumber(number - 1);
-  };
 
-  const link =
-    Platform.OS === "ios"
-      ? "https://apps.apple.com/us/app/%EB%B3%B4%EB%8B%A5-%EB%82%B4-%EB%B3%B4%ED%97%98%EC%A0%90%EC%88%98-%EC%A7%84%EB%8B%A8-%EC%83%88%EB%8A%94-%EB%B3%B4%ED%97%98%EB%A3%8C-%ED%99%95%EC%9D%B8/id1447862053"
-      : "https://play.google.com/store/apps/details?id=com.mrp.doctor&hl=ko";
-
-  const goReply = (id: number) => {
-    return (
-      <Pressable
-        onPress={() => {
-          setSelect([...isSelect.slice(0, id), !isSelect[id], ...isSelect.slice(id + 1)]);
-        }}
-      >
-        <Ionicons name="md-chatbox-ellipses" size={25} color="black" onPress={goToReply} style={{ left: 10, top: 5 }} />
-        <BoldText2>{number}</BoldText2>
-      </Pressable>
-    );
-  };
-  const mentionHashtagClick = (text) => {
-    Alert.alert("Clicked to + " + text);
-    /*navigate("HomeStack",{
-            screen:"ReplyPage"
-        })*/
-  };
 
   return feedsLoading ? (
     <Loader>
@@ -514,24 +502,28 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
           <LogoText>OnYou</LogoText>
         </SubView>
         <SubView>
-          <Ionicons name="md-notifications-outline" onPress={goToAlarm} size={19} color="black" />
+          {/* <Ionicons name="md-notifications-outline" onPress={goToAlarm} size={19} color="black" /> */}
           <MaterialIcons name="add-photo-alternate" onPress={goToClub} style={{ paddingLeft: "2.5%" }} size={19} color="black" />
         </SubView>
       </HeaderView>
+
       <FlatList
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        contentContainerStyle={{ paddingHorizontal: SCREEN_PADDING_SIZE }}
+         refreshing={refreshing}
+         onRefresh={onRefresh}
+        // onEndReached={loadMore}
+        // numColumns={2}
         keyExtractor={(item: Feed, index: number) => String(index)}
+        //data={feeds?.pages.map((page) => page?.responses?.content).flat()}
         data={feeds?.data}
-        renderItem={({ item, index }: { item: Feed; index: number }) => (
+        renderItem={({ item }: { item: Feed }) => (
           <FeedContainer>
             <FeedHeader>
               <FeedUser>
                 <UserImage source={{ uri: "https://i.pinimg.com/564x/9e/d8/4c/9ed84cf3fc04d0011ec4f75c0692c83e.jpg" }} />
+                {/** 버그 발생*/}
                 <UserInfo>
                   <UserId>{item.userName}</UserId>
-                  <ClubBox onPress={goToReply}>
+                  <ClubBox>
                     <ClubName>{item.clubName}</ClubName>
                   </ClubBox>
                 </UserInfo>
@@ -540,10 +532,24 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
                 <ModalIcon onPress={toggleModal}>
                   <Ionicons name="ellipsis-vertical" size={20} color={"black"} />
                 </ModalIcon>
+                <View>
+                  <Modal animationType="slide" transparent={true} visible={isModalVisible}>
+                    <CenteredView onTouchEnd={closeModal}>
+                      <ModalView>
+                        <ModalText onPress={goToModifiy}>수정</ModalText>
+                        <ModalText style={{ color: "red" }} onPress={deleteCheck}>
+                          삭제
+                        </ModalText>
+                        <ModalText onPress={goToAccusation}>신고</ModalText>
+                        <ModalText onPress={closeModal}>Close</ModalText>
+                      </ModalView>
+                    </CenteredView>
+                  </Modal>
+                </View>
               </ModalArea>
             </FeedHeader>
-
             <FeedMain>
+              {/** 버그 발생*/}
               <FeedImage>
                 <Swiper horizontal dotColor="#E0E0E0" activeDotColor="#FF714B" containerStyle={{ backgroundColor: "black", height: FEED_IMAGE_SIZE }}>
                   <SliderBox images={item.imageUrls} sliderBoxHeight={FEED_IMAGE_SIZE} />
@@ -553,9 +559,9 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
                 <LeftInfo>
                   <InfoArea>
                     <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)}>
-                      {heartSelected ? <Ionicons name="md-heart" size={20} color="red" /> : <Ionicons name="md-heart-outline" size={20} color="black" />}
+                      {heartSelected ? <Ionicons name="md-heart" size={20} color="red"/> : <Ionicons name="md-heart-outline" size={20} color="black"/>}
                     </TouchableOpacity>
-                    <NumberText>{item.likesCount}</NumberText>
+                    {heartSelected? <NumberText>{item.likesCount +1} </NumberText> : <NumberText> {item.likesCount} </NumberText>}
                   </InfoArea>
                   <InfoArea>
                     <TouchableOpacity onPress={goToReply}>
@@ -568,9 +574,9 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
                   <Timestamp>{timestring}</Timestamp>
                 </RightInfo>
               </FeedInfo>
-              <Content>
+             {/* <Content>
                 <Ment>{item.content}</Ment>
-              </Content>
+              </Content>*/}
             </FeedMain>
           </FeedContainer>
         )}
@@ -579,30 +585,3 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
   );
 };
 export default Home;
-
-{
-  /* <ModalArea>
-    <ModalIcon onPress={toggleModal}>
-        <Ionicons
-        name="ellipsis-vertical"
-        size={20}
-        style={{
-            color: "black",
-        }}
-        />
-    </ModalIcon>
-    <View>
-        <Modal animationType="slide" transparent={true} visible={isModalVisible}>
-        <CenteredView onTouchEnd={closeModal}>
-            <ModalView>
-            <ModalText onPress={goToModifiy}>수정</ModalText>
-            <ModalText style={{ color: "red" }} onPress={deleteCheck}>
-                삭제
-            </ModalText>
-            <ModalText onPress={goToAccusation}>신고</ModalText>
-            </ModalView>
-        </CenteredView>
-        </Modal>
-    </View>
-</ModalArea> */
-}

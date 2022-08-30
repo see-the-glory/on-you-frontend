@@ -174,6 +174,7 @@ const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min
 const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { navigate } }) => {
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
+    token: '',
     categoryId: null,
     clubState: null,
     minMember: null,
@@ -197,7 +198,7 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
     fetchNextPage,
   } = useInfiniteQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
     getNextPageParam: (currentPage) => {
-      if (currentPage) return currentPage.hasNext === false ? null : currentPage.responses.content[currentPage.responses.content.length - 1].customCursor;
+      if (currentPage) return currentPage.hasNext === false ? null : currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor;
     },
     onSuccess: (res) => {
       setIsPageTransition(false);
@@ -256,7 +257,7 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
 
   return (
     <Container>
-      <IntroText>가입한 모임 Lis1t</IntroText>
+      <IntroText>가입한 모임 List</IntroText>
       <ReplyContainer>
         {loading ? (
           <ActivityIndicator />
@@ -265,7 +266,8 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
             refreshing={refreshing}
             onRefresh={onRefresh}
             keyExtractor={(item: Club, index: number) => String(index)}
-            data={clubs?.pages.map((page) => page.responses.content).flat()}
+            numColumns={2}
+            data={clubs?.pages.map((page) => page?.responses?.content).flat()}
             renderItem={({ item, index }: { item: Club; index: number }) => (
               <ClubArea onPress={() => goToImage()}>
                 <ClubImg source={{ uri: item.thumbnail }} />
