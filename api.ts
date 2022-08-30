@@ -78,7 +78,7 @@ export interface Feed {
   userName: string;
   content: string;
   imageUrls: string | null;
-  hashtags: string | null;
+  hashtags: any;
   likeYn: boolean;
   likesCount: number;
   commentCount: number;
@@ -126,6 +126,10 @@ export interface UserInfoResponse extends BaseResponse {
 }
 export interface ReplyReponse extends BaseResponse {
   data: Reply[];
+}
+
+export interface FeedsParams{
+  token: string;
 }
 
 export interface ClubsParams {
@@ -368,9 +372,10 @@ const selectMyClubs = ({ queryKey }: any) => {
   }).then((res) => res.json());
 };
 
-const getFeeds = ({ queryKey }: any) => {
+
+export const getFeeds = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
-  return fetch(`${BASE_URL}/api/feeds`, {
+  return fetch(`${BASE_URL}/api/feeds?`, {
     headers: {
       authorization: `Bearer ${token}`,
     },
