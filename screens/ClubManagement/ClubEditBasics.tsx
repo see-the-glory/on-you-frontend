@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { KeyboardAvoidingView, Platform, TouchableOpacity, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { ClubEditBasicsProps } from "../../Types/Club";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery } from "react-query";
-import { Category, CategoryResponse, ClubApi } from "../../api";
+import { useQuery, useMutation } from "react-query";
+import { Category, CategoryResponse, ClubApi, ClubUpdateRequest, ClubUpdateResponse } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
+import { useSelector } from "react-redux";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -132,9 +133,11 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
     params: { clubData },
   },
 }) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
+  const toast = useToast();
   const [clubName, setClubName] = useState(clubData.name);
   const [maxNumber, setMaxNumber] = useState(`${String(clubData.maxNumber)} 명`);
-  const [maxNumberInfinity, setMaxNumberInfinity] = useState(false);
+  const [maxNumberInfinity, setMaxNumberInfinity] = useState<Boolean>(clubData.maxNumber ? false : true);
   const [phoneNumber, setPhoneNumber] = useState(clubData.contactPhone ?? "");
   const [organizationName, setOrganizationName] = useState(clubData.organizationName ?? "");
   const [isApproveRequired, setIsApproveRequired] = useState("Y");
@@ -143,7 +146,6 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   const [categoryBundle, setCategoryBundle] = useState<Array<Category[]>>();
   const [imageURI, setImageURI] = useState<string | null>(null);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
-  const toast = useToast();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 4) * 3);
 
   const { isLoading: categoryLoading, data: categories } = useQuery<CategoryResponse>(["getCategories"], ClubApi.getCategories, {
@@ -154,7 +156,33 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
       setCategoryBundle(bundle);
     },
   });
-  useEffect(() => {
+  const mutation = useMutation(ClubApi.updateClub, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.resultCode === "OK") {
+        toast.show(`저장이 완료되었습니다.`, {
+          type: "success",
+        });
+        navigate("ClubManagementMain", { clubData: res.data, refresh: true });
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res);
+        toast.show(`Error Code: ${res.status}`, {
+          type: "error",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "error",
+      });
+    },
+    onSettled: (res, error) => {},
+  });
+
+  useLayoutEffect(() => {
     setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={save}>
@@ -162,21 +190,53 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
         </TouchableOpacity>
       ),
     });
-  }, []);
+  }, [clubName, maxNumber, maxNumberInfinity, organizationName, isApproveRequired, phoneNumber, imageURI, selectCategory1, selectCategory2]);
 
   useEffect(() => {
     if (phoneNumber.length === 10) {
       setPhoneNumber(phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3"));
-    }
-    if (phoneNumber.length === 12) {
+    } else if (phoneNumber.length === 11) {
       setPhoneNumber(phoneNumber.replace(/-/g, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3"));
-    }
-    if (phoneNumber.length === 13) {
+    } else if (phoneNumber.length === 12) {
+      setPhoneNumber(phoneNumber.replace(/-/g, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3"));
+    } else if (phoneNumber.length === 13) {
       setPhoneNumber(phoneNumber.replace(/-/g, "").replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3"));
     }
   }, [phoneNumber]);
 
-  const save = () => {};
+  const save = () => {
+    const data = {
+      clubName,
+      clubMaxMember: maxNumberInfinity ? 0 : Number(maxNumber.split(" ")[0]),
+      isApproveRequired,
+      organizationName,
+      contactPhone: phoneNumber.replace(/-/g, ""),
+    };
+
+    console.log(data);
+
+    const splitedURI = new String(imageURI).split("/");
+
+    const updateData: ClubUpdateRequest =
+      imageURI === null
+        ? {
+            data,
+            token,
+            clubId: clubData.id,
+          }
+        : {
+            image: {
+              uri: imageURI.replace("file://", ""),
+              type: "image/jpeg",
+              name: splitedURI[splitedURI.length - 1],
+            },
+            data,
+            token,
+            clubId: clubData.id,
+          };
+
+    mutation.mutate(updateData);
+  };
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -220,7 +280,22 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
           <Content>
             <ContentItem>
               <ItemTitle>모임 이름</ItemTitle>
-              <ItemTextInput value={clubName} placeholder="모임명 16자 이내 (특수문자 불가)" maxLength={16} onChangeText={(name) => setClubName(name)} returnKeyType="done" returnKeyLabel="done" />
+              <ItemTextInput
+                value={clubName}
+                placeholder="모임명 16자 이내 (특수문자 불가)"
+                maxLength={16}
+                onEndEditing={() => {
+                  if (clubName === "") {
+                    toast.show("모임 이름을 공백으로 설정할 수 없습니다.", {
+                      type: "warning",
+                    });
+                    setClubName(clubData.name);
+                  }
+                }}
+                onChangeText={(name) => setClubName(name)}
+                returnKeyType="done"
+                returnKeyLabel="done"
+              />
             </ContentItem>
             <ContentItem>
               <ItemTitle>모집 정원</ItemTitle>
@@ -229,7 +304,12 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                   keyboardType="number-pad"
                   placeholder="최대 수용가능 정원 수"
                   onPressIn={() => setMaxNumber((prev) => prev.split(" ")[0])}
-                  onEndEditing={() => setMaxNumber((prev) => (prev === "" ? "0 명" : `${prev} 명`))}
+                  onEndEditing={() =>
+                    setMaxNumber((prev) => {
+                      if (prev === "" || prev === "0") return `${clubData.maxNumber} 명`;
+                      else return `${prev} 명`;
+                    })
+                  }
                   value={maxNumber}
                   maxLength={6}
                   onChangeText={(num) => {
@@ -243,13 +323,10 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                 />
                 <CheckButton
                   onPress={() => {
-                    if (maxNumberInfinity) {
-                      setMaxNumberInfinity(false);
-                      setMaxNumber(`${String(clubData.maxNumber)} 명`);
-                    } else {
-                      setMaxNumberInfinity(true);
-                      setMaxNumber("무제한 정원");
-                    }
+                    if (!maxNumberInfinity) setMaxNumber("무제한 정원");
+                    else setMaxNumber(`${clubData.maxNumber} 명`);
+
+                    setMaxNumberInfinity((prev) => !prev);
                   }}
                 >
                   <ItemText>인원 수 무제한으로 받기</ItemText>
