@@ -193,7 +193,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
         screen: "ClubEditMembers",
       },
       {
-        icon: <Feather name="x-circle" size={iconSize} color="red" />,
+        icon: <Feather name="trash-2" size={iconSize} color="red" />,
         title: "모임 삭제",
         screen: "ClubDelete",
       },

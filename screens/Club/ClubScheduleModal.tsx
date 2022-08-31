@@ -219,7 +219,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
                 </ContentItemView>
                 <Break sep={0} />
                 <ContentItemView>
-                  <Feather name="user-check" size={16} color="black" />
+                  <Feather name="users" size={16} color="black" />
                 </ContentItemView>
                 <Break sep={0} />
                 <ContentItemView>

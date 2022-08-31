@@ -20,7 +20,7 @@ const BadgeIcon = styled.View`
   border-radius: 10px;
 `;
 
-const Backplate = styled.TouchableOpacity<{ size: number }>`
+const Backplate = styled.View<{ size: number }>`
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;
   border-radius: ${(props) => Math.ceil(props.size / 2)}px;

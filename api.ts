@@ -226,7 +226,8 @@ const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => re
 
 const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
-  return fetch(`${BASE_URL}/api/clubs?customCursor=${pageParam ?? ""}`, {
+  console.log(clubsParams.categoryId);
+  return fetch(`${BASE_URL}/api/clubs?cursor=${pageParam ?? ""}&categoryId=${clubsParams.categoryId ?? "0"}`, {
     headers: {
       authorization: `Bearer ${clubsParams.token}`,
     },

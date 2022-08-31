@@ -109,6 +109,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     data: clubs,
     isRefetching: isRefetchingClubs,
     hasNextPage,
+    refetch: clubsRefetch,
     fetchNextPage,
   } = useInfiniteQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
     getNextPageParam: (currentPage) => {
@@ -200,7 +201,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 paddingLeft: index === 0 ? 20 : 0,
                 paddingRight: index === Number(category?.data.length) ? 20 : 0,
               }}
-              onPress={() => setCategory(index)}
+              onPress={() => setCategory(item.id)}
             >
               {index === selectedCategory ? <SelectedCategoryName>{item.name}</SelectedCategoryName> : <CategoryName>{item.name}</CategoryName>}
             </CategoryButton>
