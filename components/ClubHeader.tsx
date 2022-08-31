@@ -180,7 +180,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
                 </DetailInfoContent>
                 <DetailInfoContent>
                   <Ionicons name="md-person-circle-outline" size={14} color="yellow" style={{ marginRight: 5 }} />
-                  {recruitStatus.toUpperCase() === "RECRUIT" ? <ContentText>멤버 모집 중!</ContentText> : <ContentText>멤버 모집 기간 아님</ContentText>}
+                  {recruitStatus.toUpperCase() === "OPEN" ? <ContentText>멤버 모집 중!</ContentText> : <ContentText>멤버 모집 기간 아님</ContentText>}
                 </DetailInfoContent>
               </DetailInfoView>
             </InformationView>

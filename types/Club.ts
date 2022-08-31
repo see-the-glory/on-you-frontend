@@ -29,7 +29,7 @@ export type RootStackParamList = {
   ClubCreationFail: {};
 
   ClubManagementStack: { clubData: Club };
-  ClubManagementMain: { clubData: Club };
+  ClubManagementMain: { clubData: Club; refresh?: boolean };
   ClubEditBasics: { clubData: Club };
   ClubEditIntroduction: { clubData: Club };
   ClubEditMembers: { clubData: Club };
@@ -78,7 +78,7 @@ export interface ClubHomeHaederProps extends ClubHomeParamList {
   name: string;
   shortDesc: string | null;
   categories: Category[];
-  recruitStatus: string;
+  recruitStatus: string | null;
   heightExpanded: number;
   heightCollapsed: number;
 }

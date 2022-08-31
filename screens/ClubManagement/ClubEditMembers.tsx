@@ -4,7 +4,9 @@ import styled from "styled-components/native";
 import { Member } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
-import { ClubEditMembersProps, MemberBundle } from "../../Types/Club";
+import { Feather, MaterialIcons, AntDesign } from "@expo/vector-icons";
+import { Menu, MenuItem, MenuDivider } from "react-native-material-menu";
+import { ClubEditMembersProps } from "../../types/Club";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -20,7 +22,7 @@ const HeaderText = styled(CustomText)`
   font-size: 9px;
   color: #959595;
 `;
-const ContentItem = styled.View<{ col: number }>`
+const ContentItem = styled.TouchableOpacity<{ col: number }>`
   flex: ${(props) => 1 / props.col};
   justify-content: center;
   align-items: flex-start;
@@ -48,10 +50,8 @@ const SectionText = styled(CustomText)`
 `;
 
 const ItemText = styled(CustomText)`
-  font-size: 9px;
-  line-height: 15px;
-  padding: 8px 0px;
-  color: #8c8c8c;
+  font-size: 12px;
+  color: #262626;
 `;
 
 interface MemberBundle {
@@ -74,7 +74,11 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const ICON_SIZE = 45;
   const DEFAULT_PADDING = 40;
-  const COLUMN_SIZE = Math.floor((SCREEN_WIDTH - DEFAULT_PADDING) / (ICON_SIZE + 10));
+  const COLUMN_NUM = Math.floor((SCREEN_WIDTH - DEFAULT_PADDING) / (ICON_SIZE + 10));
+  const [menuVisibleMap, setMenuVisibleMap] = useState(new Map());
+
+  const hideMenu = (id: number) => setMenuVisibleMap((prev) => new Map(prev).set(id, false));
+  const showMenu = (id: number) => setMenuVisibleMap((prev) => new Map(prev).set(id, true));
 
   const save = () => {
     console.log(clubData.members);
@@ -99,24 +103,25 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
       if (member.role === "MASTER") masters.push(member);
       else if (member.role === "MANAGER") managers.push(member);
       else members.push(member);
+      setMenuVisibleMap((prev) => new Map(prev).set(member.id, false));
     });
 
     setBundles([
       {
         title: "MASTER",
-        data: masters.division(COLUMN_SIZE).map((list) => {
+        data: masters.division(COLUMN_NUM).map((list) => {
           return { list };
         }),
       },
       {
         title: "MANAGER",
-        data: managers.division(COLUMN_SIZE).map((list) => {
+        data: managers.division(COLUMN_NUM).map((list) => {
           return { list };
         }),
       },
       {
         title: "MEMBER",
-        data: members.division(COLUMN_SIZE).map((list) => {
+        data: members.division(COLUMN_NUM).map((list) => {
           return { list };
         }),
       },
@@ -160,17 +165,83 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
           ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
           renderItem={({ item }: { item: MemberList }) => (
             <FlatList
-              key={COLUMN_SIZE}
+              key={COLUMN_NUM}
               data={item.list}
-              numColumns={COLUMN_SIZE}
+              numColumns={COLUMN_NUM}
               keyExtractor={(item: Member, index: number) => String(index)}
               renderItem={({ item }: { item: Member }) => (
-                <ContentItem col={COLUMN_SIZE}>
-                  {item.role !== null && item.role !== "MEMBER" ? (
-                    <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} badge={item.role === "MASTER" ? "stars" : "check-circle"} />
-                  ) : (
-                    <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} />
-                  )}
+                <ContentItem col={COLUMN_NUM}>
+                  <Menu
+                    style={{ marginLeft: ICON_SIZE / 2 + 5, marginTop: ICON_SIZE / 2 + 5 }}
+                    visible={menuVisibleMap.get(item.id)}
+                    anchor={
+                      <TouchableOpacity onPress={() => showMenu(item.id)}>
+                        {item.role !== null && item.role !== "MEMBER" ? (
+                          <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} badge={item.role === "MASTER" ? "stars" : "check-circle"} />
+                        ) : (
+                          <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} />
+                        )}
+                      </TouchableOpacity>
+                    }
+                    onRequestClose={() => hideMenu(item.id)}
+                  >
+                    {item.role === "MASTER" ? (
+                      <MenuItem
+                        onPress={() => {
+                          item.role = "MEMBER";
+                          setMemberData();
+                          hideMenu(item.id);
+                        }}
+                        style={{ margin: -10 }}
+                      >
+                        <AntDesign name="closecircleo" size={12} color="#FF714B" />
+                        <ItemText>{` 리더 지정 취소`}</ItemText>
+                      </MenuItem>
+                    ) : item.role === "MANAGER" ? (
+                      <MenuItem
+                        onPress={() => {
+                          item.role = "MEMBER";
+                          setMemberData();
+                          hideMenu(item.id);
+                        }}
+                        style={{ margin: -10 }}
+                      >
+                        <AntDesign name="closecircleo" size={12} color="#FF714B" />
+                        <ItemText>{` 매니저 지정 취소`}</ItemText>
+                      </MenuItem>
+                    ) : (
+                      <>
+                        <MenuItem
+                          onPress={() => {
+                            item.role = "MASTER";
+                            setMemberData();
+                            hideMenu(item.id);
+                          }}
+                          style={{ margin: -10 }}
+                        >
+                          <AntDesign name="star" size={12} color="#FF714B" />
+                          <ItemText>{` 리더 지정`}</ItemText>
+                        </MenuItem>
+                        <MenuDivider />
+                        <MenuItem
+                          onPress={() => {
+                            item.role = "MANAGER";
+                            setMemberData();
+                            hideMenu(item.id);
+                          }}
+                          style={{ margin: -10 }}
+                        >
+                          <AntDesign name="checkcircle" size={12} color="#FF714B" />
+                          <ItemText>{` 매니저 지정`}</ItemText>
+                        </MenuItem>
+                        <MenuDivider />
+                        <MenuItem onPress={() => hideMenu(item.id)} style={{ margin: -10 }}>
+                          <AntDesign name="deleteuser" size={12} color="#FF714B" />
+                          <ItemText>{` 강제 탈퇴`}</ItemText>
+                        </MenuItem>
+                      </>
+                    )}
+                  </Menu>
                 </ContentItem>
               )}
             />

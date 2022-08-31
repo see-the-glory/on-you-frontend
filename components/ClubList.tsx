@@ -123,7 +123,7 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
       <ThumbnailView>
         <ThumbnailImage source={thumbnailPath === null ? require("../assets/basic.jpg") : { uri: thumbnailPath }} size={colSize}></ThumbnailImage>
         <Gradient size={colSize} colors={["transparent", "rgba(0, 0, 0, 0.8)"]} start={Platform.OS === "android" ? { x: 0, y: 0.65 } : { x: 0.5, y: 0.65 }}>
-          {recruitStatus === "RECRUIT" ? (
+          {recruitStatus === "OPEN" ? (
             <RecruitView>
               <RecruitText>모집중</RecruitText>
             </RecruitView>

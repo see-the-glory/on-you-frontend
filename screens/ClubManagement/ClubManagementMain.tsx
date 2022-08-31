@@ -1,17 +1,21 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Animated, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Animated, StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
-import { Feather, AntDesign, FontAwesome5, Entypo } from "@expo/vector-icons";
-import { ClubManagementMainProps, RootStackParamList } from "../../Types/Club";
+import { Feather, AntDesign, FontAwesome5, Entypo, Ionicons } from "@expo/vector-icons";
+import { ClubManagementMainProps, RootStackParamList } from "../../types/Club";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { Shadow } from "react-native-shadow-2";
+import { useQuery } from "react-query";
+import { Club, ClubApi, ClubResponse } from "../../api";
+import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Container = styled.SafeAreaView`
   flex: 1;
 `;
 
-const MainView = styled.ScrollView``;
+const MainView = styled.View``;
 
 const Header = styled.View`
   align-items: center;
@@ -37,7 +41,6 @@ const LeftNavigationView = styled.View`
 const RightNavigationView = styled.View`
   flex-direction: row;
   padding-right: 10px;
-  background-color: green;
 `;
 
 const InformationView = styled.View`
@@ -141,15 +144,34 @@ interface ClubEditItem {
 const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   navigation: { navigate, goBack },
   route: {
-    params: { clubData },
+    params: { clubData, refresh },
   },
 }) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
+  const [data, setData] = useState<Club>(clubData);
   const [items, setItems] = useState<ClubEditItem[]>();
   const [isToggle, setIsToggle] = useState(false);
   const X = useRef(new Animated.Value(0)).current;
+  const { refetch: clubDataRefetch } = useQuery<ClubResponse>(["club", token, clubData.id], ClubApi.getClub, {
+    onSuccess: (res) => {
+      setData(res.data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
-  useEffect(() => {
-    if (clubData.recruitStatus === "RECRUIT") {
+  useFocusEffect(
+    useCallback(() => {
+      if (refresh) {
+        clubDataRefetch();
+      }
+    }, [refresh])
+  );
+
+  useLayoutEffect(() => {
+    console.log("layoutEffect!");
+    if (data.recruitStatus === "OPEN") {
       setIsToggle(true);
       X.setValue(13);
     }
@@ -171,7 +193,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
         screen: "ClubEditMembers",
       },
       {
-        icon: <Feather name="x-circle" size={iconSize} color="red" />,
+        icon: <Feather name="trash-2" size={iconSize} color="red" />,
         title: "모임 삭제",
         screen: "ClubDelete",
       },
@@ -179,7 +201,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   }, []);
 
   const goToScreen = (screen: keyof RootStackParamList) => {
-    return navigate(screen, { clubData });
+    return navigate(screen, { clubData: data });
   };
 
   const onPressToggle = () => {
@@ -203,7 +225,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
     <Container>
       <StatusBar barStyle={"default"} />
       <MainView>
-        <Shadow distance={3} viewStyle={{ width: "100%" }}>
+        <Shadow distance={3} sides={["bottom"]} viewStyle={{ width: "100%" }}>
           <Header>
             <NavigationView height={100}>
               <LeftNavigationView>
@@ -211,33 +233,41 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
                   <Entypo name="chevron-thin-left" size={24} color="black" />
                 </TouchableOpacity>
               </LeftNavigationView>
-              <RightNavigationView></RightNavigationView>
+              <RightNavigationView>
+                <TouchableOpacity
+                  onPress={() => {
+                    clubDataRefetch();
+                  }}
+                >
+                  <Ionicons name="refresh" size={24} color="black" />
+                </TouchableOpacity>
+              </RightNavigationView>
             </NavigationView>
 
             <InformationView>
               <TagView>
                 <Tag color={"white"}>
                   <FontAwesome5 name="cross" size={6} color="#A5A5A5" />
-                  <TagText style={{ color: "#A5A5A5", marginLeft: 3 }}>{clubData.organizationName}</TagText>
+                  <TagText style={{ color: "#A5A5A5", marginLeft: 3 }}>{data.organizationName}</TagText>
                 </Tag>
-                {clubData.categories[0] ? (
+                {data.categories[0] ? (
                   <Tag color={"#B4B4B4"}>
-                    <TagText style={{ color: "white" }}>{clubData.categories[0].name}</TagText>
+                    <TagText style={{ color: "white" }}>{data.categories[0].name}</TagText>
                   </Tag>
                 ) : (
                   <></>
                 )}
-                {clubData.categories[1] ? (
+                {data.categories[1] ? (
                   <Tag color={"#B4B4B4"}>
-                    <TagText style={{ color: "white" }}>{clubData.categories[1].name}</TagText>
+                    <TagText style={{ color: "white" }}>{data.categories[1].name}</TagText>
                   </Tag>
                 ) : (
                   <></>
                 )}
               </TagView>
-              <Title>{clubData.name}</Title>
+              <Title>{data.name}</Title>
             </InformationView>
-            <CircleIcon size={70} uri={clubData.thumbnail} />
+            <CircleIcon size={70} uri={data.thumbnail} />
             <ButtonView>
               <AntDesign name="user" size={10} color="#B7B7B7" />
               <HeaderText>멤버모집</HeaderText>

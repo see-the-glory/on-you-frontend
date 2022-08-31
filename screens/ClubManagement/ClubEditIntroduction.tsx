@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
+import { useToast } from "react-native-toast-notifications";
+import { useMutation } from "react-query";
+import { useSelector } from "react-redux";
 import styled from "styled-components/native";
+import { ClubApi, ClubUpdateRequest, ClubUpdateResponse } from "../../api";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
 import { ClubEditIntroductionProps } from "../../Types/Club";
@@ -61,16 +65,41 @@ const LongDescInput = styled(CustomTextInput)`
   background-color: #f3f3f3;
 `;
 
-const save = () => {};
-
 const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
   navigation: { navigate, setOptions, goBack },
   route: {
     params: { clubData },
   },
 }) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
+  const toast = useToast();
   const [clubShortDesc, setClubShortDesc] = useState(clubData.clubShortDesc ?? "");
   const [clubLongDesc, setClubLongDesc] = useState(clubData.clubLongDesc ?? "");
+  const mutation = useMutation(ClubApi.updateClub, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.resultCode === "OK") {
+        toast.show(`저장이 완료되었습니다.`, {
+          type: "success",
+        });
+        navigate("ClubManagementMain", { clubData: res.data, refresh: true });
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res);
+        toast.show(`Error Code: ${res.status}`, {
+          type: "error",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "error",
+      });
+    },
+    onSettled: (res, error) => {},
+  });
 
   useEffect(() => {
     setOptions({
@@ -80,7 +109,22 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
         </TouchableOpacity>
       ),
     });
-  }, []);
+  }, [clubShortDesc, clubLongDesc]);
+
+  const save = () => {
+    const updateData: ClubUpdateRequest = {
+      data: {
+        clubShortDesc,
+        clubLongDesc,
+      },
+      token,
+      clubId: clubData.id,
+    };
+
+    console.log(updateData);
+
+    mutation.mutate(updateData);
+  };
 
   return (
     <Container>
