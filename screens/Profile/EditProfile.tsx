@@ -7,7 +7,7 @@ import { useMutation, useQuery } from "react-query";
 import { useSelector, useDispatch } from "react-redux";
 import { UserApi, UserInfoRequest, User, Category, ClubApi, CategoryResponse } from "../../api";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { EditProfileScreenProps } from "../../types/User";
+import { EditProfileScreenProps } from "../../Types/User";
 import { NavigationRouteContext } from "@react-navigation/native";
 
 Date.prototype.format = function (f) {

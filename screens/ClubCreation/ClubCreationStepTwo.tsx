@@ -3,7 +3,7 @@ import { Alert, Keyboard, TouchableWithoutFeedback, useWindowDimensions } from "
 import styled from "styled-components/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { ClubCreationStepTwoScreenProps } from "../../types/Club";
+import { ClubCreationStepTwoScreenProps } from "../../Types/Club";
 
 const Container = styled.ScrollView`
   flex: 1;

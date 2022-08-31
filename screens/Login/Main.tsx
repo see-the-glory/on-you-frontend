@@ -62,7 +62,6 @@ const LoginTitle = styled.Text`
 `;
 
 const Main: React.FC<NativeStackScreenProps<any, "Main">> = ({ navigation: { navigate } }) => {
-  const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const mutation = useMutation(CommonApi.getJWT, {
@@ -96,7 +95,7 @@ const Main: React.FC<NativeStackScreenProps<any, "Main">> = ({ navigation: { nav
           <JoinButton>
             <JoinTitle>회원가입</JoinTitle>
           </JoinButton>
-          <LoginButton>
+          <LoginButton onPress={goToLogin}>
             <LoginTitle>로그인</LoginTitle>
           </LoginButton>
         </BtnWrap>

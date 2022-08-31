@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Animated, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { Feather, AntDesign, FontAwesome5, Entypo } from "@expo/vector-icons";
-import { ClubManagementMainProps, RootStackParamList } from "../../types/Club";
+import { ClubManagementMainProps, RootStackParamList } from "../../Types/Club";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { Shadow } from "react-native-shadow-2";

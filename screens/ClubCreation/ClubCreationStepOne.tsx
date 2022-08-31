@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
-import { ClubCreationStepOneScreenProps } from "../../types/Club";
+import { ClubCreationStepOneScreenProps } from "../../Types/Club";
 import { Category } from "../../api";
 
 const Loader = styled.SafeAreaView`
