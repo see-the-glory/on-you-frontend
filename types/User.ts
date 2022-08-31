@@ -1,10 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { User, Category } from "../api";
+import { User, CategoryResponse } from "../api";
 
 export type EditStackParamList = {
   EditProfile: {
     userData: User;
-    category: Category;
+    category: CategoryResponse;
   };
 };
 

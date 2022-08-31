@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Tabs from "./Tabs";
 import Profile from "../screens/Profile";
@@ -13,48 +13,33 @@ import MyClubSelector from "../screens/HomeRelevant/MyClubSelector";
 import { Text, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
-import { useQuery } from "react-query";
-import { Feed, FeedsResponse } from "../api";
+import { useQuery, useMutation } from "react-query";
+import { Feed, FeedCreationRequest, FeedsResponse } from "../api";
+import styled from "styled-components/native";
+
+const ImageSelectSave = styled.Text`
+  color: #2995fa;
+  margin-right: 5%;
+`;
 
 const NativeStack = createNativeStackNavigator();
 
 const HomeStack = ({ navigation: { navigate } }) => {
-  //취소 알람
-  const cancleCreate = () =>
+  const cancleCreate = () => {
     Alert.alert(
-      // 말그대로 Alert를 띄운다
-      "취소하시겠습니까?", // 첫번째 text: 타이틀 제목
-      "게시글이 삭제됩니다.", // 두번째 text: 그 밑에 작은 제목
+      "게시글을 삭제하시겠어요?",
+      "30일 이내에 내 활동의 최근 삭제 항목에서 이 게시물을 복원할 수 있습니다." + "30일이 지나면 영구 삭제 됩니다. ",
       [
-        // 버튼 배열
         {
           text: "아니요",
+          onPress: () => console.log(""),
           style: "cancel",
         },
-        { text: "네", onPress: () => navigate("Home") },
+        { text: "네", onPress: () => navigate("Tabs", { screen: "Home" }) },
       ],
       { cancelable: false }
     );
-
-  //피드생성
-  const getFeeds = () => {
-    return fetch(`http://3.39.190.23:8080/api/feeds`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res) => res.json());
   };
-  const token = useSelector((state) => state.AuthReducers.authToken);
-  const { data: feeds, isLoading: feedsLoading } = useQuery<FeedsResponse>(["getFeeds"], getFeeds, {
-    //useQuery(["getFeeds", token], FeedApi.getFeeds, {
-    onSuccess: (res) => {
-      console.log(res);
-    },
-    onError: (err) => {
-      console.log(`[getFeeds error] ${err}`);
-    },
-  });
 
   return (
     <NativeStack.Navigator
@@ -193,5 +178,4 @@ const HomeStack = ({ navigation: { navigate } }) => {
     </NativeStack.Navigator>
   );
 };
-
 export default HomeStack;

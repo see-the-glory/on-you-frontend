@@ -172,8 +172,10 @@ const CreatorName = styled.Text`
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { navigate } }) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
+    token,
     categoryId: null,
     clubState: null,
     minMember: null,
@@ -187,7 +189,6 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
-  const token = useSelector((state) => state.AuthReducers.authToken);
 
   const {
     isLoading: clubsLoading,
@@ -197,7 +198,7 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
     fetchNextPage,
   } = useInfiniteQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
     getNextPageParam: (currentPage) => {
-      if (currentPage) return currentPage.hasNext === false ? null : currentPage.responses.content[currentPage.responses.content.length - 1].customCursor;
+      if (currentPage) return currentPage.hasNext === false ? null : currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor;
     },
     onSuccess: (res) => {
       setIsPageTransition(false);
@@ -212,33 +213,9 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
     if (hasNextPage) fetchNextPage();
   };
 
-  const getHome = () => {
-    const result = [];
-    for (let i = 0; i < 5; ++i) {
-      result.push({
-        id: i,
-        img: "https://i.pinimg.com/564x/96/a1/11/96a111a649dd6d19fbde7bcbbb692216.jpg",
-        name: "문규빈",
-        content: "",
-        memberNum: Math.ceil(Math.random() * 10),
-      });
-    }
-
-    setHome(result);
-  };
-
-  const getData = async () => {
-    await Promise.all([getHome()]);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
-
   const onRefresh = async () => {
     setRefreshing(true);
-    await getData();
+    await queryClient.refetchQueries(["clubs"]);
     setRefreshing(false);
   };
 
@@ -264,6 +241,7 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
           <FlatList
             refreshing={refreshing}
             onRefresh={onRefresh}
+            onEndReached={loadMore}
             keyExtractor={(item: Club, index: number) => String(index)}
             data={clubs?.pages.map((page) => page.responses.content).flat()}
             renderItem={({ item, index }: { item: Club; index: number }) => (

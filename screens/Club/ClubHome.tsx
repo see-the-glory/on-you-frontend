@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, useWindowDimensions, Animated, FlatList, RefreshControl } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
-import { ClubHomeScreenProps, ClubHomeParamList, RefinedSchedule } from "../../types/Club";
+import { ClubHomeScreenProps, ClubHomeParamList, RefinedSchedule } from "../../Types/Club";
 import { useMutation, useQuery } from "react-query";
 import { ClubApi, ClubRoleResponse, ClubSchedulesResponse, Schedule } from "../../api";
 import ScheduleModal from "./ClubScheduleModal";

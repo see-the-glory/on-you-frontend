@@ -8,14 +8,17 @@ import { Login } from "../../store/Actions";
 import styled from "styled-components/native";
 
 const Container = styled.View`
-  flex: 1;
+  width: 100%;
+  height: 100%;
   justify-content: center;
   align-items: center;
 `;
 
-const Title = styled.Text`
-  color: #191919;
-  font-size: 16px;
+const Logo = styled.ImageBackground`
+  width: 100%;
+  height: 100%;
+  justify-content: flex-end;
+  align-items: center;
 `;
 
 const KakaoButton = styled.TouchableOpacity`
@@ -23,8 +26,9 @@ const KakaoButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   border-radius: 12px;
-  width: 200px;
+  width: 60%;
   height: 50px;
+  margin-bottom: 15%;
   background-color: #fee500;
 `;
 
@@ -34,9 +38,9 @@ const KakaoImage = styled.Image`
   margin-right: 5px;
 `;
 
-const Logo = styled.ImageBackground`
-  width: 100%;
-  height: 50%;
+const Title = styled.Text`
+  color: #191919;
+  font-size: 18px;
 `;
 
 const KakaoAuth = () => {
@@ -65,12 +69,13 @@ const KakaoAuth = () => {
     <Container>
       <Logo
         source={require("../../assets/logo.png")} //이미지경로
-        resizeMode="center" // 'cover', 'contain', 'stretch', 'repeat', 'center' 중 선택
-      ></Logo>
-      <KakaoButton onPress={signInWithKakao}>
-        <KakaoImage source={require("../../assets/kakao_logo.png")} resizeMode="cover" />
-        <Title>카카오로 시작하기</Title>
-      </KakaoButton>
+        resizeMode="cover" // 'cover', 'contain', 'stretch', 'repeat', 'center' 중 선택
+      >
+        <KakaoButton onPress={signInWithKakao}>
+          <KakaoImage source={require("../../assets/kakao_logo.png")} resizeMode="cover" />
+          <Title>카카오로 시작하기</Title>
+        </KakaoButton>
+      </Logo>
     </Container>
   );
 };

@@ -5,7 +5,7 @@ import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
 import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
 import { Category, CategoryResponse, ClubApi, Club, ClubsResponse, ClubsParams } from "../api";
-import { ClubListScreenProps } from "../types/Club";
+import { ClubListScreenProps } from "../Types/Club";
 import { useSelector } from "react-redux";
 import CustomText from "../components/CustomText";
 

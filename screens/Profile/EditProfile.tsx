@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { TouchableOpacity, Text, NativeModules } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { TouchableOpacity, Text, NativeModules, Alert } from "react-native";
 import { Keyboard, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import * as ImagePicker from "expo-image-picker";
@@ -7,7 +7,7 @@ import { useMutation, useQuery } from "react-query";
 import { useSelector, useDispatch } from "react-redux";
 import { UserApi, UserInfoRequest, User, Category, ClubApi, CategoryResponse } from "../../api";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { EditProfileScreenProps } from "../../types/User";
+import { EditProfileScreenProps } from "../../Types/User";
 import { NavigationRouteContext } from "@react-navigation/native";
 
 Date.prototype.format = function (f) {
@@ -108,6 +108,7 @@ const ProfileText = styled.Text`
 
 const Form = styled.View`
   margin-bottom: 20px;
+  padding: 0 5px;
 `;
 
 const Title = styled.Text`
@@ -151,42 +152,42 @@ const CategoryView = styled.View`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  margin-top: 10px;
+  flex-wrap: wrap;
 `;
 
 const CategoryItem = styled.TouchableOpacity<{ selected: boolean }>`
   min-width: 60px;
-  height: 22px;
+  height: 25px;
   align-items: center;
   justify-content: center;
   background-color: ${(props) => (props.selected ? "#295AF5" : "white")};
   border-radius: 30px;
   border: 0.5px solid #bbbbbb;
   margin-right: 10px;
+  margin-bottom: 10px;
   padding: 0px 8px;
 `;
 
 const CategoryText = styled.Text<{ selected: boolean }>`
   font-size: 14px;
-  color: ${(props) => (props.selected ? "white" : "black")};
   font-weight: 300;
+  ${(props) => (props.selected ? "white" : "black")}
 `;
 
 const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userData }, navigation: { navigate, setOptions, goBack } }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
 
-  const {
-    isLoading: getCategoryLoading, // true or false
-    data: category,
-  } = useQuery<CategoryResponse>(["getCategories", token], ClubApi.getCategories);
+  const interestsEng = ["READING", "GODLY", "VOLUNTEER", "EXERCISE", "CULTURE", "GAME", "CREATURE", "DEVELOPMENT", "FOOD", "TRAVEL", "PET", "ETC"];
+  const interestsKor = ["📚 독서", "🙏 경건생활", "💗 봉사", "⚽ 운동", "🎈 문화생활", "🎲 게임", "💡 창작", "📂 자기개발", "🍕 음식", "🏝 여행", "🐼 반려동물", "🔍 기타"];
 
-  console.log("category" + category?.data);
-
-  const [phone, setPhone] = useState("");
-  const [name, setName] = useState("");
-  const [birthday, setBirthday] = useState("");
   const [thumbnail, setThumbnail] = useState("");
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [sex, setSex] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [phone, setPhone] = useState("");
   const [organizationName, setOrganizationName] = useState("");
+  const [interests, setInterests] = useState("");
 
   const mutation = useMutation(UserApi.updateUserInfo, {
     onSuccess: (res) => {
@@ -206,7 +207,7 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
   });
 
   const onSubmit = () => {
-    const data = { phone, name, birthday, thumbnail, organizationName };
+    const data = { /* phone, */ name, birthday, email /* thumbnail, organizationName, interests */ };
 
     console.log(data);
 
@@ -224,6 +225,18 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
       ),
     });
   }, []);
+
+  useEffect(() => {
+    if (phone.length === 10) {
+      setPhone(phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3"));
+    }
+    if (phone.length === 12) {
+      setPhone(phone.replace(/-/g, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3"));
+    }
+    if (phone.length === 13) {
+      setPhone(phone.replace(/-/g, "").replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3"));
+    }
+  }, [phone]);
 
   const [imageURI, setImageURI] = useState<string | null>(null);
 
@@ -264,22 +277,13 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
 
   const [approvalMethod, setApprovalMethod] = useState<number>(0);
 
-  const [categories, setCategories] = useState<Array<Array<Category>>>([[]]);
-  const [selectCategory1, setCategory1] = useState<number>(-1);
-  const [selectCategory2, setCategory2] = useState<number>(-1);
+  const [categoryItem, setCategoryItem] = useState(false);
 
-  /* const onPressCategory = (id: number) => {
-    if (selectCategory1 === id) {
-      return setCategory1(-1);
-    } else if (selectCategory2 === id) {
-      return setCategory2(-1);
-    }
-    if (selectCategory1 === -1) {
-      return setCategory1(id);
-    } else if (selectCategory2 === -1) {
-      return setCategory2(id);
-    }
-  }; */
+  const isCategorySelect = Array(interestsKor.length).fill(false);
+
+  const onClick = () => {
+    categoryItem === true ? setCategoryItem(false) : setCategoryItem(true);
+  };
 
   return (
     <TouchableWithoutFeedback
@@ -301,11 +305,12 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
         </ImagePickerView>
         <Form>
           <Title>이름</Title>
-          <Input autoCorrect={false} defaultValue={userData.name} onChangeText={(text) => setName(text)} />
+          <Input autoCorrect={false} placeholder="이정규" defaultValue={userData.name} onChangeText={(text) => setName(text)} />
         </Form>
         <Form>
           <Title>성별</Title>
-          <FieldContentView>
+          <Input autoCorrect={false} placeholder="남자" defaultValue={userData.sex === "M" ? "남자" : "여자"} onChangeText={(text) => setSex(text)} />
+          {/* <FieldContentView>
             <FieldContentLine>
               <Button onPress={() => setApprovalMethod(0)} activeOpacity={0.5}>
                 {approvalMethod ? <MaterialCommunityIcons name="radiobox-blank" size={20} color="#E8E8E8" /> : <MaterialCommunityIcons name="radiobox-marked" size={20} color="#ff714b" />}
@@ -318,14 +323,14 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
                 <FieldContentText> 여자</FieldContentText>
               </Button>
             </FieldContentLine>
-          </FieldContentView>
+          </FieldContentView> */}
         </Form>
         <Form>
           <Title>생년월일</Title>
           <TextBtn onPress={showDatePicker}>
             <Input
               pointerEvents="none"
-              placeholder={placeholder}
+              placeholder="yyyy/MM/dd"
               placeholderTextColor="#000000"
               underlineColorAndroid="transparent"
               editable={false}
@@ -336,24 +341,27 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
         </Form>
         <Form>
           <Title>연락처</Title>
-          <Input keyboardType="phone-pad" autoCorrect={false} defaultValue="" /* onChangeText={(data) => setPhone(data)} */ maxLength={11} />
+          <Input keyboardType="numeric" placeholder="010-xxxx-xxxx" autoCorrect={false} defaultValue={userData.phoneNumber} onChangeText={(phone) => setPhone(phone)} maxLength={13} />
         </Form>
         <Form>
           <Title>교회</Title>
-          <Input autoCorrect={false} defaultValue={userData.organizationName} onChangeText={(text) => setOrganizationName(text)} />
+          <Input autoCorrect={false} placeholder="시광교회" defaultValue={userData.organizationName} onChangeText={(text) => setOrganizationName(text)} />
         </Form>
         <Form>
           <Title>관심사(3개 이상 택)</Title>
           <CategoryView>
-            <CategoryItem activeOpacity={0.8} selected={true || false}>
-              <CategoryText selected={true || false}>📚 독서</CategoryText>
-            </CategoryItem>
-            <CategoryItem activeOpacity={0.8}>
-              <CategoryText>🙏 경건생활</CategoryText>
-            </CategoryItem>
-            <CategoryItem activeOpacity={0.8}>
-              <CategoryText>💗 봉사</CategoryText>
-            </CategoryItem>
+            {interestsKor.map((category, index) => (
+              <CategoryItem
+                key={index}
+                activeOpacity={0.8}
+                selected={categoryItem}
+                onPress={() => {
+                  onClick();
+                }}
+              >
+                <CategoryText selected={categoryItem}>{category}</CategoryText>
+              </CategoryItem>
+            ))}
           </CategoryView>
         </Form>
       </Container>

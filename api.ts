@@ -67,6 +67,8 @@ export interface User {
   role: string;
   sex: string;
   thumbnail: string | null;
+  phoneNumber: string;
+  interests: [];
 }
 export interface Feed {
   feedId: number;
@@ -88,6 +90,7 @@ export interface Reply {
   content: string;
   created: string;
   updated: string;
+  thumbnail: string;
 }
 
 export interface ClubRole {
@@ -127,6 +130,10 @@ export interface UserInfoResponse extends BaseResponse {
 }
 export interface ReplyReponse extends BaseResponse {
   data: Reply[];
+}
+
+export interface FeedsParams {
+  token: string;
 }
 
 export interface ClubsParams {
@@ -218,6 +225,9 @@ export interface UserInfoRequest {
     name?: string;
     organizationName?: string;
     thumbnail?: string;
+    sex?: string;
+    phoneNumber?: string;
+    interests?: [];
   };
 }
 
@@ -406,19 +416,19 @@ const registerUserInfo = ({ queryKey }: any) => {
   }).then((response) => response.json());
 };
 
-const selectUserClubResponse = ({ queryKey }: any) => {
+const selectMyClubs = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
-  return fetch(`${BASE_URL}/api/user/{clubId}`, {
+  return fetch(`${BASE_URL}/api/clubs/my`, {
     method: "GET",
     headers: {
       authorization: `Bearer ${token}`,
     },
-  }).then((response) => response.json());
+  }).then((res) => res.json());
 };
 
-const getFeeds = ({ queryKey }: any) => {
+export const getFeeds = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
-  return fetch(`${BASE_URL}/api/feeds`, {
+  return fetch(`${BASE_URL}/api/feeds?`, {
     headers: {
       authorization: `Bearer ${token}`,
     },
@@ -435,13 +445,15 @@ export const ClubApi = {
   createClubSchedule,
   getClubRole,
   applyClub,
+  selectMyClubs,
 };
 
 export const UserApi = {
+  getCategories,
   getUserInfo,
   registerUserInfo,
   updateUserInfo,
-  selectUserClubResponse,
+  selectMyClubs,
 };
 
 export const FeedApi = {

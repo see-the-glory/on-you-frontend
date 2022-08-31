@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components/native";
-import { StyleSheet, Dimensions, Animated } from "react-native";
+import { Dimensions, Animated } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
+import { useSelector } from "react-redux";
+import { useQuery } from "react-query";
+import { UserApi, Club, ClubResponse } from "../../api";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -64,6 +67,15 @@ const DeleteBox = styled.View`
 `;
 
 const MyClub = (props) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
+
+  const {
+    isLoading: myClubInfoLoading, // true or false
+    data: myClub,
+  } = useQuery<Club>(["selectMyClubs", token], UserApi.selectMyClubs);
+
+  console.log(myClub);
+
   const rightSwipe = (progress, dragX) => {
     const scale = dragX.interpolate({
       inputRange: [0, 100],
@@ -99,18 +111,6 @@ const MyClub = (props) => {
             </MyClubImgBox>
             <MyClubTextBox>
               <MyClubText>온유 프로젝트</MyClubText>
-            </MyClubTextBox>
-          </MyClubBox>
-        </Swipeable>
-      </MyClubWrap>
-      <MyClubWrap>
-        <Swipeable renderRightActions={rightSwipe}>
-          <MyClubBox style={{ width: SCREEN_WIDTH }}>
-            <MyClubImgBox>
-              <MyClubImg />
-            </MyClubImgBox>
-            <MyClubTextBox>
-              <MyClubText>덕 모임</MyClubText>
             </MyClubTextBox>
           </MyClubBox>
         </Swipeable>

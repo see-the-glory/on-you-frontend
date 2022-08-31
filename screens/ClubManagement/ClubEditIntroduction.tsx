@@ -7,7 +7,7 @@ import styled from "styled-components/native";
 import { ClubApi, ClubUpdateRequest, ClubUpdateResponse } from "../../api";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
-import { ClubEditIntroductionProps } from "../../types/Club";
+import { ClubEditIntroductionProps } from "../../Types/Club";
 
 const Container = styled.SafeAreaView`
   flex: 1;
