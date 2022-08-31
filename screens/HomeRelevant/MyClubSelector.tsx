@@ -172,9 +172,10 @@ const CreatorName = styled.Text`
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { navigate } }) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
-    token: '',
+    token,
     categoryId: null,
     clubState: null,
     minMember: null,
@@ -188,7 +189,6 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
-  const token = useSelector((state) => state.AuthReducers.authToken);
 
   const {
     isLoading: clubsLoading,
@@ -239,7 +239,7 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await getData();
+    await queryClient.refetchQueries(["clubs"]);
     setRefreshing(false);
   };
 
@@ -257,7 +257,7 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
 
   return (
     <Container>
-      <IntroText>가입한 모임 List</IntroText>
+      <IntroText>가입한 모임 Lis1t</IntroText>
       <ReplyContainer>
         {loading ? (
           <ActivityIndicator />
@@ -265,9 +265,9 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
           <FlatList
             refreshing={refreshing}
             onRefresh={onRefresh}
+            onEndReached={loadMore}
             keyExtractor={(item: Club, index: number) => String(index)}
-            numColumns={2}
-            data={clubs?.pages.map((page) => page?.responses?.content).flat()}
+            data={clubs?.pages.map((page) => page.responses.content).flat()}
             renderItem={({ item, index }: { item: Club; index: number }) => (
               <ClubArea onPress={() => goToImage()}>
                 <ClubImg source={{ uri: item.thumbnail }} />

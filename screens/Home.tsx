@@ -8,10 +8,7 @@ import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-ic
 import { useQuery, useInfiniteQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { Feed, FeedsResponse, FeedsParams, getFeeds, FeedApi, Reply } from "../api";
-import { gql } from "apollo-boost";
 import CustomText from "../components/CustomText";
-import { useMutation } from "react-apollo-hooks";
-import * as url from "url";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -288,7 +285,7 @@ const Content = styled.View`
   padding: 0 12px 0 12px;
 `;
 
-const Ment = styled.Text`
+const Ment = styled(CustomText)`
   width: 100%;
   color: black;
   font-size: 12px;
@@ -297,20 +294,15 @@ const Ment = styled.Text`
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { navigate } }) => {
-  const [Home, setHome] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [number, setNumber] = useState(rand(1, 100));
-  const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
+  //const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const SCREEN_PADDING_SIZE = 20;
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
   const token = useSelector((state) => state.AuthReducers.authToken);
 
-  const [isLiked, setIsLiked]=useState();
-  const [likeCount, setLikeCount]=useState();
   /**현재시간*/
   let today = new Date("2022-08-03T13:26:43.005981");
   let time = {
@@ -321,10 +313,6 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     minutes: today.getMinutes(), //현재 분
   };
   let timestring = `${time.year}년 ${time.month}월 ${time.date}일`;
-
-  const [params, setParams] = useState<FeedsParams>({
-    token,
-  });
 
   // const fetchBlacklist = async ({ pageParam = 1 }) => {
   //   const response = await axiosInstance.get(`http://3.39.190.23:8080/api/feeds/${pageParam}`);
@@ -358,8 +346,6 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
   //   },
   // });
 
-
-
   const getFeeds = () => {
     return fetch(`http://3.39.190.23:8080/api/feeds`, {
       method: "GET",
@@ -373,22 +359,23 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     isLoading: feedsLoading,
     data: feeds,
     isRefetching: isRefetchingClubs,
-  } = useQuery<FeedsResponse>(["getFeeds", token], getFeeds, {
+  } = useQuery<FeedsResponse>(["getFeeds"], getFeeds, {
     //useQuery(["getFeeds", token], FeedApi.getFeeds, {
     onSuccess: (res) => {
-      console.log(res+'realasdgsdagsdf@@@@@@@@@@@@@@@@@@@@@');
+      console.log(res);
     },
     onError: (err) => {
       console.log(err);
     },
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     getFeeds();
-  },[])
+  }, []);
 
   //heart선택
-  const [heartSelected, setHeartSelected] = useState<boolean>(false);
+  const [heartSelected, setHeartSelected] = useState(false);
+  const [likeYn, setLikeYn] = useState<boolean>(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -406,10 +393,9 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     });
   };
 
-  const goToReply = (replyData: Reply) => {
+  const goToReply = () => {
     navigate("HomeStack", {
       screen: "ReplyPage",
-      replyData,
     });
   };
 
@@ -454,41 +440,11 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     setModalVisible(!isModalVisible);
   };
 
-/*  const getHome = () => {
-    const result = [];
-    for (let i = 0; i < 1; ++i) {
-      result.push({
-        id: i,
-        img: "https://i.pinimg.com/564x/96/a1/11/96a111a649dd6d19fbde7bcbbb692216.jpg",
-        name: "문규빈",
-        content: "",
-        memberNum: Math.ceil(Math.random() * 10),
-      });
-    }
-
-    setHome(result);
-  };
-
-  const getData = async () => {
-    await Promise.all([getHome()]);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);*/
-
   const onRefresh = async () => {
     setRefreshing(true);
-     await queryClient.refetchQueries(["feeds"]);
+    await queryClient.refetchQueries(["feeds"]);
     setRefreshing(false);
   };
-
-  // const loadMore = () => {
-  //   if (hasNextPage) fetchNextPage();
-  // };
-
-
 
   return feedsLoading ? (
     <Loader>
@@ -502,14 +458,13 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
           <LogoText>OnYou</LogoText>
         </SubView>
         <SubView>
-          {/* <Ionicons name="md-notifications-outline" onPress={goToAlarm} size={19} color="black" /> */}
           <MaterialIcons name="add-photo-alternate" onPress={goToClub} style={{ paddingLeft: "2.5%" }} size={19} color="black" />
         </SubView>
       </HeaderView>
 
       <FlatList
-         refreshing={refreshing}
-         onRefresh={onRefresh}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         // onEndReached={loadMore}
         // numColumns={2}
         keyExtractor={(item: Feed, index: number) => String(index)}
@@ -541,7 +496,6 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
                           삭제
                         </ModalText>
                         <ModalText onPress={goToAccusation}>신고</ModalText>
-                        <ModalText onPress={closeModal}>Close</ModalText>
                       </ModalView>
                     </CenteredView>
                   </Modal>
@@ -559,12 +513,12 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
                 <LeftInfo>
                   <InfoArea>
                     <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)}>
-                      {heartSelected ? <Ionicons name="md-heart" size={20} color="red"/> : <Ionicons name="md-heart-outline" size={20} color="black"/>}
+                      {heartSelected ? <Ionicons name="md-heart" size={20} color="red" likeYn={true} /> : <Ionicons name="md-heart-outline" size={20} color="black" ikeYn={false} />}
                     </TouchableOpacity>
-                    {heartSelected? <NumberText>{item.likesCount +1} </NumberText> : <NumberText> {item.likesCount} </NumberText>}
+                    {heartSelected ? <NumberText>{item.likesCount + 1} </NumberText> : <NumberText> {item.likesCount} </NumberText>}
                   </InfoArea>
                   <InfoArea>
-                    <TouchableOpacity onPress={goToReply}>
+                    <TouchableOpacity onPress={() => goToReply()}>
                       <Ionicons name="md-chatbox-ellipses-outline" size={20} color="black" />
                     </TouchableOpacity>
                     <NumberText>{item.commentCount}</NumberText>
@@ -574,9 +528,9 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
                   <Timestamp>{timestring}</Timestamp>
                 </RightInfo>
               </FeedInfo>
-             {/* <Content>
+              <Content>
                 <Ment>{item.content}</Ment>
-              </Content>*/}
+              </Content>
             </FeedMain>
           </FeedContainer>
         )}

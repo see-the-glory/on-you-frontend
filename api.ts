@@ -90,6 +90,7 @@ export interface Reply {
   content: string;
   created: string;
   updated: string;
+  thumbnail: string;
 }
 
 export interface ClubRole {
@@ -128,7 +129,7 @@ export interface ReplyReponse extends BaseResponse {
   data: Reply[];
 }
 
-export interface FeedsParams{
+export interface FeedsParams {
   token: string;
 }
 
@@ -371,7 +372,6 @@ const selectMyClubs = ({ queryKey }: any) => {
     },
   }).then((res) => res.json());
 };
-
 
 export const getFeeds = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
