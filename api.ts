@@ -106,6 +106,7 @@ export interface CategoryResponse extends BaseResponse {
 
 export interface ClubResponse extends BaseResponse {
   data: Club;
+  status: number;
 }
 
 export interface ClubUpdateResponse extends BaseResponse {
@@ -209,6 +210,17 @@ export interface ClubApplyRequest {
   token: string;
 }
 
+export interface ChangeRoleRequest {
+  clubId: number;
+  data: ChangeRole[];
+  token: string;
+}
+
+export interface ChangeRole {
+  role: string | null;
+  userId: number;
+}
+
 export interface LoginRequest {
   token: string;
 }
@@ -246,11 +258,14 @@ const getClubs = ({ queryKey, pageParam }: any) => {
 
 const getClub = ({ queryKey }: any) => {
   const [_key, token, clubId]: [string, string, number] = queryKey;
+  console.log(_key, token, clubId);
   return fetch(`${BASE_URL}/api/clubs/${clubId}`, {
     headers: {
       authorization: `Bearer ${token}`,
     },
-  }).then((res) => res.json());
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
 };
 
 const getClubRole = ({ queryKey }: any) => {
@@ -324,22 +339,30 @@ const updateClub = async (req: ClubUpdateRequest) => {
 };
 
 const applyClub = (req: ClubApplyRequest) => {
-  return fetch(`${BASE_URL}/api/clubs/${req.clubId}/apply`, {
+  return fetch(`${BASE_URL}/api/clubs/apply`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
       authorization: `Bearer ${req.token}`,
     },
-    body: JSON.stringify({ memo: req.memo }),
-  })
-    .then((res) => {
-      if (res.status === 409) console.log("[ERROR] API 409");
-      return res.json();
-    })
-    .then((res) => {
-      if (res.resultCode !== "OK") new Error("applyClub API Response Error");
-      else return res;
-    });
+    body: JSON.stringify({ clubId: req.clubId, memo: req.memo }),
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
+};
+
+const changeRole = (req: ChangeRoleRequest) => {
+  console.log(req);
+  return fetch(`${BASE_URL}/api/clubs/${req.clubId}/changeRole`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${req.token}`,
+    },
+    body: JSON.stringify(req.data),
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
 };
 
 const getClubSchedules = ({ queryKey }: any) => {
@@ -441,6 +464,7 @@ export const ClubApi = {
   getClubs,
   createClub,
   updateClub,
+  changeRole,
   getClubSchedules,
   createClubSchedule,
   getClubRole,
