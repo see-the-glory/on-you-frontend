@@ -61,38 +61,24 @@ const LoginTitle = styled.Text`
   font-weight: 700;
 `;
 
-const Main: React.FC<NativeStackScreenProps<any, "Main">> = ({ navigation: { navigate } }) => {
-  const dispatch = useDispatch();
-
-  const mutation = useMutation(CommonApi.getJWT, {
-    onSuccess: (res) => {
-      // redux 저장
-      dispatch(Login(res.token));
-    },
-    onError: (error) => {
-      console.log("--- Error ---");
-      console.log(error);
-      // Toast Message 출력.
-    },
-  });
-
+const Main: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
   const goToLogin = () => {
     navigate("LoginStack", {
       screen: "Login",
     });
   };
 
-  /* const signInWithKakao = async () => {
-    const token: KakaoOAuthToken = await kakaoLogin();
-
-    mutation.mutate({ token: token.accessToken });
-  }; */
+  const goToJoinStepOne = () => {
+    navigate("LoginStack", {
+      screen: "JoinStepOne",
+    });
+  };
 
   return (
     <Container>
       <Logo source={require("../../assets/logo.png")} resizeMode="cover">
         <BtnWrap>
-          <JoinButton>
+          <JoinButton onPress={goToJoinStepOne}>
             <JoinTitle>회원가입</JoinTitle>
           </JoinButton>
           <LoginButton onPress={goToLogin}>

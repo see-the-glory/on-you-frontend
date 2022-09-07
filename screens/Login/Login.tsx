@@ -1,25 +1,38 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
 import { useMutation } from "react-query";
+import { CommonApi } from "../../api";
 import { useDispatch } from "react-redux";
+import { Login } from "../../store/Actions";
+import { NavigationContainer } from "@react-navigation/native";
+import Root from "../../navigation/Root";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useState, useEffect, useRef } from "react";
+import { TouchableOpacity, Text, NativeModules, Alert, Keyboard, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
+import { Ionicons } from "@expo/vector-icons";
+import { LoginStackParamList } from "../../Types/User";
 
 const Container = styled.View`
   width: 100%;
-  height: 100%;
+  height: 95%;
   align-items: center;
+  justify-content: space-between;
   padding-horizontal: 20px;
   padding-top: 30px;
 `;
 
+const Wrap = styled.View`
+  width: 100%;
+`;
+
 const Form = styled.View`
   width: 100%;
-  margin-top: 35px;
+  margin-bottom: 30px;
 `;
 
 const Title = styled.Text`
   color: #1b1717;
   font-size: 16px;
+  font-weight: bold;
   margin-bottom: 8px;
 `;
 
@@ -47,9 +60,8 @@ const LoginButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 38px;
+  height: 48px;
   background-color: #ff714b;
-  margin-top: 10%;
 `;
 
 const LoginTitle = styled.Text`
@@ -58,31 +70,49 @@ const LoginTitle = styled.Text`
   font-weight: 700;
 `;
 
-const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { navigate } }) => {
+const LoginRequest: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate, setOptions } }) => {
+  /*  useEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigate("AuthStack", { screen: "Main" })}>
+          <Ionicons name="chevron-back" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []); */
+
   const goToFindLoginInfo = () => {
     navigate("LoginStack", {
       screen: "FindLoginInfo",
     });
   };
 
+  const goToRoot = () => {
+    return <NavigationContainer>{<Root />}</NavigationContainer>;
+  };
+
   return (
     <Container>
-      <Form>
-        <Title>아이디</Title>
-        <Input placeholder="example@email.com" />
-      </Form>
-      <Form>
-        <Title>비밀번호</Title>
-        <Input placeholder="비밀번호를 입력해주세요." />
-        <View onPress={goToFindLoginInfo}>
-          <ForgetText>로그인 정보가 기억나지 않을때</ForgetText>
-        </View>
-      </Form>
-      <LoginButton>
-        <LoginTitle>로그인</LoginTitle>
-      </LoginButton>
+      <Wrap>
+        <Form>
+          <Title>아이디</Title>
+          <Input placeholder="example@email.com" />
+        </Form>
+        <Form>
+          <Title>비밀번호</Title>
+          <Input placeholder="비밀번호를 입력해주세요." />
+          <View onPress={goToFindLoginInfo}>
+            <ForgetText>로그인 정보가 기억나지 않을때</ForgetText>
+          </View>
+        </Form>
+      </Wrap>
+      <Wrap>
+        <LoginButton onPress={goToRoot}>
+          <LoginTitle>로그인</LoginTitle>
+        </LoginButton>
+      </Wrap>
     </Container>
   );
 };
 
-export default Login;
+export default LoginRequest;

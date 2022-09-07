@@ -8,4 +8,9 @@ export type EditStackParamList = {
   };
 };
 
+export type LoginStackParamList = {
+  LoginStack: {};
+};
+
 export type EditProfileScreenProps = NativeStackScreenProps<EditStackParamList, "EditProfile">;
+export type LoginScreenProps = NativeStackScreenProps<LoginStackParamList, "LoginStack">;
