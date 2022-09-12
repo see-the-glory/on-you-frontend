@@ -1,12 +1,16 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { FlatList, SectionList, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
-import { Member } from "../../api";
+import { ChangeRole, ChangeRoleRequest, Member } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
-import { Feather, MaterialIcons, AntDesign } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { Menu, MenuItem, MenuDivider } from "react-native-material-menu";
 import { ClubEditMembersProps } from "../../types/Club";
+import { useToast } from "react-native-toast-notifications";
+import { useSelector } from "react-redux";
+import { useMutation } from "react-query";
+import { ClubApi } from "../../api";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -69,26 +73,119 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
     params: { clubData },
   },
 }) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
+  const toast = useToast();
   const [refreshing, setRefreshing] = useState(false);
   const [bundles, setBundles] = useState<MemberBundle[]>();
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const ICON_SIZE = 45;
   const DEFAULT_PADDING = 40;
   const COLUMN_NUM = Math.floor((SCREEN_WIDTH - DEFAULT_PADDING) / (ICON_SIZE + 10));
-  const [menuVisibleMap, setMenuVisibleMap] = useState(new Map());
+  const [menuVisibleMap, setMenuVisibleMap] = useState(new Map(clubData.members.map((member) => [member.id, false])));
+  const [kickOutMap, setKickOutMap] = useState(new Map(clubData.members.map((member) => [member.id, false])));
+  const [memberMap, setMemberMap] = useState(new Map(clubData.members.map((member) => [member.id, { ...member }]))); // 깊은 복사를 위해서 Spread 구문 사용
+  const mutation = useMutation(ClubApi.changeRole, {
+    onSuccess: (res) => {
+      console.log(res);
+      if (res.status === 200 && res.resultCode === "OK") {
+        toast.show(`저장이 완료되었습니다.`, {
+          type: "success",
+        });
+        navigate("ClubManagementMain", { clubData, refresh: true });
+      } else {
+        console.log(`changeRole mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res);
+        toast.show(`${res.message} (Error Code: ${res.status})`, {
+          type: "error",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error changeRole ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "error",
+      });
+    },
+    onSettled: (res, error) => {},
+  });
 
-  const hideMenu = (id: number) => setMenuVisibleMap((prev) => new Map(prev).set(id, false));
-  const showMenu = (id: number) => setMenuVisibleMap((prev) => new Map(prev).set(id, true));
+  const hideMenu = (userId: number) => setMenuVisibleMap((prev) => new Map(prev).set(userId, false));
+  const showMenu = (userId: number) => setMenuVisibleMap((prev) => new Map(prev).set(userId, true));
+
+  /**
+   * @description 해당 유저를 탈퇴 유저 리스트에 포함시킴. menu hide 하는 동안 기다리기 위해 200ms 대기
+   */
+  const kickOut = (userId: number) => {
+    setTimeout(() => setKickOutMap((prev) => new Map(prev).set(userId, true)), 200);
+    hideMenu(userId);
+  };
+
+  const cancelKickOut = (userId: number) => {
+    setTimeout(() => setKickOutMap((prev) => new Map(prev).set(userId, false)), 200);
+    hideMenu(userId);
+  };
+  /**
+   * @description userId 를 해당 role 로 변경하기.
+   */
+  const changeRole = (member: Member, role: string) => {
+    member.role = role;
+    setMemberData();
+    hideMenu(member.id);
+  };
 
   const save = () => {
-    console.log(clubData.members);
-    onRefresh();
+    let masterCount = 0;
+
+    const data: ChangeRole[] = [];
+    clubData.members.map((member) => {
+      const modifiedMember = memberMap.get(member.id);
+      const isKicked = kickOutMap.get(member.id);
+      if (isKicked === true) {
+        data.push({
+          userId: member.id,
+          role: null,
+        });
+      } else if (modifiedMember && modifiedMember.role !== member.role && isKicked === false) {
+        data.push({
+          userId: modifiedMember.id,
+          role: modifiedMember.role,
+        });
+      }
+    });
+
+    for (let member of memberMap) {
+      if (member[1].role === "MASTER") masterCount++;
+    }
+
+    // Validation
+    // master 가 1명도 없을 경우.
+    // master 가 2명 이상인 경우.
+    ////
+    if (masterCount === 0) {
+      toast.show(`리더가 지정되지 않았습니다.`, {
+        type: "danger",
+      });
+      return;
+    }
+    if (masterCount > 1) {
+      toast.show(`리더는 1명만 지정할 수 있습니다.`, {
+        type: "danger",
+      });
+      return;
+    }
+
+    mutation.mutate({
+      clubId: clubData.id,
+      data,
+      token,
+    });
   };
 
   const onRefresh = () => {
     setRefreshing(true);
     console.log("refresh!");
-    setMemberData();
     setRefreshing(false);
   };
 
@@ -99,28 +196,27 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
     const managers: Member[] = [];
     const members: Member[] = [];
 
-    clubData.members.map((member) => {
-      if (member.role === "MASTER") masters.push(member);
-      else if (member.role === "MANAGER") managers.push(member);
-      else members.push(member);
-      setMenuVisibleMap((prev) => new Map(prev).set(member.id, false));
-    });
+    for (let member of memberMap) {
+      if (member[1].role === "MASTER") masters.push(member[1]);
+      else if (member[1].role === "MANAGER") managers.push(member[1]);
+      else if (member[1].role === "MEMBER") members.push(member[1]);
+    }
 
     setBundles([
       {
-        title: "MASTER",
+        title: "Leader",
         data: masters.division(COLUMN_NUM).map((list) => {
           return { list };
         }),
       },
       {
-        title: "MANAGER",
+        title: "Manager",
         data: managers.division(COLUMN_NUM).map((list) => {
           return { list };
         }),
       },
       {
-        title: "MEMBER",
+        title: "Member",
         data: members.division(COLUMN_NUM).map((list) => {
           return { list };
         }),
@@ -128,7 +224,9 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
     ]);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    console.log("useLayoutEffect");
+    console.log(clubData.members);
     setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={save}>
@@ -137,7 +235,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
       ),
     });
     setMemberData();
-  }, []);
+  }, [kickOutMap]);
 
   const loading = bundles?.length === 0 ? true : false;
 
@@ -177,67 +275,68 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
                     anchor={
                       <TouchableOpacity onPress={() => showMenu(item.id)}>
                         {item.role !== null && item.role !== "MEMBER" ? (
-                          <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} badge={item.role === "MASTER" ? "stars" : "check-circle"} />
+                          <CircleIcon
+                            size={ICON_SIZE}
+                            uri={item.thumbnail}
+                            name={item.name}
+                            badge={item.role === "MASTER" ? "stars" : "check-circle"}
+                            opacity={kickOutMap.get(item.id) === true ? 0.5 : 1}
+                          />
                         ) : (
-                          <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} />
+                          <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} opacity={kickOutMap.get(item.id) === true ? 0.5 : 1} />
                         )}
                       </TouchableOpacity>
                     }
                     onRequestClose={() => hideMenu(item.id)}
                   >
-                    {item.role === "MASTER" ? (
-                      <MenuItem
-                        onPress={() => {
-                          item.role = "MEMBER";
-                          setMemberData();
-                          hideMenu(item.id);
-                        }}
-                        style={{ margin: -10 }}
-                      >
-                        <AntDesign name="closecircleo" size={12} color="#FF714B" />
-                        <ItemText>{` 리더 지정 취소`}</ItemText>
-                      </MenuItem>
-                    ) : item.role === "MANAGER" ? (
-                      <MenuItem
-                        onPress={() => {
-                          item.role = "MEMBER";
-                          setMemberData();
-                          hideMenu(item.id);
-                        }}
-                        style={{ margin: -10 }}
-                      >
-                        <AntDesign name="closecircleo" size={12} color="#FF714B" />
-                        <ItemText>{` 매니저 지정 취소`}</ItemText>
-                      </MenuItem>
+                    {kickOutMap.get(item.id) === false ? (
+                      item.role === "MASTER" ? (
+                        <>
+                          <MenuItem onPress={() => changeRole(item, "MEMBER")} style={{ margin: -10 }}>
+                            <AntDesign name="closecircleo" size={12} color="#FF714B" />
+                            <ItemText>{` 리더 지정 취소`}</ItemText>
+                          </MenuItem>
+                          <MenuDivider />
+                          <MenuItem onPress={() => changeRole(item, "MANAGER")} style={{ margin: -10 }}>
+                            <AntDesign name="checkcircle" size={12} color="#FF714B" />
+                            <ItemText>{` 매니저 지정`}</ItemText>
+                          </MenuItem>
+                        </>
+                      ) : item.role === "MANAGER" ? (
+                        <>
+                          <MenuItem onPress={() => changeRole(item, "MASTER")} style={{ margin: -10 }}>
+                            <AntDesign name="star" size={12} color="#FF714B" />
+                            <ItemText>{` 리더 지정`}</ItemText>
+                          </MenuItem>
+                          <MenuDivider />
+                          <MenuItem onPress={() => changeRole(item, "MEMBER")} style={{ margin: -10 }}>
+                            <AntDesign name="closecircleo" size={12} color="#FF714B" />
+                            <ItemText>{` 매니저 지정 취소`}</ItemText>
+                          </MenuItem>
+                        </>
+                      ) : (
+                        <>
+                          <MenuItem onPress={() => changeRole(item, "MASTER")} style={{ margin: -10 }}>
+                            <AntDesign name="star" size={12} color="#FF714B" />
+                            <ItemText>{` 리더 지정`}</ItemText>
+                          </MenuItem>
+                          <MenuDivider />
+                          <MenuItem onPress={() => changeRole(item, "MANAGER")} style={{ margin: -10 }}>
+                            <AntDesign name="checkcircle" size={12} color="#FF714B" />
+                            <ItemText>{` 매니저 지정`}</ItemText>
+                          </MenuItem>
+                          <MenuDivider />
+                          <MenuItem onPress={() => kickOut(item.id)} style={{ margin: -10 }}>
+                            <AntDesign name="deleteuser" size={12} color="#FF714B" />
+                            <ItemText>{` 강제 탈퇴`}</ItemText>
+                          </MenuItem>
+                        </>
+                      )
                     ) : (
                       <>
-                        <MenuItem
-                          onPress={() => {
-                            item.role = "MASTER";
-                            setMemberData();
-                            hideMenu(item.id);
-                          }}
-                          style={{ margin: -10 }}
-                        >
-                          <AntDesign name="star" size={12} color="#FF714B" />
-                          <ItemText>{` 리더 지정`}</ItemText>
-                        </MenuItem>
-                        <MenuDivider />
-                        <MenuItem
-                          onPress={() => {
-                            item.role = "MANAGER";
-                            setMemberData();
-                            hideMenu(item.id);
-                          }}
-                          style={{ margin: -10 }}
-                        >
-                          <AntDesign name="checkcircle" size={12} color="#FF714B" />
-                          <ItemText>{` 매니저 지정`}</ItemText>
-                        </MenuItem>
-                        <MenuDivider />
-                        <MenuItem onPress={() => hideMenu(item.id)} style={{ margin: -10 }}>
+                        <MenuItem onPress={() => cancelKickOut(item.id)} style={{ margin: -10 }}>
                           <AntDesign name="deleteuser" size={12} color="#FF714B" />
-                          <ItemText>{` 강제 탈퇴`}</ItemText>
+                          <ItemText>{` 강제 탈퇴 취소`}</ItemText>
                         </MenuItem>
                       </>
                     )}

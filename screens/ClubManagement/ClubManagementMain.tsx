@@ -10,6 +10,7 @@ import { useQuery } from "react-query";
 import { Club, ClubApi, ClubResponse } from "../../api";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
+import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -148,21 +149,36 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   },
 }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
+  const toast = useToast();
   const [data, setData] = useState<Club>(clubData);
   const [items, setItems] = useState<ClubEditItem[]>();
   const [isToggle, setIsToggle] = useState(false);
   const X = useRef(new Animated.Value(0)).current;
   const { refetch: clubDataRefetch } = useQuery<ClubResponse>(["club", token, clubData.id], ClubApi.getClub, {
     onSuccess: (res) => {
-      setData(res.data);
+      if (res.status === 200 && res.resultCode === "OK") {
+        setData(res.data);
+      } else {
+        console.log(`getClub query success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res);
+        toast.show(`Error Code: ${res.status}`, {
+          type: "error",
+        });
+      }
     },
     onError: (error) => {
-      console.log(error);
+      console.log("--- Error getClub ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "error",
+      });
     },
   });
 
   useFocusEffect(
     useCallback(() => {
+      console.log("ClubManagementMain useFocusEffect!");
       if (refresh) {
         clubDataRefetch();
       }
@@ -170,7 +186,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   );
 
   useLayoutEffect(() => {
-    console.log("layoutEffect!");
+    console.log("ClubManagementMain useLayoutEffect!");
     if (data.recruitStatus === "OPEN") {
       setIsToggle(true);
       X.setValue(13);

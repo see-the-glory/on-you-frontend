@@ -5,7 +5,7 @@ import { ClubEditBasicsProps } from "../../Types/Club";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery, useMutation } from "react-query";
-import { Category, CategoryResponse, ClubApi, ClubUpdateRequest, ClubUpdateResponse } from "../../api";
+import { Category, CategoryResponse, ClubApi, ClubUpdateRequest } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -164,7 +164,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
         });
         navigate("ClubManagementMain", { clubData: res.data, refresh: true });
       } else {
-        console.log(`mutation success but please check status code`);
+        console.log(`updateClub mutation success but please check status code`);
         console.log(`status: ${res.status}`);
         console.log(res);
         toast.show(`Error Code: ${res.status}`, {
@@ -173,7 +173,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
       }
     },
     onError: (error) => {
-      console.log("--- Error ---");
+      console.log("--- Error updateClub ---");
       console.log(`error: ${error}`);
       toast.show(`Error Code: ${error}`, {
         type: "error",

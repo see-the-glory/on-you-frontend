@@ -124,15 +124,26 @@ const ClubTopTabs = ({
 
   const mutation = useMutation(ClubApi.applyClub, {
     onSuccess: (res) => {
-      console.log("Success!");
-      toast.show("가입신청이 완료되었습니다.", {
-        type: "success",
-      });
-      queryClient.refetchQueries(["getClubRole"]);
+      if (res.status === 200 && res.resultCode === "OK") {
+        toast.show(`가입 신청이 완료되었습니다.`, {
+          type: "success",
+        });
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res);
+        toast.show(`Error Code: ${res.status}`, {
+          type: "error",
+        });
+      }
+      clubRoleRefetch();
     },
     onError: (error) => {
       console.log("--- Error ---");
       console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "error",
+      });
     },
     onSettled: (res, error) => {},
   });
