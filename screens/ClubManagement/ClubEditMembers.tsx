@@ -82,6 +82,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
   const DEFAULT_PADDING = 40;
   const COLUMN_NUM = Math.floor((SCREEN_WIDTH - DEFAULT_PADDING) / (ICON_SIZE + 10));
   const [menuVisibleMap, setMenuVisibleMap] = useState(new Map(clubData.members.map((member) => [member.id, false])));
+  const [kickOutMap, setKickOutMap] = useState(new Map(clubData.members.map((member) => [member.id, false])));
   const [memberMap, setMemberMap] = useState(new Map(clubData.members.map((member) => [member.id, { ...member }]))); // 깊은 복사를 위해서 Spread 구문 사용
   const mutation = useMutation(ClubApi.changeRole, {
     onSuccess: (res) => {
@@ -114,6 +115,18 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
   const showMenu = (userId: number) => setMenuVisibleMap((prev) => new Map(prev).set(userId, true));
 
   /**
+   * @description 해당 유저를 탈퇴 유저 리스트에 포함시킴. menu hide 하는 동안 기다리기 위해 200ms 대기
+   */
+  const kickOut = (userId: number) => {
+    setTimeout(() => setKickOutMap((prev) => new Map(prev).set(userId, true)), 200);
+    hideMenu(userId);
+  };
+
+  const cancelKickOut = (userId: number) => {
+    setTimeout(() => setKickOutMap((prev) => new Map(prev).set(userId, false)), 200);
+    hideMenu(userId);
+  };
+  /**
    * @description userId 를 해당 role 로 변경하기.
    */
   const changeRole = (member: Member, role: string) => {
@@ -128,12 +141,17 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
     const data: ChangeRole[] = [];
     clubData.members.map((member) => {
       const modifiedMember = memberMap.get(member.id);
-      if (modifiedMember && modifiedMember.role !== member.role) {
-        const changedData = {
+      const isKicked = kickOutMap.get(member.id);
+      if (isKicked === true) {
+        data.push({
+          userId: member.id,
+          role: null,
+        });
+      } else if (modifiedMember && modifiedMember.role !== member.role && isKicked === false) {
+        data.push({
           userId: modifiedMember.id,
           role: modifiedMember.role,
-        };
-        data.push(changedData);
+        });
       }
     });
 
@@ -208,6 +226,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
 
   useLayoutEffect(() => {
     console.log("useLayoutEffect");
+    console.log(clubData.members);
     setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={save}>
@@ -216,7 +235,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
       ),
     });
     setMemberData();
-  }, []);
+  }, [kickOutMap]);
 
   const loading = bundles?.length === 0 ? true : false;
 
@@ -256,53 +275,68 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
                     anchor={
                       <TouchableOpacity onPress={() => showMenu(item.id)}>
                         {item.role !== null && item.role !== "MEMBER" ? (
-                          <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} badge={item.role === "MASTER" ? "stars" : "check-circle"} />
+                          <CircleIcon
+                            size={ICON_SIZE}
+                            uri={item.thumbnail}
+                            name={item.name}
+                            badge={item.role === "MASTER" ? "stars" : "check-circle"}
+                            opacity={kickOutMap.get(item.id) === true ? 0.5 : 1}
+                          />
                         ) : (
-                          <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} />
+                          <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} opacity={kickOutMap.get(item.id) === true ? 0.5 : 1} />
                         )}
                       </TouchableOpacity>
                     }
                     onRequestClose={() => hideMenu(item.id)}
                   >
-                    {item.role === "MASTER" ? (
-                      <>
-                        <MenuItem onPress={() => changeRole(item, "MEMBER")} style={{ margin: -10 }}>
-                          <AntDesign name="closecircleo" size={12} color="#FF714B" />
-                          <ItemText>{` 리더 지정 취소`}</ItemText>
-                        </MenuItem>
-                        <MenuDivider />
-                        <MenuItem onPress={() => changeRole(item, "MANAGER")} style={{ margin: -10 }}>
-                          <AntDesign name="checkcircle" size={12} color="#FF714B" />
-                          <ItemText>{` 매니저 지정`}</ItemText>
-                        </MenuItem>
-                      </>
-                    ) : item.role === "MANAGER" ? (
-                      <>
-                        <MenuItem onPress={() => changeRole(item, "MASTER")} style={{ margin: -10 }}>
-                          <AntDesign name="star" size={12} color="#FF714B" />
-                          <ItemText>{` 리더 지정`}</ItemText>
-                        </MenuItem>
-                        <MenuDivider />
-                        <MenuItem onPress={() => changeRole(item, "MEMBER")} style={{ margin: -10 }}>
-                          <AntDesign name="closecircleo" size={12} color="#FF714B" />
-                          <ItemText>{` 매니저 지정 취소`}</ItemText>
-                        </MenuItem>
-                      </>
+                    {kickOutMap.get(item.id) === false ? (
+                      item.role === "MASTER" ? (
+                        <>
+                          <MenuItem onPress={() => changeRole(item, "MEMBER")} style={{ margin: -10 }}>
+                            <AntDesign name="closecircleo" size={12} color="#FF714B" />
+                            <ItemText>{` 리더 지정 취소`}</ItemText>
+                          </MenuItem>
+                          <MenuDivider />
+                          <MenuItem onPress={() => changeRole(item, "MANAGER")} style={{ margin: -10 }}>
+                            <AntDesign name="checkcircle" size={12} color="#FF714B" />
+                            <ItemText>{` 매니저 지정`}</ItemText>
+                          </MenuItem>
+                        </>
+                      ) : item.role === "MANAGER" ? (
+                        <>
+                          <MenuItem onPress={() => changeRole(item, "MASTER")} style={{ margin: -10 }}>
+                            <AntDesign name="star" size={12} color="#FF714B" />
+                            <ItemText>{` 리더 지정`}</ItemText>
+                          </MenuItem>
+                          <MenuDivider />
+                          <MenuItem onPress={() => changeRole(item, "MEMBER")} style={{ margin: -10 }}>
+                            <AntDesign name="closecircleo" size={12} color="#FF714B" />
+                            <ItemText>{` 매니저 지정 취소`}</ItemText>
+                          </MenuItem>
+                        </>
+                      ) : (
+                        <>
+                          <MenuItem onPress={() => changeRole(item, "MASTER")} style={{ margin: -10 }}>
+                            <AntDesign name="star" size={12} color="#FF714B" />
+                            <ItemText>{` 리더 지정`}</ItemText>
+                          </MenuItem>
+                          <MenuDivider />
+                          <MenuItem onPress={() => changeRole(item, "MANAGER")} style={{ margin: -10 }}>
+                            <AntDesign name="checkcircle" size={12} color="#FF714B" />
+                            <ItemText>{` 매니저 지정`}</ItemText>
+                          </MenuItem>
+                          <MenuDivider />
+                          <MenuItem onPress={() => kickOut(item.id)} style={{ margin: -10 }}>
+                            <AntDesign name="deleteuser" size={12} color="#FF714B" />
+                            <ItemText>{` 강제 탈퇴`}</ItemText>
+                          </MenuItem>
+                        </>
+                      )
                     ) : (
                       <>
-                        <MenuItem onPress={() => changeRole(item, "MASTER")} style={{ margin: -10 }}>
-                          <AntDesign name="star" size={12} color="#FF714B" />
-                          <ItemText>{` 리더 지정`}</ItemText>
-                        </MenuItem>
-                        <MenuDivider />
-                        <MenuItem onPress={() => changeRole(item, "MANAGER")} style={{ margin: -10 }}>
-                          <AntDesign name="checkcircle" size={12} color="#FF714B" />
-                          <ItemText>{` 매니저 지정`}</ItemText>
-                        </MenuItem>
-                        <MenuDivider />
-                        <MenuItem onPress={() => hideMenu(item.id)} style={{ margin: -10 }}>
+                        <MenuItem onPress={() => cancelKickOut(item.id)} style={{ margin: -10 }}>
                           <AntDesign name="deleteuser" size={12} color="#FF714B" />
-                          <ItemText>{` 강제 탈퇴`}</ItemText>
+                          <ItemText>{` 강제 탈퇴 취소`}</ItemText>
                         </MenuItem>
                       </>
                     )}
