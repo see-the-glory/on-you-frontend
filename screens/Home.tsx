@@ -9,6 +9,7 @@ import { useQuery, useInfiniteQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { Feed, FeedsResponse, FeedsParams, getFeeds, FeedApi, Reply } from "../api";
 import CustomText from "../components/CustomText";
+// import MentionHashtagTextView from "react-native-mention-hashtag-text";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -303,49 +304,6 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
   const token = useSelector((state) => state.AuthReducers.authToken);
 
-  /**현재시간*/
-  let today = new Date("2022-08-03T13:26:43.005981");
-  let time = {
-    year: today.getFullYear(), //현재 년도
-    month: today.getMonth() + 1, // 현재 월
-    date: today.getDate(), // 현제 날짜
-    hours: today.getHours(), //현재 시간
-    minutes: today.getMinutes(), //현재 분
-  };
-  let timestring = `${time.year}년 ${time.month}월 ${time.date}일`;
-
-  // const fetchBlacklist = async ({ pageParam = 1 }) => {
-  //   const response = await axiosInstance.get(`http://3.39.190.23:8080/api/feeds/${pageParam}`);
-  //   const result = response.data;
-  //   // axios로 받아온 데이터를 다음과 같이 변경!
-
-  //   return {
-  //     result: result.blacklist,
-  //     nextPage: pageParam + 1,
-  //     isLast: result.is_last,
-  //   };
-  // };
-  // const {
-  //   isLoading: feedsLoading,
-  //   data: feeds,
-  //   isRefetching: isRefetchingClubs,
-  //   hasNextPage,
-  //   fetchNextPage,
-  // } = useInfiniteQuery<FeedsResponse>(["getFeeds", fetchBlacklist], FeedApi.getFeeds, {
-  //   //useQuery(["getFeeds", token], FeedApi.getFeeds, {
-  //   getNextPageParam: (lastPage, pages) => {
-  //     if (!lastPage.isLast) return lastPage.nextPage;
-  //     return undefined;
-  //   },
-  //   onSuccess: (res) => {
-  //     setIsPageTransition(false);
-  //     console.log(res);
-  //   },
-  //   onError: (err) => {
-  //     console.log(err);
-  //   },
-  // });
-
   const getFeeds = () => {
     return fetch(`http://3.39.190.23:8080/api/feeds`, {
       method: "GET",
@@ -362,16 +320,12 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
   } = useQuery<FeedsResponse>(["getFeeds"], getFeeds, {
     //useQuery(["getFeeds", token], FeedApi.getFeeds, {
     onSuccess: (res) => {
-      console.log(res);
+      console.log('1'+res);
     },
     onError: (err) => {
       console.log(err);
     },
   });
-
-  useEffect(() => {
-    getFeeds();
-  }, []);
 
   //heart선택
   const [heartSelected, setHeartSelected] = useState(false);
@@ -440,17 +394,7 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     setModalVisible(!isModalVisible);
   };
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await queryClient.refetchQueries(["feeds"]);
-    setRefreshing(false);
-  };
-
-  return feedsLoading ? (
-    <Loader>
-      <ActivityIndicator />
-    </Loader>
-  ) : (
+  return  (
     <Container>
       <HeaderView size={SCREEN_PADDING_SIZE}>
         <SubView>
@@ -463,12 +407,7 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
       </HeaderView>
 
       <FlatList
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        // onEndReached={loadMore}
-        // numColumns={2}
         keyExtractor={(item: Feed, index: number) => String(index)}
-        //data={feeds?.pages.map((page) => page?.responses?.content).flat()}
         data={feeds?.data}
         renderItem={({ item }: { item: Feed }) => (
           <FeedContainer>
@@ -506,6 +445,11 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
               {/** 버그 발생*/}
               <FeedImage>
                 <Swiper horizontal dotColor="#E0E0E0" activeDotColor="#FF714B" containerStyle={{ backgroundColor: "black", height: FEED_IMAGE_SIZE }}>
+                  {/* <SliderBox
+                    images={item.imageUrls === "" ? { uri: "https://i.pinimg.com/564x/aa/26/04/aa2604e4c5e060f97396f3f711de37c1.jpg" } : { uri: item.imageUrls }}
+                    sliderBoxHeight={FEED_IMAGE_SIZE}
+                  /> */}
+                  {/* <SliderBox images={item.imageUrls === "" ? require("../assets/basic.jpg") : { uri: item.imageUrls }} sliderBoxHeight={FEED_IMAGE_SIZE} /> */}
                   <SliderBox images={item.imageUrls} sliderBoxHeight={FEED_IMAGE_SIZE} />
                 </Swiper>
               </FeedImage>
@@ -525,7 +469,7 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
                   </InfoArea>
                 </LeftInfo>
                 <RightInfo>
-                  <Timestamp>{timestring}</Timestamp>
+                  <Timestamp>{item.created}</Timestamp>
                 </RightInfo>
               </FeedInfo>
               <Content>

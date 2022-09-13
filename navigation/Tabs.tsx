@@ -126,7 +126,7 @@ const Tabs = () => (
     tabBar={(props) => <CustomTabBar {...props} />}
   >
     <Tab.Screen name="Home" component={Home} initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }} options={{ headerShown: false }} />
-    <Tab.Screen name="Search" component={Search} initialParams={{ activeIcon: "search", inActiveIcon: "search-outline" }} options={{ headerShown: false }} />
+    {/*<Tab.Screen name="Search" component={Search} initialParams={{ activeIcon: "search", inActiveIcon: "search-outline" }} options={{ headerShown: false }} />*/}
     <Tab.Screen name="Clubs" component={Clubs} initialParams={{ activeIcon: "grid", inActiveIcon: "grid-outline" }} options={{}} />
     <Tab.Screen name="Profile" component={Profile} initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }} options={{}} />
   </Tab.Navigator>

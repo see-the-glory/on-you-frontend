@@ -5422,10 +5422,10 @@
   "resolved" "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-4.8.4.tgz"
   "version" "4.8.4"
 
-"react-native-image-slider-box@^2.0.2":
-  "integrity" "sha512-wx8Ds6Z39MQtK7wkxu98l27ZNzNhHqEmziBpejrmzkHjb/YSPjpGEu+DeIqv2wxZ/JL59MHx1+SolJtsbSBXxQ=="
-  "resolved" "https://registry.npmjs.org/react-native-image-slider-box/-/react-native-image-slider-box-2.0.2.tgz"
-  "version" "2.0.2"
+"react-native-image-slider-box@^2.0.5":
+  "integrity" "sha512-f41RTIncz1XDBfnFBCK1RWp2f5mLnfrwa+ntfcX92VjBhzm+cgjUEnlMDL5hq164PAA6ajfbOq+xOE2PdpF49Q=="
+  "resolved" "https://registry.npmjs.org/react-native-image-slider-box/-/react-native-image-slider-box-2.0.5.tgz"
+  "version" "2.0.5"
   dependencies:
     "react-native-snap-carousel" "latest"
 

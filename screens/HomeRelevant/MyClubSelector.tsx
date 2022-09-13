@@ -233,7 +233,7 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
 
   return (
     <Container>
-      <IntroText>가입한 모임 Lis1t</IntroText>
+      <IntroText>가입한 모임 List</IntroText>
       <ReplyContainer>
         {loading ? (
           <ActivityIndicator />
