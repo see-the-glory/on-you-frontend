@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useState, createRef } from "react";
+import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import { useMutation } from "react-query";
 import { CommonApi } from "../../api";
 import { useDispatch } from "react-redux";
@@ -58,7 +59,7 @@ const Button = styled.TouchableOpacity`
   align-items: center;
   width: 100%;
   height: 48px;
-  background-color: #d3d3d3;
+  background-color: ${(props) => (props.disabled ? "#d3d3d3" : "#295AF5")};
 `;
 
 const ButtonTitle = styled.Text`
@@ -67,29 +68,69 @@ const ButtonTitle = styled.Text`
   font-weight: 700;
 `;
 
+const Error = styled.Text`
+  color: #ff714b;
+  font-size: 12px;
+  margin-top: 7px;
+`;
+
 const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
-  const goToNext = () => {
-    navigate("LoginStack", {
-      screen: "JoinStepTwo",
-    });
+  const [userName, setUserName] = useState("");
+  const [errortext, setErrortext] = useState(false);
+
+  const nameInputRef = createRef();
+  const nameReg = /^[가-힣]+$/;
+
+  const validate = () => {
+    if (!nameReg.test(userName)) {
+      setErrortext(true);
+      return;
+    } else {
+      setErrortext(false);
+      navigate("LoginStack", {
+        screen: "JoinStepTwo",
+      });
+    }
   };
 
+  // const goToNext = () => {
+  //   navigate("LoginStack", {
+  //     screen: "JoinStepTwo",
+  //   });
+  // };
+
   return (
-    <Container>
-      <Wrap>
-        <BorderWrap>
-          <Border></Border>
-        </BorderWrap>
-        <AskText>성함이 어떻게 되시나요?</AskText>
-        <SubText>정확한 성함을 입력해 주세요.</SubText>
-        <Input placeholder="홍길동" maxLength={5} />
-      </Wrap>
-      <Wrap>
-        <Button onPress={goToNext}>
-          <ButtonTitle>다음</ButtonTitle>
-        </Button>
-      </Wrap>
-    </Container>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <Container>
+        <Wrap>
+          <BorderWrap>
+            <Border></Border>
+          </BorderWrap>
+          <AskText>성함이 어떻게 되시나요?</AskText>
+          <SubText>정확한 성함을 입력해 주세요.</SubText>
+          <Input
+            keyboardType={"name-phone-pad"}
+            placeholder="홍길동"
+            maxLength={5}
+            autoCorrect={false}
+            onChangeText={(UserName) => setUserName(UserName)}
+            ref={nameInputRef}
+            returnKeyType="next"
+            blurOnSubmit={false}
+          />
+          {errortext === true || !nameReg.test(userName) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+        </Wrap>
+        <Wrap>
+          <Button onPress={validate} disabled={!nameReg.test(userName)}>
+            <ButtonTitle>다음</ButtonTitle>
+          </Button>
+        </Wrap>
+      </Container>
+    </TouchableWithoutFeedback>
   );
 };
 
