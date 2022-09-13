@@ -189,7 +189,7 @@ const ScheduleAddModal: React.FC<ScheduleAddModalProps> = ({ visible, mutation, 
                   <ContentText>{moment(selectedDate).format("YYYY-MM-DD")}</ContentText>
                 </TouchableOpacity>
               ) : (
-                <DateTimePicker value={selectedDate} mode="date" display="default" locale="ko-KR" onChange={onChangeDate} style={{ width: "100%" }} />
+                <DateTimePicker value={selectedDate} mode="date" display="default" locale="ko-KR" onChange={onChangeDate} style={{ width: "50%" }} />
               )}
             </ContentItemView>
             <Break sep={0} />
@@ -200,7 +200,7 @@ const ScheduleAddModal: React.FC<ScheduleAddModalProps> = ({ visible, mutation, 
                   <ContentText>{moment(selectedDate).format("A hh:mm")}</ContentText>
                 </TouchableOpacity>
               ) : (
-                <DateTimePicker value={selectedDate} mode="time" display="default" locale="ko-KR" onChange={onChangeDate} style={{ width: "100%" }} />
+                <DateTimePicker value={selectedDate} mode="time" display="default" locale="ko-KR" onChange={onChangeDate} style={{ width: "50%" }} />
               )}
             </ContentItemView>
             <Break sep={0} />
