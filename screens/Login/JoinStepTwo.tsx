@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useState, createRef } from "react";
+import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import { useMutation } from "react-query";
 import { CommonApi } from "../../api";
 import { useDispatch } from "react-redux";
@@ -58,7 +59,7 @@ const Button = styled.TouchableOpacity`
   align-items: center;
   width: 100%;
   height: 48px;
-  background-color: #d3d3d3;
+  background-color: ${(props) => (props.disabled ? "#d3d3d3" : "#295AF5")};
 `;
 
 const ButtonTitle = styled.Text`
@@ -67,29 +68,60 @@ const ButtonTitle = styled.Text`
   font-weight: 700;
 `;
 
+const Error = styled.Text`
+  color: #ff714b;
+  font-size: 12px;
+  margin-top: 7px;
+`;
+
 const JoinStepTwo: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
-  const goToNext = () => {
+  const [userEmail, setUserEmail] = useState("");
+  const [errortext, setErrortext] = useState(false);
+
+  const emailInputRef = createRef();
+  const emailReg = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
+
+  const validate = () => {
+    if (!emailReg.test(userEmail)) {
+      setErrortext(true);
+      return;
+    } else {
+      setErrortext(false);
+      navigate("LoginStack", {
+        screen: "JoinStepThree",
+      });
+    }
+  };
+
+  /* const goToNext = () => {
     navigate("LoginStack", {
       screen: "JoinStepThree",
     });
-  };
+  }; */
 
   return (
-    <Container>
-      <Wrap>
-        <BorderWrap>
-          <Border></Border>
-        </BorderWrap>
-        <AskText>이메일을 적어주세요.</AskText>
-        <SubText>로그인 ID로 활용됩니다.</SubText>
-        <Input placeholder="example@gmail.com" />
-      </Wrap>
-      <Wrap>
-        <Button onPress={goToNext}>
-          <ButtonTitle>다음</ButtonTitle>
-        </Button>
-      </Wrap>
-    </Container>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <Container>
+        <Wrap>
+          <BorderWrap>
+            <Border></Border>
+          </BorderWrap>
+          <AskText>이메일을 적어주세요.</AskText>
+          <SubText>로그인 ID로 활용됩니다.</SubText>
+          <Input placeholder="example@gmail.com" autoCorrect={false} onChangeText={(Email) => setUserEmail(Email)} ref={emailInputRef} returnKeyType="next" blurOnSubmit={false} />
+          {errortext === true || !emailReg.test(userEmail) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+        </Wrap>
+        <Wrap>
+          <Button onPress={validate} disabled={!emailReg.test(userEmail)}>
+            <ButtonTitle>다음</ButtonTitle>
+          </Button>
+        </Wrap>
+      </Container>
+    </TouchableWithoutFeedback>
   );
 };
 
