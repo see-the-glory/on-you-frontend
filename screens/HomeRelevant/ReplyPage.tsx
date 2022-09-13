@@ -117,9 +117,10 @@ const ReplyDone = styled.Text`
 `;
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
-
+//파일전송방법
+// route: {
+//   params: { category1, category2 },
+// },
 const ReplyPage: React.FC<NativeStackScreenProps<any, "ReplyPage">> = ({ navigation: { navigate } }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [Home, setHome] = useState([{}]);

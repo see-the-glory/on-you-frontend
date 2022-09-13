@@ -82,6 +82,7 @@ export interface Feed {
   likeYn: boolean;
   likesCount: number;
   commentCount: number;
+  created: string;
 }
 
 export interface Reply {
@@ -451,7 +452,7 @@ const selectMyClubs = ({ queryKey }: any) => {
 
 export const getFeeds = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
-  return fetch(`${BASE_URL}/api/feeds?`, {
+  return fetch(`${BASE_URL}/api/feeds`, {
     headers: {
       authorization: `Bearer ${token}`,
     },

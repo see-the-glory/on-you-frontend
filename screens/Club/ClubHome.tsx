@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
 import { ClubHomeScreenProps, ClubHomeParamList, RefinedSchedule } from "../../Types/Club";
 import { useMutation, useQuery } from "react-query";
-import { ClubApi, ClubRoleResponse, ClubSchedulesResponse, Schedule } from "../../api";
+import { ClubApi, ClubRoleResponse, ClubSchedulesResponse, Member, Schedule } from "../../api";
 import ScheduleModal from "./ClubScheduleModal";
 import CircleIcon from "../../components/CircleIcon";
 import ScheduleAddModal from "./ClubScheduleAddModal";
@@ -69,15 +69,18 @@ const ScheduleSeparator = styled.View`
 `;
 
 const ScheduleView = styled.TouchableOpacity`
+  min-width: 110px;
   box-shadow: 1px 1px 2px gray;
 `;
 
 const ScheduleAddView = styled.TouchableOpacity`
   background-color: white;
+  min-width: 110px;
+  min-height: 120px;
   justify-content: space-evenly;
   align-items: center;
   box-shadow: 1px 1px 2px gray;
-  elevation: 3;
+  elevation: 5;
   padding: 20px 5px;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
@@ -115,6 +118,7 @@ const ScheduleDateView = styled.View<{ index: number }>`
   elevation: 3;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
+  min-height: 40px;
 `;
 
 const ScheduleDetailView = styled.View`
@@ -167,6 +171,17 @@ const MemberSubTitle = styled(CustomText)`
   font-weight: 500;
 `;
 
+const MemberTextView = styled.View`
+  margin-left: 5px;
+  margin-bottom: 20px;
+`;
+
+const MemberText = styled(CustomText)`
+  font-size: 11px;
+  line-height: 17px;
+  color: #b0b0b0;
+`;
+
 const ModalHeaderRight = styled.View`
   position: absolute;
   right: 15px;
@@ -189,9 +204,9 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const [scheduleData, setScheduleData] = useState<Array<RefinedSchedule>>([]);
   const [memberLoading, setMemberLoading] = useState(true);
-  const [memberData, setMemberData] = useState([[{}]]);
-  const [managerData, setManagerData] = useState([[{}]]);
-  const [masterData, setMasterData] = useState({});
+  const [memberData, setMemberData] = useState<Member[][]>();
+  const [managerData, setManagerData] = useState<Member[][]>();
+  const [masterData, setMasterData] = useState<Member>();
   const toast = useToast();
   const memberCountPerLine = Math.floor((SCREEN_WIDTH - SCREEN_PADDING_SIZE) / (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING));
   const {
@@ -270,59 +285,21 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   });
 
   const getClubMembers = () => {
-    let master = {};
-    const members: { profilePath: string; name: string; role: string }[] = [];
-    const memberBundle = [];
-    const manager: { profilePath: string; name: string; role: string }[] = [];
-    const managerBundle = [];
-    const items = [
-      {
-        profilePath: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fHBvcnRyYWl0fGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60",
-        name: "박종원",
-        role: "master",
-      },
-      {
-        profilePath: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cG9ydHJhaXR8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60",
-        name: "장준용",
-        role: "manager",
-      },
-      {
-        profilePath: "https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8cG9ydHJhaXR8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60",
-        name: "문규빈",
-        role: "member",
-      },
-      {
-        profilePath: "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8cG9ydHJhaXR8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60",
-        name: "김재광",
-        role: "member",
-      },
-      {
-        profilePath: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8bGFuZHNjYXBlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
-        name: "김예찬",
-        role: "member",
-      },
-      {
-        profilePath: "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
-        name: "이진규",
-        role: "member",
-      },
-      {
-        profilePath:
-          "https://images.unsplash.com/photo-1620964955179-1e7041a53045?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTd8fHBvcnRyYWl0JTIwZ2lybHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
-        name: "유주은",
-        role: "member",
-      },
-    ];
+    console.log(clubData.members);
+    const members: Member[] = [];
+    const manager: Member[] = [];
+    const memberBundle: Member[][] = [];
+    const managerBundle: Member[][] = [];
 
-    items.forEach((item) => {
-      if (item.role.toUpperCase() === "MASTER") {
-        master = item;
-      } else if (item.role.toUpperCase() === "MANAGER") {
-        manager.push(item);
-      } else {
-        members.push(item);
+    for (let i = 0; i < clubData.members.length; ++i) {
+      if (clubData.members[i].role?.toUpperCase() === "MASTER") {
+        setMasterData(clubData.members[i]);
+      } else if (clubData.members[i].role?.toUpperCase() === "MANAGER") {
+        manager.push(clubData.members[i]);
+      } else if (clubData.members[i].role?.toUpperCase() === "MEMBER") {
+        members.push(clubData.members[i]);
       }
-    });
+    }
 
     for (var i = 0; i < members.length; i += memberCountPerLine) {
       memberBundle.push(members.slice(i, i + memberCountPerLine));
@@ -334,7 +311,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
 
     setMemberData(memberBundle);
     setManagerData(managerBundle);
-    setMasterData(master);
   };
 
   const getData = async () => {
@@ -343,6 +319,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   };
 
   useEffect(() => {
+    console.log("clubHome useEffect");
     getData();
   }, []);
 
@@ -469,33 +446,52 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           <MemberSubTitleView>
             <MemberSubTitle>Leader</MemberSubTitle>
           </MemberSubTitleView>
-          <MemberLineView>
-            <CircleIcon size={MEMBER_ICON_SIZE} uri={masterData.profilePath} name={masterData.name} badge={"stars"} />
-          </MemberLineView>
+          {masterData ? (
+            <MemberLineView>
+              <CircleIcon size={MEMBER_ICON_SIZE} uri={masterData?.thumbnail} name={masterData?.name} badge={"stars"} />
+            </MemberLineView>
+          ) : (
+            <MemberTextView>
+              <MemberText>리더가 없습니다.</MemberText>
+            </MemberTextView>
+          )}
+
           <MemberSubTitleView>
             <MemberSubTitle>Manager</MemberSubTitle>
           </MemberSubTitleView>
-          {managerData.map((bundle, index) => {
-            return (
-              <MemberLineView key={index}>
-                {bundle.map((item, index) => {
-                  return <CircleIcon key={index} size={MEMBER_ICON_SIZE} uri={item.profilePath} name={item.name} badge={"check-circle"} />;
-                })}
-              </MemberLineView>
-            );
-          })}
+          {managerData?.length !== 0 ? (
+            managerData?.map((bundle, index) => {
+              return (
+                <MemberLineView key={index}>
+                  {bundle.map((item, index) => {
+                    return <CircleIcon key={index} size={MEMBER_ICON_SIZE} uri={item.thumbnail} name={item.name} badge={"check-circle"} />;
+                  })}
+                </MemberLineView>
+              );
+            })
+          ) : (
+            <MemberTextView>
+              <MemberText>매니저가 없습니다.</MemberText>
+            </MemberTextView>
+          )}
           <MemberSubTitleView>
             <MemberSubTitle>Member</MemberSubTitle>
           </MemberSubTitleView>
-          {memberData.map((bundle, index) => {
-            return (
-              <MemberLineView key={index}>
-                {bundle.map((item, index) => {
-                  return <CircleIcon key={index} size={MEMBER_ICON_SIZE} uri={item.profilePath} name={item.name} kerning={MEMBER_ICON_KERNING} />;
-                })}
-              </MemberLineView>
-            );
-          })}
+          {memberData?.length !== 0 ? (
+            memberData?.map((bundle, index) => {
+              return (
+                <MemberLineView key={index}>
+                  {bundle.map((item, index) => {
+                    return <CircleIcon key={index} size={MEMBER_ICON_SIZE} uri={item.thumbnail} name={item.name} kerning={MEMBER_ICON_KERNING} />;
+                  })}
+                </MemberLineView>
+              );
+            })
+          ) : (
+            <MemberTextView>
+              <MemberText>멤버들이 클럽을 가입할 수 있게 해보세요.</MemberText>
+            </MemberTextView>
+          )}
         </MemberView>
       </SectionView>
 
