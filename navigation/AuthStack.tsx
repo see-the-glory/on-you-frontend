@@ -9,7 +9,7 @@ const NativeStack = createNativeStackNavigator();
 const AuthStack = () => {
   return (
     <NativeStack.Navigator screenOptions={{ presentation: "card", contentStyle: { backgroundColor: "white" }, headerShown: false }}>
-      <NativeStack.Screen name="Main" component={Main} />
+      <NativeStack.Screen name="KakaoAuth" component={KakaoAuth} />
       <NativeStack.Screen name="LoginStack" component={LoginStack} />
     </NativeStack.Navigator>
   );
