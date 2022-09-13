@@ -22,7 +22,6 @@ const Root = () => (
     <Nav.Screen name="ClubManagementStack" component={ClubManagementStack} />
     <Nav.Screen name="ClubStack" component={ClubStack} />
     <Nav.Screen name="HomeStack" component={HomeStack} />
-    <Nav.Screen name="SearchStack" component={SearchStack} />
     <Nav.Screen name="ProfileStack" component={ProfileStack} />
   </Nav.Navigator>
 );

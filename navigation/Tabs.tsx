@@ -6,7 +6,7 @@ import Clubs from "../screens/Clubs";
 import Profile from "../screens/Profile";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
-import { Animated, useWindowDimensions } from "react-native";
+import { Animated, useWindowDimensions, View } from "react-native";
 import { MainBottomTabParamList } from "../Types/Club";
 import { Shadow } from "react-native-shadow-2";
 
@@ -35,17 +35,17 @@ const ShadowBox = styled.View`
 
 const SlidingTabContainer = styled.View<{ tabWidth: number }>`
   position: absolute;
-  width: ${(props) => props.tabWidth + "px"};
+  width: ${(props) => props.tabWidth}px;
   left: 0;
   align-items: center;
   box-shadow: 1px 1px 3px gray;
 `;
 
-const Circle = styled.View`
-  width: 100px;
-  height: 100px;
-  bottom: 8px;
-  border-radius: 50px;
+const Circle = styled.View<{ tabWidth: number }>`
+  width: ${(props) => props.tabWidth * 1.8}px;
+  height: ${(props) => props.tabWidth * 1.9}px;
+  bottom: 18px;
+  border-radius: ${(props) => props.tabWidth}px;
   background-color: white;
 `;
 
@@ -53,14 +53,14 @@ const IconButton = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const SlidingTab = Animated.createAnimatedComponent(Circle);
+const SlidingTab = Animated.createAnimatedComponent(View);
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
 const Tab = createBottomTabNavigator<MainBottomTabParamList>();
 
 const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigation }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
-  const TAB_WIDTH = SCREEN_WIDTH / 4;
+  const TAB_WIDTH = SCREEN_WIDTH / 3;
   const translateX = useRef(new Animated.Value(0)).current;
   const translateTab = (index: number) => {
     Animated.spring(translateX, {
@@ -82,8 +82,8 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
         </Shadow>
         <SlidingTabContainer tabWidth={TAB_WIDTH}>
           <SlidingTab style={{ transform: [{ translateX }] }}>
-            <Shadow distance={12} radius={50}>
-              <Circle />
+            <Shadow distance={3} offset={[0, -18]} viewStyle={{ borderRadius: TAB_WIDTH }}>
+              <Circle tabWidth={TAB_WIDTH} />
             </Shadow>
           </SlidingTab>
         </SlidingTabContainer>
@@ -126,7 +126,6 @@ const Tabs = () => (
     tabBar={(props) => <CustomTabBar {...props} />}
   >
     <Tab.Screen name="Home" component={Home} initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }} options={{ headerShown: false }} />
-    {/*<Tab.Screen name="Search" component={Search} initialParams={{ activeIcon: "search", inActiveIcon: "search-outline" }} options={{ headerShown: false }} />*/}
     <Tab.Screen name="Clubs" component={Clubs} initialParams={{ activeIcon: "grid", inActiveIcon: "grid-outline" }} options={{}} />
     <Tab.Screen name="Profile" component={Profile} initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }} options={{}} />
   </Tab.Navigator>
