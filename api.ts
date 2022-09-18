@@ -83,6 +83,7 @@ export interface Feed {
   likesCount: number;
   commentCount: number;
   created: string;
+  customCursor?: string;
 }
 
 export interface Reply {
@@ -124,7 +125,11 @@ export interface ClubsResponse extends BaseResponse {
 }
 
 export interface FeedsResponse extends BaseResponse {
+  hasNext: boolean;
   data: Feed[];
+  responses: {
+    content: Feed[];
+  };
 }
 
 export interface UserInfoResponse extends BaseResponse {
@@ -246,6 +251,15 @@ export interface UserInfoRequest {
 
 // Categories
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
+
+export const getFeeds = ({ queryKey }: any) => {
+  const [_key, feedsParams]: [string, FeedsParams] = queryKey;
+  return fetch(`${BASE_URL}/api/feeds`, {
+    headers: {
+      authorization: `Bearer ${feedsParams.token}`,
+    },
+  }).then((res) => res.json());
+};
 
 const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
@@ -450,14 +464,7 @@ const selectMyClubs = ({ queryKey }: any) => {
   }).then((res) => res.json());
 };
 
-export const getFeeds = ({ queryKey }: any) => {
-  const [_key, token]: [string, string] = queryKey;
-  return fetch(`${BASE_URL}/api/feeds`, {
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  }).then((res) => res.json());
-};
+
 
 export const ClubApi = {
   getCategories,

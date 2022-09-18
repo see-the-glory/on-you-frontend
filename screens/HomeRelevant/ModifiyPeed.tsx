@@ -62,6 +62,12 @@ const Ment = styled.TextInput`
   color: black;
   font-size: 12px;
 `;
+
+const ImageSource = styled.Image<{ size: number }>`
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
+`;
+
 const ModifiyPeed=({navigation:{navigate}})=> {
   const token = useSelector((state) => state.AuthReducers.authToken);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
@@ -109,9 +115,10 @@ const ModifiyPeed=({navigation:{navigate}})=> {
           </FeedUser>
 
           <FeedImage>
-            <Swiper horizontal dotColor="#E0E0E0" activeDotColor="#FF714B" containerStyle={{ backgroundColor: "black",height: FEED_IMAGE_SIZE }}>
-            <SliderBox images={{uri: item.imageUrls}} sliderBoxHeight={FEED_IMAGE_SIZE}/>
-            </Swiper>
+            {/*<Swiper horizontal dotColor="#E0E0E0" activeDotColor="#FF714B" containerStyle={{ backgroundColor: "black", height: FEED_IMAGE_SIZE }}>
+                  <SliderBox images={item.imageUrls} sliderBoxHeight={FEED_IMAGE_SIZE} />
+                </Swiper>*/}
+            <ImageSource source={item.imageUrls[0] === undefined ? require("../../assets/basic.jpg") : { uri: item.imageUrls[0] }}  size={FEED_IMAGE_SIZE}/>
           </FeedImage>
           <Content>
             <Ment>{item.content}</Ment>

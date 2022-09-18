@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, TouchableOpacity, Dimensions, Modal, Alert, Slider, useWindowDimensions, Platform, View, Text } from "react-native";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
@@ -7,9 +7,19 @@ import { SliderBox } from "react-native-image-slider-box";
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useQuery, useInfiniteQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
-import { Feed, FeedsResponse, FeedsParams, getFeeds, FeedApi, Reply } from "../api";
+import {
+  Feed,
+  FeedsResponse,
+  FeedsParams,
+  getFeeds,
+  FeedApi,
+  Reply,
+  UserInfoResponse,
+  UserApi,
+  Category
+} from "../api";
 import CustomText from "../components/CustomText";
-// import MentionHashtagTextView from "react-native-mention-hashtag-text";
+ import MentionHashtagTextView from "react-native-mention-hashtag-text";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -21,7 +31,7 @@ const HeaderView = styled.View<{ size: number }>`
   align-items: center;
   justify-content: space-between;
   padding: 10px ${(props) => props.size}px 10px ${(props) => props.size}px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 `;
 
 const SubView = styled.View`
@@ -33,7 +43,7 @@ const SubView = styled.View`
 const LogoImage = styled.Image`
   width: 28px;
   height: 28px;
-  margin-right: 15px;
+  margin-right: 10px;
   border-radius: 14px;
 `;
 const LogoText = styled(CustomText)`
@@ -86,7 +96,8 @@ const UserId = styled.Text`
   font-size: 14px;
   padding-bottom: 5px;
 `;
-const ClubBox = styled.TouchableOpacity`
+
+const ClubBox = styled.View`
   padding: 3px 6px 3px 6px;
   background-color: #c4c4c4;
   justify-content: center;
@@ -242,10 +253,11 @@ const FeedHeader = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 10px;
+  margin: 20px 0 10px 0;
+  
 `;
 
-const FeedUser = styled.View`
+const FeedUser = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -291,18 +303,26 @@ const Ment = styled(CustomText)`
   color: black;
   font-size: 12px;
 `;
-//Number
-const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+const ImageSource = styled.Image<{ size: number }>`
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
+`;
 
 const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { navigate } }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [isModalVisible, setModalVisible] = useState(false);
-  //const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const SCREEN_PADDING_SIZE = 20;
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
   const token = useSelector((state) => state.AuthReducers.authToken);
+  const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
+
+
+  const [params, setParams] = useState<FeedsParams>({
+    token
+  });
 
   const getFeeds = () => {
     return fetch(`http://3.39.190.23:8080/api/feeds`, {
@@ -313,6 +333,7 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     }).then((res) => res.json());
   };
 
+  //피드
   const {
     isLoading: feedsLoading,
     data: feeds,
@@ -320,6 +341,7 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
   } = useQuery<FeedsResponse>(["getFeeds"], getFeeds, {
     //useQuery(["getFeeds", token], FeedApi.getFeeds, {
     onSuccess: (res) => {
+      setIsPageTransition(false);
       console.log('1'+res);
     },
     onError: (err) => {
@@ -327,9 +349,19 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     },
   });
 
+  //User
+  const {
+    isLoading: userInfoLoading, // true or false
+    data: userInfo,
+  } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo);
+
+  console.log(userInfo?.data);
   //heart선택
+
   const [heartSelected, setHeartSelected] = useState(false);
   const [likeYn, setLikeYn] = useState<boolean>(false);
+
+  const feedSize = Math.round(SCREEN_WIDTH / 3) - 1;
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -394,27 +426,40 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     setModalVisible(!isModalVisible);
   };
 
+    const onRefresh = async () => {
+      setRefreshing(true);
+      await queryClient.refetchQueries(["feeds"]);
+      setRefreshing(false);
+    };
+
+
   return  (
     <Container>
+      <FeedContainer>
       <HeaderView size={SCREEN_PADDING_SIZE}>
         <SubView>
           <LogoImage source={{ uri: "https://i.pinimg.com/564x/cd/c9/a5/cdc9a5ffec176461e7a1503d3b2553d4.jpg" }} />
           <LogoText>OnYou</LogoText>
         </SubView>
         <SubView>
-          <MaterialIcons name="add-photo-alternate" onPress={goToClub} style={{ paddingLeft: "2.5%" }} size={19} color="black" />
+          <MaterialIcons name="add-photo-alternate" onPress={goToClub} style={{ left: 9 }} size={19} color="black" />
         </SubView>
       </HeaderView>
 
       <FlatList
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         keyExtractor={(item: Feed, index: number) => String(index)}
+        // data={feeds?.pages.map((page) => page?.responses?.content).flat()}
         data={feeds?.data}
-        renderItem={({ item }: { item: Feed }) => (
-          <FeedContainer>
+        renderItem={({ item,index }: { item: Feed, index: number }) => (
+          <>
             <FeedHeader>
-              <FeedUser>
-                <UserImage source={{ uri: "https://i.pinimg.com/564x/9e/d8/4c/9ed84cf3fc04d0011ec4f75c0692c83e.jpg" }} />
-                {/** 버그 발생*/}
+              <FeedUser onPress={goToProfile}>
+                {/*<UserImage source={{ uri: "https://i.pinimg.com/564x/9e/d8/4c/9ed84cf3fc04d0011ec4f75c0692c83e.jpg" }} />*/}
+                <UserImage  source={{
+                  uri: userInfo?.data.thumbnail === null ? "https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userInfo?.data.thumbnail,
+                }} />
                 <UserInfo>
                   <UserId>{item.userName}</UserId>
                   <ClubBox>
@@ -442,16 +487,11 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
               </ModalArea>
             </FeedHeader>
             <FeedMain>
-              {/** 버그 발생*/}
               <FeedImage>
-                <Swiper horizontal dotColor="#E0E0E0" activeDotColor="#FF714B" containerStyle={{ backgroundColor: "black", height: FEED_IMAGE_SIZE }}>
-                  {/* <SliderBox
-                    images={item.imageUrls === "" ? { uri: "https://i.pinimg.com/564x/aa/26/04/aa2604e4c5e060f97396f3f711de37c1.jpg" } : { uri: item.imageUrls }}
-                    sliderBoxHeight={FEED_IMAGE_SIZE}
-                  /> */}
-                  {/* <SliderBox images={item.imageUrls === "" ? require("../assets/basic.jpg") : { uri: item.imageUrls }} sliderBoxHeight={FEED_IMAGE_SIZE} /> */}
+                {/*<Swiper horizontal dotColor="#E0E0E0" activeDotColor="#FF714B" containerStyle={{ backgroundColor: "black", height: FEED_IMAGE_SIZE }}>
                   <SliderBox images={item.imageUrls} sliderBoxHeight={FEED_IMAGE_SIZE} />
-                </Swiper>
+                </Swiper>*/}
+                <ImageSource source={item.imageUrls[0] === undefined ? require("../assets/basic.jpg") : { uri: item.imageUrls[0] }}  size={FEED_IMAGE_SIZE}/>
               </FeedImage>
               <FeedInfo>
                 <LeftInfo>
@@ -473,12 +513,17 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
                 </RightInfo>
               </FeedInfo>
               <Content>
-                <Ment>{item.content}</Ment>
+                <Ment>
+                  <MentionHashtagTextView>
+                  {item.content}
+                  </MentionHashtagTextView>
+                  </Ment>
               </Content>
             </FeedMain>
-          </FeedContainer>
+          </>
         )}
       ></FlatList>
+      </FeedContainer>
     </Container>
   );
 };
