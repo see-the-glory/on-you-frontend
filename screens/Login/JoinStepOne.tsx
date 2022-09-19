@@ -115,7 +115,7 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
           <Input
             keyboardType={"name-phone-pad"}
             placeholder="홍길동"
-            maxLength={5}
+            maxLength={10}
             autoCorrect={false}
             onChangeText={(UserName) => setUserName(UserName)}
             ref={nameInputRef}

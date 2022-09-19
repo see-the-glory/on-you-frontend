@@ -10,13 +10,19 @@ import JoinStepSix from "../screens/Login/JoinStepSix";
 import JoinStepSeven from "../screens/Login/JoinStepSeven";
 import JoinStepEight from "../screens/Login/JoinStepEight";
 import JoinStepNine from "../screens/Login/JoinStepNine";
+import JoinStepSuccess from "../screens/Login/JoinStepSuccess";
 import FindLoginInfo from "../screens/Login/FindLoginInfo";
 import { TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const NativeStack = createNativeStackNavigator();
 
-const LoginStack = ({ navigation: { navigate, goBack } }) => {
+const LoginStack = ({
+  navigation: { navigate, goBack },
+  route: {
+    params: { userData, category },
+  },
+}) => {
   return (
     <NativeStack.Navigator screenOptions={{ presentation: "card", contentStyle: { backgroundColor: "white" } }}>
       <NativeStack.Screen
@@ -97,7 +103,7 @@ const LoginStack = ({ navigation: { navigate, goBack } }) => {
         options={{
           title: "회원가입",
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepFour" })}>
+            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepThree" })}>
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),
@@ -142,10 +148,23 @@ const LoginStack = ({ navigation: { navigate, goBack } }) => {
       <NativeStack.Screen
         name="JoinStepNine"
         component={JoinStepNine}
+        initialParams={{ userData, category }}
         options={{
           title: "회원가입",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepEight" })}>
+              <Ionicons name="chevron-back" size={20} color="black" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <NativeStack.Screen
+        name="JoinStepSuccess"
+        component={JoinStepSuccess}
+        options={{
+          title: "회원가입",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepNine" })}>
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),

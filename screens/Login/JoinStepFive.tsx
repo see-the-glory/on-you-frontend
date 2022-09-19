@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState } from "react";
+import React, { useState, createRef } from "react";
+import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import { useMutation } from "react-query";
 import { CommonApi } from "../../api";
 import { useDispatch } from "react-redux";
@@ -59,7 +60,7 @@ const Button = styled.TouchableOpacity`
   align-items: center;
   width: 100%;
   height: 48px;
-  background-color: #d3d3d3;
+  background-color: #295af5;
 `;
 
 const ButtonTitle = styled.Text`
@@ -98,34 +99,40 @@ const JoinStepFive: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navi
   const [approvalMethod, setApprovalMethod] = useState<number>(0);
 
   return (
-    <Container>
-      <Wrap>
-        <BorderWrap>
-          <Border></Border>
-        </BorderWrap>
-        <AskText>성별이 어떻게 되시나요?</AskText>
-        <SubText>멤버 관리와, 동명이인 구분을 위함 입니다.</SubText>
-        <FieldContentView>
-          <FieldContentLine>
-            <ChoiceButton onPress={() => setApprovalMethod(0)} activeOpacity={0.5}>
-              <FieldContentText> 남성</FieldContentText>
-              {approvalMethod ? <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" /> : <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" />}
-            </ChoiceButton>
-          </FieldContentLine>
-          <FieldContentLine>
-            <ChoiceButton onPress={() => setApprovalMethod(1)} activeOpacity={0.5}>
-              <FieldContentText> 여성</FieldContentText>
-              {approvalMethod ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
-            </ChoiceButton>
-          </FieldContentLine>
-        </FieldContentView>
-      </Wrap>
-      <Wrap>
-        <Button onPress={goToNext}>
-          <ButtonTitle>다음</ButtonTitle>
-        </Button>
-      </Wrap>
-    </Container>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <Container>
+        <Wrap>
+          <BorderWrap>
+            <Border></Border>
+          </BorderWrap>
+          <AskText>성별이 어떻게 되시나요?</AskText>
+          <SubText>멤버 관리와, 동명이인 구분을 위함 입니다.</SubText>
+          <FieldContentView>
+            <FieldContentLine>
+              <ChoiceButton onPress={() => setApprovalMethod(0)} activeOpacity={0.5}>
+                <FieldContentText> 남성</FieldContentText>
+                {approvalMethod ? <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" /> : <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" />}
+              </ChoiceButton>
+            </FieldContentLine>
+            <FieldContentLine>
+              <ChoiceButton onPress={() => setApprovalMethod(1)} activeOpacity={0.5}>
+                <FieldContentText> 여성</FieldContentText>
+                {approvalMethod ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
+              </ChoiceButton>
+            </FieldContentLine>
+          </FieldContentView>
+        </Wrap>
+        <Wrap>
+          <Button onPress={goToNext}>
+            <ButtonTitle>다음</ButtonTitle>
+          </Button>
+        </Wrap>
+      </Container>
+    </TouchableWithoutFeedback>
   );
 };
 

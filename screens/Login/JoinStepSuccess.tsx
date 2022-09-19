@@ -28,7 +28,7 @@ const BorderWrap = styled.View`
 `;
 
 const Border = styled.View`
-  width: 80%;
+  width: 100%;
   height: 2px;
   background-color: #295af5;
 `;
@@ -75,43 +75,23 @@ const Error = styled.Text`
   margin-bottom: 20px;
 `;
 
-const JoinStepEight: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
-  const [church, setChurch] = useState("");
-  const [errortext, setErrortext] = useState(false);
-  const churchInputRef = createRef();
-
-  const churchReg = /^([가-힣]{1,8})(교회)$/;
-
-  const validate = () => {
-    if (!churchReg.test(church)) {
-      setErrortext(true);
-      return;
-    } else {
-      setErrortext(false);
-      navigate("LoginStack", {
-        screen: "JoinStepNine",
-      });
-    }
-  };
-
+const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
   return (
     <Container>
       <Wrap>
         <BorderWrap>
           <Border></Border>
         </BorderWrap>
-        <AskText>출석중인 교회를 알려주세요.</AskText>
-        <SubText>멤버 관리와, 소모임 소속 기관을 알기 위함 입니다.</SubText>
-        <Input placeholder="교회를 입력해주세요. ex)OO교회" maxLength={10} onChangeText={(church) => setChurch(church)} value={church} ref={churchInputRef} returnKeyType="next" blurOnSubmit={false} />
-        {errortext === true || !churchReg.test(church) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+        <AskText>가입이 완료되었습니다.</AskText>
+        <SubText>온유에 오신 것을 환영합니다 :&#41;</SubText>
       </Wrap>
       <Wrap>
-        <Button onPress={validate} disabled={!churchReg.test(church)}>
-          <ButtonTitle>다음</ButtonTitle>
+        <Button>
+          <ButtonTitle>시작하기</ButtonTitle>
         </Button>
       </Wrap>
     </Container>
   );
 };
 
-export default JoinStepEight;
+export default JoinStepSuccess;
