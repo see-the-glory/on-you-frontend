@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useState, createRef, useEffect } from "react";
+import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import { useMutation } from "react-query";
 import { CommonApi } from "../../api";
 import { useDispatch } from "react-redux";
@@ -58,7 +59,7 @@ const Button = styled.TouchableOpacity`
   align-items: center;
   width: 100%;
   height: 48px;
-  background-color: #d3d3d3;
+  background-color: ${(props) => (props.disabled ? "#d3d3d3" : "#295AF5")};
 `;
 
 const ButtonTitle = styled.Text`
@@ -67,28 +68,76 @@ const ButtonTitle = styled.Text`
   font-weight: 700;
 `;
 
+const Error = styled.Text`
+  color: #ff714b;
+  font-size: 12px;
+  margin-top: 7px;
+  margin-bottom: 20px;
+`;
+
 const JoinStepSix: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
-  const goToNext = () => {
-    navigate("LoginStack", {
-      screen: "JoinStepSeven",
-    });
+  const [birthNumber, setBirthNumber] = useState("");
+  const [errortext, setErrortext] = useState(false);
+  const birthInputRef = createRef();
+
+  const birthReg = /^(19[0-9][0-9]|20\d{2})-(0[0-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
+
+  useEffect(() => {
+    if (birthNumber.length === 5) {
+      setBirthNumber(birthNumber.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
+    } else if (birthNumber.length === 6) {
+      setBirthNumber(birthNumber.replace(/-/g, "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
+    } else if (birthNumber.length === 7) {
+      setBirthNumber(birthNumber.replace(/-/g, "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
+    } else if (birthNumber.length === 8) {
+      setBirthNumber(birthNumber.replace(/-/g, "").replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
+    }
+  }, [birthNumber]);
+
+  const validate = () => {
+    if (!birthReg.test(birthNumber)) {
+      setErrortext(true);
+      return;
+    } else {
+      setErrortext(false);
+      navigate("LoginStack", {
+        screen: "JoinStepSeven",
+      });
+    }
   };
+
   return (
-    <Container>
-      <Wrap>
-        <BorderWrap>
-          <Border></Border>
-        </BorderWrap>
-        <AskText>출생년도를 입력해주세요.</AskText>
-        <SubText>정확한 출생년도를 입력해주세요.</SubText>
-        <Input placeholder="2022년" />
-      </Wrap>
-      <Wrap>
-        <Button onPress={goToNext}>
-          <ButtonTitle>다음</ButtonTitle>
-        </Button>
-      </Wrap>
-    </Container>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <Container>
+        <Wrap>
+          <BorderWrap>
+            <Border></Border>
+          </BorderWrap>
+          <AskText>생년월일을 입력해주세요.</AskText>
+          <SubText>정확한 생년월일을 입력해주세요.</SubText>
+          <Input
+            keyboardType="numeric"
+            placeholder="yyyy-MM-dd"
+            maxLength={8}
+            onChangeText={(birth) => setBirthNumber(birth)}
+            value={birthNumber}
+            ref={birthInputRef}
+            returnKeyType="next"
+            blurOnSubmit={false}
+          />
+          {errortext === true || !birthReg.test(birthNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+        </Wrap>
+        <Wrap>
+          <Button onPress={validate} disabled={!birthReg.test(birthNumber)}>
+            <ButtonTitle>다음</ButtonTitle>
+          </Button>
+        </Wrap>
+      </Container>
+    </TouchableWithoutFeedback>
   );
 };
 

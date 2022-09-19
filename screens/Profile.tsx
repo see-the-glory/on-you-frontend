@@ -109,12 +109,6 @@ const EditBox = styled.View`
   justify-content: center;
 `;
 
-// 알아볼 것
-// 1. 동기와 비동기 차이
-// 2. fetch / axios 차이 알아보기
-// 3. react query
-// 4. es5 / es6 차이 알아보기
-
 const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation: { navigate } }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
 
