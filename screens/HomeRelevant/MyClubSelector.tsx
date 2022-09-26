@@ -4,7 +4,7 @@ import { ActivityIndicator, FlatList, View, Text } from "react-native";
 import { useInfiniteQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Club, ClubApi, ClubsParams, ClubsResponse } from "../../api";
+import { Club, ClubApi, ClubsParams, ClubsResponse, Feed } from "../../api";
 const Container = styled.SafeAreaView`
   flex: 1;
   height: 100%;
@@ -21,33 +21,6 @@ const IntroText = styled.Text`
 
 const ReplyContainer = styled.View`
   height: 100%;
-`;
-
-const LogoImage = styled.Image`
-  width: 40px;
-  height: 40px;
-  border-radius: 100px;
-  left: 10px;
-  top: 10px;
-`;
-const MentId = styled.Text`
-  color: black;
-  font-weight: bold;
-  font-size: 15px;
-`;
-
-const Ment = styled.Text`
-  color: black;
-  margin-left: 10px;
-  width: 200px;
-`;
-
-const TitleView = styled.SafeAreaView`
-  width: 100%;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 15px;
 `;
 
 const ClubArea = styled.TouchableOpacity`
@@ -94,47 +67,6 @@ const CommentMent = styled.View`
 
 const CommentRemainder = styled.View`
   flex-direction: row;
-`;
-
-const Like = styled.Text`
-  justify-content: flex-start;
-`;
-const FieldInput = styled.TextInput`
-  height: 40px;
-  border-radius: 5px;
-  background-color: #f3f3f3;
-  font-size: 15px;
-  width: 100%;
-`;
-
-const ReplyArea = styled.View`
-  display: flex;
-  flex-direction: row;
-  padding: 10px 0 10px 20px;
-  border: solid 0.5px #c4c4c4;
-  bottom: 0;
-`;
-
-const ReplyInput = styled.TextInput`
-  color: #b0b0b0;
-  left: 15px;
-`;
-
-const ReplyImg = styled.Image`
-  width: 30px;
-  height: 30px;
-  border-radius: 100px;
-`;
-
-const ReplyButton = styled.TouchableOpacity``;
-const ReplyDone = styled.Text`
-  color: #63abff;
-  font-size: 15px;
-  font-weight: bold;
-  left: 550%;
-  width: 30px;
-  height: 24px;
-  top: 15%;
 `;
 
 const CtrgArea = styled.View`
@@ -184,9 +116,8 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
     showRecruiting: null,
     showMy: null,
   });
+  const [clubName, setClubName] = useState<string>("");
   const [refreshing, setRefreshing] = useState(false);
-  const [Home, setHome] = useState([{}]);
-  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
 
@@ -225,7 +156,7 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
     });
   };
 
-  const goToImage = () => {
+  const goToImage = (clubName: Club) => {
     navigate("HomeStack", {
       screen: "ImageSelecter",
     });
@@ -245,7 +176,13 @@ const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { naviga
             keyExtractor={(item: Club, index: number) => String(index)}
             data={clubs?.pages.map((page) => page.responses.content).flat()}
             renderItem={({ item, index }: { item: Club; index: number }) => (
-              <ClubArea onPress={() => goToImage()}>
+              <ClubArea
+                onPress={() => {
+                  return navigate("ImageSelecter", {
+                    clubName,
+                  });
+                }}
+              >
                 <ClubImg source={{ uri: item.thumbnail }} />
                 <ClubMy>
                   <CommentMent>

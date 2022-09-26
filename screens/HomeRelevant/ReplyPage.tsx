@@ -13,13 +13,6 @@ const Container = styled.SafeAreaView`
   width: 100%;
 `;
 
-const Loader = styled.SafeAreaView`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0};
-`;
-
 const ReplyContainer = styled.View`
   height: 100%;
   flex-basis: 90%;
@@ -75,17 +68,6 @@ const Time = styled.Text`
   left: 9px;
 `;
 
-const Like = styled.Text`
-  justify-content: flex-start;
-`;
-const FieldInput = styled.TextInput`
-  height: 40px;
-  border-radius: 5px;
-  background-color: #f3f3f3;
-  font-size: 15px;
-  width: 100%;
-`;
-
 const ReplyArea = styled.View`
   display: flex;
   flex-direction: row;
@@ -123,7 +105,6 @@ const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min
 // },
 const ReplyPage: React.FC<NativeStackScreenProps<any, "ReplyPage">> = ({ navigation: { navigate } }) => {
   const [refreshing, setRefreshing] = useState(false);
-  const [Home, setHome] = useState([{}]);
   const [loading, setLoading] = useState(false);
   const token = useSelector((state) => state.AuthReducers.authToken);
   const queryClient = useQueryClient();
@@ -169,12 +150,6 @@ const ReplyPage: React.FC<NativeStackScreenProps<any, "ReplyPage">> = ({ navigat
   } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo);
 
   console.log(userInfo?.data);
-
-  const goToHome = () => {
-    navigate("Tabs", {
-      screen: "Home",
-    });
-  };
 
   return (
     <Container>
