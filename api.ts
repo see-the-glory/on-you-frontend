@@ -71,7 +71,7 @@ export interface User {
   interests: [];
 }
 export interface Feed {
-  feedId: number;
+  id: number;
   clubId: number;
   clubName: string;
   userId: number;
@@ -160,6 +160,18 @@ export interface ClubSchedulesResponse extends BaseResponse {
 
 export interface ClubRoleResponse extends BaseResponse {
   data: ClubRole;
+}
+
+export interface FeedCreationRequest {
+  image?: {
+    uri: string;
+    type: string;
+    name: string | undefined;
+  };
+  data: {
+    clubName: string;
+  };
+  token: string;
 }
 
 export interface ClubCreationRequest {
@@ -252,8 +264,9 @@ export interface UserInfoRequest {
 // Categories
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
-export const getFeeds = ({ queryKey }: any) => {
+  const getFeeds = ({ queryKey }: any) => {
   const [_key, feedsParams]: [string, FeedsParams] = queryKey;
+   console.log(feedsParams)
   return fetch(`${BASE_URL}/api/feeds`, {
     headers: {
       authorization: `Bearer ${feedsParams.token}`,
@@ -300,6 +313,33 @@ const getClubRole = ({ queryKey }: any) => {
       return res;
     });
 };
+
+const createFeed=async(req:FeedCreationRequest)=>{
+  const body = new FormData();
+
+  if (req.image !== null) {
+    body.append("file", req.image);
+  }
+
+  body.append("feedCreateRequest", {
+    string: JSON.stringify(req.data),
+    type: "application/json",
+  });
+
+  return fetch(`${BASE_URL}/api/feeds`, {
+    method: "POST",
+    headers: {
+      "content-type": "multipart/form-data",
+      authorization: `Bearer ${req.token}`,
+      Accept: "*/*",
+      clubId: '11',
+      content: '112'
+    },
+    body,
+  }).then(async (res) => {
+    return { status: res.status, json: await res.json() };
+  });
+}
 
 const createClub = async (req: ClubCreationRequest) => {
   const body = new FormData();
@@ -490,6 +530,7 @@ export const UserApi = {
 
 export const FeedApi = {
   getFeeds,
+  createFeed
 };
 
 export const CommonApi = { getJWT };

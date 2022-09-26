@@ -2,9 +2,12 @@ import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
-import { Alert, Keyboard, Text, TouchableWithoutFeedback, useWindowDimensions, View, Image, TouchableOpacity } from "react-native";
+import { Alert, Keyboard, Text, TouchableWithoutFeedback, useWindowDimensions, View, Image, TouchableOpacity, Button } from "react-native";
 import styled from "styled-components/native";
-
+import { FeedCreate } from "../../types/feed";
+import { ClubApi, ClubCreationRequest, FeedApi } from "../../api";
+import { useSelector } from "react-redux";
+import { useMutation } from "react-query";
 interface ValueInfo {
   str: string;
   isHT: boolean;
@@ -85,7 +88,12 @@ const CancleIcon = styled.View`
   left: 73%;
 `;
 
-const ImageSelecter: React.FC<NativeStackScreenProps> = ({ navigation: { navigate } }) => {
+const ImageSelecter: React.FC<FeedCreate> = ({
+  route: {
+    params: { clubName, clubId },
+  },
+  navigation: { navigate },
+}) => {
   const Stack = createNativeStackNavigator();
   const [refreshing, setRefreshing] = useState(false);
   //사진권한 허용
@@ -118,6 +126,7 @@ const ImageSelecter: React.FC<NativeStackScreenProps> = ({ navigation: { navigat
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 16) * 9);
   const [postText, setPostText] = useState("");
+  const token = useSelector((state) => state.AuthReducers.authToken);
   const onText = (text: React.SetStateAction<string>) => setPostText(text);
 
   const pickImage = async () => {
@@ -128,7 +137,7 @@ const ImageSelecter: React.FC<NativeStackScreenProps> = ({ navigation: { navigat
       quality: 1,
     });
 
-    if (result.cancelled === false) {
+    if (!result.cancelled) {
       setImageURI(result.uri);
     }
   };
@@ -141,15 +150,32 @@ const ImageSelecter: React.FC<NativeStackScreenProps> = ({ navigation: { navigat
     //홈화면 새로고침 기능 넣기
   };
 
-  /* const onSubmit = () => {
+  const mutation = useMutation(FeedApi.createFeed, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.json?.resultCode === "OK") {
+        setRefreshing(true);
+        return navigate("Home", {
+          clubData: res.json?.data,
+        });
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res.json);
+        return navigate("Home", {});
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+      return navigate("Home", {});
+    },
+    onSettled: (res, error) => {},
+  });
+
+  const onSubmit = () => {
     const data = {
-      category1Id: category1,
-      category2Id: category2,
       clubName,
-      clubMaxMember: clubMemberCount,
-      clubShortDesc: briefIntroText,
-      clubLongDesc: detailIntroText,
-      isApproveRequired: approvalMethod === 0 ? "N" : "Y",
+      clubId,
     };
 
     const splitedURI = new String(imageURI).split("/");
@@ -172,24 +198,7 @@ const ImageSelecter: React.FC<NativeStackScreenProps> = ({ navigation: { navigat
           };
 
     mutation.mutate(requestData);
-  }; */
-
-  /*    const createHomeFeed=async ()=>{
-            try{
-                setLoading(true);
-                const response= await axios.post(
-                    `http://3.39.190.23:8080/api/clubs`
-                );
-                setData(response.data.data)
-                Alert.alert("등록되었습니다.");
-                setRefreshing(true);
-                return navigate("Home");
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
-        }*/
+  };
 
   useEffect(() => {
     let timer = setTimeout(() => {
@@ -205,6 +214,7 @@ const ImageSelecter: React.FC<NativeStackScreenProps> = ({ navigation: { navigat
   /** X선택시 사진 없어지는 태그 */
   const ImageCancle = () => {
     uri: imageURI === null;
+    imageURI == "";
     console.log(imageURI);
   };
 
@@ -282,9 +292,9 @@ const ImageSelecter: React.FC<NativeStackScreenProps> = ({ navigation: { navigat
             <SelectImage source={{ uri: "https://i.pinimg.com/564x/aa/26/04/aa2604e4c5e060f97396f3f711de37c1.jpg" }} /> */}
           </SelectImageView>
           <FeedText
-            key={"FeedCreateRequest"}
+            key={"feedCreateRequest"}
             placeholder="사진과 함께 남길 게시글을 작성해 보세요."
-            onChangeText={setTitle}
+            onChangeText={(text) => setTitle(text)}
             textContentType="none"
             autoCompleteType="off"
             autoCapitalize="none"
@@ -310,35 +320,9 @@ const ImageSelecter: React.FC<NativeStackScreenProps> = ({ navigation: { navigat
               );
             })}
           </FeedText>
-          {/* <FeedText
-            key={"FeedCreateRequest"}
-            placeholder="사진과 함께 남길 게시글을 작성해 보세요."
-            onChangeText={setTitle}
-            textContentType="none"
-            autoCompleteType="off"
-            autoCapitalize="none"
-            multiline={true}
-          >
-            {valueInfos.map(({ str, isHT, idxArr }, idx) => {
-              const [firstIdx, lastIdx] = idxArr;
-              let value = title.slice(firstIdx, lastIdx + 1);
-              const isLast = idx === valueInfos.length - 1;
-              if (isHT) {
-                return (
-                  <Text style={{ color: "skyblue", backgroundColor: "transparent" }}>
-                    {value}
-                    {!isLast && <Text style={{ backgroundColor: "transparent", color: "black" }}> </Text>}
-                  </Text>
-                );
-              }
-              return (
-                <Text style={{ color: "black" }}>
-                  {value}
-                  {!isLast && <Text> </Text>}
-                </Text>
-              );
-            })}
-          </FeedText> */}
+          <TouchableOpacity onPress={onSubmit}>
+            <Text>저장</Text>
+          </TouchableOpacity>
         </>
       </TouchableWithoutFeedback>
     </Container>

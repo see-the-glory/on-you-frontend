@@ -2,6 +2,7 @@ import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Animated, GestureResponderEvent } from "react-native";
 import { Reply } from "../api";
+import ImageSelecter from "../screens/HomeRelevant/ImageSelecter";
 
 export type RootStackParamList = {
   HomeStack: {
@@ -19,5 +20,12 @@ export type RootStackParamList = {
     created: string;
     updated: string;
   };
+  ImageSelecter:{
+    clubName:string
+    clubId: number
+  }
   ReplyPage: { replyData: Reply };
+  
 };
+
+export type FeedCreate = NativeStackScreenProps<RootStackParamList,"ImageSelecter">
