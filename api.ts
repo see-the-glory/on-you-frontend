@@ -149,9 +149,10 @@ export interface ClubsParams {
   clubState: number | null;
   minMember: number | null;
   maxMember: number | null;
-  showRecruiting: boolean | null;
-  sort: string | null;
-  showMy: null;
+  showRecruiting: number;
+  sortType: string;
+  orderBy: string;
+  showMy: number;
 }
 
 export interface ClubSchedulesResponse extends BaseResponse {
@@ -276,8 +277,8 @@ const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => re
 
 const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
-  console.log(clubsParams.categoryId);
-  return fetch(`${BASE_URL}/api/clubs?cursor=${pageParam ?? ""}&categoryId=${clubsParams.categoryId ?? "0"}`, {
+  console.log(clubsParams);
+  return fetch(`${BASE_URL}/api/clubs?cursor=${pageParam ?? ""}&categoryId=${clubsParams.categoryId ?? "0"}&showMy=${clubsParams.showMy}`, {
     headers: {
       authorization: `Bearer ${clubsParams.token}`,
     },
