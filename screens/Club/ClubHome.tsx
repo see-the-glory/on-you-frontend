@@ -48,9 +48,9 @@ const TitleView = styled.View`
 
 const SectionTitle = styled(CustomText)`
   font-family: "NotoSansKR-Bold";
-  font-size: 13px;
+  font-size: 14px;
   margin-left: 5px;
-  line-height: 21px;
+  line-height: 20px;
 `;
 
 const ContentView = styled.View<{ paddingSize?: number }>`
@@ -60,7 +60,7 @@ const ContentView = styled.View<{ paddingSize?: number }>`
 `;
 
 const ContentText = styled(CustomText)`
-  font-size: 11px;
+  font-size: 12px;
   line-height: 17px;
 `;
 
@@ -134,8 +134,8 @@ const ScheduleDetailItemView = styled.View`
 `;
 
 const ScheduleText = styled(CustomText)`
-  font-size: 10px;
-  line-height: 12px;
+  font-size: 11px;
+  line-height: 15px;
 `;
 
 const ScheduleSubText = styled(CustomText)`
@@ -167,8 +167,8 @@ const MemberSubTitleView = styled.View`
 `;
 
 const MemberSubTitle = styled(CustomText)`
+  font-size: 13px;
   color: #bababa;
-  font-weight: 500;
 `;
 
 const MemberTextView = styled.View`

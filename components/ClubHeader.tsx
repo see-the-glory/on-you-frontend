@@ -41,8 +41,8 @@ const CategoryBox = styled.View`
 `;
 
 const CategoryNameText = styled(CustomText)`
-  font-size: 10px;
-  line-height: 14px;
+  font-size: 12px;
+  line-height: 16px;
 `;
 
 const ClubNameView = styled.View`
@@ -52,17 +52,17 @@ const ClubNameView = styled.View`
 
 const ClubNameText = styled(CustomText)`
   color: white;
-  font-size: 22px;
+  font-size: 26px;
   font-family: "NotoSansKR-Bold";
-  line-height: 31px;
+  line-height: 35px;
 `;
 
 const ClubShortDescView = styled.View`
   align-items: center;
 `;
 const ClubShortDescText = styled(CustomText)`
-  font-size: 11px;
-  line-height: 14px;
+  font-size: 14px;
+  line-height: 19px;
   color: white;
 `;
 
@@ -103,8 +103,8 @@ const CollapsedView = styled.SafeAreaView<{ height: number }>`
 `;
 
 const ContentText = styled(CustomText)`
-  font-size: 11px;
-  line-height: 14px;
+  font-size: 12px;
+  line-height: 16px;
   color: white;
 `;
 
@@ -175,11 +175,11 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
               <Break></Break>
               <DetailInfoView>
                 <DetailInfoContent>
-                  <Ionicons name="calendar" size={14} color="yellow" style={{ marginRight: 5 }} />
+                  <Ionicons name="calendar" size={15} color="yellow" style={{ marginRight: 5 }} />
                   <ContentText>May 7 | 14:00 PM</ContentText>
                 </DetailInfoContent>
                 <DetailInfoContent>
-                  <Ionicons name="md-person-circle-outline" size={14} color="yellow" style={{ marginRight: 5 }} />
+                  <Ionicons name="md-person-circle-outline" size={15} color="yellow" style={{ marginRight: 5 }} />
                   {recruitStatus.toUpperCase() === "OPEN" ? <ContentText>멤버 모집 중!</ContentText> : <ContentText>멤버 모집 기간 아님</ContentText>}
                 </DetailInfoContent>
               </DetailInfoView>
