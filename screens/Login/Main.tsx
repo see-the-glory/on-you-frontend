@@ -1,4 +1,4 @@
-import { KakaoOAuthToken, login as kakaoLogin } from "@react-native-seoul/kakao-login";
+// import { KakaoOAuthToken, login as kakaoLogin } from "@react-native-seoul/kakao-login";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
@@ -90,11 +90,11 @@ const Main: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: 
     },
   });
 
-  const signInWithKakao = async () => {
-    const token: KakaoOAuthToken = await kakaoLogin();
+  // const signInWithKakao = async () => {
+  //   const token: KakaoOAuthToken = await kakaoLogin();
 
-    mutation.mutate({ token: token.accessToken });
-  };
+  //   mutation.mutate({ token: token.accessToken });
+  // };
 
   return (
     <Container>
@@ -103,7 +103,7 @@ const Main: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: 
           <JoinButton onPress={goToJoinStepOne}>
             <JoinTitle>회원가입</JoinTitle>
           </JoinButton>
-          <LoginButton onPress={signInWithKakao}>
+          <LoginButton>
             <LoginTitle>로그인</LoginTitle>
           </LoginButton>
         </BtnWrap>

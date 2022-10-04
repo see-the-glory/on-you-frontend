@@ -1,5 +1,5 @@
 #import "AppDelegate.h"
-#import <RNKakaoLogins.h>
+// #import <RNKakaoLogins.h>
 // #import <KakaoOpenSDK/KakaoOpenSDK.h>
 
 #import <React/RCTBridge.h>
@@ -75,15 +75,15 @@ static void InitializeFlipper(UIApplication *application) {
   return [super application:application continueUserActivity:userActivity restorationHandler:restorationHandler] || result;
 }
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
-                                       sourceApplication:(NSString *)sourceApplication
-                                              annotation:(id)annotation {
-    if([RNKakaoLogins isKakaoTalkLoginUrl:url]) {
-      return [RNKakaoLogins handleOpenUrl: url];
-    }
+// - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+//                                        sourceApplication:(NSString *)sourceApplication
+//                                               annotation:(id)annotation {
+//     if([RNKakaoLogins isKakaoTalkLoginUrl:url]) {
+//       return [RNKakaoLogins handleOpenUrl: url];
+//     }
 
-    return NO;
-}
+//     return NO;
+// }
 
 // - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
 //                                       sourceApplication:(NSString *)sourceApplication
