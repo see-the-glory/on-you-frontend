@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, createRef } from "react";
+import React, { useState, useEffect, createRef } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import { useMutation } from "react-query";
 import { CommonApi } from "../../api";
@@ -74,9 +75,38 @@ const Error = styled.Text`
   margin-top: 7px;
 `;
 
-const JoinStepTwo: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
+const JoinStepTwo: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate }, route: { params: name } }) => {
+  const [userName, setUserName] = useState(name);
   const [userEmail, setUserEmail] = useState("");
   const [errortext, setErrortext] = useState(false);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        // AsyncStorage에서 inputData에 저장된 값 가져오기
+        const value = await AsyncStorage.getItem("userInfo");
+        // value에 값이 있으면 콘솔에 찍어줘
+        if (value !== null) {
+          console.log(value);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    // 함수 실행
+    getData();
+  }, []);
+
+  const storeData = async () => {
+    try {
+      await AsyncStorage.setItem("userInfo", JSON.stringify({ name: userName.name, email: userEmail }), () => {
+        console.log("유저정보 저장 완료");
+      });
+      console.log("등록 완료");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const emailInputRef = createRef();
   const emailReg = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
@@ -87,8 +117,11 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
       return;
     } else {
       setErrortext(false);
+      storeData();
       navigate("LoginStack", {
         screen: "JoinStepThree",
+        name: userName.name,
+        email: userEmail,
       });
     }
   };
