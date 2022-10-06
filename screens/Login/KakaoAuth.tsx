@@ -71,10 +71,10 @@ const KakaoAuth = () => {
         source={require("../../assets/logo.png")} //이미지경로
         resizeMode="cover" // 'cover', 'contain', 'stretch', 'repeat', 'center' 중 선택
       >
-        {/* <KakaoButton onPress={signInWithKakao}> */}
-        <KakaoImage source={require("../../assets/kakao_logo.png")} resizeMode="cover" />
-        <Title>카카오로 시작하기</Title>
-        {/* </KakaoButton> */}
+        {/* <KakaoButton onPress={signInWithKakao}>
+          <KakaoImage source={require("../../assets/kakao_logo.png")} resizeMode="cover" />
+          <Title>카카오로 시작하기</Title>
+        </KakaoButton> */}
       </Logo>
     </Container>
   );
