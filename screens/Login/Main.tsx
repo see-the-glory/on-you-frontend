@@ -103,7 +103,7 @@ const Main: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: 
           <JoinButton onPress={goToJoinStepOne}>
             <JoinTitle>회원가입</JoinTitle>
           </JoinButton>
-          <LoginButton>
+          <LoginButton onPress={Login}>
             <LoginTitle>로그인</LoginTitle>
           </LoginButton>
         </BtnWrap>
