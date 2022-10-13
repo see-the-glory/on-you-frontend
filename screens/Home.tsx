@@ -1,15 +1,13 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, TouchableOpacity, Dimensions, Modal, Alert, Slider, useWindowDimensions, Platform, View, Text } from "react-native";
-import styled from "styled-components/native";
-import Swiper from "react-native-swiper";
-import { SliderBox } from "react-native-image-slider-box";
-import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { useQuery, useInfiniteQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { Feed, FeedsResponse, FeedsParams, getFeeds, FeedApi, Reply, UserInfoResponse, UserApi, Category } from "../api";
-import CustomText from "../components/CustomText";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { Alert, Dimensions, FlatList, Modal, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import MentionHashtagTextView from "react-native-mention-hashtag-text";
+import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
+import styled from "styled-components/native";
+import { Feed, FeedsParams, FeedsResponse, ReplyResponse, UserApi, UserInfoResponse } from "../api";
+import CustomText from "../components/CustomText";
+import { HomeScreenProps } from "../types/feed";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -190,7 +188,7 @@ interface HeartType {
   heart: boolean;
 }
 
-const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { navigate } }) => {
+const Home: React.FC<HomeScreenProps> = ({ navigation: { navigate},route:{params:{userId}} }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const queryClient = useQueryClient();
@@ -199,6 +197,8 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
   const token = useSelector((state) => state.AuthReducers.authToken);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
+
+  // const [userId, setUserId] = useState<string>("");
 
   const [params, setParams] = useState<FeedsParams>({
     token,
@@ -213,8 +213,28 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     }).then((res) => res.json());
   };
 
+  const likeCount = () =>{
+    return fetch(`http://3.39.190.23:8080/api/feeds/${userId}/likes`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((res) => res.json());
+  }
+
+  
+  const likeCountReverse = () =>{
+    return fetch(`http://3.39.190.23:8080/api/feeds/${userId}/likes`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((res) => res.json());
+  }
+
   //heart선택
   const [heartMap, setHeartMap] = useState(new Map());
+
   //피드
   const {
     isLoading: feedsLoading,
@@ -245,6 +265,21 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
   } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo);
 
   console.log(userInfo?.data);
+
+  //commentCount
+  const {
+    isLoading: commentPlusLoading,
+    data: commentPlusCount,
+  }=useQuery<ReplyResponse>(["getCommentCount", token], likeCount)
+
+  const {
+    isLoading: commentReverseLoading,
+    data: commentReverseCount,
+  }=useQuery<ReplyResponse>(["getCommentCount", token], likeCountReverse)
+
+
+  console.log(commentPlusCount?.data)
+  console.log(commentReverseCount?.data)
 
   const feedSize = Math.round(SCREEN_WIDTH / 3) - 1;
 
@@ -280,6 +315,7 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
   const goToClub = () => {
     navigate("HomeStack", {
       screen: "MyClubSelector",
+      userId,
     });
   };
 
@@ -380,7 +416,7 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
                       <TouchableOpacity onPress={() => setHeartMap((prev) => new Map(prev).set(item.id, !prev.get(item.id)))}>
                         {heartMap.get(item.id) ? <Ionicons name="md-heart" size={20} color="red" likeYn={true} /> : <Ionicons name="md-heart-outline" size={20} color="black" likeYn={false} />}
                       </TouchableOpacity>
-                      <NumberText>{item.likesCount} </NumberText>
+                      {heartMap.get(item.id) ? <NumberText>{commentPlusCount?.data} </NumberText> : <NumberText> {commentReverseCount?.data} </NumberText>}
                     </InfoArea>
                     <InfoArea>
                       <TouchableOpacity onPress={() => goToReply()}>
