@@ -147,7 +147,9 @@ const FeedCreate: React.FC<FeedCreateScreenProps> = ({
   const createFinish = () => {
     Alert.alert("등록되었습니다.");
     setRefreshing(true);
-    return navigate("Home");
+    return navigate("Tabs", {
+      screen: "Home",
+    });
 
     //홈화면 새로고침 기능 넣기
   };
@@ -157,18 +159,25 @@ const FeedCreate: React.FC<FeedCreateScreenProps> = ({
       if (res.status === 200 && res.json?.resultCode === "OK") {
         setRefreshing(true);
         console.log(`status: ${res.status}`);
-        return navigate("Home", {});
+        return navigate("Tabs", {
+          screen: "Home",
+        });
+
       } else {
         console.log(`mutation success but please check status code`);
         console.log(`status: ${res.status}`);
         console.log(res.json);
-        return navigate("Home", {});
+        return navigate("Tabs", {
+          screen: "Home",
+        });
       }
     },
     onError: (error) => {
       console.log("--- Error ---");
       console.log(`error: ${error}`);
-      return navigate("Home", {});
+      return navigate("Tabs", {
+        screen: "Home",
+      });
     },
     onSettled: (res, error) => {},
   });
@@ -176,16 +185,15 @@ const FeedCreate: React.FC<FeedCreateScreenProps> = ({
  
   const onSubmit = () => {
       const data={
+        userName: userName,
         userId: userId,
         imageUrls: imageUrls,
-        userId: userId,
         content: content,
         hashtag: hashtag,
         clubId: clubId,
         clubName: clubName,
         likeYn: likeYn,
       }
-    };
 
     const splitedURI = new String(imageURI).split("/");
 
@@ -222,9 +230,9 @@ const FeedCreate: React.FC<FeedCreateScreenProps> = ({
 
   /** X선택시 사진 없어지는 태그 */
   const ImageCancle = () => {
-    uri: imageURI === null;
+/*    uri: imageURI === null;
     imageURI == "";
-    console.log(imageURI);
+    console.log(imageURI);*/
   };
 
   useEffect(() => {

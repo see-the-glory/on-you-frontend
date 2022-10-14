@@ -4,8 +4,17 @@ import { FlatList, Image, TextInput, TouchableOpacity, useWindowDimensions, View
 import Swiper from "react-native-swiper";
 import { SliderBox } from "react-native-image-slider-box";
 import { useSelector } from "react-redux";
-import { useQuery } from "react-query";
-import { Feed, FeedsResponse, FeedApi, updateFeed, ClubCreationRequest } from "../../api";
+import { useMutation, useQuery } from "react-query";
+import {
+  Feed,
+  FeedsResponse,
+  FeedApi,
+  updateFeed,
+  ClubCreationRequest,
+  FeedCreationRequest,
+  ClubApi,
+  FeedUpdateRequest
+} from "../../api";
 import CustomText from "../../components/CustomText";
 import { ModifiyPeedScreenProps } from "../../types/feed";
 
@@ -69,13 +78,39 @@ const ImageSource = styled.Image<{ size: number }>`
   height: ${(props) => props.size}px;
 `;
 
-const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({navigation:{navigate}, route:{params: {content,userId}}})=> {
+const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({navigation:{navigate},
+                                                      route:{params: {id, content,userId, hashtag}}})=> {
   const token = useSelector((state) => state.AuthReducers.authToken);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const SCREEN_PADDING_SIZE = 20;
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
 
   const [fixContent, setFixContent] = useState(content)
+
+  const mutation = useMutation(FeedApi.updateFeed, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.json?.resultCode === "OK") {
+        return navigate("Tabs", {
+          screen: "Home",
+        });
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res.json);
+        return navigate("Tabs", {
+          screen: "Home",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+      return navigate("Tabs", {
+        screen: "Home",
+      });
+    },
+    onSettled: (res, error) => {},
+  });
 
   const getFeeds = () => {
     return fetch(`http://3.39.190.23:8080/api/feeds/${userId}`, {
@@ -86,6 +121,7 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({navigation:{navigate}, rout
     }).then((res) => res.json());
   };
 
+  //피드호출
   const {
     isLoading: feedsLoading,
     data: feeds,
@@ -100,18 +136,21 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({navigation:{navigate}, rout
     },
   });
 
-  const {
-    isLoading: feedUpdateLoading, // true or false
-    data: feedUpdate,
-  } = useQuery<FeedsResponse>(["getFeedReport", token], FeedApi.updateFeed);
-  console.log(feedUpdate)
-
+  //피드업데이트
   const FixComplete =() =>{
     const data={
+      id: id,
       userId: userId,
       content: content,
-    }
-  }
+      hashtag: hashtag,
+    };
+
+    const requestData: FeedUpdateRequest={
+      data,
+      token,
+    };
+    mutation.mutate(requestData);
+  };
 
   return (
     <Container>

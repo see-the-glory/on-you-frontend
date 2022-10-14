@@ -25,14 +25,17 @@ export type RootStackParamList = {
     created: string;
     clubId: number;
     clubName: string;
+    userName: string;
   }
   ReplyPage: {userId: number, userName: string, content: string,id: number};
   MyClubSelector:{clubId: number, clubName: string, userId: number}
   FeedCreateSuccess:{feedData: Feed}
+  FeedUpdate:{id:number ,userId: number, content: string, hashtag: string}
+  Tabs:{}
 };
 
 export type HomeScreenProps = NativeStackScreenProps<RootStackParamList,"Home">
 export type FeedCreateScreenProps = NativeStackScreenProps<RootStackParamList,"FeedCreater">
 export type MyClubSelectorScreenProps = NativeStackScreenProps<RootStackParamList,"MyClubSelector">
 export type ReplyPageScreenProps = NativeStackScreenProps<RootStackParamList,"ReplyPage">
-export type ModifiyPeedScreenProps = NativeStackScreenProps<RootStackParamList,"Home">
+export type ModifiyPeedScreenProps = NativeStackScreenProps<RootStackParamList,"FeedUpdate">

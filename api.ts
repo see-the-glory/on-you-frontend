@@ -190,7 +190,12 @@ export interface FeedCreationRequest {
 }
 
 export interface FeedUpdateRequest{
-  data: Feed[];
+  data: {
+    id: number;
+    userId: number;
+    content: string;
+    hashtag: string;
+  };
   token: string;
 }
 
@@ -419,7 +424,7 @@ const updateClub = async (req: ClubUpdateRequest) => {
   });
 };
 
-export const updateFeed = async (req: FeedUpdateRequest) => {
+ const updateFeed = async (req: FeedUpdateRequest) => {
   const body = new FormData();
 
   if (req.data) {
