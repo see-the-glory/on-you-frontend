@@ -277,13 +277,25 @@ export interface UserInfoRequest {
   } | null;
   data: {
     birthday?: string;
+    email?: string;
     name?: string;
+    password?: string;
     organizationName?: string;
     thumbnail?: string;
     sex?: string;
     phoneNumber?: string;
     interests?: [];
   };
+}
+
+export interface SignUp {
+  birthday?: string;
+  email?: string;
+  name?: string;
+  password?: string;
+  organizationName?: string;
+  sex?: string;
+  phoneNumber?: string;
 }
 
 export interface FeedReportRequest{
@@ -297,9 +309,9 @@ export interface FeedReportRequest{
 // Categories
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
-  const getFeeds = ({ queryKey }: any) => {
+const getFeeds = ({ queryKey }: any) => {
   const [_key, feedsParams]: [string, FeedsParams] = queryKey;
-   console.log(feedsParams)
+  console.log(feedsParams);
   return fetch(`${BASE_URL}/api/feeds`, {
     headers: {
       authorization: `Bearer ${feedsParams.token}`,
@@ -347,7 +359,7 @@ const getClubRole = ({ queryKey }: any) => {
     });
 };
 
-const createFeed=async(req:FeedCreationRequest)=>{
+const createFeed = async (req: FeedCreationRequest) => {
   const body = new FormData();
 
   if (req.image !== null) {
@@ -365,12 +377,14 @@ const createFeed=async(req:FeedCreationRequest)=>{
       "content-type": "multipart/form-data",
       authorization: `Bearer ${req.token}`,
       Accept: "*/*",
+      clubId: "11",
+      content: "112",
     },
     body,
   }).then(async (res) => {
     return { status: res.status, json: await res.json() };
   });
-}
+};
 
 const createClub = async (req: ClubCreationRequest) => {
   const body = new FormData();
@@ -538,14 +552,16 @@ const updateUserInfo = (req: UserInfoRequest) => {
   });
 };
 
-const registerUserInfo = ({ queryKey }: any) => {
-  const [_key, token]: [string, string] = queryKey;
-  return fetch(`${BASE_URL}/api/user`, {
+const registerUserInfo = (req: SignUp) => {
+  return fetch(`${BASE_URL}/api/user/signup`, {
     method: "POST",
     headers: {
-      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
     },
-  }).then((response) => response.json());
+    body: JSON.stringify(req),
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
 };
 
 const selectMyClubs = ({ queryKey }: any) => {
@@ -566,7 +582,6 @@ const reportFeed = (req: FeedReportRequest) => {
     },
   }).then((res) => res.json());
 };
-
 
 export const ClubApi = {
   getCategories,

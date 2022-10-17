@@ -247,7 +247,7 @@ const Home: React.FC<HomeScreenProps> = ({ navigation: { navigate},route:{params
 
       let heartDataMap = new Map();
 
-      for (let i = 0; i < res.data.length; ++i) {
+      for (let i = 0; i < res?.data?.length; ++i) {
         heartDataMap.set(res.data[i].id, false);
         //나중에 api 호출했을때는 false자리에 id 불러오듯이 값 받아와야함.
       }
