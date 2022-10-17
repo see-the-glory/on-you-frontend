@@ -1,6 +1,9 @@
 import React from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
 import styled from "styled-components/native";
+import { FeedReportRequest, ReportResponse } from "../../api";
 
 const Container = styled.SafeAreaView`
   position: relative;
@@ -40,7 +43,27 @@ const AccText = styled.Text`
 `;
 
 export default function Accusation({ navigation: { navigate } }) {
+  const token = useSelector((state) => state.AuthReducers.authToken);
+  //Report
+
+  const ReportFeed = (req: FeedReportRequest) => {
+    return fetch(`http://3.39.190.23:8080/api/feeds/${req.data.userId}/report?reason=${req.data.reason}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${req.token}`,
+      },
+    }).then((res) => res.json());
+  };
+  
+  const {
+    isLoading: feedReportLoading, // true or false
+    data: feedReport,
+  } = useQuery<ReportResponse>(["getFeedReport", token], ReportFeed);
+
+  console.log(feedReport?.data);
+
   const ReportComplete = () => {
+    
     navigate("HomeStack", {
       screen: "ReportComplete",
     });
@@ -56,19 +79,16 @@ export default function Accusation({ navigation: { navigate } }) {
         </AccTop>
         <AccInfo>
           <TouchableOpacity>
-            <AccText onPress={ReportComplete}>스팸</AccText>
+            <AccText key="SPAM" onPress={ReportComplete}>스팸</AccText>
           </TouchableOpacity>
           <TouchableOpacity>
-            <AccText onPress={ReportComplete}>마음에 들지 않습니다</AccText>
+            <AccText key="FRAUD" onPress={ReportComplete}>사기 또는 거짓</AccText>
           </TouchableOpacity>
           <TouchableOpacity>
-            <AccText onPress={ReportComplete}>사기 또는 거짓</AccText>
+            <AccText key="HATE" onPress={ReportComplete}>혐오 발언 또는 상징</AccText>
           </TouchableOpacity>
           <TouchableOpacity>
-            <AccText onPress={ReportComplete}>혐오 발언 또는 상징</AccText>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <AccText onPress={ReportComplete}>거짓정보</AccText>
+            <AccText key="PORNO" onPress={ReportComplete}>성인물</AccText>
           </TouchableOpacity>
         </AccInfo>
       </View>

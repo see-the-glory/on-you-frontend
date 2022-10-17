@@ -1,13 +1,12 @@
-import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
-import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
+import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
-import { Alert, Keyboard, Text, TouchableWithoutFeedback, useWindowDimensions, View, Image, TouchableOpacity, Button } from "react-native";
-import styled from "styled-components/native";
-import { FeedCreate } from "../../types/feed";
-import { ClubApi, ClubCreationRequest, FeedApi } from "../../api";
-import { useSelector } from "react-redux";
+import { Alert, Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import { useMutation } from "react-query";
+import { useSelector } from "react-redux";
+import styled from "styled-components/native";
+import { FeedApi } from "../../api";
+import { FeedCreateScreenProps, FeedCreationRequest } from '../../types/feed';
 interface ValueInfo {
   str: string;
   isHT: boolean;
@@ -88,19 +87,21 @@ const CancleIcon = styled.View`
   left: 73%;
 `;
 
-const ImageSelecter: React.FC<FeedCreate> = ({
-  route: {
-    params: { clubName, clubId },
+const FeedCreate: React.FC<FeedCreateScreenProps> = ({
+  route:{
+    params:{imageUrls, userId, userName, content, hashtag, clubId, clubName},
   },
   navigation: { navigate },
 }) => {
-  const Stack = createNativeStackNavigator();
   const [refreshing, setRefreshing] = useState(false);
   //사진권한 허용
   const [imageURI, setImageURI] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
-  let [alert, alertSet] = useState(true);
+  const [alert, Setalert] = useState(true);
+
+  const [likeYn, setLikeYn] = useState(false);
+
 
   const getValueInfos = (value: string): ValueInfo[] => {
     if (value.length === 0) {
@@ -128,6 +129,7 @@ const ImageSelecter: React.FC<FeedCreate> = ({
   const [postText, setPostText] = useState("");
   const token = useSelector((state) => state.AuthReducers.authToken);
   const onText = (text: React.SetStateAction<string>) => setPostText(text);
+  const [feedCreate, setFeedCreate] = useState(userName);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -145,7 +147,9 @@ const ImageSelecter: React.FC<FeedCreate> = ({
   const createFinish = () => {
     Alert.alert("등록되었습니다.");
     setRefreshing(true);
-    return navigate("Home");
+    return navigate("Tabs", {
+      screen: "Home",
+    });
 
     //홈화면 새로고침 기능 넣기
   };
@@ -154,33 +158,46 @@ const ImageSelecter: React.FC<FeedCreate> = ({
     onSuccess: (res) => {
       if (res.status === 200 && res.json?.resultCode === "OK") {
         setRefreshing(true);
-        return navigate("Home", {
-          clubData: res.json?.data,
+        console.log(`status: ${res.status}`);
+        return navigate("Tabs", {
+          screen: "Home",
         });
+
       } else {
         console.log(`mutation success but please check status code`);
         console.log(`status: ${res.status}`);
         console.log(res.json);
-        return navigate("Home", {});
+        return navigate("Tabs", {
+          screen: "Home",
+        });
       }
     },
     onError: (error) => {
       console.log("--- Error ---");
       console.log(`error: ${error}`);
-      return navigate("Home", {});
+      return navigate("Tabs", {
+        screen: "Home",
+      });
     },
     onSettled: (res, error) => {},
   });
 
+ 
   const onSubmit = () => {
-    const data = {
-      clubName,
-      clubId,
-    };
+      const data={
+        userName: userName,
+        userId: userId,
+        imageUrls: imageUrls,
+        content: content,
+        hashtag: hashtag,
+        clubId: clubId,
+        clubName: clubName,
+        likeYn: likeYn,
+      }
 
     const splitedURI = new String(imageURI).split("/");
 
-    const requestData: ClubCreationRequest =
+    const requestData: FeedCreationRequest =
       imageURI === null
         ? {
             image: null,
@@ -202,7 +219,7 @@ const ImageSelecter: React.FC<FeedCreate> = ({
 
   useEffect(() => {
     let timer = setTimeout(() => {
-      alertSet(false);
+      Setalert(false);
     }, 3000);
   });
 
@@ -213,9 +230,9 @@ const ImageSelecter: React.FC<FeedCreate> = ({
 
   /** X선택시 사진 없어지는 태그 */
   const ImageCancle = () => {
-    uri: imageURI === null;
+/*    uri: imageURI === null;
     imageURI == "";
-    console.log(imageURI);
+    console.log(imageURI);*/
   };
 
   useEffect(() => {
@@ -292,7 +309,7 @@ const ImageSelecter: React.FC<FeedCreate> = ({
             <SelectImage source={{ uri: "https://i.pinimg.com/564x/aa/26/04/aa2604e4c5e060f97396f3f711de37c1.jpg" }} /> */}
           </SelectImageView>
           <FeedText
-            key={"feedCreateRequest"}
+            key={}
             placeholder="사진과 함께 남길 게시글을 작성해 보세요."
             onChangeText={(text) => setTitle(text)}
             textContentType="none"
@@ -329,4 +346,4 @@ const ImageSelecter: React.FC<FeedCreate> = ({
   );
 };
 
-export default ImageSelecter;
+export default FeedCreate;

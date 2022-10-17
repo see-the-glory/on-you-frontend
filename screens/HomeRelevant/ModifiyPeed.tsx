@@ -1,12 +1,22 @@
-import React from "react";
+import React,{useState} from "react";
 import styled from "styled-components/native";
-import { FlatList, Image, TextInput, useWindowDimensions, View } from "react-native";
+import { FlatList, Image, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import Swiper from "react-native-swiper";
 import { SliderBox } from "react-native-image-slider-box";
 import { useSelector } from "react-redux";
-import { useQuery } from "react-query";
-import { Feed, FeedsResponse } from "../../api";
+import { useMutation, useQuery } from "react-query";
+import {
+  Feed,
+  FeedsResponse,
+  FeedApi,
+  updateFeed,
+  ClubCreationRequest,
+  FeedCreationRequest,
+  ClubApi,
+  FeedUpdateRequest
+} from "../../api";
 import CustomText from "../../components/CustomText";
+import { ModifiyPeedScreenProps } from "../../types/feed";
 
 const Container=styled.View`
   flex: 1;
@@ -68,14 +78,42 @@ const ImageSource = styled.Image<{ size: number }>`
   height: ${(props) => props.size}px;
 `;
 
-const ModifiyPeed=({navigation:{navigate}})=> {
+const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({navigation:{navigate},
+                                                      route:{params: {id, content,userId, hashtag}}})=> {
   const token = useSelector((state) => state.AuthReducers.authToken);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const SCREEN_PADDING_SIZE = 20;
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
 
+  const [fixContent, setFixContent] = useState(content)
+
+  const mutation = useMutation(FeedApi.updateFeed, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.json?.resultCode === "OK") {
+        return navigate("Tabs", {
+          screen: "Home",
+        });
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res.json);
+        return navigate("Tabs", {
+          screen: "Home",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+      return navigate("Tabs", {
+        screen: "Home",
+      });
+    },
+    onSettled: (res, error) => {},
+  });
+
   const getFeeds = () => {
-    return fetch(`http://3.39.190.23:8080/api/feeds`, {
+    return fetch(`http://3.39.190.23:8080/api/feeds/${userId}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -83,6 +121,7 @@ const ModifiyPeed=({navigation:{navigate}})=> {
     }).then((res) => res.json());
   };
 
+  //피드호출
   const {
     isLoading: feedsLoading,
     data: feeds,
@@ -96,6 +135,22 @@ const ModifiyPeed=({navigation:{navigate}})=> {
       console.log(err);
     },
   });
+
+  //피드업데이트
+  const FixComplete =() =>{
+    const data={
+      id: id,
+      userId: userId,
+      content: content,
+      hashtag: hashtag,
+    };
+
+    const requestData: FeedUpdateRequest={
+      data,
+      token,
+    };
+    mutation.mutate(requestData);
+  };
 
   return (
     <Container>
@@ -123,6 +178,10 @@ const ModifiyPeed=({navigation:{navigate}})=> {
           <Content>
             <Ment>{item.content}</Ment>
           </Content>
+
+          <TouchableOpacity onPress={FixComplete}>
+            <Text>수정완료</Text>
+          </TouchableOpacity>
         </View>
       )}></FlatList>
 
