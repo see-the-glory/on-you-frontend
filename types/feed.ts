@@ -1,8 +1,11 @@
+import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Feed } from "../api";
+import { Animated, GestureResponderEvent } from "react-native";
+import { Reply } from "../api";
+import ImageSelecter from "../screens/HomeRelevant/ImageSelecter";
 
 export type RootStackParamList = {
-  Home: {
+  HomeStack: {
     id: number;
     clubId: number;
     clubName: string | undefined;
@@ -10,29 +13,19 @@ export type RootStackParamList = {
     userName: string | undefined;
     content: string | undefined;
     imageUrls: string;
-    hashtag: string | undefined;
+    hastags: string | undefined;
     likeYn: boolean | undefined;
     likeCount: number;
     commentCount: number;
     created: string;
     updated: string;
   };
-  FeedCreater:{
-    imageUrls: string;
-    userId: number;
-    content: string;
-    hashtag: string | undefined;
-    created: string;
-    clubId: number;
-    clubName: string;
+  ImageSelecter:{
+    clubName:string
+    clubId: number
   }
-  ReplyPage: {userId: number, userName: string, content: string,id: number};
-  MyClubSelector:{clubId: number, clubName: string, userId: number}
-  FeedCreateSuccess:{feedData: Feed}
+  ReplyPage: { replyData: Reply };
+  
 };
 
-export type HomeScreenProps = NativeStackScreenProps<RootStackParamList,"Home">
-export type FeedCreateScreenProps = NativeStackScreenProps<RootStackParamList,"FeedCreater">
-export type MyClubSelectorScreenProps = NativeStackScreenProps<RootStackParamList,"MyClubSelector">
-export type ReplyPageScreenProps = NativeStackScreenProps<RootStackParamList,"ReplyPage">
-export type ModifiyPeedScreenProps = NativeStackScreenProps<RootStackParamList,"Home">
+export type FeedCreate = NativeStackScreenProps<RootStackParamList,"ImageSelecter">

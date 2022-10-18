@@ -95,11 +95,6 @@ export interface Reply {
   thumbnail: string;
 }
 
-export interface Report{
-  userId: number;
-  reason: string;
-}
-
 export interface ClubRole {
   clubId: number;
   userId: number;
@@ -140,12 +135,8 @@ export interface FeedsResponse extends BaseResponse {
 export interface UserInfoResponse extends BaseResponse {
   data: User;
 }
-export interface ReplyResponse extends BaseResponse {
+export interface ReplyReponse extends BaseResponse {
   data: Reply[];
-}
-
-export interface ReportResponse extends BaseResponse {
-  data: Report[];
 }
 
 export interface FeedsParams {
@@ -180,17 +171,7 @@ export interface FeedCreationRequest {
   };
   data: {
     clubName: string;
-    imageUrls: string;
-    userId: number;
-    content: string;
-    hashtag: string;
-    clubId: number;
   };
-  token: string;
-}
-
-export interface FeedUpdateRequest{
-  data: Feed[];
   token: string;
 }
 
@@ -281,14 +262,6 @@ export interface UserInfoRequest {
   };
 }
 
-export interface FeedReportRequest{
-  token: string;
-  data:{
-    userId: number;
-    reason: string;
-  }
-}
-
 // Categories
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
@@ -360,6 +333,8 @@ const createFeed=async(req:FeedCreationRequest)=>{
       "content-type": "multipart/form-data",
       authorization: `Bearer ${req.token}`,
       Accept: "*/*",
+      clubId: '11',
+      content: '112'
     },
     body,
   }).then(async (res) => {
@@ -407,29 +382,6 @@ const updateClub = async (req: ClubUpdateRequest) => {
   }
 
   return fetch(`${BASE_URL}/api/clubs/${req.clubId}`, {
-    method: "PUT",
-    headers: {
-      "content-type": "multipart/form-data",
-      authorization: `Bearer ${req.token}`,
-      Accept: "*/*",
-    },
-    body,
-  }).then(async (res) => {
-    return { ...(await res.json()), status: res.status };
-  });
-};
-
-export const updateFeed = async (req: FeedUpdateRequest) => {
-  const body = new FormData();
-
-  if (req.data) {
-    body.append("clubUpdateRequest", {
-      string: JSON.stringify(req.data),
-      type: "application/json",
-    });
-  }
-
-  return fetch(`${BASE_URL}/api/feeds/${req.data.id}`, {
     method: "PUT",
     headers: {
       "content-type": "multipart/form-data",
@@ -553,14 +505,6 @@ const selectMyClubs = ({ queryKey }: any) => {
   }).then((res) => res.json());
 };
 
-const reportFeed = (req: FeedReportRequest) => {
-  return fetch(`${BASE_URL}/api/feeds/${req.data.userId}/report?reason=${req.data.reason}`, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${req.token}`,
-    },
-  }).then((res) => res.json());
-};
 
 
 export const ClubApi = {
@@ -587,9 +531,7 @@ export const UserApi = {
 
 export const FeedApi = {
   getFeeds,
-  createFeed,
-  reportFeed,
-  updateFeed,
+  createFeed
 };
 
 export const CommonApi = { getJWT };

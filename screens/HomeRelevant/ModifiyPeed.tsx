@@ -1,13 +1,12 @@
-import React,{useState} from "react";
+import React from "react";
 import styled from "styled-components/native";
-import { FlatList, Image, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { FlatList, Image, TextInput, useWindowDimensions, View } from "react-native";
 import Swiper from "react-native-swiper";
 import { SliderBox } from "react-native-image-slider-box";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
-import { Feed, FeedsResponse, FeedApi, updateFeed, ClubCreationRequest } from "../../api";
+import { Feed, FeedsResponse } from "../../api";
 import CustomText from "../../components/CustomText";
-import { ModifiyPeedScreenProps } from "../../types/feed";
 
 const Container=styled.View`
   flex: 1;
@@ -69,16 +68,14 @@ const ImageSource = styled.Image<{ size: number }>`
   height: ${(props) => props.size}px;
 `;
 
-const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({navigation:{navigate}, route:{params: {content,userId}}})=> {
+const ModifiyPeed=({navigation:{navigate}})=> {
   const token = useSelector((state) => state.AuthReducers.authToken);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const SCREEN_PADDING_SIZE = 20;
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
 
-  const [fixContent, setFixContent] = useState(content)
-
   const getFeeds = () => {
-    return fetch(`http://3.39.190.23:8080/api/feeds/${userId}`, {
+    return fetch(`http://3.39.190.23:8080/api/feeds`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -99,19 +96,6 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({navigation:{navigate}, rout
       console.log(err);
     },
   });
-
-  const {
-    isLoading: feedUpdateLoading, // true or false
-    data: feedUpdate,
-  } = useQuery<FeedsResponse>(["getFeedReport", token], FeedApi.updateFeed);
-  console.log(feedUpdate)
-
-  const FixComplete =() =>{
-    const data={
-      userId: userId,
-      content: content,
-    }
-  }
 
   return (
     <Container>
@@ -139,10 +123,6 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({navigation:{navigate}, rout
           <Content>
             <Ment>{item.content}</Ment>
           </Content>
-
-          <TouchableOpacity onPress={FixComplete}>
-            <Text>수정완료</Text>
-          </TouchableOpacity>
         </View>
       )}></FlatList>
 

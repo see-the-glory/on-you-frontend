@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { ActivityIndicator, FlatList } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, View, Text } from "react-native";
 import { useInfiniteQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Club, ClubApi, ClubsParams, ClubsResponse } from "../../api";
-import { MyClubSelectorScreenProps } from "../../types/feed";
-
+import { Club, ClubApi, ClubsParams, ClubsResponse, Feed } from "../../api";
 const Container = styled.SafeAreaView`
   flex: 1;
   height: 100%;
@@ -104,7 +103,7 @@ const CreatorName = styled.Text`
 
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({route:{params:{userId}},navigation: { navigate } }) => {
+const MyClubSelector: React.FC<NativeStackScreenProps> = ({ navigation: { navigate } }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
@@ -117,15 +116,10 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({route:{params:{use
     showRecruiting: null,
     showMy: null,
   });
-
+  const [clubName, setClubName] = useState<string>("");
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
-
-//
-const [clubName, setClubName] = useState<string>("");
-const [clubId, setClubId] = useState<string>("");
-const [userName, setUserName] = useState<string>("");
 
   const {
     isLoading: clubsLoading,
@@ -184,11 +178,8 @@ const [userName, setUserName] = useState<string>("");
             renderItem={({ item, index }: { item: Club; index: number }) => (
               <ClubArea
                 onPress={() => {
-                  return navigate("FeedCreate", {
-                    clubName:clubName,
-                    clubId:clubId,
-                    userId:userId,
-                    username:userName,
+                  return navigate("ImageSelecter", {
+                    clubName,
                   });
                 }}
               >

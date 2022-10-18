@@ -141,7 +141,39 @@ const JoinStepNine: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navi
       console.log(error);
     }
   };
-  
+
+  /* const { isLoading: categoiresLoading, data: categories } = useQuery<CategoryResponse>(["getCategories", token], UserApi.getCategories, {
+    onSuccess: (res) => {
+      const count = 4;
+      const bundle = [];
+      for (let i = 0; i < res.data.length; i += count) bundle.push(res.data.slice(i, i + count));
+      setCategoryBundle(bundle);
+    },
+  }); */
+
+  // console.log(categories?.data.length);
+
+  // const [selectCategory1, setCategory1] = useState(categories[0]?.id ?? -1);
+  // const [selectCategory2, setCategory2] = useState(categories[1]?.id ?? -1);
+  // const [categoryBundle, setCategoryBundle] = useState<Array<Category[]>>();
+
+  /* const onPressCategory = (id: number) => {
+    if (selectCategory1 === id) {
+      return setCategory1(-1);
+    } else if (selectCategory2 === id) {
+      return setCategory2(-1);
+    }
+    if (selectCategory1 === -1) {
+      return setCategory1(id);
+    } else if (selectCategory2 === -1) {
+      return setCategory2(id);
+    } else {
+      toast.show("카테고리는 2개만 고를 수 있습니다.", {
+        type: "warning",
+      });
+    }
+  }; */
+
   const goToNext = () => {
     storeData();
     navigate("LoginStack", {

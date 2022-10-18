@@ -1,12 +1,13 @@
-import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
+import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
-import { Alert, Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
-import { useMutation } from "react-query";
-import { useSelector } from "react-redux";
+import { Alert, Keyboard, Text, TouchableWithoutFeedback, useWindowDimensions, View, Image, TouchableOpacity, Button } from "react-native";
 import styled from "styled-components/native";
-import { FeedApi } from "../../api";
-import { FeedCreateScreenProps, FeedCreationRequest } from '../../types/feed';
+import { FeedCreate } from "../../types/feed";
+import { ClubApi, ClubCreationRequest, FeedApi } from "../../api";
+import { useSelector } from "react-redux";
+import { useMutation } from "react-query";
 interface ValueInfo {
   str: string;
   isHT: boolean;
@@ -87,21 +88,19 @@ const CancleIcon = styled.View`
   left: 73%;
 `;
 
-const FeedCreate: React.FC<FeedCreateScreenProps> = ({
-  route:{
-    params:{imageUrls, userId, userName, content, hashtag, clubId, clubName},
+const ImageSelecter: React.FC<FeedCreate> = ({
+  route: {
+    params: { clubName, clubId },
   },
   navigation: { navigate },
 }) => {
+  const Stack = createNativeStackNavigator();
   const [refreshing, setRefreshing] = useState(false);
   //사진권한 허용
   const [imageURI, setImageURI] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
-  const [alert, Setalert] = useState(true);
-
-  const [likeYn, setLikeYn] = useState(false);
-
+  let [alert, alertSet] = useState(true);
 
   const getValueInfos = (value: string): ValueInfo[] => {
     if (value.length === 0) {
@@ -129,7 +128,6 @@ const FeedCreate: React.FC<FeedCreateScreenProps> = ({
   const [postText, setPostText] = useState("");
   const token = useSelector((state) => state.AuthReducers.authToken);
   const onText = (text: React.SetStateAction<string>) => setPostText(text);
-  const [feedCreate, setFeedCreate] = useState(userName);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -156,8 +154,9 @@ const FeedCreate: React.FC<FeedCreateScreenProps> = ({
     onSuccess: (res) => {
       if (res.status === 200 && res.json?.resultCode === "OK") {
         setRefreshing(true);
-        console.log(`status: ${res.status}`);
-        return navigate("Home", {});
+        return navigate("Home", {
+          clubData: res.json?.data,
+        });
       } else {
         console.log(`mutation success but please check status code`);
         console.log(`status: ${res.status}`);
@@ -173,23 +172,15 @@ const FeedCreate: React.FC<FeedCreateScreenProps> = ({
     onSettled: (res, error) => {},
   });
 
- 
   const onSubmit = () => {
-      const data={
-        userId: userId,
-        imageUrls: imageUrls,
-        userId: userId,
-        content: content,
-        hashtag: hashtag,
-        clubId: clubId,
-        clubName: clubName,
-        likeYn: likeYn,
-      }
+    const data = {
+      clubName,
+      clubId,
     };
 
     const splitedURI = new String(imageURI).split("/");
 
-    const requestData: FeedCreationRequest =
+    const requestData: ClubCreationRequest =
       imageURI === null
         ? {
             image: null,
@@ -211,7 +202,7 @@ const FeedCreate: React.FC<FeedCreateScreenProps> = ({
 
   useEffect(() => {
     let timer = setTimeout(() => {
-      Setalert(false);
+      alertSet(false);
     }, 3000);
   });
 
@@ -301,7 +292,7 @@ const FeedCreate: React.FC<FeedCreateScreenProps> = ({
             <SelectImage source={{ uri: "https://i.pinimg.com/564x/aa/26/04/aa2604e4c5e060f97396f3f711de37c1.jpg" }} /> */}
           </SelectImageView>
           <FeedText
-            key={}
+            key={"feedCreateRequest"}
             placeholder="사진과 함께 남길 게시글을 작성해 보세요."
             onChangeText={(text) => setTitle(text)}
             textContentType="none"
@@ -338,4 +329,4 @@ const FeedCreate: React.FC<FeedCreateScreenProps> = ({
   );
 };
 
-export default FeedCreate;
+export default ImageSelecter;

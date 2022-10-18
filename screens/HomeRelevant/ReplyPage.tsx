@@ -5,8 +5,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { Dimensions } from "react-native";
-import { Reply, ReplyResponse, User, FeedApi, UserInfoResponse, getUserInfo, UserApi } from "../../api";
-import { ReplyPageScreenProps } from "../../types/feed";
+import { Reply, ReplyReponse, User, FeedApi, UserInfoResponse, getUserInfo, UserApi } from "../../api";
 const Container = styled.SafeAreaView`
   flex: 1;
   height: 100%;
@@ -104,14 +103,11 @@ const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min
 // route: {
 //   params: { category1, category2 },
 // },
-const ReplyPage: React.FC<ReplyPageScreenProps> = ({ navigation: { navigate },
-                                                     route:{params:{userId,id}} }) => {
+const ReplyPage: React.FC<NativeStackScreenProps<any, "ReplyPage">> = ({ navigation: { navigate } }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const token = useSelector((state) => state.AuthReducers.authToken);
   const queryClient = useQueryClient();
-
-  const [content, setContent]=useState<string>("");
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -129,7 +125,7 @@ const ReplyPage: React.FC<ReplyPageScreenProps> = ({ navigation: { navigate },
   };
 
   const getReply = () => {
-    return fetch(`http://3.39.190.23:8080/api/feeds/${userId}/comments`, {
+    return fetch(`http://3.39.190.23:8080/api/feeds/8/comments`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -137,20 +133,8 @@ const ReplyPage: React.FC<ReplyPageScreenProps> = ({ navigation: { navigate },
     }).then((res) => res.json());
   };
 
-  const PostReply=()=>{
-    return fetch(`http://3.39.190.23:8080/api/feeds/${id}/comment`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(content)
-    }).then((res) => res.json());
-  };
-
-
-
   /** 리플 데이터   */
-  const { data: replys, isLoading: replysLoading } = useQuery<ReplyResponse>(["getReply"], getReply, {
+  const { data: replys, isLoading: replysLoading } = useQuery<ReplyReponse>(["getReply"], getReply, {
     onSuccess: (res) => {
       console.log(res);
     },
@@ -203,7 +187,7 @@ const ReplyPage: React.FC<ReplyPageScreenProps> = ({ navigation: { navigate },
             }}
           />
           <ReplyInput>댓글을 입력해보세요...</ReplyInput>
-          <ReplyButton onPress={PostReply}>
+          <ReplyButton>
             <ReplyDone>게시</ReplyDone>
           </ReplyButton>
         </ReplyArea>
