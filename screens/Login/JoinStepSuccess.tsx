@@ -76,12 +76,6 @@ const Error = styled.Text`
 `;
 
 const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
-  const goToNext = () => {
-    navigate("LoginStack", {
-      screen: "Login",
-    });
-  };
-
   return (
     <Container>
       <Wrap>
@@ -92,7 +86,7 @@ const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ n
         <SubText>온유에 오신 것을 환영합니다 :&#41;</SubText>
       </Wrap>
       <Wrap>
-        <Button onPress={goToNext}>
+        <Button>
           <ButtonTitle>시작하기</ButtonTitle>
         </Button>
       </Wrap>
