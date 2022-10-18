@@ -2,11 +2,12 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
-import { useMutation } from "react-query";
-import { CommonApi } from "../../api";
-import { useDispatch } from "react-redux";
+import { useMutation, useQuery } from "react-query";
+import { UserApi, UserInfoRequest, User, SignUp } from "../../api";
+import { useSelector, useDispatch } from "react-redux";
 import { Login } from "../../store/Actions";
 import styled from "styled-components/native";
+import { resolveUri } from "expo-asset/build/AssetSources";
 
 const Container = styled.View`
   width: 100%;
@@ -92,25 +93,43 @@ const ButtonTitle = styled.Text`
   font-weight: 700;
 `;
 
-const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate }, route: { params: name } }) => {
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        // AsyncStorage에서 inputData에 저장된 값 가져오기
-        const value = await AsyncStorage.getItem("userInfo");
-        // value에 값이 있으면 콘솔에 찍어줘
-        if (value !== null) {
-          console.log(value);
-        }
-      } catch (error) {
-        console.log(error);
+const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate }, route: { params: name, token } }) => {
+  const mutation = useMutation(UserApi.registerUserInfo, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.resultCode === "OK") {
+        console.log(`success`);
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(res);
       }
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+    },
+    onSettled: (res, error) => {},
+  });
+
+  const onSubmit = () => {
+    const data = {
+      name: name?.name,
+      email: name?.email,
+      password: name?.password,
+      sex: name?.sex === "남성" ? "M" : "F",
+      birthday: name?.birth,
+      phoneNumber: name?.phone,
+      organizationName: name?.church,
     };
-    // 함수 실행
-    getData();
-  }, []);
+
+    const requestData: SignUp = data;
+
+    console.log(requestData);
+
+    mutation.mutate(requestData);
+  };
 
   const goToNext = () => {
+    onSubmit();
     navigate("LoginStack", {
       screen: "JoinStepSuccess",
     });

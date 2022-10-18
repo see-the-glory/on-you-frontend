@@ -21,7 +21,7 @@ const NativeStack = createNativeStackNavigator();
 const LoginStack = ({
   navigation: { navigate, goBack },
   route: {
-    params: { userData, category, name, email, password, sex, birth, phone, church },
+    params: { userData, category, name, email, password, sex, birth, phone, church, token },
   },
 }) => {
   return (
@@ -156,7 +156,7 @@ const LoginStack = ({
       <NativeStack.Screen
         name="JoinConfirm"
         component={JoinConfirm}
-        initialParams={{ name, email, password, sex, birth, phone, church, userData, category }}
+        initialParams={{ name, email, password, sex, birth, phone, church, userData, category, token }}
         options={{
           title: "회원가입",
           headerLeft: () => (
@@ -169,6 +169,7 @@ const LoginStack = ({
       <NativeStack.Screen
         name="JoinStepSuccess"
         component={JoinStepSuccess}
+        initialParams={{ token }}
         options={{
           title: "회원가입",
           headerLeft: () => (
