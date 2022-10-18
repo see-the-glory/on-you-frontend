@@ -75,6 +75,7 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
 
   const mutation = useMutation(CommonApi.getJWT, {
     onSuccess: (res) => {
+      console.log(res.status);
       // redux 저장
       dispatch(Login(res.token));
     },
@@ -100,18 +101,18 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
     });
   };
 
-  // const onSubmit = () => {
-  //   const token = {
-  //     email: email,
-  //     password: password,
-  //   };
+  const onSubmit = () => {
+    const token = {
+      email: email,
+      password: password,
+    };
 
-  //   const requestData: LoginRequest = token;
+    const requestData: LoginRequest = token;
 
-  //   console.log(requestData);
+    console.log(requestData);
 
-  //   mutation.mutate(requestData);
-  // };
+    mutation.mutate(requestData);
+  };
 
   const goToRoot = () => {
     return <NavigationContainer>{<Root />}</NavigationContainer>;
@@ -133,7 +134,7 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
         </Form>
       </Wrap>
       <Wrap>
-        <LoginButton onPress={goToRoot}>
+        <LoginButton onPress={onSubmit}>
           <LoginTitle>로그인</LoginTitle>
         </LoginButton>
       </Wrap>
