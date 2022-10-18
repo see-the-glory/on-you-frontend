@@ -508,7 +508,7 @@ const createClubSchedule = async (req: ClubScheduleCreationRequest) => {
 };
 
 const getJWT = (req: LoginRequest) => {
-  return fetch(`${BASE_URL}/login/kakao/`, {
+  return fetch(`${BASE_URL}/api/user/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
