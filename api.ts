@@ -146,7 +146,6 @@ export interface FeedsParams {
 export interface ClubsParams {
   token: string;
   categoryId: number | null;
-  clubState: number | null;
   minMember: number | null;
   maxMember: number | null;
   showRecruiting: number;
@@ -180,7 +179,7 @@ export interface ClubCreationRequest {
     uri: string;
     type: string;
     name: string | undefined;
-  };
+  } | null;
   data: {
     category1Id: number;
     category2Id: number | null;
@@ -189,6 +188,8 @@ export interface ClubCreationRequest {
     clubLongDesc: string | null;
     clubName: string;
     clubMaxMember: number;
+    phoneNumber: string;
+    organizationName: string;
   };
   token: string;
 }
@@ -265,9 +266,9 @@ export interface UserInfoRequest {
 // Categories
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
-  const getFeeds = ({ queryKey }: any) => {
+const getFeeds = ({ queryKey }: any) => {
   const [_key, feedsParams]: [string, FeedsParams] = queryKey;
-   console.log(feedsParams)
+  console.log(feedsParams);
   return fetch(`${BASE_URL}/api/feeds`, {
     headers: {
       authorization: `Bearer ${feedsParams.token}`,
@@ -277,8 +278,13 @@ const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => re
 
 const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
-  console.log(clubsParams);
-  return fetch(`${BASE_URL}/api/clubs?cursor=${pageParam ?? ""}&categoryId=${clubsParams.categoryId ?? "0"}&showMy=${clubsParams.showMy}`, {
+  let parameters = `categoryId=${clubsParams.categoryId ?? 0}&showMy=${clubsParams.showMy}&showRecruitingOnly=${clubsParams.showRecruiting}`;
+  parameters += clubsParams.minMember !== null ? `&min=${clubsParams.minMember}` : "";
+  parameters += clubsParams.maxMember !== null ? `&max=${clubsParams.maxMember}` : "";
+  parameters += `&sort=${clubsParams.sortType}&orderBy=${clubsParams.orderBy}`;
+  parameters += pageParam ? `&cursor=${pageParam}` : "";
+  console.log(parameters);
+  return fetch(`${BASE_URL}/api/clubs?${parameters}`, {
     headers: {
       authorization: `Bearer ${clubsParams.token}`,
     },
@@ -293,7 +299,7 @@ const getClub = ({ queryKey }: any) => {
       authorization: `Bearer ${token}`,
     },
   }).then(async (res) => {
-    return { ...(await res.json()), status: res.status };
+    return { status: res.status, ...(await res.json()) };
   });
 };
 
@@ -315,7 +321,7 @@ const getClubRole = ({ queryKey }: any) => {
     });
 };
 
-const createFeed=async(req:FeedCreationRequest)=>{
+const createFeed = async (req: FeedCreationRequest) => {
   const body = new FormData();
 
   if (req.image !== null) {
@@ -333,14 +339,14 @@ const createFeed=async(req:FeedCreationRequest)=>{
       "content-type": "multipart/form-data",
       authorization: `Bearer ${req.token}`,
       Accept: "*/*",
-      clubId: '11',
-      content: '112'
+      clubId: "11",
+      content: "112",
     },
     body,
   }).then(async (res) => {
     return { status: res.status, json: await res.json() };
   });
-}
+};
 
 const createClub = async (req: ClubCreationRequest) => {
   const body = new FormData();
@@ -363,7 +369,8 @@ const createClub = async (req: ClubCreationRequest) => {
     },
     body,
   }).then(async (res) => {
-    return { status: res.status, json: await res.json() };
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
   });
 };
 
@@ -505,8 +512,6 @@ const selectMyClubs = ({ queryKey }: any) => {
   }).then((res) => res.json());
 };
 
-
-
 export const ClubApi = {
   getCategories,
   getClub,
@@ -531,7 +536,7 @@ export const UserApi = {
 
 export const FeedApi = {
   getFeeds,
-  createFeed
+  createFeed,
 };
 
 export const CommonApi = { getJWT };

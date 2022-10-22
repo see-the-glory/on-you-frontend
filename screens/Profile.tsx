@@ -166,13 +166,13 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
         <LogoBox>
           <LogoImage
             source={{
-              uri: userInfo?.data.thumbnail === null ? "http://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userInfo?.data.thumbnail,
+              uri: userInfo?.data?.thumbnail === null ? "http://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userInfo?.data?.thumbnail,
             }}
           />
         </LogoBox>
         <InfoBox>
-          <Email>{userInfo?.data.email}</Email>
-          <Title>{userInfo?.data.name}</Title>
+          <Email>{userInfo?.data?.email}</Email>
+          <Title>{userInfo?.data?.name}</Title>
         </InfoBox>
         <EditBox>
           <MaterialCommunityIcons name="pencil-outline" color="#295AF5" size={20} onPress={goToEditProfile} />

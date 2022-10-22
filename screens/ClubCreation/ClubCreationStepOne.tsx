@@ -4,6 +4,8 @@ import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { ClubCreationStepOneScreenProps } from "../../Types/Club";
 import { Category } from "../../api";
+import CustomText from "../../components/CustomText";
+import { useToast } from "react-native-toast-notifications";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -12,26 +14,30 @@ const Loader = styled.SafeAreaView`
 `;
 
 const HeaderView = styled.View`
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
 `;
 
-const H1 = styled.Text`
-  font-size: 28px;
-  font-weight: 900;
+const H1 = styled(CustomText)`
+  font-size: 18px;
+  line-height: 25px;
+  font-family: "NotoSansKR-Bold";
+  margin: 10px 0px;
+`;
+
+const H2 = styled(CustomText)`
+  font-size: 14px;
+  color: #5c5c5c;
   margin-bottom: 15px;
 `;
 
-const H2 = styled.Text`
-  font-size: 18px;
-  color: #5c5c5c;
-  margin-bottom: 20px;
+const HeaderSubView = styled.View`
+  width: 100%;
+  align-items: flex-end;
+  justify-content: center;
 `;
 
-const H3 = styled.Text`
-  font-size: 16px;
-  font-weight: 300;
-  margin-left: 150px;
+const H3 = styled(CustomText)`
   color: #8b8b8b;
 `;
 
@@ -44,7 +50,7 @@ const CategoryView = styled.View`
 `;
 
 const CategoryItem = styled.TouchableOpacity<{ selected: boolean }>`
-  width: 100px;
+  width: 105px;
   height: 35px;
   align-items: center;
   justify-content: center;
@@ -60,24 +66,24 @@ const CategoryIcon = styled.Image<{ selected: boolean }>`
   ${(props) => (props.selected ? "background-color: #295AF5;" : "")};
 `;
 
-const CategoryText = styled.Text<{ selected: boolean }>`
-  font-size: 18px;
+const CategoryText = styled(CustomText)<{ selected: boolean }>`
+  font-size: 13px;
+  line-height: 20px;
   color: ${(props) => (props.selected ? "white" : "black")};
-  font-weight: 500;
 `;
 
 const NextButton = styled.TouchableOpacity`
-  width: 200px;
-  height: 40px;
-  background-color: ${(props) => (props.disabled ? "#c4c4c4" : "#295AF5")};
-  border-radius: 10px;
+  width: 100%;
+  height: 50px;
+  background-color: ${(props) => (props.disabled ? "#c4c4c4" : "#FF714B")};
   justify-content: center;
   align-items: center;
 `;
 
-const ButtonText = styled.Text`
+const ButtonText = styled(CustomText)`
   font-size: 18px;
-  font-weight: 700;
+  line-height: 25px;
+  font-family: "NotoSansKR-Bold";
   color: white;
 `;
 
@@ -87,6 +93,7 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
     params: { category },
   },
 }) => {
+  const toast = useToast();
   const [loading, setLoading] = useState<boolean>(true);
   const [categories, setCategories] = useState<Array<Array<Category>>>([[]]);
   const [selectCategory1, setCategory1] = useState<number>(-1);
@@ -121,7 +128,9 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
     } else if (selectCategory2 === -1) {
       return setCategory2(id);
     } else {
-      Alert.alert("카테고리는 2개만 고를 수 있습니다.");
+      toast.show("카테고리는 2개만 고를 수 있습니다.", {
+        type: "warning",
+      });
     }
   };
 
@@ -131,21 +140,24 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
     </Loader>
   ) : (
     <FlatList
-      ListHeaderComponentStyle={{ marginTop: 30, marginBottom: 10 }}
+      ListHeaderComponentStyle={{ marginTop: 20, marginBottom: 10, paddingHorizontal: 20 }}
       ListHeaderComponent={
         <>
           <HeaderView>
             <H1>카테고리</H1>
             <H2>개설하실 모임의 카테고리를 선택해주세요.</H2>
-            <H3>
-              <Ionicons name="checkmark-sharp" size={16} color="#8b8b8b" /> 중복선택 2개까지 가능
-            </H3>
+            <HeaderSubView>
+              <H3>
+                <Ionicons name="checkmark-sharp" size={16} color="#8b8b8b" /> 중복선택 2개까지 가능
+              </H3>
+            </HeaderSubView>
           </HeaderView>
         </>
       }
       ListFooterComponentStyle={{
         marginTop: 30,
         marginBottom: 80,
+        paddingHorizontal: 20,
         alignItems: "center",
       }}
       ListFooterComponent={
@@ -174,7 +186,9 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
           {item.map((categoryItem, index) => {
             return (
               <CategoryItem key={index} activeOpacity={0.8} onPress={() => onPressCategory(categoryItem.id)} selected={categoryItem.id === selectCategory1 || categoryItem.id === selectCategory2}>
-                <CategoryText selected={categoryItem.id === selectCategory1 || categoryItem.id === selectCategory2}>{categoryItem.name}</CategoryText>
+                <CategoryText selected={categoryItem.id === selectCategory1 || categoryItem.id === selectCategory2}>
+                  {categoryItem.thumbnail} {categoryItem.name}
+                </CategoryText>
               </CategoryItem>
             );
           })}

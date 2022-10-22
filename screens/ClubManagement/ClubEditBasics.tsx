@@ -64,8 +64,8 @@ const Item = styled.View`
 `;
 
 const ItemTitle = styled(CustomText)`
-  font-size: 10px;
-  line-height: 16px;
+  font-size: 13px;
+  line-height: 19px;
   color: #b0b0b0;
   margin-bottom: 5px;
 `;
@@ -137,7 +137,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   const toast = useToast();
   const [clubName, setClubName] = useState(clubData.name);
   const [maxNumber, setMaxNumber] = useState(clubData.maxNumber === 0 ? "무제한 정원" : `${String(clubData.maxNumber)} 명`);
-  const [maxNumberInfinity, setMaxNumberInfinity] = useState<Boolean>(clubData.maxNumber ? false : true);
+  const [maxNumberInfinity, setMaxNumberInfinity] = useState<boolean>(clubData.maxNumber ? false : true);
   const [phoneNumber, setPhoneNumber] = useState(clubData.contactPhone ?? "");
   const [organizationName, setOrganizationName] = useState(clubData.organizationName ?? "");
   const [isApproveRequired, setIsApproveRequired] = useState("Y");

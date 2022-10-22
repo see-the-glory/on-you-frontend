@@ -19,8 +19,10 @@ export type RootStackParamList = {
     category1: number;
     category2: number;
     clubName: string;
-    clubMemberCount: number;
-    approvalMethod: number;
+    maxNumber: number;
+    isApproveRequired: string;
+    phoneNumber: string;
+    organizationName: string;
     imageURI: string | null;
   };
   ClubCreationSuccess: {

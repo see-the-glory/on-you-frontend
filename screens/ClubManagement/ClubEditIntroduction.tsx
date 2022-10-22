@@ -34,8 +34,8 @@ const Item = styled.View`
 `;
 
 const ItemTitle = styled(CustomText)`
-  font-size: 10px;
-  line-height: 16px;
+  font-size: 13px;
+  line-height: 19px;
   color: #b0b0b0;
   margin-bottom: 8px;
 `;
