@@ -117,7 +117,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     data: userInfo,
   } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo);
 
-  console.log(userInfo?.data);
+  // console.log(userInfo?.data);
 
   const dispatch = useDispatch();
 
@@ -166,7 +166,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
         <LogoBox>
           <LogoImage
             source={{
-              uri: userInfo?.data.thumbnail,
+              uri: userInfo?.data?.thumbnail,
             }}
           />
         </LogoBox>

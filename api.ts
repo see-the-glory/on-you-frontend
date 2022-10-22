@@ -1,3 +1,4 @@
+
 const BASE_URL = "http://3.39.190.23:8080";
 
 interface BaseResponse {
@@ -95,6 +96,10 @@ export interface Reply {
   thumbnail: string;
 }
 
+export interface Report{
+  userId: number;
+  reason: string;
+}
 export interface ClubRole {
   clubId: number;
   userId: number;
@@ -138,7 +143,9 @@ export interface UserInfoResponse extends BaseResponse {
 export interface ReplyReponse extends BaseResponse {
   data: Reply[];
 }
-
+export interface ReportResponse extends BaseResponse {
+  data: Report[];
+}
 export interface FeedsParams {
   token: string;
 }
@@ -170,6 +177,21 @@ export interface FeedCreationRequest {
   };
   data: {
     clubName: string;
+    imageUrls: string;
+    userId: number;
+    content: string;
+    hashtag: string;
+    clubId: number;
+  };
+  token: string;
+}
+
+export interface FeedUpdateRequest{
+  data: {
+    id: number;
+    userId: number;
+    content: string;
+    hashtag: string;
   };
   token: string;
 }
@@ -254,9 +276,7 @@ export interface UserInfoRequest {
   } | null;
   data: {
     birthday?: string;
-    email?: string;
     name?: string;
-    password?: string;
     organizationName?: string;
     thumbnail?: string;
     sex?: string;
@@ -275,17 +295,27 @@ export interface SignUp {
   phoneNumber?: string;
 }
 
+export interface FeedReportRequest{
+  token: string;
+  data:{
+    userId: number;
+    reason: string;
+  }
+}
 // Categories
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
 const getFeeds = ({ queryKey }: any) => {
   const [_key, feedsParams]: [string, FeedsParams] = queryKey;
-  console.log(feedsParams);
   return fetch(`${BASE_URL}/api/feeds`, {
     headers: {
-      authorization: `Bearer ${feedsParams.token}`,
+      authorization: `${feedsParams.token}`,
     },
-  }).then((res) => res.json());
+  }).then(async (res) => {
+    if(res.status === 200) return {status: res.status, ...(await res.json())}
+    else return {status: res.status}
+
+  });
 };
 
 const getClubs = ({ queryKey, pageParam }: any) => {
@@ -298,7 +328,7 @@ const getClubs = ({ queryKey, pageParam }: any) => {
   console.log(parameters);
   return fetch(`${BASE_URL}/api/clubs?${parameters}`, {
     headers: {
-      authorization: `Bearer ${clubsParams.token}`,
+      authorization: `${clubsParams.token}`,
     },
   }).then((res) => res.json());
 };
@@ -308,7 +338,7 @@ const getClub = ({ queryKey }: any) => {
   console.log(_key, token, clubId);
   return fetch(`${BASE_URL}/api/clubs/${clubId}`, {
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: `${token}`,
     },
   }).then(async (res) => {
     return { status: res.status, ...(await res.json()) };
@@ -319,7 +349,7 @@ const getClubRole = ({ queryKey }: any) => {
   const [_key, token, clubId]: [string, string, number] = queryKey;
   return fetch(`${BASE_URL}/api/clubs/${clubId}/role`, {
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: `${token}`,
     },
   })
     .then((res) => res.json())
@@ -349,14 +379,37 @@ const createFeed = async (req: FeedCreationRequest) => {
     method: "POST",
     headers: {
       "content-type": "multipart/form-data",
-      authorization: `Bearer ${req.token}`,
+      authorization: `${req.token}`,
       Accept: "*/*",
-      clubId: "11",
-      content: "112",
+      clubId: '11',
+      content: '112'
     },
     body,
   }).then(async (res) => {
     return { status: res.status, json: await res.json() };
+  });
+};
+
+const updateFeed = async (req: FeedUpdateRequest) => {
+  const body = new FormData();
+
+  if (req.data) {
+    body.append("clubUpdateRequest", {
+      string: JSON.stringify(req.data),
+      type: "application/json",
+    });
+  }
+
+  return fetch(`${BASE_URL}/api/feeds/${req.data.id}`, {
+    method: "PUT",
+    headers: {
+      "content-type": "multipart/form-data",
+      authorization: `${req.token}`,
+      Accept: "*/*",
+    },
+    body,
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
   });
 };
 
@@ -376,7 +429,7 @@ const createClub = async (req: ClubCreationRequest) => {
     method: "POST",
     headers: {
       "content-type": "multipart/form-data",
-      authorization: `Bearer ${req.token}`,
+      authorization: `${req.token}`,
       Accept: "*/*",
     },
     body,
@@ -404,7 +457,7 @@ const updateClub = async (req: ClubUpdateRequest) => {
     method: "PUT",
     headers: {
       "content-type": "multipart/form-data",
-      authorization: `Bearer ${req.token}`,
+      authorization: `${req.token}`,
       Accept: "*/*",
     },
     body,
@@ -418,7 +471,7 @@ const applyClub = (req: ClubApplyRequest) => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      authorization: `Bearer ${req.token}`,
+      authorization: `${req.token}`,
     },
     body: JSON.stringify({ clubId: req.clubId, memo: req.memo }),
   }).then(async (res) => {
@@ -432,7 +485,7 @@ const changeRole = (req: ChangeRoleRequest) => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      authorization: `Bearer ${req.token}`,
+      authorization: `${req.token}`,
     },
     body: JSON.stringify(req.data),
   }).then(async (res) => {
@@ -450,7 +503,7 @@ const createClubSchedule = async (req: ClubScheduleCreationRequest) => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      authorization: `Bearer ${req.token}`,
+      authorization: `${req.token}`,
       Accept: "*/*",
     },
     body: JSON.stringify(req.body),
@@ -476,7 +529,7 @@ const getUserInfo = ({ queryKey }: any) => {
   return fetch(`${BASE_URL}/api/user`, {
     method: "GET",
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: `${token}`,
     },
   }).then((response) => response.json());
 };
@@ -497,7 +550,7 @@ const updateUserInfo = (req: UserInfoRequest) => {
     method: "PUT",
     headers: {
       "content-type": "multipart/form-data",
-      authorization: `Bearer ${req.token}`,
+      authorization: `${req.token}`,
       Accept: "*/*",
     },
     body,
@@ -523,7 +576,16 @@ const selectMyClubs = ({ queryKey }: any) => {
   return fetch(`${BASE_URL}/api/clubs/my`, {
     method: "GET",
     headers: {
-      authorization: `Bearer ${token}`,
+      authorization: `${token}`,
+    },
+  }).then((res) => res.json());
+};
+
+const reportFeed = (req: FeedReportRequest) => {
+  return fetch(`${BASE_URL}/api/feeds/${req.data.userId}/report?reason=${req.data.reason}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `${req.token}`,
     },
   }).then((res) => res.json());
 };
@@ -553,6 +615,11 @@ export const UserApi = {
 export const FeedApi = {
   getFeeds,
   createFeed,
+  reportFeed,
+  updateFeed,
 };
 
 export const CommonApi = { getJWT };
+
+
+

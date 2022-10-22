@@ -1,16 +1,20 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, TouchableOpacity, Dimensions, Modal, Alert, Slider, useWindowDimensions, Platform, View, Text } from "react-native";
-import styled from "styled-components/native";
-import Swiper from "react-native-swiper";
-import { SliderBox } from "react-native-image-slider-box";
-import { Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { useQuery, useInfiniteQuery, useQueryClient } from "react-query";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { Alert, Dimensions, FlatList, Modal,
+  TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
-import { Feed, FeedsResponse, FeedsParams, getFeeds, FeedApi, Reply, UserInfoResponse, UserApi, Category } from "../api";
+import styled from "styled-components/native";
+import {
+  Feed,
+  FeedApi,
+  FeedsParams,
+  FeedsResponse,
+  UserApi,
+  UserInfoResponse
+} from "../api";
 import CustomText from "../components/CustomText";
-import MentionHashtagTextView from "react-native-mention-hashtag-text";
-
+import ImageSelecter from "./HomeRelevant/ImageSelecter";
 const Container = styled.SafeAreaView`
   flex: 1;
 `;
@@ -159,6 +163,10 @@ const InfoArea = styled.View`
   padding-right: 10px;
 `;
 
+const LikeClick=styled.TouchableOpacity`
+
+`
+
 const NumberText = styled.Text`
   font-size: 12px;
   font-weight: 300;
@@ -190,7 +198,7 @@ interface HeartType {
   heart: boolean;
 }
 
-const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { navigate } }) => {
+const Home = ({ navigation: { navigate},route:{params:{userId,userName,content}} }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const queryClient = useQueryClient();
@@ -200,18 +208,32 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
   const token = useSelector((state) => state.AuthReducers.authToken);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
 
+  const [id, setId] = useState(userId);
+  const [name,setName]=useState(userName)
+  const [PeedContent,setPeedContent] = useState(content)
+
   const [params, setParams] = useState<FeedsParams>({
     token,
   });
-
-  const getFeeds = () => {
-    return fetch(`http://3.39.190.23:8080/api/feeds`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res) => res.json());
-  };
+  //
+  // const likeCount = () =>{
+  //   return fetch(`http://3.39.190.23:8080/api/feeds/${id}/likes`, {
+  //     method: "POST",
+  //     headers: {
+  //       Authorization: `${token}`,
+  //     },
+  //   }).then((res) => res.json());
+  // }
+  //
+  //
+  // const likeCountReverse = () =>{
+  //   return fetch(`http://3.39.190.23:8080/api/feeds/${id}/likes`, {
+  //     method: "PUT",
+  //     headers: {
+  //       Authorization: `${token}`,
+  //     },
+  //   }).then((res) => res.json());
+  // }
 
   //heart선택
   const [heartMap, setHeartMap] = useState(new Map());
@@ -220,7 +242,7 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     isLoading: feedsLoading,
     data: feeds,
     isRefetching: isRefetchingClubs,
-  } = useQuery<FeedsResponse>(["getFeeds"], getFeeds, {
+  } = useQuery<FeedsResponse>(["getFeeds", {token}], FeedApi.getFeeds, {
     //useQuery(["getFeeds", token], FeedApi.getFeeds, {
     onSuccess: (res) => {
       setIsPageTransition(false);
@@ -228,10 +250,11 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
       let heartDataMap = new Map();
 
       for (let i = 0; i < res?.data?.length; ++i) {
-        heartDataMap.set(res?.data[i].id, false);
+        heartDataMap.set(res.data[i].id, false);
         //나중에 api 호출했을때는 false자리에 id 불러오듯이 값 받아와야함.
       }
       setHeartMap(heartDataMap);
+      // console.log(res.statusCode)
     },
     onError: (err) => {
       console.log(err);
@@ -244,7 +267,21 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
     data: userInfo,
   } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo);
 
-  console.log(userInfo?.data);
+
+  //commentCount
+
+  // const {
+  //   isLoading: commentPlusLoading,
+  //   data: commentPlusCount,
+  // }=useQuery<ReplyResponse>(["getCommentCount", token], likeCount)
+  //
+  // const {
+  //   isLoading: commentReverseLoading,
+  //   data: commentReverseCount,
+  // }=useQuery<ReplyResponse>(["getCommentCount", token], likeCountReverse)
+
+
+
 
   const feedSize = Math.round(SCREEN_WIDTH / 3) - 1;
 
@@ -273,13 +310,16 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
   const goToModifiy = () => {
     navigate("HomeStack", {
       screen: "ModifiyPeed",
+      userId: userId,
+      content: PeedContent,
     });
     setModalVisible(!isModalVisible);
   };
 
   const goToClub = () => {
-    navigate("HomeStack", {
+    return navigate("HomeStack", {
       screen: "MyClubSelector",
+      userId: id,
     });
   };
 
@@ -337,7 +377,7 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
           data={feeds?.data}
           renderItem={({ item, index }: { item: Feed; index: number }) => (
             <>
-              <FeedHeader>
+              <FeedHeader key={index}>
                 <FeedUser onPress={goToProfile}>
                   <UserImage
                     source={{
@@ -380,7 +420,8 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
                       <TouchableOpacity onPress={() => setHeartMap((prev) => new Map(prev).set(item.id, !prev.get(item.id)))}>
                         {heartMap.get(item.id) ? <Ionicons name="md-heart" size={20} color="red" likeYn={true} /> : <Ionicons name="md-heart-outline" size={20} color="black" likeYn={false} />}
                       </TouchableOpacity>
-                      <NumberText>{item.likesCount} </NumberText>
+                      {heartMap.get(item.id) ? <LikeClick onPress={() => {}}><NumberText>{item.likesCount +1}</NumberText></LikeClick>
+                        : <LikeClick onPress={() => {}}><NumberText>{item.likesCount }</NumberText></LikeClick>}
                     </InfoArea>
                     <InfoArea>
                       <TouchableOpacity onPress={() => goToReply()}>
@@ -395,7 +436,7 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
                 </FeedInfo>
                 <Content>
                   <Ment>
-                    <MentionHashtagTextView key={feeds}>{item.content}</MentionHashtagTextView>
+                    {item.content}
                   </Ment>
                 </Content>
               </FeedMain>
@@ -407,3 +448,4 @@ const Home: React.FC<NativeStackScreenProps<any, "Home">> = ({ navigation: { nav
   );
 };
 export default Home;
+
