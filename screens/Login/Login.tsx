@@ -1,15 +1,14 @@
 import { useMutation } from "react-query";
-import { CommonApi } from "../../api";
+import { CommonApi, LoginRequest } from "../../api";
 import { useDispatch } from "react-redux";
 import { Login } from "../../store/Actions";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import Root from "../../navigation/Root";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, useEffect, useRef } from "react";
 import { TouchableOpacity, Text, NativeModules, Alert, Keyboard, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
-import { LoginStackParamList } from "../../Types/User";
 
 const Container = styled.View`
   width: 100%;
@@ -70,21 +69,49 @@ const LoginTitle = styled.Text`
   font-weight: 700;
 `;
 
-const LoginRequest: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate, setOptions } }) => {
-  /*  useEffect(() => {
-    setOptions({
-      headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("AuthStack", { screen: "Main" })}>
-          <Ionicons name="chevron-back" size={20} color="black" />
-        </TouchableOpacity>
-      ),
-    });
-  }, []); */
+const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const mutation = useMutation(CommonApi.getJWT, {
+    onSuccess: (res) => {
+      console.log(res.status);
+      // redux 저장
+      dispatch(Login(res.token));
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(error);
+      // Toast Message 출력.
+    },
+  });
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // const signInWithKakao = async () => {
+  //   const token: KakaoOAuthToken = await kakaoLogin();
+
+  //   mutation.mutate({ token: token.accessToken });
+  // };
 
   const goToFindLoginInfo = () => {
     navigate("LoginStack", {
       screen: "FindLoginInfo",
     });
+  };
+
+  const onSubmit = () => {
+    const token = {
+      email: email,
+      password: password,
+    };
+
+    const requestData: LoginRequest = token;
+
+    console.log(requestData);
+
+    mutation.mutate(requestData);
   };
 
   const goToRoot = () => {
@@ -96,18 +123,18 @@ const LoginRequest: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navi
       <Wrap>
         <Form>
           <Title>아이디</Title>
-          <Input placeholder="example@email.com" />
+          <Input placeholder="example@email.com" onChangeText={(text) => setEmail(text)} />
         </Form>
         <Form>
           <Title>비밀번호</Title>
-          <Input placeholder="비밀번호를 입력해주세요." />
+          <Input placeholder="비밀번호를 입력해주세요." onChangeText={(text) => setPassword(text)} />
           <View onPress={goToFindLoginInfo}>
             <ForgetText>로그인 정보가 기억나지 않을때</ForgetText>
           </View>
         </Form>
       </Wrap>
       <Wrap>
-        <LoginButton onPress={goToRoot}>
+        <LoginButton onPress={onSubmit}>
           <LoginTitle>로그인</LoginTitle>
         </LoginButton>
       </Wrap>
@@ -115,4 +142,4 @@ const LoginRequest: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navi
   );
 };
 
-export default LoginRequest;
+export default SignIn;

@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import { useMutation } from "react-query";
 import { CommonApi } from "../../api";
@@ -75,7 +76,12 @@ const Error = styled.Text`
   margin-bottom: 20px;
 `;
 
-const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
+const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate }, route: { params: name, email, password, sex, birth } }) => {
+  const [userName, setUserName] = useState(name);
+  const [userEmail, setUserEmail] = useState(email);
+  const [userPw, setUserPw] = useState(password);
+  const [approvalMethod, setApprovalMethod] = useState(sex);
+  const [birthNumber, setBirthNumber] = useState(birth);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [errortext, setErrortext] = useState(false);
   const phoneInputRef = createRef();
@@ -94,14 +100,53 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ nav
     }
   }, [phoneNumber]);
 
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        // AsyncStorage에서 inputData에 저장된 값 가져오기
+        const value = await AsyncStorage.getItem("userInfo");
+        // value에 값이 있으면 콘솔에 찍어줘
+        if (value !== null) {
+          console.log(value);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    // 함수 실행
+    getData();
+  }, []);
+
+  const storeData = async () => {
+    try {
+      await AsyncStorage.setItem(
+        "userInfo",
+        JSON.stringify({ name: userName.name, email: userName.email, password: userName.password, sex: userName.sex, birth: userName.birth, phone: phoneNumber }),
+        () => {
+          console.log("유저정보 저장 완료");
+        }
+      );
+      console.log("등록 완료");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const validate = () => {
     if (!phoneReg.test(phoneNumber)) {
       setErrortext(true);
       return;
     } else {
       setErrortext(false);
+      storeData();
       navigate("LoginStack", {
         screen: "JoinStepEight",
+        name: userName.name,
+        email: userName.email,
+        password: userName.password,
+        sex: userName.sex,
+        birth: userName.birth,
+        phone: phoneNumber,
       });
     }
   };

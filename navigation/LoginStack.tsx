@@ -10,6 +10,7 @@ import JoinStepSix from "../screens/Login/JoinStepSix";
 import JoinStepSeven from "../screens/Login/JoinStepSeven";
 import JoinStepEight from "../screens/Login/JoinStepEight";
 import JoinStepNine from "../screens/Login/JoinStepNine";
+import JoinConfirm from "../screens/Login/JoinConfirm";
 import JoinStepSuccess from "../screens/Login/JoinStepSuccess";
 import FindLoginInfo from "../screens/Login/FindLoginInfo";
 import { TouchableOpacity, Text } from "react-native";
@@ -20,7 +21,7 @@ const NativeStack = createNativeStackNavigator();
 const LoginStack = ({
   navigation: { navigate, goBack },
   route: {
-    params: { userData, category },
+    params: { userData, category, name, email, password, sex, birth, phone, church, token },
   },
 }) => {
   return (
@@ -64,6 +65,7 @@ const LoginStack = ({
       <NativeStack.Screen
         name="JoinStepTwo"
         component={JoinStepTwo}
+        initialParams={{ name }}
         options={{
           title: "회원가입",
           headerLeft: () => (
@@ -76,6 +78,7 @@ const LoginStack = ({
       <NativeStack.Screen
         name="JoinStepThree"
         component={JoinStepThree}
+        initialParams={{ name, email }}
         options={{
           title: "회원가입",
           headerLeft: () => (
@@ -86,20 +89,9 @@ const LoginStack = ({
         }}
       />
       <NativeStack.Screen
-        name="JoinStepFour"
-        component={JoinStepFour}
-        options={{
-          title: "회원가입",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepThree" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <NativeStack.Screen
         name="JoinStepFive"
         component={JoinStepFive}
+        initialParams={{ name, email, password }}
         options={{
           title: "회원가입",
           headerLeft: () => (
@@ -112,6 +104,7 @@ const LoginStack = ({
       <NativeStack.Screen
         name="JoinStepSix"
         component={JoinStepSix}
+        initialParams={{ name, email, password, sex }}
         options={{
           title: "회원가입",
           headerLeft: () => (
@@ -124,6 +117,7 @@ const LoginStack = ({
       <NativeStack.Screen
         name="JoinStepSeven"
         component={JoinStepSeven}
+        initialParams={{ name, email, password, sex, birth }}
         options={{
           title: "회원가입",
           headerLeft: () => (
@@ -136,6 +130,7 @@ const LoginStack = ({
       <NativeStack.Screen
         name="JoinStepEight"
         component={JoinStepEight}
+        initialParams={{ name, email, password, sex, birth, phone }}
         options={{
           title: "회원가입",
           headerLeft: () => (
@@ -148,7 +143,7 @@ const LoginStack = ({
       <NativeStack.Screen
         name="JoinStepNine"
         component={JoinStepNine}
-        initialParams={{ userData, category }}
+        initialParams={{ name, email, password, sex, birth, phone, church, userData, category }}
         options={{
           title: "회원가입",
           headerLeft: () => (
@@ -159,12 +154,26 @@ const LoginStack = ({
         }}
       />
       <NativeStack.Screen
-        name="JoinStepSuccess"
-        component={JoinStepSuccess}
+        name="JoinConfirm"
+        component={JoinConfirm}
+        initialParams={{ name, email, password, sex, birth, phone, church, userData, category, token }}
         options={{
           title: "회원가입",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepNine" })}>
+              <Ionicons name="chevron-back" size={20} color="black" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <NativeStack.Screen
+        name="JoinStepSuccess"
+        component={JoinStepSuccess}
+        initialParams={{ token }}
+        options={{
+          title: "회원가입",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinConfirm" })}>
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),

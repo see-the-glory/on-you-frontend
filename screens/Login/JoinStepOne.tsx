@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, createRef } from "react";
+import React, { useState, useEffect, createRef } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import { useMutation } from "react-query";
 import { CommonApi } from "../../api";
@@ -78,6 +79,17 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
   const [userName, setUserName] = useState("");
   const [errortext, setErrortext] = useState(false);
 
+  const storeData = async () => {
+    try {
+      await AsyncStorage.setItem("userInfo", JSON.stringify({ name: userName }), () => {
+        console.log("유저정보 저장 완료");
+      });
+      console.log("등록 완료");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const nameInputRef = createRef();
   const nameReg = /^[가-힣]+$/;
 
@@ -87,8 +99,10 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
       return;
     } else {
       setErrortext(false);
+      storeData();
       navigate("LoginStack", {
         screen: "JoinStepTwo",
+        name: userName,
       });
     }
   };

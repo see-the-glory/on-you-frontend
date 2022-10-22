@@ -254,13 +254,25 @@ export interface UserInfoRequest {
   } | null;
   data: {
     birthday?: string;
+    email?: string;
     name?: string;
+    password?: string;
     organizationName?: string;
     thumbnail?: string;
     sex?: string;
     phoneNumber?: string;
     interests?: [];
   };
+}
+
+export interface SignUp {
+  birthday?: string;
+  email?: string;
+  name?: string;
+  password?: string;
+  organizationName?: string;
+  sex?: string;
+  phoneNumber?: string;
 }
 
 // Categories
@@ -448,13 +460,15 @@ const createClubSchedule = async (req: ClubScheduleCreationRequest) => {
 };
 
 const getJWT = (req: LoginRequest) => {
-  return fetch(`${BASE_URL}/login/kakao/`, {
+  return fetch(`${BASE_URL}/api/user/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(req),
-  }).then((res) => res.json());
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
 };
 
 const getUserInfo = ({ queryKey }: any) => {
@@ -492,14 +506,16 @@ const updateUserInfo = (req: UserInfoRequest) => {
   });
 };
 
-const registerUserInfo = ({ queryKey }: any) => {
-  const [_key, token]: [string, string] = queryKey;
-  return fetch(`${BASE_URL}/api/user`, {
+const registerUserInfo = (req: SignUp) => {
+  return fetch(`${BASE_URL}/api/user/signup`, {
     method: "POST",
     headers: {
-      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
     },
-  }).then((response) => response.json());
+    body: JSON.stringify(req),
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
 };
 
 const selectMyClubs = ({ queryKey }: any) => {

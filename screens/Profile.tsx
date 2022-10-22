@@ -166,7 +166,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
         <LogoBox>
           <LogoImage
             source={{
-              uri: userInfo?.data?.thumbnail === null ? "http://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userInfo?.data?.thumbnail,
+              uri: userInfo?.data.thumbnail,
             }}
           />
         </LogoBox>
