@@ -146,7 +146,6 @@ export interface FeedsParams {
 export interface ClubsParams {
   token: string;
   categoryId: number | null;
-  clubState: number | null;
   minMember: number | null;
   maxMember: number | null;
   showRecruiting: number;
@@ -180,7 +179,7 @@ export interface ClubCreationRequest {
     uri: string;
     type: string;
     name: string | undefined;
-  };
+  } | null;
   data: {
     category1Id: number;
     category2Id: number | null;
@@ -189,6 +188,8 @@ export interface ClubCreationRequest {
     clubLongDesc: string | null;
     clubName: string;
     clubMaxMember: number;
+    phoneNumber: string;
+    organizationName: string;
   };
   token: string;
 }
@@ -289,8 +290,13 @@ const getFeeds = ({ queryKey }: any) => {
 
 const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
-  console.log(clubsParams);
-  return fetch(`${BASE_URL}/api/clubs?cursor=${pageParam ?? ""}&categoryId=${clubsParams.categoryId ?? "0"}&showMy=${clubsParams.showMy}`, {
+  let parameters = `categoryId=${clubsParams.categoryId ?? 0}&showMy=${clubsParams.showMy}&showRecruitingOnly=${clubsParams.showRecruiting}`;
+  parameters += clubsParams.minMember !== null ? `&min=${clubsParams.minMember}` : "";
+  parameters += clubsParams.maxMember !== null ? `&max=${clubsParams.maxMember}` : "";
+  parameters += `&sort=${clubsParams.sortType}&orderBy=${clubsParams.orderBy}`;
+  parameters += pageParam ? `&cursor=${pageParam}` : "";
+  console.log(parameters);
+  return fetch(`${BASE_URL}/api/clubs?${parameters}`, {
     headers: {
       authorization: `Bearer ${clubsParams.token}`,
     },
@@ -305,7 +311,7 @@ const getClub = ({ queryKey }: any) => {
       authorization: `Bearer ${token}`,
     },
   }).then(async (res) => {
-    return { ...(await res.json()), status: res.status };
+    return { status: res.status, ...(await res.json()) };
   });
 };
 
@@ -375,7 +381,8 @@ const createClub = async (req: ClubCreationRequest) => {
     },
     body,
   }).then(async (res) => {
-    return { status: res.status, json: await res.json() };
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
   });
 };
 

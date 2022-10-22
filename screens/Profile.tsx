@@ -171,8 +171,8 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
           />
         </LogoBox>
         <InfoBox>
-          <Email>{userInfo?.data.email}</Email>
-          <Title>{userInfo?.data.name}</Title>
+          <Email>{userInfo?.data?.email}</Email>
+          <Title>{userInfo?.data?.name}</Title>
         </InfoBox>
         <EditBox>
           <MaterialCommunityIcons name="pencil-outline" color="#295AF5" size={20} onPress={goToEditProfile} />

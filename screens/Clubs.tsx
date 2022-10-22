@@ -166,15 +166,14 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const [params, setParams] = useState<ClubsParams>({
     token,
     categoryId: 0,
-    clubState: null,
     minMember: null,
     maxMember: null,
     sortType: "created",
-    orderBy: "desc",
+    orderBy: "DESC",
     showRecruiting: 0,
     showMy: 0,
   });
-  const [memberRange, setMemberRange] = useState<number | number[]>([1, 20]);
+  const [memberRange, setMemberRange] = useState<number | number[]>([0, 100]);
   let sliderTimeoutId: NodeJS.Timeout;
   const [showRecruiting, setShowRecruiting] = useState<number>(0);
   const [showMy, setShowMy] = useState<number>(0);
@@ -255,6 +254,8 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     let curParams: ClubsParams = params;
     curParams.showRecruiting = showRecruiting;
     curParams.showMy = showMy;
+    curParams.minMember = Array.isArray(memberRange) ? memberRange[0] : null;
+    curParams.maxMember = Array.isArray(memberRange) ? memberRange[1] : null;
     setParams(curParams);
     setIsPageTransition(true);
   };
@@ -292,27 +293,27 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
       {
         title: "최신개설 모임 순",
         sortType: "created",
-        orderBy: "desc",
+        orderBy: "DESC",
       },
       {
         title: "멤버수 많은 순",
         sortType: "recruitNum",
-        orderBy: "desc",
+        orderBy: "DESC",
       },
       {
         title: "멤버수 적은 순",
         sortType: "recruitNum",
-        orderBy: "asc",
+        orderBy: "ASC",
       },
       {
         title: "게시글 많은 순",
         sortType: "feedNum",
-        orderBy: "desc",
+        orderBy: "DESC",
       },
       {
         title: "하트 많은 순",
         sortType: "likesNum",
-        orderBy: "desc",
+        orderBy: "DESC",
       },
     ]);
   }, []);
@@ -412,7 +413,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                     thumbnailPath={item.thumbnail}
                     organizationName={item.organizationName}
                     clubName={item.name}
-                    memberNum={item.members.length}
+                    memberNum={item.members.filter((member) => member.role !== "PENDING").length}
                     clubShortDesc={item.clubShortDesc}
                     categories={item.categories}
                     recruitStatus={item.recruitStatus}
@@ -437,7 +438,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             <SubmitButton
               onPress={() => {
                 closeFilteringSheet();
-                if (params.showRecruiting !== showRecruiting || params.showMy !== showMy) setClubsFilterParams();
+                if (params.showRecruiting !== showRecruiting || params.showMy !== showMy || memberRange[0] !== params.minMember || memberRange[1] !== params.maxMember) setClubsFilterParams();
               }}
             >
               <SubmitText>모임 보기</SubmitText>

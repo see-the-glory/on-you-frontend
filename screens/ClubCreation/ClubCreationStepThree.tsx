@@ -1,109 +1,121 @@
 import React, { useState } from "react";
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from "react-native";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { ClubApi, ClubCreationRequest } from "../../api";
+import CustomText from "../../components/CustomText";
+import CustomTextInput from "../../components/CustomTextInput";
 import { ClubCreationStepThreeScreenProps } from "../../Types/Club";
 
 const Container = styled.ScrollView`
   flex: 1;
+  padding: 0px 20px;
 `;
 
 const HeaderView = styled.View`
-  flex-direction: column;
   align-items: center;
-  margin-top: 30px;
-  margin-bottom: 20px;
+  justify-content: center;
+  margin: 20px 0px 10px 0px;
 `;
 
-const H1 = styled.Text`
-  font-size: 28px;
-  font-weight: 900;
+const H1 = styled(CustomText)`
+  font-size: 18px;
+  line-height: 25px;
+  font-family: "NotoSansKR-Bold";
+  margin: 10px 0px;
+`;
+
+const H2 = styled(CustomText)`
+  font-size: 14px;
+  color: #5c5c5c;
   margin-bottom: 15px;
 `;
 
-const H2 = styled.Text`
-  font-size: 18px;
-  color: #5c5c5c;
-`;
-
-const SectionView = styled.View`
+const Content = styled.View`
   width: 100%;
 `;
 
-const FieldView = styled.View`
-  justify-content: center;
-  margin-left: 50px;
-  margin-right: 50px;
-  margin-top: 30px;
+const ContentItem = styled.View`
+  width: 100%;
+  flex: 1;
+  margin-bottom: 30px;
 `;
 
-const FieldNameText = styled.Text`
-  font-size: 21px;
-  font-weight: 700;
-  margin-bottom: 10px;
+const ItemTitle = styled(CustomText)`
+  font-size: 13px;
+  line-height: 19px;
+  color: #b0b0b0;
+  margin-bottom: 8px;
 `;
 
-const ExampleText = styled.Text`
-  font-size: 12px;
-  margin-left: 5px;
+const ItemText = styled(CustomText)`
+  font-size: 9px;
+  line-height: 15px;
+  padding: 8px 0px;
   color: #8c8c8c;
 `;
 
-const BrifeTextInput = styled.TextInput`
-  border-radius: 10px;
+const ShortDescInput = styled(CustomTextInput)`
+  width: 100%;
+  font-size: 12px;
+  line-height: 17px;
+  padding: 8px;
   background-color: #f3f3f3;
-  font-size: 14px;
-  padding: 15px;
-  margin-bottom: 10px;
+  text-align: center;
 `;
 
-const DetailTextInput = styled.TextInput`
-  height: 130px;
-  border-radius: 10px;
+const LongDescInput = styled(CustomTextInput)`
+  width: 100%;
+  height: 300px;
+  font-size: 12px;
+  line-height: 20px;
+  padding: 12px;
   background-color: #f3f3f3;
-  font-size: 14px;
-  padding: 15px;
 `;
 
+const FooterView = styled.View`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin: 30px 0px 80px 0px;
+`;
 const NextButton = styled.TouchableOpacity`
-  width: 200px;
-  height: 40px;
-  background-color: #295af5;
-  border-radius: 10px;
+  width: 100%;
+  height: 50px;
+  background-color: ${(props) => (props.disabled ? "#c4c4c4" : "#295AF5")};
   justify-content: center;
   align-items: center;
-  margin-top: 50px;
-  margin-bottom: 80px;
 `;
 
-const ButtonText = styled.Text`
+const ButtonText = styled(CustomText)`
   font-size: 18px;
-  font-weight: 700;
+  line-height: 25px;
+  font-family: "NotoSansKR-Bold";
   color: white;
 `;
 
 const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   route: {
-    params: { category1, category2, clubName, clubMemberCount, approvalMethod, imageURI },
+    params: { category1, category2, clubName, maxNumber, isApproveRequired, phoneNumber, organizationName, imageURI },
   },
   navigation: { navigate },
 }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
-  const [briefIntroText, setBriefIntroText] = useState<string>("");
-  const [detailIntroText, setDetailIntroText] = useState<string>("");
+  const [clubShortDesc, setClubShortDesc] = useState<string>("");
+  const [clubLongDesc, setClubLongDesc] = useState<string>("");
+
+  console.log(category1, category2, clubName, maxNumber, isApproveRequired, phoneNumber, organizationName, imageURI);
 
   const mutation = useMutation(ClubApi.createClub, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.json?.resultCode === "OK") {
+      if (res.status === 200) {
         return navigate("ClubCreationSuccess", {
-          clubData: res.json?.data,
+          clubData: res.data,
         });
       } else {
         console.log(`mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res.json);
+        console.log(res);
         return navigate("ClubCreationFail", {});
       }
     },
@@ -120,11 +132,15 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
       category1Id: category1,
       category2Id: category2,
       clubName,
-      clubMaxMember: clubMemberCount,
-      clubShortDesc: briefIntroText,
-      clubLongDesc: detailIntroText,
-      isApproveRequired: approvalMethod === 0 ? "N" : "Y",
+      clubMaxMember: maxNumber,
+      clubShortDesc,
+      clubLongDesc,
+      phoneNumber,
+      organizationName,
+      isApproveRequired,
     };
+
+    console.log(data);
 
     const splitedURI = new String(imageURI).split("/");
 
@@ -150,46 +166,51 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Container
-        contentContainerStyle={{
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <HeaderView>
-          <H1>모임 소개</H1>
-          <H2>모임을 소개해주세요.</H2>
-        </HeaderView>
-        <SectionView>
-          <FieldView>
-            <FieldNameText>간단 소개</FieldNameText>
-            <BrifeTextInput
-              placeholder="30자 이내로 간단 소개글을 적어주세요."
-              textAlign="left"
-              multiline={true}
-              maxLength={30}
-              textAlignVertical="top"
-              onChangeText={(text) => setBriefIntroText(text)}
-            />
-            <ExampleText>ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!</ExampleText>
-          </FieldView>
-          <FieldView>
-            <FieldNameText>상세 소개</FieldNameText>
-            <DetailTextInput
-              placeholder="모임의 상세 소개글을 적어주세요.
-              ex) 모임시간, 모임방식, 안내사항 등"
-              textAlign="left"
-              multiline={true}
-              maxLength={1000}
-              textAlignVertical="top"
-              onChangeText={(text) => setDetailIntroText(text)}
-            />
-          </FieldView>
-        </SectionView>
-        <NextButton onPress={onSubmit}>
-          <ButtonText>완료</ButtonText>
-        </NextButton>
-      </Container>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
+        <Container
+          contentContainerStyle={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <HeaderView>
+            <H1>모임 소개</H1>
+            <H2>모임을 소개해주세요.</H2>
+          </HeaderView>
+          <Content>
+            <ContentItem>
+              <ItemTitle>간단 소개</ItemTitle>
+              <ShortDescInput
+                placeholder="36자 이내로 간단 소개글을 적어주세요."
+                value={clubShortDesc}
+                textAlign="center"
+                multiline={true}
+                maxLength={36}
+                textAlignVertical="center"
+                onChangeText={(value: string) => setClubShortDesc(value)}
+              />
+              <ItemText>ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!</ItemText>
+            </ContentItem>
+            <ContentItem>
+              <ItemTitle>상세 소개</ItemTitle>
+              <LongDescInput
+                placeholder="모임의 상세 소개글을 적어주세요."
+                value={clubLongDesc}
+                textAlign="left"
+                multiline={true}
+                maxLength={1000}
+                textAlignVertical="top"
+                onChangeText={(value: string) => setClubLongDesc(value)}
+              />
+            </ContentItem>
+          </Content>
+          <FooterView>
+            <NextButton onPress={onSubmit} disabled={clubShortDesc === "" || clubLongDesc === ""}>
+              <ButtonText>완료</ButtonText>
+            </NextButton>
+          </FooterView>
+        </Container>
+      </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 };
