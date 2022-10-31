@@ -93,7 +93,9 @@ const ButtonTitle = styled.Text`
   font-weight: 700;
 `;
 
-const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate }, route: { params: name, token } }) => {
+const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate }, route: { params: name, email, password } }) => {
+  const [userName, setUserName] = useState(name);
+
   const mutation = useMutation(UserApi.registerUserInfo, {
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
@@ -132,6 +134,8 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
     onSubmit();
     navigate("LoginStack", {
       screen: "JoinStepSuccess",
+      email: name?.email,
+      password: name?.password,
     });
   };
 
