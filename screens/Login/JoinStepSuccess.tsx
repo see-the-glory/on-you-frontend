@@ -1,9 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import { useMutation } from "react-query";
-import { CommonApi } from "../../api";
-import { useDispatch } from "react-redux";
+import { CommonApi, LoginRequest } from "../../api";
+import { useDispatch, useSelector } from "react-redux";
 import { Login } from "../../store/Actions";
 import styled from "styled-components/native";
 
@@ -75,14 +76,40 @@ const Error = styled.Text`
   margin-bottom: 20px;
 `;
 
-const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate }, route: { params: token } }) => {
+const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate }, route: { params: name } }) => {
+  const dispatch = useDispatch();
+
+  const mutation = useMutation(CommonApi.getJWT, {
+    onSuccess: (res) => {
+      console.log(res.status);
+      // redux 저장
+      dispatch(Login(res.token));
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(error);
+      // Toast Message 출력.
+    },
+  });
+
+  const onSubmit = () => {
+    const token = {
+      email: name?.email,
+      password: name?.password,
+    };
+
+    const requestData: LoginRequest = token;
+
+    console.log(requestData);
+
+    mutation.mutate(requestData);
+  };
+
   const goToNext = () => {
     navigate("LoginStack", {
       screen: "Login",
     });
   };
-
-  console.log();
 
   return (
     <Container>
@@ -94,7 +121,7 @@ const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ n
         <SubText>온유에 오신 것을 환영합니다 :&#41;</SubText>
       </Wrap>
       <Wrap>
-        <Button onPress={goToNext}>
+        <Button onPress={onSubmit}>
           <ButtonTitle>시작하기</ButtonTitle>
         </Button>
       </Wrap>

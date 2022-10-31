@@ -119,26 +119,32 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
   };
 
   return (
-    <Container>
-      <Wrap>
-        <Form>
-          <Title>아이디</Title>
-          <Input placeholder="example@email.com" onChangeText={(text) => setEmail(text)} />
-        </Form>
-        <Form>
-          <Title>비밀번호</Title>
-          <Input placeholder="비밀번호를 입력해주세요." onChangeText={(text) => setPassword(text)} />
-          <View onPress={goToFindLoginInfo}>
-            <ForgetText>로그인 정보가 기억나지 않을때</ForgetText>
-          </View>
-        </Form>
-      </Wrap>
-      <Wrap>
-        <LoginButton onPress={onSubmit}>
-          <LoginTitle>로그인</LoginTitle>
-        </LoginButton>
-      </Wrap>
-    </Container>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <Container>
+        <Wrap>
+          <Form>
+            <Title>아이디</Title>
+            <Input placeholder="example@email.com" onChangeText={(text) => setEmail(text)} />
+          </Form>
+          <Form>
+            <Title>비밀번호</Title>
+            <Input secureTextEntry={true} placeholder="비밀번호를 입력해주세요." onChangeText={(text) => setPassword(text)} />
+            <View onPress={goToFindLoginInfo}>
+              <ForgetText>로그인 정보가 기억나지 않을때</ForgetText>
+            </View>
+          </Form>
+        </Wrap>
+        <Wrap>
+          <LoginButton onPress={onSubmit}>
+            <LoginTitle>로그인</LoginTitle>
+          </LoginButton>
+        </Wrap>
+      </Container>
+    </TouchableWithoutFeedback>
   );
 };
 

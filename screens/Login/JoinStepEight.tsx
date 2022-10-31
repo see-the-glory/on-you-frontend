@@ -142,22 +142,36 @@ const JoinStepEight: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ nav
   };
 
   return (
-    <Container>
-      <Wrap>
-        <BorderWrap>
-          <Border></Border>
-        </BorderWrap>
-        <AskText>출석중인 교회를 알려주세요.</AskText>
-        <SubText>멤버 관리와, 소모임 소속 기관을 알기 위함 입니다.</SubText>
-        <Input placeholder="교회를 입력해주세요. ex)OO교회" maxLength={10} onChangeText={(church) => setChurch(church)} value={church} ref={churchInputRef} returnKeyType="next" blurOnSubmit={false} />
-        {errortext === true || !churchReg.test(church) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
-      </Wrap>
-      <Wrap>
-        <Button onPress={validate} disabled={!churchReg.test(church)}>
-          <ButtonTitle>다음</ButtonTitle>
-        </Button>
-      </Wrap>
-    </Container>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <Container>
+        <Wrap>
+          <BorderWrap>
+            <Border></Border>
+          </BorderWrap>
+          <AskText>출석중인 교회를 알려주세요.</AskText>
+          <SubText>멤버 관리와, 소모임 소속 기관을 알기 위함 입니다.</SubText>
+          <Input
+            placeholder="교회를 입력해주세요. ex)OO교회"
+            maxLength={10}
+            onChangeText={(church) => setChurch(church)}
+            value={church}
+            ref={churchInputRef}
+            returnKeyType="next"
+            blurOnSubmit={false}
+          />
+          {errortext === true || !churchReg.test(church) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+        </Wrap>
+        <Wrap>
+          <Button onPress={validate} disabled={!churchReg.test(church)}>
+            <ButtonTitle>다음</ButtonTitle>
+          </Button>
+        </Wrap>
+      </Container>
+    </TouchableWithoutFeedback>
   );
 };
 

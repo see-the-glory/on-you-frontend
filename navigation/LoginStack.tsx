@@ -169,14 +169,10 @@ const LoginStack = ({
       <NativeStack.Screen
         name="JoinStepSuccess"
         component={JoinStepSuccess}
-        initialParams={{ token }}
+        initialParams={{ name, email, password, token }}
         options={{
           title: "회원가입",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinConfirm" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
-            </TouchableOpacity>
-          ),
+          headerLeft: () => <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinConfirm" })}>{/* <Ionicons name="chevron-back" size={20} color="black" /> */}</TouchableOpacity>,
         }}
       />
     </NativeStack.Navigator>
