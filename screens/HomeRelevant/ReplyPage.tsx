@@ -2,10 +2,24 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Platform, StatusBar, FlatList, Button, TextInput, Alert, Animated, ActivityIndicator, Image } from "react-native";
 import styled from "styled-components/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { Dimensions } from "react-native";
-import { Reply, ReplyReponse, User, FeedApi, UserInfoResponse, getUserInfo, UserApi } from "../../api";
+import {
+  Reply,
+  ReplyReponse,
+  User,
+  FeedApi,
+  UserInfoResponse,
+  getUserInfo,
+  UserApi,
+  getReply,
+  FeedLikeRequest, FeedReplyRequest
+} from "../../api";
+import {
+  ModifiyPeedScreenProps,
+  ReplyPageScreenProps
+} from "../../types/feed";
 const Container = styled.SafeAreaView`
   flex: 1;
   height: 100%;
@@ -76,6 +90,13 @@ const ReplyArea = styled.View`
   bottom: 0;
 `;
 
+const ReplyInputArea = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 88%;
+`
+
 const ReplyInput = styled.TextInput`
   color: #b0b0b0;
   left: 15px;
@@ -92,64 +113,84 @@ const ReplyDone = styled.Text`
   color: #63abff;
   font-size: 15px;
   font-weight: bold;
-  left: 550%;
   width: 30px;
   height: 24px;
   top: 15%;
 `;
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-//파일전송방법
-// route: {
-//   params: { category1, category2 },
-// },
-const ReplyPage: React.FC<NativeStackScreenProps<any, "ReplyPage">> = ({ navigation: { navigate } }) => {
+const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
+                     navigation:{navigate},
+                     route: { params: { feedData }},
+                   }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const token = useSelector((state) => state.AuthReducers.authToken);
   const queryClient = useQueryClient();
+
+  const [content, setContent] = useState("");
 
   const onRefresh = async () => {
     setRefreshing(true);
     await queryClient.refetchQueries(["replys"]);
     setRefreshing(false);
   };
-
-  const FeedId = () => {
-    return fetch(`http://3.39.190.23:8080/api/feeds`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res) => res.json());
-  };
-
-  const getReply = () => {
-    return fetch(`http://3.39.190.23:8080/api/feeds/8/comments`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res) => res.json());
-  };
-
   /** 리플 데이터   */
-  const { data: replys, isLoading: replysLoading } = useQuery<ReplyReponse>(["getReply"], getReply, {
-    onSuccess: (res) => {
-      console.log(res);
-    },
-    onError: (err) => {
-      console.log(`[getFeeds error] ${err}`);
-    },
-  });
+  const { data: replys, isLoading: replysLoading } =
+    useQuery<ReplyReponse>(["getReply",token,feedData.id], FeedApi.getReply,{
+      onSuccess: (res) => {
+        // console.log(res);
+      },
+      onError: (err) => {
+        console.log(`[getFeeds error] ${err}`);
+      },
+    });
+
 
   /** 유저 데이터   */
   const {
     isLoading: userInfoLoading, // true or false
     data: userInfo,
-  } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo);
+  } = useQuery<UserInfoResponse>(["userInfo", token], UserApi.getUserInfo);
 
-  console.log(userInfo?.data);
+  // console.log(userInfo?.data.id);
+
+  //댓글추가
+  const mutation = useMutation( FeedApi.ReplyFeed, {
+    onSuccess: (res) => {
+      if (res.status === 200) {
+        console.log(res)
+        onRefresh();
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(res);
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+      // return navigate("Tabs", {
+      //   screen: "Home",
+      // });
+    },
+    onSettled: (res, error) => {},
+  });
+
+  const RelpyFeed=()=>{
+    const data = {
+      id: feedData.id,
+      content: content,
+    };
+
+    // console.log(data);
+    const likeRequestData: FeedReplyRequest=
+      {
+        data,
+        token,
+      }
+
+    mutation.mutate(likeRequestData);
+  };
 
   return (
     <Container>
@@ -163,7 +204,7 @@ const ReplyPage: React.FC<NativeStackScreenProps<any, "ReplyPage">> = ({ navigat
             keyExtractor={(item: Reply, index: number) => String(index)}
             data={replys?.data}
             renderItem={({ item, index }: { item: Reply; index: number }) => (
-              <CommentArea>
+              <CommentArea key={index}>
                 <CommentImg source={{ uri: item.thumbnail }} />
                 <View style={{ marginBottom: 20, top: 7 }}>
                   <CommentMent>
@@ -186,10 +227,23 @@ const ReplyPage: React.FC<NativeStackScreenProps<any, "ReplyPage">> = ({ navigat
               uri: userInfo?.data.thumbnail === null ? "http://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userInfo?.data.thumbnail,
             }}
           />
-          <ReplyInput>댓글을 입력해보세요...</ReplyInput>
-          <ReplyButton>
-            <ReplyDone>게시</ReplyDone>
-          </ReplyButton>
+          <ReplyInputArea>
+            <ReplyInput
+              placeholder=" 댓글을 입력해보세요..."
+              value={content}
+              onChangeText={(value:string) => setContent(value)}
+              textContentType="none"
+              autoCompleteType="off"
+              autoCapitalize="none"
+              multiline={true}
+              maxLength={100}
+            >
+            </ReplyInput>
+            <ReplyButton onPress={RelpyFeed}>
+              <ReplyDone>게시</ReplyDone>
+            </ReplyButton>
+          </ReplyInputArea>
+
         </ReplyArea>
       </ReplyWriteArea>
     </Container>

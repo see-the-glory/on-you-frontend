@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
+import { useMutation, useQuery } from "react-query";
+import { useSelector } from "react-redux";
+import { ReportPeedScreenProps } from "../../types/feed";
+import { FeedApi, FeedLikeRequest, FeedReportRequest } from "../../api";
 
 const Container = styled.SafeAreaView`
   position: relative;
@@ -39,11 +43,57 @@ const AccText = styled.Text`
   color: red;
 `;
 
-export default function Accusation({ navigation: { navigate } }) {
-  const ReportComplete = () => {
-    navigate("HomeStack", {
-      screen: "ReportComplete",
-    });
+interface ReportReason{
+     title:string,
+    reason:string,
+}
+
+const Accusation:React.FC<ReportPeedScreenProps>=({ navigation:
+  { navigate},route:{params:{
+  feedData
+}} }) =>{
+  const token = useSelector((state) => state.AuthReducers.authToken);
+
+  const[reportReason,setReportReason]=useState<ReportReason[]>();
+  const mutation = useMutation( FeedApi.reportFeed, {
+    onSuccess: (res) => {
+      if (res.status === 200) {
+        console.log(res)
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(res);
+        // return navigate("Home", {});
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+      // return navigate("Home", {});
+    },
+    onSettled: (res, error) => {},
+  });
+
+  const ReportFeed=(reason:string)=>{
+    const data={
+      userId:feedData.userId,
+      id:feedData.id,
+      reason:reason,
+    };
+    console.log(data);
+    const ReportData:FeedReportRequest=
+      {
+        data,
+        token,
+      }
+
+    mutation.mutate(ReportData);
+  };
+
+  const ReportComplete = (reason:string) => {
+    ReportFeed(reason)
+    // navigate("HomeStack", {
+    //   screen: "ReportComplete",
+    // });
   };
 
   return (
@@ -56,22 +106,21 @@ export default function Accusation({ navigation: { navigate } }) {
         </AccTop>
         <AccInfo>
           <TouchableOpacity>
-            <AccText onPress={ReportComplete}>스팸</AccText>
+            <AccText onPress={()=>ReportComplete('SPAM')}>스팸</AccText>
           </TouchableOpacity>
           <TouchableOpacity>
-            <AccText onPress={ReportComplete}>마음에 들지 않습니다</AccText>
+            <AccText onPress={()=>ReportComplete('FRAUD')}>사기 또는 거짓</AccText>
           </TouchableOpacity>
           <TouchableOpacity>
-            <AccText onPress={ReportComplete}>사기 또는 거짓</AccText>
+            <AccText onPress={()=>ReportComplete('HATE')}>혐오 발언 또는 상징</AccText>
           </TouchableOpacity>
           <TouchableOpacity>
-            <AccText onPress={ReportComplete}>혐오 발언 또는 상징</AccText>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <AccText onPress={ReportComplete}>거짓정보</AccText>
+            <AccText onPress={()=>ReportComplete('PORNO')}>성인물</AccText>
           </TouchableOpacity>
         </AccInfo>
       </View>
     </Container>
   );
 }
+
+export default Accusation;
