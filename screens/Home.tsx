@@ -24,7 +24,12 @@ import {
   UserInfoResponse,
   likeCount,
   likeCountReverse,
-  FeedsLikeReponse, ClubApi, ClubCreationRequest, FeedLikeRequest, FeedReverseLikeRequest
+  FeedsLikeReponse,
+  ClubApi,
+  ClubCreationRequest,
+  FeedLikeRequest,
+  FeedReverseLikeRequest,
+  Club
 } from "../api";
 import CustomText from "../components/CustomText";
 import ImageSelecter from "./HomeRelevant/ImageSelecter";
@@ -365,18 +370,6 @@ const Home:React.FC<HomeScreenProps> = ({
 
     setModalVisible(!isModalVisible);
     setRefreshing(false);
-  };
-
-  const goToProfile = () => {
-    navigate("HomeStack", {
-      screen: "Profile",
-    });
-  };
-
-  const goToContent = () => {
-    navigate("HomeStack", {
-      screen: "ImageSelecter",
-    });
   };
 
   const goToReply = (feedData: Feed) => {
