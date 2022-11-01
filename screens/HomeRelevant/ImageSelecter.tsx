@@ -91,7 +91,7 @@ const CancleIcon = styled.View`
 `;
 
 const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
-  route:{params:{clubId}},
+  route:{params:{clubId,userId}},
   navigation: { navigate } }) => {
   const Stack = createNativeStackNavigator();
   const [refreshing, setRefreshing] = useState(false);
@@ -100,6 +100,9 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
   const [loading, setLoading] = useState(false);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
   let [alert, alertSet] = useState(true);
+
+  console.log(userId+'userId')
+  console.log(clubId+'clubId')
 
   const getValueInfos = (value: string): ValueInfo[] => {
     if (value.length === 0) {
@@ -318,12 +321,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
               );
             })}
           </FeedText>
-          <TouchableOpacity onPress={()=>{
-            if(imageURI === null){
-              return Alert.alert('이미지를 선택하세요');
-          }else{
-           return onSubmit
-          }}}>
+          <TouchableOpacity onPress={onSubmit}>
             <Text>저장</Text>
           </TouchableOpacity>
         </>
