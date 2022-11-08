@@ -54,6 +54,7 @@ const Accusation:React.FC<ReportPeedScreenProps>=({ navigation:
 }} }) =>{
   const token = useSelector((state) => state.AuthReducers.authToken);
 
+  console.log(feedData.id)
   const[reportReason,setReportReason]=useState<ReportReason[]>();
   const mutation = useMutation( FeedApi.reportFeed, {
     onSuccess: (res) => {
@@ -91,9 +92,9 @@ const Accusation:React.FC<ReportPeedScreenProps>=({ navigation:
 
   const ReportComplete = (reason:string) => {
     ReportFeed(reason)
-    // navigate("HomeStack", {
-    //   screen: "ReportComplete",
-    // });
+    navigate("HomeStack", {
+      screen: "ReportComplete",
+    });
   };
 
   return (

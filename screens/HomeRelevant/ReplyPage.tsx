@@ -1,5 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Platform, StatusBar, FlatList, Button, TextInput, Alert, Animated, ActivityIndicator, Image } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  StatusBar,
+  FlatList,
+  Button,
+  TextInput,
+  Alert,
+  Animated,
+  ActivityIndicator,
+  Image,
+  Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, SafeAreaView
+} from "react-native";
 import styled from "styled-components/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -20,6 +35,7 @@ import {
   ModifiyPeedScreenProps,
   ReplyPageScreenProps
 } from "../../types/feed";
+import { useToast } from "react-native-toast-notifications";
 const Container = styled.SafeAreaView`
   flex: 1;
   height: 100%;
@@ -27,7 +43,7 @@ const Container = styled.SafeAreaView`
   width: 100%;
 `;
 
-const ReplyContainer = styled.View`
+const ReplyContainer = styled.ScrollView`
   height: 100%;
   flex-basis: 90%;
 `;
@@ -40,7 +56,6 @@ const CommentArea = styled.View`
   flex: 1;
   flex-direction: row;
   width: 100%;
-  top: 6px;
   margin: 10px 20px 0 20px;
 `;
 
@@ -85,9 +100,9 @@ const Time = styled.Text`
 const ReplyArea = styled.View`
   display: flex;
   flex-direction: row;
-  padding: 10px 0 10px 20px;
+  padding: 5px 0 5px 20px;
   border: solid 0.5px #c4c4c4;
-  bottom: 0;
+  top: 3%;
 `;
 
 const ReplyInputArea = styled.View`
@@ -100,6 +115,8 @@ const ReplyInputArea = styled.View`
 const ReplyInput = styled.TextInput`
   color: #b0b0b0;
   left: 15px;
+  width: 80%;
+  height: 35px;
 `;
 
 const ReplyImg = styled.Image`
@@ -120,12 +137,13 @@ const ReplyDone = styled.Text`
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
-                     navigation:{navigate},
-                     route: { params: { feedData }},
-                   }) => {
+                                                      navigation:{navigate},
+                                                      route: { params: { feedData }},
+                                                    }) => {
+  const toast = useToast();
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state:any) => state.AuthReducers.authToken);
   const queryClient = useQueryClient();
 
   const [content, setContent] = useState("");
@@ -160,7 +178,8 @@ const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
     onSuccess: (res) => {
       if (res.status === 200) {
         console.log(res)
-        onRefresh();
+        setRefreshing(false);
+
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
@@ -177,11 +196,18 @@ const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
   });
 
   const RelpyFeed=()=>{
+    if(content === ''){
+      /* toast.show("댓글 공백으로 하지 마세요",{
+         type: 'warning'
+       })*/
+      Alert.alert('공백임')
+
+    }
     const data = {
       id: feedData.id,
       content: content,
     };
-
+    Keyboard.dismiss();
     // console.log(data);
     const likeRequestData: FeedReplyRequest=
       {
@@ -191,62 +217,70 @@ const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
 
     mutation.mutate(likeRequestData);
   };
-
   return (
-    <Container>
-      <ReplyContainer>
-        {loading ? (
-          <ActivityIndicator />
-        ) : (
-          <FlatList
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            keyExtractor={(item: Reply, index: number) => String(index)}
-            data={replys?.data}
-            renderItem={({ item, index }: { item: Reply; index: number }) => (
-              <CommentArea key={index}>
-                <CommentImg source={{ uri: item.thumbnail }} />
-                <View style={{ marginBottom: 20, top: 7 }}>
-                  <CommentMent>
-                    <CommentId>{item.userName}</CommentId>
-                    <Comment>{item.content}</Comment>
-                  </CommentMent>
-                  <CommentRemainder>
-                    <Time>{rand(1, 60)}분 전</Time>
-                  </CommentRemainder>
-                </View>
-              </CommentArea>
-            )}
-          />
-        )}
-      </ReplyContainer>
-      <ReplyWriteArea>
-        <ReplyArea>
-          <ReplyImg
-            source={{
-              uri: userInfo?.data.thumbnail === null ? "http://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userInfo?.data.thumbnail,
-            }}
-          />
-          <ReplyInputArea>
-            <ReplyInput
-              placeholder=" 댓글을 입력해보세요..."
-              value={content}
-              onChangeText={(value:string) => setContent(value)}
-              textContentType="none"
-              autoCompleteType="off"
-              autoCapitalize="none"
-              multiline={true}
-              maxLength={100}
-            >
-            </ReplyInput>
-            <ReplyButton onPress={RelpyFeed}>
-              <ReplyDone>게시</ReplyDone>
-            </ReplyButton>
-          </ReplyInputArea>
-
-        </ReplyArea>
-      </ReplyWriteArea>
-    </Container>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        behavior={Platform.select({ios: 'padding', android: undefined})} style={{ flex: 1 }}>
+        <Container>
+          <ReplyContainer>
+            <FlatList
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              keyExtractor={(item: Reply, index: number) => String(index)}
+              data={replys?.data}
+              renderItem={({ item, index }: { item: Reply; index: number }) => (
+                <CommentArea key={index}>
+                  <CommentImg source={{ uri: item.thumbnail }} />
+                  <View style={{ marginBottom: 20, top: 7 }}>
+                    <CommentMent>
+                      <CommentId>{item.userName}</CommentId>
+                      <Comment>{item.content}</Comment>
+                    </CommentMent>
+                    <CommentRemainder>
+                      <Time>{item.created}</Time>
+                    </CommentRemainder>
+                  </View>
+                </CommentArea>
+              )}
+            />
+          </ReplyContainer>
+          <ReplyWriteArea>
+            <ReplyArea>
+              <ReplyImg
+                source={{
+                  uri: userInfo?.data.thumbnail === null ? "https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userInfo?.data.thumbnail,
+                }}
+              />
+              <ReplyInputArea>
+                {replys?.data.length === null ?
+                  <ReplyInput
+                  placeholder=" 댓글을 입력해보세요..."
+                  onChangeText={(content) => setContent(content)}
+                  autoCompleteType="off"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  multiline={true}
+                  returnKeyType="done"
+                  returnKeyLabel="done"></ReplyInput>:
+                    <ReplyInput
+                    placeholder=" 댓글을 입력해보세요..."
+                    onChangeText={(content) => setContent(content)}
+                    autoCompleteType="off"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    multiline={true}
+                    returnKeyType="done"
+                    returnKeyLabel="done"></ReplyInput>
+                    }
+                <ReplyButton onPress={RelpyFeed}>
+                  <ReplyDone>게시</ReplyDone>
+                </ReplyButton>
+              </ReplyInputArea>
+            </ReplyArea>
+          </ReplyWriteArea>
+        </Container>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 export default ReplyPage;

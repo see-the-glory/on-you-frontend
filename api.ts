@@ -210,9 +210,16 @@ export interface FeedCreationRequest {
   token: string;
 }
 
+export interface FeedUpdateRequest{
+  image?: {
+    uri: string;
+    type: string;
+    name: string | undefined;
+  };
 export interface FeedUpdateRequest {
   data: {
-    id: number | undefined;
+    id:number | undefined
+    // access: string
     content: string;
   };
   token: string;
@@ -322,6 +329,10 @@ export interface SignUp {
   phoneNumber?: string;
 }
 
+export interface getFeedLike{
+  data:{
+    id?: number;
+  }
 export interface FeedReportRequest {
   token: string;
   data: {
@@ -362,6 +373,7 @@ const getFeeds = ({ queryKey }: any) => {
 /**피드 선택*/
 const getSelectFeeds = ({ queryKey }: any) => {
   const [_key, token, id]: [string, string, number] = queryKey;
+  console.log(id+'id')
 return fetch(`${BASE_URL}/api/feeds/${id}`, {
   method: "GET",
   headers: {
@@ -447,23 +459,15 @@ const createFeed = async (req: FeedCreationRequest) => {
 };
 
 const updateFeed = async (req: FeedUpdateRequest) => {
-  const body = new FormData();
-
-  if (req.data) {
-    body.append("feedUpdateRequest", {
-      string: JSON.stringify(req.data),
-      type: "application/json",
-    });
-  }
+  console.log(req.data.id+'realId')
 
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}`, {
     method: "PUT",
     headers: {
-      "content-type": "multipart/form-data",
-      authorization: `${req.token}`,
-      Accept: "*/*",
+      "Content-Type": "application/json",
+      Authorization: `${req.token}`,
     },
-    body,
+    body: JSON.stringify(req.data),
   }).then(async (res) => {
     if(res.status === 200) return {status: res.status, ...(await res.json())}
     else return {status: res.status}
@@ -654,13 +658,13 @@ const reportFeed = (req: FeedReportRequest) => {
 };
 
 /**피드좋아요*/
-const likeCount = ({mutationkey}:any) =>{
-  const [id, token]: [number, string] = mutationkey;
-  console.log(id)
-  return fetch(`${BASE_URL}/api/feeds/${id}/likes`, {
+const likeCount = (req:getFeedLike) =>{
+  console.log('LikeFeed')
+  return fetch(`${BASE_URL}/api/feeds/${req.data.id}/likes`, {
     method: "POST",
     headers: {
-      Authorization: `${token}`,
+      "Content-Type": "application/json",
+      Authorization: `${req.token}`,
     },
   }).then(async (res) => {
     if(res.status === 200) return {status: res.status, ...(await res.json())}
@@ -669,12 +673,13 @@ const likeCount = ({mutationkey}:any) =>{
 }
 
 /**피드 좋아요 취소*/
-const likeCountReverse = ({mutationkey}:any) => {
-  const [id, token]: [number, string] = mutationkey;
-  return fetch(`${BASE_URL}/api/feeds/${id}/likes`, {
+const likeCountReverse = (req:getFeedLike) => {
+  console.log('LikeFeedCancle')
+  return fetch(`${BASE_URL}/api/feeds/${req.data.id}/likes`, {
     method: "PUT",
     headers: {
-      Authorization: `${token}`,
+      "Content-Type": "application/json",
+      Authorization: `${req.token}`,
     },
   }).then(async (res) => {
     if(res.status === 200) return {status: res.status, ...(await res.json())}
