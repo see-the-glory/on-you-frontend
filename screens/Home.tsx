@@ -10,7 +10,7 @@ import {
   useWindowDimensions,
   View,
   ActivityIndicator,
-  Platform, StatusBar
+  Platform, StatusBar, ScrollView, VirtualizedList
 } from "react-native";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
@@ -36,7 +36,6 @@ import ImageSelecter from "./HomeRelevant/ImageSelecter";
 import {
   FeedData,
   HomeScreenProps,
-  HomeStack
 } from "../types/feed";
 
 const Loader = styled.SafeAreaView`
@@ -47,6 +46,7 @@ const Loader = styled.SafeAreaView`
 `;
 const Container = styled.SafeAreaView`
   flex: 1;
+  top: ${Platform.OS === 'android' ? 3 : 0}%;
 `;
 
 const HeaderView = styled.View<{ size: number }>`
@@ -54,7 +54,7 @@ const HeaderView = styled.View<{ size: number }>`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 10px ${(props) => props.size}px 10px ${(props) => props.size}px;
+  padding: 5px ${(props) => props.size}px 10px ${(props) => props.size}px;
   margin-bottom: 10px;
 `;
 
@@ -124,17 +124,19 @@ const ModalView = styled.View`
   align-items: center;
   opacity: 1;
   width: 100%;
-  height: 30%;
+  height: auto;
 `;
 
 const ModalText = styled.Text`
   font-weight: bold;
   text-align: center;
   font-size: 20px;
-  margin: 15px;
-  width: 120%;
+  padding: 30px;
+  width: 100%;
   color: black;
+  height: auto;
 `;
+
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
 //Img Slider
@@ -223,6 +225,7 @@ const ImageSource = styled.Image<{ size: number }>`
   height: ${(props) => props.size}px;
 `;
 
+
 interface HeartType {
   feedId: number;
   heart: boolean;
@@ -233,6 +236,7 @@ const Home:React.FC<HomeScreenProps> = ({
                                           })=> {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [modalInfo, setModalInfo] = useState(false);
   const queryClient = useQueryClient();
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const SCREEN_PADDING_SIZE = 20;
@@ -243,8 +247,7 @@ const Home:React.FC<HomeScreenProps> = ({
 
    //heart선택
   const [heartMap, setHeartMap] = useState(new Map());
-  const [likeClick, setLikeClick] = useState(new Map());
-  const [FeedId,setFeedId] = useState();
+  const [modalMap, setModaltMap] = useState(new Map());
     /*
    let selectFeedId = new Map();
   for (let i = 0; i < res?.data?.length; ++i) {
@@ -263,19 +266,18 @@ const Home:React.FC<HomeScreenProps> = ({
       setIsPageTransition(false);
 
       let heartDataMap = new Map();
-      let heartClick = new Map();
+      let modalMap = new Map();
 
       for (let i = 0; i < res?.data?.length; ++i) {
         heartDataMap.set(res.data[i].id, false);
         //나중에 api 호출했을때는 false자리에 id 불러오듯이 값 받아와야함.
       }
       for (let i = 0; i < res?.data?.length; ++i) {
-        heartClick.set(res.data[i].id, res.data[i].id);
+        modalMap.set(res.data[i].id, res.data[i].id);
         //나중에 api 호출했을때는 false자리에 id 불러오듯이 값 받아와야함.
       }
       setHeartMap(heartDataMap);
-      setHeartMap(heartClick);
-      // console.log(res.statusCode)
+      setModaltMap(modalMap);
     },
     onError: (err) => {
       console.log(err);
@@ -287,7 +289,9 @@ const Home:React.FC<HomeScreenProps> = ({
     isLoading: userInfoLoading, // true or false
     data: userInfo,
   } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo);
+  let myName = userInfo?.data?.name;
   let myId = userInfo?.data?.id;
+
 //Like
   const LikeMutation = useMutation( FeedApi.likeCount, {
     onSuccess: (res) => {
@@ -305,9 +309,9 @@ const Home:React.FC<HomeScreenProps> = ({
     onSettled: (res, error) => {},
   });
 
-  const LikeFeed=()=>{
+  const LikeFeed=(feedData:Feed)=>{
     const data = {
-      id: myId,
+      id: feedData.id,
     };
     console.log(data);
     const likeRequestData: FeedLikeRequest=
@@ -339,9 +343,9 @@ const Home:React.FC<HomeScreenProps> = ({
     onSettled: (res, error) => {},
   });
 
-  const LikeReverseFeed=()=>{
+  const LikeReverseFeed=(feedData:Feed)=>{
     const data = {
-      id: myId,
+      id: feedData.id,
     };
     console.log(data);
     const likeRequestData: FeedLikeRequest=
@@ -353,25 +357,23 @@ const Home:React.FC<HomeScreenProps> = ({
     LikeMutation.mutate(likeRequestData);
   };
 
-  const {
-    isLoading: commentPlusLoading,
-    data: commentPlusCount,
-  }=useMutation<FeedsLikeReponse>([myId, token], FeedApi.likeCount)
-
-  const {
-    isLoading: commentReverseLoading,
-    data: commentReverseCount,
-  }=useMutation<FeedsLikeReponse>([myId, token], FeedApi.likeCountReverse)
-
-
   const feedSize = Math.round(SCREEN_WIDTH / 3) - 1;
 
-  const toggleModal = () => {
+/*  const ModalInfo = (feedData:Feed)=>{
+    setModalInfo(!ModalInfo);
+    toggleModal(feedData)
+    console.log(feedData.id)
+  }
 
+  const toggleModal = (feedData:Feed) => {
+    setModaltMap((prev) => new Map(prev).set(feedData.id, prev.get(feedData.id)))
+    console.log(feedData.id,feedData.userName,modalMap.get(feedData.id))
+  };*/
+
+  const toggleModal = () => {
     setModalVisible(!isModalVisible);
     setRefreshing(false);
   };
-
   const goToReply = (feedData: Feed) => {
     navigate("HomeStack", {
       screen: "ReplyPage",
@@ -437,6 +439,7 @@ const Home:React.FC<HomeScreenProps> = ({
     ):(
       <>
     <Container>
+      <ScrollView>
       <FeedContainer>
         <HeaderView size={SCREEN_PADDING_SIZE}>
           <SubView>
@@ -463,51 +466,27 @@ const Home:React.FC<HomeScreenProps> = ({
                   />
                   <UserInfo>
                     <UserId>{item.userName}</UserId>
+                    {/*<UserId>{myName}</UserId>*/}
+                    {/*<UserId>{item.id}</UserId>*/}
                     <ClubBox>
                       <ClubName>{item.clubName}</ClubName>
                     </ClubBox>
                   </UserInfo>
                 </FeedUser>
                 <ModalArea>
-                  <ModalIcon onPress={toggleModal}>
+                  <ModalIcon onPress={()=>toggleModal()}>
                     <Ionicons name="ellipsis-vertical" size={20} color={"black"} />
                   </ModalIcon>
-                 {/* {myId === item.userName ?
-                    <View>
-                      <Modal animationType="slide" transparent={true} visible={isModalVisible}>
-                        <CenteredView onTouchEnd={closeModal}>
-                          <ModalView>
-                            <ModalText onPress={()=>goToModifiy(item)}>
-                              수정
-                            </ModalText>
-                            <ModalText style={{color:"red"}} onPress={deleteCheck}>
-                              삭제
-                            </ModalText>
-                          </ModalView>
-                        </CenteredView>
-                      </Modal>
-                    </View> :
-                    <View>
-                      <Modal animationType="slide"transparent={true}visible={isModalVisible}>
-                        <CenteredView onTouchEnd={closeModal}>
-                          <ModalView>
-                            <ModalText onPress={()=> goToAccusation(item)}>
-                              신고
-                            </ModalText>
-                          </ModalView>
-                        </CenteredView>
-                      </Modal>
-                    </View>
-                  }*/}
                   <View>
                     <Modal animationType="slide" transparent={true} visible={isModalVisible}>
                       <CenteredView onTouchEnd={closeModal}>
                         <ModalView>
-                          <ModalText onPress={()=>goToModifiy(item)}>수정</ModalText>
-                          <ModalText style={{ color: "red" }} onPress={deleteCheck}>
+                          <ModalText onPress={() => goToModifiy(item)}>수정</ModalText>
+                          <ModalText style={{ color: "red" }} onPress={()=>deleteCheck(item)}>
                             삭제
                           </ModalText>
-                            <ModalText onPress={()=> goToAccusation(item)}>신고</ModalText>
+                          <ModalText onPress={()=> goToAccusation(item)}>신고</ModalText>
+                          {/*<Text>{item.userName},{myName},{item.id}</Text>*/}
                         </ModalView>
                       </CenteredView>
                     </Modal>
@@ -516,16 +495,17 @@ const Home:React.FC<HomeScreenProps> = ({
               </FeedHeader>
               <FeedMain>
                 <FeedImage>
-                  <ImageSource source={item.imageUrls[0]===undefined?{uri:"https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"}:{uri:item.imageUrls[0]}}size={FEED_IMAGE_SIZE}/>
+                  <ImageSource source={item.imageUrls[0]===undefined?{uri:"https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"}:{uri:item.imageUrls[0]}} size={FEED_IMAGE_SIZE}/>
                 </FeedImage>
                 <FeedInfo>
                   <LeftInfo>
                     <InfoArea>
                       <TouchableOpacity onPress={() => setHeartMap((prev) => new Map(prev).set(item.id, !prev.get(item.id)))}>
-                        {heartMap.get(item.id) ? <Ionicons name="md-heart" size={20} color="red" likeYn={true} /> : <Ionicons name="md-heart-outline" size={20} color="black" likeYn={false} />}
+                        {heartMap.get(item.id) ? <TouchableOpacity onPress={()=>LikeFeed(item)}><Ionicons name="md-heart" size={20} color="red" /></TouchableOpacity> :
+                          <TouchableOpacity onPress={()=>LikeReverseFeed(item)}><Ionicons  name="md-heart-outline" size={20} color="black"/></TouchableOpacity>}
                       </TouchableOpacity>
-                      {heartMap.get(item.id) ? <LikeClick onPress={() => {}}><NumberText>{item.likesCount +1}</NumberText></LikeClick>
-                        : <LikeClick onPress={() => {}}><NumberText>{item.likesCount }</NumberText></LikeClick>}
+                      {heartMap.get(item.id) ? <LikeClick ><NumberText>{item.likesCount +1}</NumberText></LikeClick>
+                        : <LikeClick><NumberText>{item.likesCount }</NumberText></LikeClick>}
                     </InfoArea>
                     <InfoArea>
                       <TouchableOpacity onPress={() => goToReply(item)}>
@@ -546,8 +526,9 @@ const Home:React.FC<HomeScreenProps> = ({
               </FeedMain>
             </>
           )}
-        ></FlatList>
+        />
       </FeedContainer>
+      </ScrollView>
     </Container>
         </>
   );
