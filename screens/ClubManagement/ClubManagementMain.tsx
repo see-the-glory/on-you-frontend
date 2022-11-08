@@ -20,7 +20,7 @@ const MainView = styled.View``;
 
 const Header = styled.View`
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   background-color: white;
   padding: 25px 0px 20px 0px;
 `;
@@ -243,10 +243,10 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
       <MainView>
         <Shadow distance={3} sides={["bottom"]} viewStyle={{ width: "100%" }}>
           <Header>
-            <NavigationView height={100}>
+            <NavigationView height={50}>
               <LeftNavigationView>
                 <TouchableOpacity onPress={goBack}>
-                  <Entypo name="chevron-thin-left" size={24} color="black" />
+                  <Entypo name="chevron-thin-left" size={20} color="black" />
                 </TouchableOpacity>
               </LeftNavigationView>
               <RightNavigationView>
@@ -255,7 +255,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
                     clubDataRefetch();
                   }}
                 >
-                  <Ionicons name="refresh" size={24} color="black" />
+                  <Ionicons name="refresh" size={20} color="black" />
                 </TouchableOpacity>
               </RightNavigationView>
             </NavigationView>

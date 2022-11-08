@@ -24,16 +24,16 @@ const CategoryButton = styled.TouchableOpacity`
   align-items: center;
 `;
 const CategoryName = styled(CustomText)`
-  font-size: 15px;
+  font-size: 17px;
   color: gray;
-  line-height: 21px;
+  line-height: 23px;
 `;
 
 const SelectedCategoryName = styled(CustomText)`
   font-family: "NotoSansKR-Bold";
-  font-size: 15px;
+  font-size: 17px;
   color: black;
-  line-height: 21px;
+  line-height: 23px;
 `;
 
 const Container = styled.SafeAreaView`
@@ -41,7 +41,7 @@ const Container = styled.SafeAreaView`
 `;
 
 const HeaderView = styled.View`
-  height: 80px;
+  height: 90px;
 `;
 
 const HeaderSection = styled.View`
@@ -76,8 +76,8 @@ const FloatingButton = styled.TouchableOpacity`
   position: absolute;
   right: 20px;
   bottom: 20px;
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   background-color: #295af5;
   elevation: 5;
   box-shadow: 1px 1px 3px gray;

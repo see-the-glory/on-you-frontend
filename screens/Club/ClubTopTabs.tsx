@@ -154,15 +154,15 @@ const ClubTopTabs = ({
   return (
     <Container>
       <StatusBar barStyle={"light-content"} />
-      <NavigationView height={heightCollapsed}>
+      <NavigationView height={HEADER_HEIGHT}>
         <LeftNavigationView>
           <TouchableOpacity onPress={() => navigation.popToTop()}>
-            <Entypo name="chevron-thin-left" size={24} color="white" />
+            <Entypo name="chevron-thin-left" size={20} color="white" />
           </TouchableOpacity>
         </LeftNavigationView>
         <RightNavigationView>
           <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)} style={{ marginRight: 10 }}>
-            {heartSelected ? <Ionicons name="md-heart" size={24} color="white" /> : <Ionicons name="md-heart-outline" size={24} color="white" />}
+            {heartSelected ? <Ionicons name="md-heart" size={20} color="white" /> : <Ionicons name="md-heart-outline" size={24} color="white" />}
           </TouchableOpacity>
         </RightNavigationView>
       </NavigationView>

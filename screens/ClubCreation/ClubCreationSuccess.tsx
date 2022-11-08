@@ -3,6 +3,7 @@ import { useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { ClubCreationSuccessScreenProps } from "../../Types/Club";
 import { Ionicons } from "@expo/vector-icons";
+import CustomText from "../../components/CustomText";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -11,36 +12,40 @@ const Container = styled.SafeAreaView`
 `;
 
 const SectionView = styled.View<{ height: number }>`
+  width: 100%;
   justify-content: center;
   align-items: center;
   height: ${(props) => props.height}px;
+  padding: 0px 20px;
 `;
 
-const H1 = styled.Text`
-  font-size: 32px;
-  font-weight: 900;
+const H1 = styled(CustomText)`
+  font-size: 24px;
+  line-height: 33px;
+  font-family: "NotoSansKR-Bold";
   margin-top: 20px;
 `;
 
-const H2 = styled.Text`
-  font-size: 16px;
-  font-weight: 500;
+const H2 = styled(CustomText)`
+  font-size: 14px;
+  line-height: 19px;
   color: #5c5c5c;
   margin-top: 12px;
+  text-align: center;
 `;
 
 const NextButton = styled.TouchableOpacity`
-  width: 200px;
-  height: 40px;
-  background-color: #295af5;
-  border-radius: 10px;
+  width: 100%;
+  height: 50px;
+  background-color: ${(props) => (props.disabled ? "#c4c4c4" : "#295AF5")};
   justify-content: center;
   align-items: center;
 `;
 
-const ButtonText = styled.Text`
+const ButtonText = styled(CustomText)`
   font-size: 18px;
-  font-weight: 700;
+  line-height: 25px;
+  font-family: "NotoSansKR-Bold";
   color: white;
 `;
 
@@ -69,7 +74,7 @@ const ClubCreationSuccess: React.FC<ClubCreationSuccessScreenProps> = ({
       <SectionView height={mainHeight}>
         <Ionicons name="checkmark-circle" size={52} color="#FF714B" />
         <H1>모임 개설이 완료되었습니다.</H1>
-        <H2>개설된 모임의 홈화면에서 상세 설정을 하실 수 있습니다.</H2>
+        <H2>{`개설된 모임의 홈화면으로 가셔서\n상세 설정을 하실 수 있습니다.`}</H2>
       </SectionView>
       <SectionView height={footerHeight}>
         <NextButton onPress={goClubHome}>

@@ -69,7 +69,7 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, app
     setOpen((open + 1) % 2);
   };
 
-  return role ? (
+  return role !== "PENDING" ? (
     <FloatingActionView>
       <AnimatedFloatingButton style={{ opacity: fade, transform: [{ translateY: secondY }] }}>
         <MaterialCommunityIcons name="image-plus" size={18} color="#ff714b" />
