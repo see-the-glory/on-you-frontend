@@ -334,14 +334,6 @@ export interface getFeedLike{
   }
   token:string;
 }
-export interface FeedReportRequest{
-  data:{
-    id:number | undefined,
-    userId:number,
-    reason: string,
-  };
-  token: string;
-}
 
 export interface FeedReplyRequest{
   data: {
@@ -445,8 +437,6 @@ const createFeed = async (req: FeedCreationRequest) => {
       "content-type": "application/json",
       authorization: `${req.token}`,
       Accept: "*/*",
-      clubId: "11",
-      content: "112",
     },
     body,
   }).then(async (res) => {
