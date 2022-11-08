@@ -117,8 +117,6 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     data: userInfo,
   } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo);
 
-  // console.log(userInfo?.data);
-
   const dispatch = useDispatch();
 
   const goLogout = () => {
