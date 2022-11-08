@@ -285,7 +285,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   });
 
   const getClubMembers = () => {
-    console.log(clubData.members);
     const members: Member[] = [];
     const manager: Member[] = [];
     const memberBundle: Member[][] = [];
@@ -427,7 +426,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
                   </ScheduleDetailView>
                 </ScheduleView>
               ) : (
-                <ScheduleAddView onPress={() => setScheduleAddVisible(true)}>
+                <ScheduleAddView onPress={() => navigate("ClubScheduleAdd", { clubData })}>
                   <Feather name="plus" size={28} color="#6E6E6E" />
                   <ScheduleText style={{ textAlign: "center", color: "#6E6E6E" }}>{`스케줄을 등록해\n멤버들과 공유해보세요.`}</ScheduleText>
                 </ScheduleAddView>

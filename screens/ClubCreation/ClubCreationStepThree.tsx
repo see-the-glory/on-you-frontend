@@ -109,6 +109,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
 
   const mutation = useMutation(ClubApi.createClub, {
     onSuccess: (res) => {
+      console.log(res);
       if (res.status === 200) {
         return navigate("ClubCreationSuccess", {
           clubData: res.data,
@@ -130,7 +131,6 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   const onSubmit = () => {
     const data = {
       category1Id: category1,
-      category2Id: category2,
       clubName,
       clubMaxMember: maxNumber,
       clubShortDesc,
@@ -139,6 +139,8 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
       organizationName,
       isApproveRequired,
     };
+
+    if (category2 !== -1) data.category2Id = category2;
 
     console.log(data);
 

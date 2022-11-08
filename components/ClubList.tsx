@@ -47,7 +47,7 @@ const TitleView = styled.View`
 `;
 
 const ClubNameText = styled(CustomText)`
-  font-size: 15px;
+  font-size: 16px;
   font-family: "NotoSansKR-Bold";
   line-height: 25px;
   color: white;
