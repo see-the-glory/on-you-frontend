@@ -161,6 +161,7 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
           <Input
             keyboardType="numeric"
             placeholder="yyyy-MM-dd"
+            placeholderTextColor={"#B0B0B0"}
             maxLength={8}
             onChangeText={(birth) => setBirthNumber(birth)}
             value={birthNumber}

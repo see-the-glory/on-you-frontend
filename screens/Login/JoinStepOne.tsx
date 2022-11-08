@@ -135,6 +135,7 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
             ref={nameInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
+            placeholderTextColor={"#B0B0B0"}
           />
           {errortext === true || !nameReg.test(userName) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
         </Wrap>

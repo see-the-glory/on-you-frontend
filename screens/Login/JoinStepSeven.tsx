@@ -166,6 +166,7 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ nav
           <SubText>연락처는 ID 찾기에 사용됩니다.</SubText>
           <Input
             placeholder="010-1234-1234"
+            placeholderTextColor={"#B0B0B0"}
             keyboardType="numeric"
             maxLength={13}
             onChangeText={(phone) => setPhoneNumber(phone)}
