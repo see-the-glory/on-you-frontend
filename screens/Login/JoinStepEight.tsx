@@ -156,6 +156,7 @@ const JoinStepEight: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ nav
           <SubText>멤버 관리와, 소모임 소속 기관을 알기 위함 입니다.</SubText>
           <Input
             placeholder="교회를 입력해주세요. ex)OO교회"
+            placeholderTextColor={"#B0B0B0"}
             maxLength={10}
             onChangeText={(church) => setChurch(church)}
             value={church}

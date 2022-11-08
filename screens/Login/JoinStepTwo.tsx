@@ -145,7 +145,15 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
           </BorderWrap>
           <AskText>이메일을 적어주세요.</AskText>
           <SubText>로그인 ID로 활용됩니다.</SubText>
-          <Input placeholder="example@gmail.com" autoCorrect={false} onChangeText={(Email) => setUserEmail(Email)} ref={emailInputRef} returnKeyType="next" blurOnSubmit={false} />
+          <Input
+            placeholder="example@gmail.com"
+            placeholderTextColor={"#B0B0B0"}
+            autoCorrect={false}
+            onChangeText={(Email) => setUserEmail(Email)}
+            ref={emailInputRef}
+            returnKeyType="next"
+            blurOnSubmit={false}
+          />
           {errortext === true || !emailReg.test(userEmail) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
         </Wrap>
         <Wrap>

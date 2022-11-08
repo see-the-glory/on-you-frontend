@@ -2,23 +2,28 @@ import React, { useState } from "react";
 import styled from "styled-components/native";
 import {
   ActivityIndicator,
-  FlatList,
-  Platform,
+  FlatList, Keyboard,
+  KeyboardAvoidingView,
+  Platform, SafeAreaView, ScrollView,
   StatusBar,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   useWindowDimensions,
   View
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useMutation, useQuery } from "react-query";
 import {
+  Club,
   Feed,
   FeedApi,
-  FeedsResponse, ModifiedReponse,
-  updateFeed
+  FeedsResponse, FeedUpdateRequest, ModifiedReponse,
+  updateFeed, UserApi, UserInfoResponse
 } from "../../api";
 import { ModifiyPeedScreenProps } from "../../types/feed";
+import { RootStackParamList } from "../../types/Club";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -26,7 +31,7 @@ const Loader = styled.SafeAreaView`
   align-items: center;
   padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
 `;
-const Container=styled.View`
+const Container=styled.SafeAreaView`
   flex: 1;
 `
 const FeedUser = styled.View`
@@ -64,7 +69,9 @@ const ClubName = styled.Text`
   color: white;
 `;
 const FeedImage = styled.View`
-  padding: 20px;
+  padding: 10px 10px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const FeedImageUrl=styled.Image`
@@ -77,8 +84,10 @@ const Content = styled.View`
 
 const Ment = styled.TextInput`
   width: 100%;
+  height: 30%;
   color: black;
-  font-size: 12px;
+  font-size: 20px;
+  padding-left: 20px;
 `;
 
 const ImageSource = styled.Image<{ size: number }>`
@@ -86,9 +95,22 @@ const ImageSource = styled.Image<{ size: number }>`
   height: ${(props) => props.size}px;
 `;
 
+const FixCompleteArea = styled.View`
+  width: 100%;
+  text-align: center;
+  height: 50px;
+  top: 20px;
+`
+const FixCompleteBtn = styled.TouchableOpacity``
+const FixCompleteText = styled.Text`
+  font-size: 20px;
+  padding-left: 20px;
+`
+
 interface FeedEditItem{
   id:number
   content:string;
+  screen: keyof RootStackParamList;
 }
 
 const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({
@@ -99,22 +121,28 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({
   const SCREEN_PADDING_SIZE = 20;
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false)
-  const [fixContent, setFixContent]=useState("");
+  const [content, setContent] = useState("")
+  const [data, setData] = useState<Feed>(feedData);
   const [items, setItems] = useState<FeedEditItem[]>();
   //피드호출
   const {
     isLoading: feedsLoading,
     data: feeds,
     isRefetching: isRefetchingFeeds,
-  } = useQuery<FeedsResponse>(["getFeeds",token,feedData.id], FeedApi.getSelectFeeds, {
+  } = useQuery<ModifiedReponse>(["getFeeds",token,feedData.id], FeedApi.getSelectFeeds, {
     onSuccess: (res) => {
       setIsPageTransition(false);
-      // console.log(res);
+      console.log(res);
     },
     onError: (err) => {
       console.log(err);
     },
   });
+
+  const {
+    isLoading: userInfoLoading, // true or false
+    data: userInfo,
+  } = useQuery<UserInfoResponse>(["userInfo", token], UserApi.getUserInfo);
 
   const mutation = useMutation(FeedApi.updateFeed, {
     onSuccess: (res) => {
@@ -126,90 +154,75 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({
         console.log(`mutation success but please check status code`);
         console.log(`status: ${res.status}`);
         console.log(res.json);
-        return navigate("Tabs", {
-          screen: "Home",
-        });
+        /*  return navigate("Tabs", {
+            screen: "Home",
+          });*/
       }
     },
     onError: (error) => {
       console.log("--- Error ---");
       console.log(`error: ${error}`);
-      return navigate("Tabs", {
-        screen: "Home",
-      });
+      /*   return navigate("Tabs", {
+           screen: "Home",
+         });*/
     },
     onSettled: (res, error) => {},
   });
 
-
-
   //피드업데이트
-/*  const FixComplete =() =>{
+  const FixComplete =() =>{
     const data={
-      id: id,
-      userId: userId,
+      id: feedData.id,
+      access: "PRIVATE",
       content: content,
-      hashtag: hashtag,
     };
+    console.log(data);
 
     const requestData: FeedUpdateRequest={
       data,
       token,
     };
     mutation.mutate(requestData);
-  };*/
-  return feedsLoading ?(
-    <Loader>
-      <ActivityIndicator/>
-    </Loader>
-    ):(
-      <>
-    <Container>
-      <View>
-        {items?.map((item,index)=>(
-          <View key={index}>
-            <View>
-              <Text>{item.content}</Text>
-            </View>
-          </View>
-        ))}
-      </View>
-      {/*<FlatList
-        keyExtractor={(item: Feed, index: number) => String(index)}
-        data={feeds?.data}
-        renderItem={({ item, index }: { item: Feed; index: number }) => (
-          <>
-          <View key={index}>
+  };
+
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+        <Container>
+          <ScrollView>
             <FeedUser >
-              <UserImage source={{ uri: "https://i.pinimg.com/564x/9e/d8/4c/9ed84cf3fc04d0011ec4f75c0692c83e.jpg" }} />
+              <UserImage source={{ uri: userInfo?.data.thumbnail }} />
               <UserInfo>
-                <UserId>{item.userName}</UserId>
+                <UserId>{data.userName}</UserId>
+                <UserId>{data.id}</UserId>
                 <ClubBox>
-                  <ClubName>{item.clubName}</ClubName>
+                  <ClubName>{data.clubName}</ClubName>
                 </ClubBox>
               </UserInfo>
             </FeedUser>
-
             <FeedImage>
-              <ImageSource source={item.imageUrls[0] === undefined ? require("../../assets/basic.jpg") : { uri: item.imageUrls[0] }}  size={FEED_IMAGE_SIZE}/>
+              <ImageSource source={data.imageUrls[0]===undefined?{uri:"https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"}:{uri:data.imageUrls[0]}} size={FEED_IMAGE_SIZE}/>
             </FeedImage>
-            <Content>
-              <Ment value={fixContent} onChangeText={(value:string)=>setFixContent(value)}>
-              <Ment>
-                {item.content}
-              </Ment>
-            </Content>
-
-            <TouchableOpacity onPress={FixComplete}>
-            <TouchableOpacity>
-              <Text>수정완료</Text>
-            </TouchableOpacity>
-          </View>
-          </>
-        )}></FlatList>*/}
-    </Container>
-    </>
+            <Ment
+              onChangeText={(content) => setContent(content)}
+              autoCompleteType="off"
+              autoCapitalize="none"
+              autoCorrect={false}
+              multiline={true}
+              returnKeyType="done"
+              returnKeyLabel="done"
+            >
+              {data.content}
+            </Ment>
+            <FixCompleteArea>
+              <FixCompleteBtn onPress={FixComplete}>
+                <FixCompleteText>수정완료</FixCompleteText>
+              </FixCompleteBtn>
+            </FixCompleteArea>
+          </ScrollView>
+        </Container>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
-}
-
+};
 export default ModifiyPeed;
