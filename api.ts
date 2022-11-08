@@ -95,7 +95,7 @@ export interface Reply {
   thumbnail: string;
 }
 
-export interface Report{
+export interface Report {
   userId: number;
   reason: string;
 }
@@ -210,7 +210,7 @@ export interface FeedCreationRequest {
   token: string;
 }
 
-export interface FeedUpdateRequest{
+export interface FeedUpdateRequest {
   data: {
     id: number | undefined;
     content: string;
@@ -322,6 +322,12 @@ export interface SignUp {
   phoneNumber?: string;
 }
 
+export interface FeedReportRequest {
+  token: string;
+  data: {
+    userId: number;
+    reason: string;
+  };
 export interface getReplyRequest{
   id: number;
   token:string;
@@ -334,6 +340,7 @@ export interface FeedReplyRequest{
   }
   token: string;
 }
+
 // Categories
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
@@ -345,6 +352,8 @@ const getFeeds = ({ queryKey }: any) => {
       authorization: `${feedsParams.token}`,
     },
   }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
     if(res.status === 200) return {status: res.status, ...(await res.json())}
     else return {status: res.status}
   });
@@ -427,6 +436,8 @@ const createFeed = async (req: FeedCreationRequest) => {
       "content-type": "application/json",
       authorization: `${req.token}`,
       Accept: "*/*",
+      clubId: "11",
+      content: "112",
     },
     body,
   }).then(async (res) => {
@@ -740,6 +751,3 @@ export const FeedApi = {
 };
 
 export const CommonApi = { getJWT };
-
-
-

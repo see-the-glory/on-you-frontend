@@ -148,10 +148,28 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ nav
           </BorderWrap>
           <AskText>비밀번호를 설정해주세요.</AskText>
           <SubText>로그인 정보로 활용됩니다.</SubText>
-          <Input placeholder="영문, 숫자 포함 6자 이상" secureTextEntry={true} autoCorrect={false} onChangeText={(pw) => setUserPw(pw)} ref={pwInputRef} returnKeyType="next" blurOnSubmit={false} />
+          <Input
+            placeholder="영문, 숫자 포함 6자 이상"
+            placeholderTextColor={"#B0B0B0"}
+            secureTextEntry={true}
+            autoCorrect={false}
+            onChangeText={(pw) => setUserPw(pw)}
+            ref={pwInputRef}
+            returnKeyType="next"
+            blurOnSubmit={false}
+          />
           {errortext === true || !pwReg.test(userPw) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
           <AskText>비밀번호를 다시 입력해주세요.</AskText>
-          <Input placeholder="영문, 숫자 포함 6자 이상" secureTextEntry={true} autoCorrect={false} onChangeText={(pw) => setUserPw2(pw)} ref={pwInputRef} returnKeyType="next" blurOnSubmit={false} />
+          <Input
+            placeholder="영문, 숫자 포함 6자 이상"
+            placeholderTextColor={"#B0B0B0"}
+            secureTextEntry={true}
+            autoCorrect={false}
+            onChangeText={(pw) => setUserPw2(pw)}
+            ref={pwInputRef}
+            returnKeyType="next"
+            blurOnSubmit={false}
+          />
           {/* {errortext === true || !pwReg.test(userPw2) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null} */}
           {userPw !== userPw2 ? <Error>비밀번호가 일치하지 않습니다.</Error> : null}
         </Wrap>
