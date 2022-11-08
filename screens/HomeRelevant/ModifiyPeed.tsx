@@ -1,13 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components/native";
-import { FlatList, Image, TextInput, useWindowDimensions, View } from "react-native";
-import Swiper from "react-native-swiper";
-import { SliderBox } from "react-native-image-slider-box";
+import {
+  ActivityIndicator,
+  FlatList,
+  Platform,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View
+} from "react-native";
 import { useSelector } from "react-redux";
-import { useQuery } from "react-query";
-import { Feed, FeedsResponse } from "../../api";
-import CustomText from "../../components/CustomText";
+import { useMutation, useQuery } from "react-query";
+import {
+  Feed,
+  FeedApi,
+  FeedsResponse, ModifiedReponse,
+  updateFeed
+} from "../../api";
+import { ModifiyPeedScreenProps } from "../../types/feed";
 
+const Loader = styled.SafeAreaView`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
+`;
 const Container=styled.View`
   flex: 1;
 `
@@ -68,65 +86,129 @@ const ImageSource = styled.Image<{ size: number }>`
   height: ${(props) => props.size}px;
 `;
 
-const ModifiyPeed=({navigation:{navigate}})=> {
+interface FeedEditItem{
+  id:number
+  content:string;
+}
+
+const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({
+                                                      navigation:{navigate},
+                                                      route:{params: {feedData}}})=> {
   const token = useSelector((state) => state.AuthReducers.authToken);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const SCREEN_PADDING_SIZE = 20;
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
-
-  const getFeeds = () => {
-    return fetch(`http://3.39.190.23:8080/api/feeds`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res) => res.json());
-  };
-
+  const [isPageTransition, setIsPageTransition] = useState<boolean>(false)
+  const [fixContent, setFixContent]=useState("");
+  const [items, setItems] = useState<FeedEditItem[]>();
+  //피드호출
   const {
     isLoading: feedsLoading,
     data: feeds,
-    isRefetching: isRefetchingClubs,
-  } = useQuery<FeedsResponse>(["getFeeds"], getFeeds, {
-    //useQuery(["getFeeds", token], FeedApi.getFeeds, {
+    isRefetching: isRefetchingFeeds,
+  } = useQuery<FeedsResponse>(["getFeeds",token,feedData.id], FeedApi.getSelectFeeds, {
     onSuccess: (res) => {
-      console.log(res);
+      setIsPageTransition(false);
+      // console.log(res);
     },
     onError: (err) => {
       console.log(err);
     },
   });
 
-  return (
+  const mutation = useMutation(FeedApi.updateFeed, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.json?.resultCode === "OK") {
+        return navigate("Tabs", {
+          screen: "Home",
+        });
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res.json);
+        return navigate("Tabs", {
+          screen: "Home",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+      return navigate("Tabs", {
+        screen: "Home",
+      });
+    },
+    onSettled: (res, error) => {},
+  });
+
+
+
+  //피드업데이트
+/*  const FixComplete =() =>{
+    const data={
+      id: id,
+      userId: userId,
+      content: content,
+      hashtag: hashtag,
+    };
+
+    const requestData: FeedUpdateRequest={
+      data,
+      token,
+    };
+    mutation.mutate(requestData);
+  };*/
+  return feedsLoading ?(
+    <Loader>
+      <ActivityIndicator/>
+    </Loader>
+    ):(
+      <>
     <Container>
-    <FlatList
-      keyExtractor={(item: Feed, index: number) => String(index)}
-      data={feeds?.data}
-      renderItem={({item}:{item:Feed})=>(
-        <View>
-          <FeedUser>
-            <UserImage source={{ uri: "https://i.pinimg.com/564x/9e/d8/4c/9ed84cf3fc04d0011ec4f75c0692c83e.jpg" }} />
-            <UserInfo>
-              <UserId>{item.userName}</UserId>
-              <ClubBox>
-                <ClubName>{item.clubName}</ClubName>
-              </ClubBox>
-            </UserInfo>
-          </FeedUser>
+      <View>
+        {items?.map((item,index)=>(
+          <View key={index}>
+            <View>
+              <Text>{item.content}</Text>
+            </View>
+          </View>
+        ))}
+      </View>
+      {/*<FlatList
+        keyExtractor={(item: Feed, index: number) => String(index)}
+        data={feeds?.data}
+        renderItem={({ item, index }: { item: Feed; index: number }) => (
+          <>
+          <View key={index}>
+            <FeedUser >
+              <UserImage source={{ uri: "https://i.pinimg.com/564x/9e/d8/4c/9ed84cf3fc04d0011ec4f75c0692c83e.jpg" }} />
+              <UserInfo>
+                <UserId>{item.userName}</UserId>
+                <ClubBox>
+                  <ClubName>{item.clubName}</ClubName>
+                </ClubBox>
+              </UserInfo>
+            </FeedUser>
 
-          <FeedImage>
-            {/*<Swiper horizontal dotColor="#E0E0E0" activeDotColor="#FF714B" containerStyle={{ backgroundColor: "black", height: FEED_IMAGE_SIZE }}>
-                  <SliderBox images={item.imageUrls} sliderBoxHeight={FEED_IMAGE_SIZE} />
-                </Swiper>*/}
-            <ImageSource source={item.imageUrls[0] === undefined ? require("../../assets/basic.jpg") : { uri: item.imageUrls[0] }}  size={FEED_IMAGE_SIZE}/>
-          </FeedImage>
-          <Content>
-            <Ment>{item.content}</Ment>
-          </Content>
-        </View>
-      )}></FlatList>
+            <FeedImage>
+              <ImageSource source={item.imageUrls[0] === undefined ? require("../../assets/basic.jpg") : { uri: item.imageUrls[0] }}  size={FEED_IMAGE_SIZE}/>
+            </FeedImage>
+            <Content>
+              <Ment value={fixContent} onChangeText={(value:string)=>setFixContent(value)}>
+              <Ment>
+                {item.content}
+              </Ment>
+            </Content>
 
-      </Container>
+            <TouchableOpacity onPress={FixComplete}>
+            <TouchableOpacity>
+              <Text>수정완료</Text>
+            </TouchableOpacity>
+          </View>
+          </>
+        )}></FlatList>*/}
+    </Container>
+    </>
   );
 }
 

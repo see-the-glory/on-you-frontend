@@ -8,7 +8,6 @@ import ModifiyPeed from "../screens/HomeRelevant/ModifiyPeed";
 import ImageSelecter from "../screens/HomeRelevant/ImageSelecter";
 import ReportComplete from "../screens/HomeRelevant/ReportComplete";
 import ReplyPage from "../screens/HomeRelevant/ReplyPage";
-import AlarmPage from "../screens/HomeRelevant/AlarmPage";
 import MyClubSelector from "../screens/HomeRelevant/MyClubSelector";
 import { Text, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -24,7 +23,11 @@ const ImageSelectSave = styled.Text`
 
 const NativeStack = createNativeStackNavigator();
 
-const HomeStack = ({ navigation: { navigate } }) => {
+const HomeStack = ({
+                     navigation: { navigate },
+                     route:{params:{feedData,userId,clubId}} }) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
+
   const cancleCreate = () => {
     Alert.alert(
       "게시글을 삭제하시겠어요?",
@@ -64,6 +67,7 @@ const HomeStack = ({ navigation: { navigate } }) => {
       <NativeStack.Screen
         name="ImageSelecter"
         component={ImageSelecter}
+        initialParams={{userId,clubId}}
         options={{
           title: "",
           headerLeft: () => (
@@ -82,6 +86,7 @@ const HomeStack = ({ navigation: { navigate } }) => {
       <NativeStack.Screen
         name="MyClubSelector"
         component={MyClubSelector}
+        initialParams={{userId}}
         options={{
           title: "나의 모임",
           headerLeft: () => (
@@ -95,6 +100,7 @@ const HomeStack = ({ navigation: { navigate } }) => {
       <NativeStack.Screen
         name="CreateHomePeed"
         component={CreateHomePeed}
+        initialParams={{feedData}}
         options={{
           title: "새 게시물",
           headerLeft: () => (
@@ -108,6 +114,7 @@ const HomeStack = ({ navigation: { navigate } }) => {
       <NativeStack.Screen
         name="ReplyPage"
         component={ReplyPage}
+        initialParams={{feedData}}
         options={{
           title: "댓글",
           headerLeft: () => (
@@ -121,6 +128,7 @@ const HomeStack = ({ navigation: { navigate } }) => {
       <NativeStack.Screen
         name="ModifiyPeed"
         component={ModifiyPeed}
+        initialParams={{feedData}}
         options={{
           title: "수정",
           headerLeft: () => (
@@ -139,21 +147,9 @@ const HomeStack = ({ navigation: { navigate } }) => {
       <NativeStack.Screen
         name="Accusation"
         component={Accusation}
+        initialParams={{feedData}}
         options={{
           title: "신고",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Home" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
-            </TouchableOpacity>
-          ),
-          headerShown: true,
-        }}
-      />
-      <NativeStack.Screen
-        name="AlarmPage"
-        component={AlarmPage}
-        options={{
-          title: "알림",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Home" })}>
               <Ionicons name="chevron-back" size={20} color="black" />

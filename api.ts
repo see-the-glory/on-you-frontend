@@ -71,7 +71,7 @@ export interface User {
   interests: [];
 }
 export interface Feed {
-  id: number;
+  id: number | undefined;
   clubId: number;
   clubName: string;
   userId: number;
@@ -83,10 +83,10 @@ export interface Feed {
   likesCount: number;
   commentCount: number;
   created: string;
-  customCursor?: string;
 }
 
 export interface Reply {
+  id:number;
   userId: number;
   userName: string;
   content: string;
@@ -135,7 +135,12 @@ export interface FeedsResponse extends BaseResponse {
     content: Feed[];
   };
 }
-
+export interface ModifiedReponse extends BaseResponse{
+  data: Feed;
+}
+export interface FeedsLikeReponse extends BaseResponse{
+  data:Feed[]
+}
 export interface UserInfoResponse extends BaseResponse {
   data: User;
 }
@@ -146,6 +151,7 @@ export interface ReportResponse extends BaseResponse {
   data: Report[];
 }
 export interface FeedsParams {
+  id:number;
   token: string;
 }
 
@@ -160,6 +166,10 @@ export interface ClubsParams {
   showMy: number;
 }
 
+export interface ReplyParams{
+  id:number;
+  token: string;
+}
 export interface ClubSchedulesResponse extends BaseResponse {
   data: Schedule[];
 }
@@ -167,34 +177,6 @@ export interface ClubSchedulesResponse extends BaseResponse {
 export interface ClubRoleResponse extends BaseResponse {
   data: ClubRole;
 }
-
-export interface FeedCreationRequest {
-  image?: {
-    uri: string;
-    type: string;
-    name: string | undefined;
-  };
-  data: {
-    clubName: string;
-    imageUrls: string;
-    userId: number;
-    content: string;
-    hashtag: string;
-    clubId: number;
-  };
-  token: string;
-}
-
-export interface FeedUpdateRequest {
-  data: {
-    id: number;
-    userId: number;
-    content: string;
-    hashtag: string;
-  };
-  token: string;
-}
-
 export interface ClubCreationRequest {
   image?: {
     uri: string;
@@ -214,6 +196,52 @@ export interface ClubCreationRequest {
   };
   token: string;
 }
+
+export interface FeedCreationRequest {
+  image?: {
+    uri: string;
+    type: string;
+    name: string | undefined;
+  }|null;
+  data: {
+    userId?: number;
+    content?: string;
+  };
+  token: string;
+}
+
+export interface FeedUpdateRequest {
+  data: {
+    id: number | undefined;
+    content: string;
+  };
+  token: string;
+}
+export interface FeedLikeRequest{
+  data:{
+    id?:number,
+    userId?: number,
+  };
+  token: string;
+}
+
+export interface FeedReverseLikeRequest{
+  data:{
+    id:number,
+    userId: number
+  };
+  token: string;
+}
+
+export interface FeedReportRequest{
+  data:{
+    id:number | undefined,
+    userId:number,
+    reason: string,
+  };
+  token: string;
+}
+
 
 export interface ClubUpdateRequest {
   image?: {
@@ -300,11 +328,23 @@ export interface FeedReportRequest {
     userId: number;
     reason: string;
   };
+export interface getReplyRequest{
+  id: number;
+  token:string;
+}
+
+export interface FeedReplyRequest{
+  data: {
+    id?: number;
+    content?: string;
+  }
+  token: string;
 }
 
 // Categories
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
+/**피드호출*/
 const getFeeds = ({ queryKey }: any) => {
   const [_key, feedsParams]: [string, FeedsParams] = queryKey;
   return fetch(`${BASE_URL}/api/feeds`, {
@@ -314,7 +354,23 @@ const getFeeds = ({ queryKey }: any) => {
   }).then(async (res) => {
     if (res.status === 200) return { status: res.status, ...(await res.json()) };
     else return { status: res.status };
+    if(res.status === 200) return {status: res.status, ...(await res.json())}
+    else return {status: res.status}
   });
+};
+
+/**피드 선택*/
+const getSelectFeeds = ({ queryKey }: any) => {
+  const [_key, token, id]: [string, string, number] = queryKey;
+return fetch(`${BASE_URL}/api/feeds/${id}`, {
+  method: "GET",
+  headers: {
+      authorization: `${token}`
+    }
+  }).then(async (res) => {
+  if(res.status === 200) return {status: res.status, ...(await res.json())}
+  else return {status: res.status}
+});
 };
 
 const getClubs = ({ queryKey, pageParam }: any) => {
@@ -377,7 +433,7 @@ const createFeed = async (req: FeedCreationRequest) => {
   return fetch(`${BASE_URL}/api/feeds`, {
     method: "POST",
     headers: {
-      "content-type": "multipart/form-data",
+      "content-type": "application/json",
       authorization: `${req.token}`,
       Accept: "*/*",
       clubId: "11",
@@ -385,7 +441,8 @@ const createFeed = async (req: FeedCreationRequest) => {
     },
     body,
   }).then(async (res) => {
-    return { status: res.status, json: await res.json() };
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
   });
 };
 
@@ -393,7 +450,7 @@ const updateFeed = async (req: FeedUpdateRequest) => {
   const body = new FormData();
 
   if (req.data) {
-    body.append("clubUpdateRequest", {
+    body.append("feedUpdateRequest", {
       string: JSON.stringify(req.data),
       type: "application/json",
     });
@@ -408,7 +465,8 @@ const updateFeed = async (req: FeedUpdateRequest) => {
     },
     body,
   }).then(async (res) => {
-    return { ...(await res.json()), status: res.status };
+    if(res.status === 200) return {status: res.status, ...(await res.json())}
+    else return {status: res.status}
   });
 };
 
@@ -580,14 +638,83 @@ const selectMyClubs = ({ queryKey }: any) => {
   }).then((res) => res.json());
 };
 
+/**피드신고*/
 const reportFeed = (req: FeedReportRequest) => {
-  return fetch(`${BASE_URL}/api/feeds/${req.data.userId}/report?reason=${req.data.reason}`, {
+  console.log(req.data.id)
+  console.log(req.data.reason)
+  return fetch(`${BASE_URL}/api/feeds/${req.data.id}/report?reason=${req.data.reason}`, {
     method: "PUT",
     headers: {
       Authorization: `${req.token}`,
     },
-  }).then((res) => res.json());
+  }).then(async (res) => {
+    if(res.status === 200) return {status: res.status, ...(await res.json())}
+    else return {status: res.status}
+  });
 };
+
+/**피드좋아요*/
+const likeCount = ({mutationkey}:any) =>{
+  const [id, token]: [number, string] = mutationkey;
+  console.log(id)
+  return fetch(`${BASE_URL}/api/feeds/${id}/likes`, {
+    method: "POST",
+    headers: {
+      Authorization: `${token}`,
+    },
+  }).then(async (res) => {
+    if(res.status === 200) return {status: res.status, ...(await res.json())}
+    else return {status: res.status}
+  });
+}
+
+/**피드 좋아요 취소*/
+const likeCountReverse = ({mutationkey}:any) => {
+  const [id, token]: [number, string] = mutationkey;
+  return fetch(`${BASE_URL}/api/feeds/${id}/likes`, {
+    method: "PUT",
+    headers: {
+      Authorization: `${token}`,
+    },
+  }).then(async (res) => {
+    if(res.status === 200) return {status: res.status, ...(await res.json())}
+    else return {status: res.status}
+  });
+}
+
+/**댓글호출*/
+const getReply = ({queryKey}:any) => {
+  const [_key, token, id]: [string, string, number] = queryKey;
+  return fetch(`${BASE_URL}/api/feeds/${id}/comments`, {
+    method: "GET",
+    headers: {
+      Authorization: `${token}`,
+    },
+  }) .then((res) => res.json())
+    .then((res) => {
+      if (res.resultCode !== "OK") new Error("API Response Error.");
+      else {
+        res.data.applyStatus = res.data.applyStatus ?? undefined;
+        res.data.role = res.data.role ?? undefined;
+      }
+      return res;
+    });
+};
+
+/**댓글달기*/
+const ReplyFeed = (req:FeedReplyRequest) =>{
+  return fetch(`${BASE_URL}/api/feeds/${req.data.id}/comment`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${req.token}`,
+    },
+    body: JSON.stringify(req.data),
+  }).then(async (res) => {
+    if(res.status === 200) return {status: res.status, ...(await res.json())}
+    else return {status: res.status}
+  });
+}
 
 export const ClubApi = {
   getCategories,
@@ -616,6 +743,11 @@ export const FeedApi = {
   createFeed,
   reportFeed,
   updateFeed,
+  likeCount,
+  likeCountReverse,
+  getReply,
+  ReplyFeed,
+  getSelectFeeds,
 };
 
 export const CommonApi = { getJWT };

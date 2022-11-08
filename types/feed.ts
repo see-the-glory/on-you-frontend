@@ -1,31 +1,38 @@
-import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Animated, GestureResponderEvent } from "react-native";
-import { Reply } from "../api";
-import ImageSelecter from "../screens/HomeRelevant/ImageSelecter";
+import { Club, Feed, Reply } from "../api";
 
 export type RootStackParamList = {
-  HomeStack: {
-    id: number;
-    clubId: number;
-    clubName: string | undefined;
-    userId: number;
-    userName: string | undefined;
-    content: string | undefined;
+  Home:{feedData:Feed}
+  FeedCreater:{
     imageUrls: string;
-    hastags: string | undefined;
-    likeYn: boolean | undefined;
-    likeCount: number;
-    commentCount: number;
+    userId: number;
+    content: string;
+    hashtag: string | undefined;
     created: string;
-    updated: string;
-  };
-  ImageSelecter:{
-    clubName:string
-    clubId: number
+    clubId: number;
+    clubName: string;
+    userName: string;
+    clubData:Club
   }
-  ReplyPage: { replyData: Reply };
-  
+  // ReplyPage: {userId: number, userName: string, id: number};
+  ReplyPage: {feedData:Feed};
+  MyClubSelector:{id:number,userId:number}
+  FeedCreateSuccess:{feedData: Feed}
+  FeedUpdate:{feedData:Feed}
+  FeedReport:{feedData:Feed}
+  Tabs:{}
+  HomeStack:{}
 };
 
-export type FeedCreate = NativeStackScreenProps<RootStackParamList,"ImageSelecter">
+export type HomeScreenProps = NativeStackScreenProps<RootStackParamList,"Home">
+export type FeedCreateScreenProps = NativeStackScreenProps<RootStackParamList,"FeedCreater">
+export type MyClubSelectorScreenProps = NativeStackScreenProps<RootStackParamList,"MyClubSelector">
+export type ReplyPageScreenProps = NativeStackScreenProps<RootStackParamList,"ReplyPage">
+export type ModifiyPeedScreenProps = NativeStackScreenProps<RootStackParamList,"FeedUpdate">
+export type ReportPeedScreenProps = NativeStackScreenProps<RootStackParamList,"FeedReport">
+
+export interface FeedData extends Feed{
+  id:number | undefined;
+  userId: number;
+  isEnd: boolean
+}

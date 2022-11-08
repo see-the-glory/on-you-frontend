@@ -1,13 +1,15 @@
-import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
+import { MaterialCommunityIcons,AntDesign } from "@expo/vector-icons";
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
-import { Alert, Keyboard, Text, TouchableWithoutFeedback, useWindowDimensions, View, Image, TouchableOpacity, Button } from "react-native";
+import { Alert, Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
-import { FeedCreate } from "../../types/feed";
-import { ClubApi, ClubCreationRequest, FeedApi } from "../../api";
-import { useSelector } from "react-redux";
 import { useMutation } from "react-query";
+import { useSelector } from "react-redux";
+import { FeedApi,FeedCreationRequest } from "../../api";
+import { FeedCreateScreenProps,  } from '../../types/feed';
+import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
+
 interface ValueInfo {
   str: string;
   isHT: boolean;
@@ -88,12 +90,9 @@ const CancleIcon = styled.View`
   left: 73%;
 `;
 
-const ImageSelecter: React.FC<FeedCreate> = ({
-  route: {
-    params: { clubName, clubId },
-  },
-  navigation: { navigate },
-}) => {
+const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
+  route:{params:{clubId,userId}},
+  navigation: { navigate } }) => {
   const Stack = createNativeStackNavigator();
   const [refreshing, setRefreshing] = useState(false);
   //사진권한 허용
@@ -101,6 +100,9 @@ const ImageSelecter: React.FC<FeedCreate> = ({
   const [loading, setLoading] = useState(false);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
   let [alert, alertSet] = useState(true);
+
+  console.log(userId+'userId')
+  console.log(clubId+'clubId')
 
   const getValueInfos = (value: string): ValueInfo[] => {
     if (value.length === 0) {
@@ -129,6 +131,7 @@ const ImageSelecter: React.FC<FeedCreate> = ({
   const token = useSelector((state) => state.AuthReducers.authToken);
   const onText = (text: React.SetStateAction<string>) => setPostText(text);
 
+  const [content, setContent] = useState("")
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -142,60 +145,59 @@ const ImageSelecter: React.FC<FeedCreate> = ({
     }
   };
 
-  const createFinish = () => {
-    Alert.alert("등록되었습니다.");
-    setRefreshing(true);
-    return navigate("Home");
-
-    //홈화면 새로고침 기능 넣기
-  };
-
   const mutation = useMutation(FeedApi.createFeed, {
     onSuccess: (res) => {
       if (res.status === 200 && res.json?.resultCode === "OK") {
         setRefreshing(true);
-        return navigate("Home", {
-          clubData: res.json?.data,
+        return navigate("Tabs", {
+          screen: "Home",
+          feedData:res.data,
         });
       } else {
         console.log(`mutation success but please check status code`);
         console.log(`status: ${res.status}`);
         console.log(res.json);
-        return navigate("Home", {});
+        return navigate("Tabs", {
+          screen: "Home",
+        });
       }
     },
     onError: (error) => {
       console.log("--- Error ---");
       console.log(`error: ${error}`);
-      return navigate("Home", {});
+      return navigate("Tabs", {
+        screen: "Home",
+      });
     },
     onSettled: (res, error) => {},
   });
 
   const onSubmit = () => {
-    const data = {
-      clubName,
-      clubId,
+    const data={
+      clubId: clubId,
+      content: content,
     };
+
+    console.log(data)
 
     const splitedURI = new String(imageURI).split("/");
 
-    const requestData: ClubCreationRequest =
+    const requestData: FeedCreationRequest =
       imageURI === null
         ? {
-            image: null,
-            data,
-            token,
-          }
+          image: null,
+          data,
+          token,
+        }
         : {
-            image: {
-              uri: imageURI.replace("file://", ""),
-              type: "image/jpeg",
-              name: splitedURI[splitedURI.length - 1],
-            },
-            data,
-            token,
-          };
+          image: {
+            uri: imageURI.replace("file://", ""),
+            type: "image/jpeg",
+            name: splitedURI[splitedURI.length - 1],
+          },
+          data,
+          token,
+        };
 
     mutation.mutate(requestData);
   };
@@ -292,9 +294,8 @@ const ImageSelecter: React.FC<FeedCreate> = ({
             <SelectImage source={{ uri: "https://i.pinimg.com/564x/aa/26/04/aa2604e4c5e060f97396f3f711de37c1.jpg" }} /> */}
           </SelectImageView>
           <FeedText
-            key={"feedCreateRequest"}
             placeholder="사진과 함께 남길 게시글을 작성해 보세요."
-            onChangeText={(text) => setTitle(text)}
+            onChangeText={(content) => setContent(content)}
             textContentType="none"
             autoCompleteType="off"
             autoCapitalize="none"
