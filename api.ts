@@ -216,7 +216,6 @@ export interface FeedUpdateRequest{
     type: string;
     name: string | undefined;
   };
-export interface FeedUpdateRequest {
   data: {
     id:number | undefined
     // access: string
@@ -333,15 +332,15 @@ export interface getFeedLike{
   data:{
     id?: number;
   }
-export interface FeedReportRequest {
-  token: string;
-  data: {
-    userId: number;
-    reason: string;
-  };
-export interface getReplyRequest{
-  id: number;
   token:string;
+}
+export interface FeedReportRequest{
+  data:{
+    id:number | undefined,
+    userId:number,
+    reason: string,
+  };
+  token: string;
 }
 
 export interface FeedReplyRequest{
@@ -365,8 +364,6 @@ const getFeeds = ({ queryKey }: any) => {
   }).then(async (res) => {
     if (res.status === 200) return { status: res.status, ...(await res.json()) };
     else return { status: res.status };
-    if(res.status === 200) return {status: res.status, ...(await res.json())}
-    else return {status: res.status}
   });
 };
 
