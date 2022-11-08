@@ -505,18 +505,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           </ModalCloseButton>
         </ModalHeaderRight>
       </ScheduleModal>
-
-      <ScheduleAddModal visible={scheduleAddVisible} mutation={scheduleMutation} clubId={clubData.id}>
-        <ModalHeaderRight>
-          <ModalCloseButton
-            onPress={() => {
-              setScheduleAddVisible(false);
-            }}
-          >
-            <Ionicons name="close" size={24} color="black" />
-          </ModalCloseButton>
-        </ModalHeaderRight>
-      </ScheduleAddModal>
     </Animated.ScrollView>
   );
 };

@@ -1428,13 +1428,6 @@
   dependencies:
     "merge-options" "^3.0.4"
 
-"@react-native-community/async-storage@^1.12.1":
-  "integrity" "sha512-70WGaH3PKYASi4BThuEEKMkyAgE9k7VytBqmgPRx3MzJx9/MkspwqJGmn3QLCgHLIFUgF1pit2mWICbRJ3T3lg=="
-  "resolved" "https://registry.npmjs.org/@react-native-community/async-storage/-/async-storage-1.12.1.tgz"
-  "version" "1.12.1"
-  dependencies:
-    "deep-assign" "^3.0.0"
-
 "@react-native-community/cli-debugger-ui@^5.0.1":
   "integrity" "sha512-5gGKaaXYOVE423BUqxIfvfAVSj5Cg1cU/TpGbeg/iqpy2CfqyWqJB3tTuVUbOOiOvR5wbU8tti6pIi1pchJ+oA=="
   "resolved" "https://registry.npmjs.org/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-5.0.1.tgz"
@@ -1769,7 +1762,7 @@
   dependencies:
     "@types/react" "^17"
 
-"@types/react@*", "@types/react@^16.8 || ^17.0 || ^18.0", "@types/react@^17", "@types/react@^17.0.39":
+"@types/react@*", "@types/react@^16.8 || ^17.0 || ^18.0", "@types/react@^17", "@types/react@~17.0.21":
   "integrity" "sha512-zJ6IYlJ8cYYxiJfUaZOQee4lh99mFihBoqkOSEGV+dFi9leROW6+PgstzQ+w3gWTnUfskALtQPGHK6dYmPj+2A=="
   "resolved" "https://registry.npmjs.org/@types/react/-/react-17.0.48.tgz"
   "version" "17.0.48"
@@ -2877,13 +2870,6 @@
   "resolved" "https://registry.npmjs.org/decode-uri-component/-/decode-uri-component-0.2.0.tgz"
   "version" "0.2.0"
 
-"deep-assign@^3.0.0":
-  "integrity" "sha512-YX2i9XjJ7h5q/aQ/IM9PEwEnDqETAIYbggmdDB3HLTlSgo1CxPsj6pvhPG68rq6SVE0+p+6Ywsm5fTYNrYtBWw=="
-  "resolved" "https://registry.npmjs.org/deep-assign/-/deep-assign-3.0.0.tgz"
-  "version" "3.0.0"
-  dependencies:
-    "is-obj" "^1.0.0"
-
 "deepmerge@^3.2.0":
   "integrity" "sha512-GRQOafGHwMHpjPx9iCvTgpu9NojZ49q794EEL94JVEw6VaeA8XTUyBKvAkOOjBX9oJNiV6G3P+T+tihFjo2TqA=="
   "resolved" "https://registry.npmjs.org/deepmerge/-/deepmerge-3.3.0.tgz"
@@ -3886,11 +3872,6 @@
   "integrity" "sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng=="
   "resolved" "https://registry.npmjs.org/is-number/-/is-number-7.0.0.tgz"
   "version" "7.0.0"
-
-"is-obj@^1.0.0":
-  "integrity" "sha512-l4RyHgRqGN4Y3+9JHVrNqO+tN0rV5My76uW5/nuO4K1b6vw5G8d/cmFjP9tRfEsdhZNt0IFdZuK/c2Vr4Nb+Qg=="
-  "resolved" "https://registry.npmjs.org/is-obj/-/is-obj-1.0.1.tgz"
-  "version" "1.0.1"
 
 "is-plain-obj@^2.1.0":
   "integrity" "sha512-YWnfyRwxL/+SsrWYfOpUtz5b3YD+nyfkHvjbcanzk8zgyO4ASD67uVMRt8k5bM4lLMDnXfriRhOpemw+NfT1eA=="
@@ -5411,10 +5392,10 @@
   dependencies:
     "prop-types" "^15.7.2"
 
-"react-native-calendars@^1.1291.0":
-  "integrity" "sha512-WBkcpD0B+Fq/VMD5E3laRFf3/1VEaZGqzXW8D1csJUGnXwKbCvh5GOzEUBJJJ2dBTIjww0o4AOUyt4St9qbC8w=="
-  "resolved" "https://registry.npmjs.org/react-native-calendars/-/react-native-calendars-1.1291.0.tgz"
-  "version" "1.1291.0"
+"react-native-calendars@^1.1291.1":
+  "integrity" "sha512-L2MK2t3kbnDg2RoU12UAoQyNrUpDYdj2MyIfg13YrwVb8BuI/gc0q/VpEinY3iz5ETHiFsTLkCsAFwSj7xbZWw=="
+  "resolved" "https://registry.npmjs.org/react-native-calendars/-/react-native-calendars-1.1291.1.tgz"
+  "version" "1.1291.1"
   dependencies:
     "hoist-non-react-statics" "^3.3.1"
     "immutable" "^4.0.0-rc.12"
@@ -5700,7 +5681,7 @@
   "resolved" "https://registry.npmjs.org/react-refresh/-/react-refresh-0.4.3.tgz"
   "version" "0.4.3"
 
-"react@*", "react@^0.14.9 || ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^17 || ^18", "react@> 15.0.0", "react@>= 15.2.1", "react@>= 16.8.0", "react@>=15.0.0", "react@>=16.3.0", "react@>=16.8", "react@>=17.0.0", "react@>=17.0.1", "react@16 || 17", "react@17.0.1":
+"react@*", "react@^0.14.9 || ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^17 || ^18", "react@> 15.0.0", "react@>= 15.2.1", "react@>= 16.8.0", "react@>=15.0.0", "react@>=16.3.0", "react@>=16.8", "react@>=17.0.0", "react@>=17.0.1", "react@16 || 17", "react@17.0.1":
   "integrity" "sha512-lG9c9UuMHdcAexXtigOZLX8exLWkW0Ku29qPRU8uhF2R9BN96dLCt0psvzPLlHc5OWkgymP3qwTRgbnw5BKx3w=="
   "resolved" "https://registry.npmjs.org/react/-/react-17.0.1.tgz"
   "version" "17.0.1"
