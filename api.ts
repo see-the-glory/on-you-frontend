@@ -643,7 +643,6 @@ const reportFeed = (req: FeedReportRequest) => {
   });
 };
 
-/**피드좋아요*/
 const likeCount = (req:getFeedLike) =>{
   console.log('LikeFeed')
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}/likes`, {

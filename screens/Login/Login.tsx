@@ -128,11 +128,11 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
         <Wrap>
           <Form>
             <Title>아이디</Title>
-            <Input placeholder="example@email.com" onChangeText={(text) => setEmail(text)} />
+            <Input placeholder="example@email.com" placeholderTextColor={"#B0B0B0"} onChangeText={(text) => setEmail(text)} />
           </Form>
           <Form>
             <Title>비밀번호</Title>
-            <Input secureTextEntry={true} placeholder="비밀번호를 입력해주세요." onChangeText={(text) => setPassword(text)} />
+            <Input secureTextEntry={true} placeholder="비밀번호를 입력해주세요." placeholderTextColor={"#B0B0B0"} onChangeText={(text) => setPassword(text)} />
             <View onPress={goToFindLoginInfo}>
               <ForgetText>로그인 정보가 기억나지 않을때</ForgetText>
             </View>
