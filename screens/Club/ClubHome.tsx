@@ -365,12 +365,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           <Ionicons name="calendar" size={16} color="#295AF5" />
           <SectionTitle>SCHEDULE</SectionTitle>
         </TitleView>
-        {clubRole?.data?.role === undefined ? (
-          // Schedule FlatList의 padding 이슈 때문에 ContentView에 paddingSize Props 추가.
-          <ContentView paddingSize={SCREEN_PADDING_SIZE}>
-            <ContentText>모임의 멤버만 확인할 수 있습니다.</ContentText>
-          </ContentView>
-        ) : (
+        {clubRole?.data?.role && clubRole?.data?.role !== "PENDING" ? (
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -433,6 +428,11 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
               )
             }
           />
+        ) : (
+          // Schedule FlatList의 padding 이슈 때문에 ContentView에 paddingSize Props 추가.
+          <ContentView paddingSize={SCREEN_PADDING_SIZE}>
+            <ContentText>모임의 멤버만 확인할 수 있습니다.</ContentText>
+          </ContentView>
         )}
       </SectionView>
       <SectionView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
