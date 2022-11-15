@@ -38,6 +38,8 @@
     "react-infinite-scroller": "^1.2.6",
     "react-native": "0.64.3",
     "react-native-calendars": "^1.1291.1",
+    "react-native-collapsible": "^1.6.0",
+    "react-native-date-picker": "^4.2.6",
     "react-native-gesture-handler": "~2.1.0",
     "react-native-image-crop-picker": "^0.38.0",
     "react-native-image-modal": "^2.0.4",
