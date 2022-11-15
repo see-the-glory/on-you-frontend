@@ -1,9 +1,12 @@
-import React, { useLayoutEffect, useMemo, useState } from "react";
-import { KeyboardAvoidingView, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import React, { useLayoutEffect, useState } from "react";
+import { KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
-import { Calendar, CalendarProvider } from "react-native-calendars";
+import { Calendar } from "react-native-calendars";
 import CustomTextInput from "../../components/CustomTextInput";
+import Collapsible from "react-native-collapsible";
+import DatePicker from "react-native-date-picker";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -79,11 +82,12 @@ const ClubScheduleAdd = ({
 }) => {
   const [place, setPlace] = useState<string>("");
   const [memo, setMemo] = useState<string>("");
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [date, setDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date().toString().split("T")[0]);
   const markedDate = {
     [selectedDate]: { selected: true },
   };
-  console.log(markedDate);
   const save = () => {};
   useLayoutEffect(() => {
     setOptions({
@@ -109,7 +113,6 @@ const ClubScheduleAdd = ({
             markedDates={markedDate}
             onDayPress={(day) => {
               setSelectedDate(day.dateString);
-              console.log(selectedDate);
             }}
             onPressArrowLeft={(subtractMonth) => subtractMonth()}
             onPressArrowRight={(addMonth) => addMonth()}
@@ -122,11 +125,26 @@ const ClubScheduleAdd = ({
           />
           <Content>
             <ItemView>
-              <TouchableItem>
+              <TouchableItem onPress={() => setShowDatePicker((prev) => !prev)}>
                 <ItemTitle>모임 시간</ItemTitle>
                 <ItemText>오전 10시 00분</ItemText>
               </TouchableItem>
             </ItemView>
+
+            {Platform.OS === "android" ? (
+              <Collapsible collapsed={!showDatePicker} style={{ alignItems: "center", paddingVertical: 10 }}>
+                <ItemView>
+                  <DatePicker date={date} mode="time" onDateChange={setDate} />
+                </ItemView>
+              </Collapsible>
+            ) : (
+              <Collapsible collapsed={!showDatePicker} style={{ paddingVertical: 10 }}>
+                <ItemView>
+                  <RNDateTimePicker mode="time" value={date} display="spinner" onChange={(_, value: Date) => setDate(value)} />
+                </ItemView>
+              </Collapsible>
+            )}
+
             <ItemView>
               <InputItem>
                 <ItemTitle>모임 장소</ItemTitle>
