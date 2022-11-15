@@ -79,6 +79,9 @@ const FindId: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
+        toast.show("일치하는 회원정보가 없습니다.", {
+          type: "warning",
+        });
       }
     },
     onError: (error) => {
@@ -102,17 +105,11 @@ const FindId: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
   // console.log(mutation.data.status);
 
   const goToNext = () => {
-    if (mutation.data.status === 200) {
-      onSubmit();
-      navigate("LoginStack", {
-        screen: "FindIdResult",
-        email: mutation.data.data,
-      });
-    } else {
-      toast.show("일치하는 회원정보가 없습니다.", {
-        type: "warning",
-      });
-    }
+    onSubmit();
+    navigate("LoginStack", {
+      screen: "FindIdResult",
+      email: mutation.data.data,
+    });
   };
 
   return (
