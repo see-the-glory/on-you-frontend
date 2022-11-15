@@ -1,11 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
-import { useMutation } from "react-query";
-import { CommonApi } from "../../api";
-import { useDispatch } from "react-redux";
-import { Login } from "../../store/Actions";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 
 const Container = styled.View`

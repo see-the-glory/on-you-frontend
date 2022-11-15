@@ -210,14 +210,14 @@ export interface FeedCreationRequest {
   token: string;
 }
 
-export interface FeedUpdateRequest{
+export interface FeedUpdateRequest {
   image?: {
     uri: string;
     type: string;
     name: string | undefined;
   };
   data: {
-    id:number | undefined
+    id: number | undefined;
     // access: string
     content: string;
   };
@@ -299,6 +299,11 @@ export interface LoginRequest {
   token: string;
 }
 
+export interface FindIdRequest {
+  phoneNumber?: string;
+  username?: string;
+}
+
 export interface UserInfoRequest {
   token: string;
   image: {
@@ -327,11 +332,11 @@ export interface SignUp {
   phoneNumber?: string;
 }
 
-export interface getFeedLike{
-  data:{
+export interface getFeedLike {
+  data: {
     id?: number;
-  }
-  token:string;
+  };
+  token: string;
 }
 
 export interface FeedReplyRequest {
@@ -361,12 +366,12 @@ const getFeeds = ({ queryKey }: any) => {
 /**피드 선택*/
 const getSelectFeeds = ({ queryKey }: any) => {
   const [_key, token, id]: [string, string, number] = queryKey;
-  console.log(id+'id')
-return fetch(`${BASE_URL}/api/feeds/${id}`, {
-  method: "GET",
-  headers: {
-      authorization: `${token}`
-    }
+  console.log(id + "id");
+  return fetch(`${BASE_URL}/api/feeds/${id}`, {
+    method: "GET",
+    headers: {
+      authorization: `${token}`,
+    },
   }).then(async (res) => {
     if (res.status === 200) return { status: res.status, ...(await res.json()) };
     else return { status: res.status };
@@ -445,7 +450,7 @@ const createFeed = async (req: FeedCreationRequest) => {
 };
 
 const updateFeed = async (req: FeedUpdateRequest) => {
-  console.log(req.data.id+'realId')
+  console.log(req.data.id + "realId");
 
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}`, {
     method: "PUT",
@@ -618,6 +623,19 @@ const registerUserInfo = (req: SignUp) => {
   });
 };
 
+const FindUserId = (req: FindIdRequest) => {
+  return fetch(`${BASE_URL}/api/user/findId`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(req),
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
+};
+
 const selectMyClubs = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
   return fetch(`${BASE_URL}/api/clubs/my`, {
@@ -625,7 +643,10 @@ const selectMyClubs = ({ queryKey }: any) => {
     headers: {
       authorization: `${token}`,
     },
-  }).then((res) => res.json());
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
 };
 
 /**피드신고*/
@@ -643,8 +664,8 @@ const reportFeed = (req: FeedReportRequest) => {
   });
 };
 
-const likeCount = (req:getFeedLike) =>{
-  console.log('LikeFeed')
+const likeCount = (req: getFeedLike) => {
+  console.log("LikeFeed");
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}/likes`, {
     method: "POST",
     headers: {
@@ -658,8 +679,8 @@ const likeCount = (req:getFeedLike) =>{
 };
 
 /**피드 좋아요 취소*/
-const likeCountReverse = (req:getFeedLike) => {
-  console.log('LikeFeedCancle')
+const likeCountReverse = (req: getFeedLike) => {
+  console.log("LikeFeedCancle");
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}/likes`, {
     method: "PUT",
     headers: {
@@ -727,6 +748,7 @@ export const UserApi = {
   registerUserInfo,
   updateUserInfo,
   selectMyClubs,
+  FindUserId,
 };
 
 export const FeedApi = {

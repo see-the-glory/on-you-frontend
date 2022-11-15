@@ -51,11 +51,11 @@ const FindPw: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
     <Container>
       <Form>
         <Title>아이디</Title>
-        <Input placeholder="example@email.com" />
+        <Input placeholder="example@email.com" placeholderTextColor={"#B0B0B0"} />
       </Form>
       <Form>
         <Title>등록된 전화번호</Title>
-        <Input placeholder="010-1234-1234" />
+        <Input placeholder="010-1234-1234" placeholderTextColor={"#B0B0B0"} />
       </Form>
       <Button>
         <ButtonTitle>확인</ButtonTitle>

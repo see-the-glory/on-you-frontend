@@ -18,11 +18,13 @@ const IdButton = styled.TouchableOpacity`
   align-items: center;
   width: 100%;
   height: 53px;
-  background-color: #ff714b;
+  border-width: 1px;
+  border-color: #ff714b;
+  background-color: #fff;
 `;
 
 const IdTitle = styled.Text`
-  color: #fff;
+  color: #000;
   font-size: 18px;
   font-weight: 700;
 `;
@@ -45,13 +47,25 @@ const PwTitle = styled.Text`
   font-weight: 700;
 `;
 
-const FindLoginInfo: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { navigate } }) => {
+const FindLoginInfo: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
+  const goToFindId = () => {
+    navigate("LoginStack", {
+      screen: "FindId",
+    });
+  };
+
+  const goToFindPw = () => {
+    navigate("LoginStack", {
+      screen: "FindPw",
+    });
+  };
+
   return (
     <Container>
-      <IdButton>
+      <IdButton onPress={goToFindId}>
         <IdTitle>아이디 찾기</IdTitle>
       </IdButton>
-      <PwButton>
+      <PwButton onPress={goToFindPw}>
         <PwTitle>비밀번호 찾기</PwTitle>
       </PwButton>
     </Container>
