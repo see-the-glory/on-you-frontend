@@ -18,6 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 import FindId from "../screens/Login/FindId";
 import FindPw from "../screens/Login/FindPw";
 import FindIdResult from "../screens/Login/FindIdResult";
+import FindPwResult from "../screens/Login/FindPwResult";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -73,7 +74,7 @@ const LoginStack = ({
         options={{
           title: "아이디 찾기",
           headerLeft: () => (
-            <TouchableOpacity onPress={() => goBack()}>
+            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "FindId" })}>
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),
@@ -86,6 +87,18 @@ const LoginStack = ({
           title: "비밀번호 찾기",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "FindLoginInfo" })}>
+              <Ionicons name="chevron-back" size={20} color="black" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <NativeStack.Screen
+        name="FindPwResult"
+        component={FindPwResult}
+        options={{
+          title: "비밀번호 찾기",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "FindPw" })}>
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),

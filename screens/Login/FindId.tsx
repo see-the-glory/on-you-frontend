@@ -76,6 +76,10 @@ const FindId: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
       if (res.status === 200 && res.resultCode === "OK") {
         console.log(`success`);
         console.log(res.data);
+        navigate("LoginStack", {
+          screen: "FindIdResult",
+          email: res.data,
+        });
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
@@ -100,16 +104,6 @@ const FindId: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
     const requestData: FindIdRequest = data;
 
     mutation.mutate(requestData);
-  };
-
-  // console.log(mutation.data.status);
-
-  const goToNext = () => {
-    onSubmit();
-    navigate("LoginStack", {
-      screen: "FindIdResult",
-      email: mutation.data.data,
-    });
   };
 
   return (
@@ -147,7 +141,7 @@ const FindId: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
             blurOnSubmit={false}
           />
         </Form>
-        <Button onPress={goToNext}>
+        <Button onPress={onSubmit}>
           <ButtonTitle>확인</ButtonTitle>
         </Button>
       </Container>
