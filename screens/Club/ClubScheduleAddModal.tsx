@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Keyboard, Modal, StatusBar, TouchableWithoutFeedback, useWindowDimensions, View, Platform, TouchableOpacity, Text } from "react-native";
+import { Animated, Modal, StatusBar, useWindowDimensions, Platform, TouchableOpacity } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import moment from "moment-timezone";
