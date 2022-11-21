@@ -302,6 +302,18 @@ export interface LoginRequest {
   token: string;
 }
 
+export interface FindIdRequest {
+  phoneNumber?: string;
+  username?: string;
+}
+
+export interface FindPwRequest {
+  birthday?: string;
+  email?: string;
+  phoneNumber?: string;
+  username?: string;
+}
+
 export interface UserInfoRequest {
   token: string;
   image: {
@@ -642,6 +654,32 @@ const registerUserInfo = (req: SignUp) => {
   });
 };
 
+const FindUserId = (req: FindIdRequest) => {
+  return fetch(`${BASE_URL}/api/user/findId`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(req),
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
+};
+
+const FindUserPw = (req: FindPwRequest) => {
+  return fetch(`${BASE_URL}/api/mail/findPw`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(req),
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
+};
+
 const selectMyClubs = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
   return fetch(`${BASE_URL}/api/clubs/my`, {
@@ -765,6 +803,8 @@ export const UserApi = {
   registerUserInfo,
   updateUserInfo,
   selectMyClubs,
+  FindUserId,
+  FindUserPw,
 };
 
 export const FeedApi = {
