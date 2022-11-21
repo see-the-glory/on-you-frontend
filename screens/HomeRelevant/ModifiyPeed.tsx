@@ -82,6 +82,10 @@ const Content = styled.View`
   padding: 0 12px 0 12px;
 `;
 
+const ContentArea = styled.View`
+  height: 20%;
+`
+
 const Ment = styled.TextInput`
   width: 100%;
   height: 30%;
@@ -99,7 +103,6 @@ const FixCompleteArea = styled.View`
   width: 100%;
   text-align: center;
   height: 50px;
-  top: 20px;
 `
 const FixCompleteBtn = styled.TouchableOpacity``
 const FixCompleteText = styled.Text`
@@ -132,7 +135,6 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({
   } = useQuery<ModifiedReponse>(["getFeeds",token,feedData.id], FeedApi.getSelectFeeds, {
     onSuccess: (res) => {
       setIsPageTransition(false);
-      console.log(res);
     },
     onError: (err) => {
       console.log(err);
@@ -187,9 +189,10 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-        <Container>
-          <ScrollView>
+      <Container>
+        {/* keyboardStatus android: clear, ios: ?*/}
+        <KeyboardAvoidingView behavior={Platform.select({ios: 'padding', android: 'position'})} style={{flex: 1}}>
+          <View>
             <FeedUser >
               <UserImage source={{ uri: userInfo?.data.thumbnail }} />
               <UserInfo>
@@ -203,6 +206,8 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({
             <FeedImage>
               <ImageSource source={data.imageUrls[0]===undefined?{uri:"https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"}:{uri:data.imageUrls[0]}} size={FEED_IMAGE_SIZE}/>
             </FeedImage>
+          </View>
+          <ContentArea>
             <Ment
               onChangeText={(content) => setContent(content)}
               autoCompleteType="off"
@@ -214,14 +219,14 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({
             >
               {data.content}
             </Ment>
-            <FixCompleteArea>
-              <FixCompleteBtn onPress={FixComplete}>
-                <FixCompleteText>수정완료</FixCompleteText>
-              </FixCompleteBtn>
-            </FixCompleteArea>
-          </ScrollView>
-        </Container>
-      </KeyboardAvoidingView>
+          </ContentArea>
+          <FixCompleteArea>
+            <FixCompleteBtn onPress={FixComplete}>
+              <FixCompleteText>수정완료</FixCompleteText>
+            </FixCompleteBtn>
+          </FixCompleteArea>
+        </KeyboardAvoidingView>
+      </Container>
     </TouchableWithoutFeedback>
   );
 };
