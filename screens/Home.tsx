@@ -535,7 +535,7 @@ const Home:React.FC<HomeScreenProps> = ({
                 <FeedMain>
                   <FeedImage>
                     <SliderBox images={item.imageUrls[0]===undefined? ["https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg","https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"]
-                      : ["item.imageUrls[0]","item.imageUrls[1]"]} sliderBoxHeight={FEED_IMAGE_SIZE}/>
+                      : [item.imageUrls[0],item.imageUrls[1]]} sliderBoxHeight={FEED_IMAGE_SIZE}/>
                     {/*<ImageSource source={item.imageUrls[0]===undefined?{uri:"https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"}:{uri:item.imageUrls[0]}} size={FEED_IMAGE_SIZE}/>*/}
                   </FeedImage>
                   <FeedInfo>
