@@ -135,7 +135,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
       clubMaxMember: maxNumber,
       clubShortDesc,
       clubLongDesc,
-      phoneNumber,
+      contactPhone: phoneNumber,
       organizationName,
       isApproveRequired,
     };

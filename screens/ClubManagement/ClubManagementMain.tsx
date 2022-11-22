@@ -158,10 +158,13 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
         setData(res.data);
+        if (res.data.recruitStatus === "OPEN") {
+          setIsToggle(true);
+          X.setValue(13);
+        } else {
+          setIsToggle(false);
+        }
       } else {
-        console.log(`getClub query success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
         toast.show(`Error Code: ${res.status}`, {
           type: "error",
         });
@@ -208,7 +211,6 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
         type: "error",
       });
     },
-    onSettled: (res, error) => {},
   });
 
   useFocusEffect(
@@ -221,11 +223,6 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   );
 
   useLayoutEffect(() => {
-    console.log("ClubManagementMain useLayoutEffect!");
-    // if (data.recruitStatus === "OPEN") {
-    //   setIsToggle(true);
-    //   X.setValue(13);
-    // }
     const iconSize = 14;
     setItems([
       {
@@ -255,14 +252,14 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
     if (isToggle) {
       // CLOSE -> OPEN
       Animated.timing(X, {
-        toValue: 0,
+        toValue: 13,
         duration: 250,
         useNativeDriver: true,
       }).start();
     } else {
       // OPEN -> CLOSE
       Animated.timing(X, {
-        toValue: 13,
+        toValue: 0,
         duration: 250,
         useNativeDriver: true,
       }).start();
@@ -282,6 +279,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
 
     mutation.mutate(updateData);
   };
+
   return (
     <Container>
       <StatusBar barStyle={"default"} />

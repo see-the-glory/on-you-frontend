@@ -72,6 +72,7 @@ export type ClubDeleteProps = NativeStackScreenProps<RootStackParamList, "ClubDe
 export interface ClubHomeParamList {
   scrollY: Animated.Value;
   headerDiff: number;
+  clubRole?: ClubRole;
 }
 
 // ClubHome Header

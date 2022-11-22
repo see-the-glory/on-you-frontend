@@ -128,15 +128,15 @@ const ClubScheduleAdd = ({
               <TouchableItem onPress={() => setShowDatePicker((prev) => !prev)}>
                 <ItemTitle>모임 시간</ItemTitle>
                 <ItemText>
-                  {date.getHours() < 12 ? "오전" : "오후"} {date.getHours() > 12 ? date.getHours() - 12 : date.getHours().toString().padStart(2, "0")}시 {date.getMinutes().toString().padStart(2, "0")}
-                  분
+                  {date.getHours() < 12 ? "오전" : "오후"} {date.getHours() > 12 ? date.getHours() - 12 : date.getHours() === 0 ? 12 : date.getHours()}시{" "}
+                  {date.getMinutes().toString().padStart(2, "0")}분
                 </ItemText>
               </TouchableItem>
             </ItemView>
 
             {Platform.OS === "android" ? (
-              <Collapsible collapsed={!showDatePicker} style={{ alignItems: "center", paddingVertical: 10 }}>
-                <ItemView>
+              <Collapsible collapsed={!showDatePicker}>
+                <ItemView style={{ width: "100%", alignItems: "center" }}>
                   <DatePicker date={date} mode="time" onDateChange={setDate} />
                 </ItemView>
               </Collapsible>

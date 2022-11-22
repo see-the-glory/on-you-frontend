@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, FlatList, RefreshControl } from "react-native";
+import React, { useLayoutEffect, useState } from "react";
+import { ActivityIndicator, useWindowDimensions, Animated, FlatList } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
 import { ClubHomeScreenProps, ClubHomeParamList, RefinedSchedule } from "../../Types/Club";
 import { useMutation, useQuery } from "react-query";
-import { ClubApi, ClubRoleResponse, ClubSchedulesResponse, Member, Schedule } from "../../api";
+import { Club, ClubApi, ClubResponse, ClubRoleResponse, ClubSchedulesResponse, Member, Schedule } from "../../api";
 import ScheduleModal from "./ClubScheduleModal";
 import CircleIcon from "../../components/CircleIcon";
 import ScheduleAddModal from "./ClubScheduleAddModal";
@@ -196,6 +196,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   },
   scrollY,
   headerDiff,
+  clubRole,
 }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
   const [scheduleVisible, setScheduleVisible] = useState(false);
@@ -209,6 +210,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const [masterData, setMasterData] = useState<Member>();
   const toast = useToast();
   const memberCountPerLine = Math.floor((SCREEN_WIDTH - SCREEN_PADDING_SIZE) / (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING));
+
   const {
     isLoading: scheduleLoading,
     data: schedules,
@@ -244,17 +246,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
       result.push({ isEnd: true });
 
       setScheduleData(result);
-    },
-  });
-
-  const {
-    isLoading: clubRoleLoading,
-    data: clubRole,
-    isRefetching: isRefetchingClubRole,
-  } = useQuery<ClubRoleResponse>(["getClubRole", token, clubData.id], ClubApi.getClubRole, {
-    onSuccess: (res) => {},
-    onError: (error) => {
-      console.log(error);
     },
   });
 
@@ -317,13 +308,12 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     setMemberLoading(false);
   };
 
-  useEffect(() => {
-    console.log("clubHome useEffect");
-    console.log(clubData.id);
+  useLayoutEffect(() => {
+    console.log(`${clubData.id} clubHome useLayoutEffect`);
     getData();
   }, []);
 
-  const loading = memberLoading || scheduleLoading || clubRoleLoading;
+  const loading = memberLoading || scheduleLoading;
 
   return loading ? (
     <Loader>
@@ -366,7 +356,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           <Ionicons name="calendar" size={16} color="#295AF5" />
           <SectionTitle>SCHEDULE</SectionTitle>
         </TitleView>
-        {clubRole?.data?.role && clubRole?.data?.role !== "PENDING" ? (
+        {clubRole?.role && clubRole?.role !== "PENDING" ? (
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}

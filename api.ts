@@ -397,7 +397,6 @@ const getClubs = ({ queryKey, pageParam }: any) => {
 
 const getClub = ({ queryKey }: any) => {
   const [_key, token, clubId]: [string, string, number] = queryKey;
-  console.log(_key, token, clubId);
   return fetch(`${BASE_URL}/api/clubs/${clubId}`, {
     headers: {
       authorization: `${token}`,
