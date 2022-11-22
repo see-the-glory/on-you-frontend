@@ -10,7 +10,7 @@ import ClubTabBar from "../../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { ClubApi, ClubApplyRequest, ClubRoleResponse } from "../../api";
+import { ClubApi, ClubApplyRequest, ClubRoleResponse, ClubSchedulesResponse } from "../../api";
 import { useSelector } from "react-redux";
 import ClubJoinModal from "./ClubJoinModal";
 import { useToast } from "react-native-toast-notifications";
@@ -118,7 +118,24 @@ const ClubTopTabs = ({
   } = useQuery<ClubRoleResponse>(["getClubRole", token, clubData.id], ClubApi.getClubRole, {
     onSuccess: (res) => {},
     onError: (error) => {
-      console.log(error);
+      toast.show(`Role Request Error: ${error}`, {
+        type: "error",
+      });
+    },
+  });
+
+  const { isLoading: schedulesLoading, data: schedules } = useQuery<ClubSchedulesResponse>(["getClubSchedules", clubData.id], ClubApi.getClubSchedules, {
+    onSuccess: (res) => {
+      if (res.status !== 200) {
+        toast.show(`Schedule Request Error Code: ${res.status}`, {
+          type: "error",
+        });
+      }
+    },
+    onError: (error) => {
+      toast.show(`Schedule Request Error: ${error}`, {
+        type: "error",
+      });
     },
   });
 
@@ -173,6 +190,7 @@ const ClubTopTabs = ({
         shortDesc={clubData.clubShortDesc}
         categories={clubData.categories}
         recruitStatus={clubData.recruitStatus}
+        schedules={schedules?.data}
         heightExpanded={heightExpanded}
         heightCollapsed={heightCollapsed}
         headerDiff={headerDiff}

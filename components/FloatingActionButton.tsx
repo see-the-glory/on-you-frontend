@@ -76,6 +76,7 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, app
       </AnimatedFloatingButton>
       <AnimatedFloatingButton
         onPress={() => {
+          toggleMenu();
           onPressEdit();
         }}
         style={{ opacity: fade, transform: [{ translateY: firstY }] }}

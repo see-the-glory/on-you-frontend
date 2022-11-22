@@ -6,8 +6,8 @@ import { ClubManagementMainProps, RootStackParamList } from "../../types/Club";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { Shadow } from "react-native-shadow-2";
-import { useQuery } from "react-query";
-import { Club, ClubApi, ClubResponse } from "../../api";
+import { useMutation, useQuery } from "react-query";
+import { Club, ClubApi, ClubResponse, ClubUpdateRequest } from "../../api";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useToast } from "react-native-toast-notifications";
@@ -154,7 +154,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   const [items, setItems] = useState<ClubEditItem[]>();
   const [isToggle, setIsToggle] = useState(false);
   const X = useRef(new Animated.Value(0)).current;
-  const { refetch: clubDataRefetch } = useQuery<ClubResponse>(["club", token, clubData.id], ClubApi.getClub, {
+  const { refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
         setData(res.data);
@@ -176,6 +176,41 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
     },
   });
 
+  const mutation = useMutation(ClubApi.updateClub, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.resultCode === "OK") {
+        if (res.data.recruitStatus === "OPEN") {
+          setIsToggle(true);
+
+          toast.show(`멤버 모집이 활성화되었습니다.`, {
+            type: "success",
+          });
+        } else if (res.data.recruitStatus === "CLOSE") {
+          setIsToggle(false);
+
+          toast.show(`멤버 모집이 비활성화되었습니다.`, {
+            type: "success",
+          });
+        }
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res);
+        toast.show(`Error Code: ${res.status}`, {
+          type: "error",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "error",
+      });
+    },
+    onSettled: (res, error) => {},
+  });
+
   useFocusEffect(
     useCallback(() => {
       console.log("ClubManagementMain useFocusEffect!");
@@ -187,10 +222,10 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
 
   useLayoutEffect(() => {
     console.log("ClubManagementMain useLayoutEffect!");
-    if (data.recruitStatus === "OPEN") {
-      setIsToggle(true);
-      X.setValue(13);
-    }
+    // if (data.recruitStatus === "OPEN") {
+    //   setIsToggle(true);
+    //   X.setValue(13);
+    // }
     const iconSize = 14;
     setItems([
       {
@@ -216,32 +251,42 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
     ]);
   }, []);
 
-  const goToScreen = (screen: keyof RootStackParamList) => {
-    return navigate(screen, { clubData: data });
-  };
-
-  const onPressToggle = () => {
+  useLayoutEffect(() => {
     if (isToggle) {
+      // CLOSE -> OPEN
       Animated.timing(X, {
         toValue: 0,
         duration: 250,
         useNativeDriver: true,
       }).start();
     } else {
+      // OPEN -> CLOSE
       Animated.timing(X, {
         toValue: 13,
         duration: 250,
         useNativeDriver: true,
       }).start();
     }
+  }, [isToggle]);
 
-    setIsToggle((prev) => !prev);
+  const goToScreen = (screen: keyof RootStackParamList) => {
+    return navigate(screen, { clubData: data });
+  };
+
+  const onPressToggle = () => {
+    let updateData: ClubUpdateRequest = {
+      data: { recruitStatus: isToggle ? "CLOSE" : "OPEN" },
+      token,
+      clubId: clubData.id,
+    };
+
+    mutation.mutate(updateData);
   };
   return (
     <Container>
       <StatusBar barStyle={"default"} />
       <MainView>
-        <Shadow distance={3} sides={["bottom"]} viewStyle={{ width: "100%" }}>
+        <Shadow distance={3} sides={{ top: false }} style={{ width: "100%" }}>
           <Header>
             <NavigationView height={50}>
               <LeftNavigationView>

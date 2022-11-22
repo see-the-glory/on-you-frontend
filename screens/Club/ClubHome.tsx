@@ -319,6 +319,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
 
   useEffect(() => {
     console.log("clubHome useEffect");
+    console.log(clubData.id);
     getData();
   }, []);
 
