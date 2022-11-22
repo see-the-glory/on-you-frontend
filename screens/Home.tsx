@@ -1,5 +1,5 @@
 import { Feather, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
 import {
   Alert,
   Dimensions,
@@ -44,7 +44,6 @@ import {
 import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { SliderBox } from "react-native-image-slider-box";
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -255,7 +254,6 @@ const Home:React.FC<HomeScreenProps> = ({
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
   const token = useSelector((state:any) => state.AuthReducers.authToken);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
-
   //모달
   const modalizeRef = useRef<Modalize>(null);
   const onOpen = (feedData:Feed) => {
@@ -347,7 +345,7 @@ const Home:React.FC<HomeScreenProps> = ({
     const data = {
       id: feedData.id,
     };
-    console.log(data);
+
     const likeRequestData: FeedLikeRequest=
       {
         data,
@@ -355,6 +353,8 @@ const Home:React.FC<HomeScreenProps> = ({
       }
 
     LikeMutation.mutate(likeRequestData);
+    console.log(data);
+    return <Ionicons name="md-heart" size={20} color="red" />
   };
 
 
@@ -381,23 +381,15 @@ const Home:React.FC<HomeScreenProps> = ({
     const data = {
       id: feedData.id,
     };
-    console.log(data);
     const likeRequestData: FeedLikeRequest=
       {
         data,
         token,
       }
-
     LikeMutation.mutate(likeRequestData);
+    console.log(data);
+    return <Ionicons  name="md-heart-outline" size={20} color="black"/>
   };
-
-  const feedSize = Math.round(SCREEN_WIDTH / 3) - 1;
-
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-    setRefreshing(false);
-  };
-
 
   const goToReply = (feedData: Feed) => {
     navigate("HomeStack", {
@@ -411,7 +403,7 @@ const Home:React.FC<HomeScreenProps> = ({
       screen: "ModifiyPeed",
       feedData,
     });
-    setModalVisible(!isModalVisible);
+    modalizeRef.current?.close()
   };
 
   const goToClub = () => {
@@ -426,7 +418,7 @@ const Home:React.FC<HomeScreenProps> = ({
       screen: "Accusation",
       feedData,
     });
-    setModalVisible(!isModalVisible);
+    modalizeRef.current?.close()
   };
 
   const closeModal = () => {
@@ -479,6 +471,7 @@ const Home:React.FC<HomeScreenProps> = ({
             onRefresh={onRefresh}
             keyExtractor={(item: Feed, index: number) => String(index)}
             data={feeds?.data}
+            disableVirtualization={false}
             renderItem={({ item, index }: { item: Feed; index: number }) => (
               <ScrollView>
                 <FeedHeader key={index}>
@@ -490,8 +483,6 @@ const Home:React.FC<HomeScreenProps> = ({
                     />
                     <UserInfo>
                       <UserId>{item.userName}</UserId>
-                      <UserId>{myName}</UserId>
-                      <UserId>{item.id}</UserId>
                       <ClubBox>
                         <ClubName>{item.clubName}</ClubName>
                       </ClubBox>
@@ -516,7 +507,7 @@ const Home:React.FC<HomeScreenProps> = ({
                           <ModalView>
                             <ModalText onPress={() => goToModifiy(item)}>수정</ModalText>
                             <ModalText style={{ color: "red" }} onPress={()=>deleteCheck(item)}>
-                              삭제2
+                              삭제
                             </ModalText>
                             <Text>{item.userName},{myName},{item.id}</Text>
                           </ModalView>
@@ -526,24 +517,22 @@ const Home:React.FC<HomeScreenProps> = ({
                             <Text>{item.userName},{myName},{item.id}</Text>
                           </ModalView>
                         }
-                        <ModalView>
-                        </ModalView>
                       </ModalContainer>
                     </Modalize>
                   </Portal>
                 </FeedHeader>
                 <FeedMain>
                   <FeedImage>
-                    <SliderBox images={item.imageUrls[0]===undefined? ["https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg","https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"]
-                      : [item.imageUrls[0],item.imageUrls[1]]} sliderBoxHeight={FEED_IMAGE_SIZE}/>
-                    {/*<ImageSource source={item.imageUrls[0]===undefined?{uri:"https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"}:{uri:item.imageUrls[0]}} size={FEED_IMAGE_SIZE}/>*/}
+                    {/*<SliderBox images={item.imageUrls[0]===undefined? ["https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg","https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"]*/}
+                    {/*  : [item.imageUrls[0],item.imageUrls[1]]} sliderBoxHeight={FEED_IMAGE_SIZE}/>*/}
+                    <ImageSource source={item.imageUrls[0]===undefined?{uri:"https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"}:{uri:item.imageUrls[0]}} size={FEED_IMAGE_SIZE}/>
                   </FeedImage>
                   <FeedInfo>
                     <LeftInfo>
                       <InfoArea>
                         <TouchableOpacity onPress={() => setHeartMap((prev) => new Map(prev).set(item.id, !prev.get(item.id)))}>
                           {heartMap.get(item.id)?
-                            <TouchableOpacity onPress={()=>LikeFeed(item)}><Ionicons name="md-heart" size={20} color="red" /></TouchableOpacity>
+                            <TouchableOpacity onPress={()=>LikeFeed(item)}><Ionicons name="md-heart" size={20} color="red"/></TouchableOpacity>
                             :
                             <TouchableOpacity onPress={()=>LikeReverseFeed(item)}><Ionicons  name="md-heart-outline" size={20} color="black"/></TouchableOpacity>}
                         </TouchableOpacity>
@@ -558,7 +547,7 @@ const Home:React.FC<HomeScreenProps> = ({
                       </InfoArea>
                     </LeftInfo>
                     <RightInfo>
-                      <Timestamp>{item.created}</Timestamp>
+                      <Timestamp>{item.created.substring(0,10)}</Timestamp>
                     </RightInfo>
                   </FeedInfo>
                   <Content>
