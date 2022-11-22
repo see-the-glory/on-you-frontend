@@ -21,6 +21,9 @@ import { FeedApi,FeedCreationRequest } from "../../api";
 import { FeedCreateScreenProps,  } from '../../types/feed';
 // @ts-ignore
 import { ImageBrowser } from "expo-image-picker-multiple";
+import ImageCropPicker from 'react-native-image-crop-picker';
+import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
+import { useNavigation } from "@react-navigation/native";
 interface ValueInfo {
   str: string;
   isHT: boolean;
@@ -86,10 +89,13 @@ const SelectImageView = styled.View`
   height: 70px;
   width: 100%;
   flex-direction: row;
-  justify-content: space-between;
-  padding: 0 19px 0 19px;
+  justify-content: space-around;
+  padding: 0;
 `;
-const SelectImageArea = styled.TouchableOpacity``
+
+const SelectImageArea = styled.TouchableOpacity`
+ 
+`
 const SelectImage = styled.Image`
   width: 55px;
   height: 55px;
@@ -97,10 +103,13 @@ const SelectImage = styled.Image`
   background-color: lightgray;
 `;
 
+const ImageCancleBtn = styled.TouchableOpacity`
+`
 const CancleIcon = styled.View`
-  position: relative;
-  top: -530%;
-  left: 73%;
+  width: 20%;
+  position: absolute;
+  right: 12%;
+  bottom: 50px;
 `;
 const FeedCreateArea = styled.View`
   left: 70%;
@@ -109,9 +118,10 @@ const FeedCreateArea = styled.View`
 const FeedCreateBtn = styled.TouchableOpacity`
 `
 const FeedCreateText = styled.Text`
-  font-size: 20px;
+  font-size: 15px;
+  color: #63abff;
+  font-weight: bold;
 `
-const ImageCancleBtn = styled.TouchableOpacity``
 
 const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                                                           route:{params:{clubId,userId}},
@@ -155,12 +165,14 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
   const token = useSelector((state:any) => state.AuthReducers.authToken);
   const onText = (text: React.SetStateAction<string>) => setPostText(text);
   const [content, setContent] = useState("")
+  const navigation = useNavigation();
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
+      allowsEditing: true,
       aspect: [16, 9],
       quality: 1,
+      allowsmultipleselection: true,
     });
 
     if (!result.cancelled) {
@@ -200,9 +212,6 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
       clubId: clubId,
       content: content,
     };
-
-    console.log(data)
-
     const splitedURI = new String(imageURI).split("/");
 
     const requestData: FeedCreationRequest =
@@ -223,7 +232,17 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
         };
 
     mutation.mutate(requestData);
+    console.log(data)
+    navigate("Tabs", {
+      screen: "Home",
+    });
   };
+
+  useEffect(()=>{
+    navigation.setOptions({
+      headerRight: () => <TouchableOpacity onPress={onSubmit}><FeedCreateText>저장</FeedCreateText></TouchableOpacity>
+    })
+  },[navigation, onSubmit]);
 
   useEffect(() => {
     let timer = setTimeout(() => {
@@ -234,21 +253,24 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
   /**
    * 이미지 리스트 선택하면 사진 크게보는쪽 사진뜨게
    */
-  const ImageFIx = () => {};
+  const ImageFIx = () => {
+    console.log('imageFix')
+  };
 
   /** X선택시 사진 없어지는 태그 */
-  const ImageCancle = () => {};
+  const ImageCancle = () => {
+    console.log('imageCancle')
+  };
 
   useEffect(() => {
     return () => setLoading(false);
   }, []);
 
-
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Container>
+    <Container>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
-          behavior={Platform.select({ios: 'padding', android: 'position'})} style={{ flex: 1 }}>
+          behavior={Platform.select({ios: 'position', android: 'position'})} style={{ flex: 1 }}>
           <>
             <ImagePickerView>
               <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={1}>
@@ -275,7 +297,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                 {imageURI === null ? null :
                   <ImageCancleBtn onPress={ImageCancle}>
                     <CancleIcon>
-                      <AntDesign name="close" size={12} color="white" />
+                      <AntDesign name="close" size={15} color="white" />
                     </CancleIcon>
                   </ImageCancleBtn>
                 }
@@ -285,7 +307,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                 {imageURI === null ? null :
                   <ImageCancleBtn onPress={ImageCancle}>
                     <CancleIcon>
-                      <AntDesign name="close" size={12} color="white" />
+                      <AntDesign name="close" size={15} color="white" />
                     </CancleIcon>
                   </ImageCancleBtn>
                 }
@@ -295,7 +317,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                 {imageURI === null ? null :
                   <ImageCancleBtn onPress={ImageCancle}>
                     <CancleIcon>
-                      <AntDesign name="close" size={12} color="white" />
+                      <AntDesign name="close" size={15} color="white" />
                     </CancleIcon>
                   </ImageCancleBtn>
                 }
@@ -305,7 +327,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                 {imageURI === null ? null :
                   <ImageCancleBtn onPress={ImageCancle}>
                     <CancleIcon>
-                      <AntDesign name="close" size={12} color="white" />
+                      <AntDesign name="close" size={15} color="white" />
                     </CancleIcon>
                   </ImageCancleBtn>
                 }
@@ -315,7 +337,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                 {imageURI === null ? null :
                   <ImageCancleBtn onPress={ImageCancle}>
                     <CancleIcon>
-                      <AntDesign name="close" size={12} color="white" />
+                      <AntDesign name="close" size={15} color="white" />
                     </CancleIcon>
                   </ImageCancleBtn>
                 }
@@ -351,15 +373,10 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                 );
               })}
             </FeedText>
-            <FeedCreateArea>
-              <FeedCreateBtn onPress={onSubmit}>
-                <FeedCreateText>저장</FeedCreateText>
-              </FeedCreateBtn>
-            </FeedCreateArea>
           </>
         </KeyboardAvoidingView>
-      </Container>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </Container>
   );
 };
 

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components/native";
 import {
-  ActivityIndicator,
+  ActivityIndicator, Animated,
   FlatList, Keyboard,
   KeyboardAvoidingView,
   Platform, SafeAreaView, ScrollView,
@@ -23,7 +23,9 @@ import {
 } from "../../api";
 import { ModifiyPeedScreenProps } from "../../types/feed";
 import { RootStackParamList } from "../../types/Club";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Modalize, useModalize } from "react-native-modalize";
+import { Portal } from "react-native-portalize";
+import { useNavigation } from "@react-navigation/native";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -74,10 +76,6 @@ const FeedImage = styled.View`
   align-items: center;
 `;
 
-const FeedImageUrl=styled.Image`
-  width: 100%;
-  height: 70%;
-`
 const Content = styled.View`
   padding: 0 12px 0 12px;
 `;
@@ -99,17 +97,31 @@ const ImageSource = styled.Image<{ size: number }>`
   height: ${(props) => props.size}px;
 `;
 
-const FixCompleteArea = styled.View`
-  width: 100%;
-  text-align: center;
-  height: 50px;
-`
-const FixCompleteBtn = styled.TouchableOpacity``
 const FixCompleteText = styled.Text`
-  font-size: 20px;
-  padding-left: 20px;
+  color: #63abff;
+  font-size: 15px;
+  font-weight: bold;
 `
 
+const ModalContainer = styled.View`
+  flex: 1;
+`;
+const ModalView = styled.View`
+  background-color: white;
+  align-items: center;
+  opacity: 1;
+  width: 100%;
+  height: auto;
+`;
+const ModalText = styled.Text`
+  font-weight: bold;
+  text-align: center;
+  font-size: 20px;
+  padding: 30px;
+  width: 100%;
+  color: black;
+  height: auto;
+`;
 interface FeedEditItem{
   id:number
   content:string;
@@ -127,6 +139,7 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({
   const [content, setContent] = useState("")
   const [data, setData] = useState<Feed>(feedData);
   const [items, setItems] = useState<FeedEditItem[]>();
+  const navigation = useNavigation();
   //피드호출
   const {
     isLoading: feedsLoading,
@@ -175,7 +188,7 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({
   const FixComplete =() =>{
     const data={
       id: feedData.id,
-      access: "PRIVATE",
+      access: "PUBLIC",
       content: content,
     };
     console.log(data);
@@ -185,13 +198,20 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({
       token,
     };
     mutation.mutate(requestData);
+    return navigate("Tabs", {
+      screen: "Home",
+    });
   };
+  useEffect(()=>{
+    navigation.setOptions({
+      headerRight: () => <TouchableOpacity onPress={FixComplete}><FixCompleteText>저장</FixCompleteText></TouchableOpacity>
+    })
+  },[navigation, FixComplete]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Container>
-        {/* keyboardStatus android: clear, ios: ?*/}
-        <KeyboardAvoidingView behavior={Platform.select({ios: 'padding', android: 'position'})} style={{flex: 1}}>
+        <KeyboardAvoidingView behavior={Platform.select({ios: 'position', android: 'position'})} style={{flex: 1}}>
           <View>
             <FeedUser >
               <UserImage source={{ uri: userInfo?.data.thumbnail }} />
@@ -220,11 +240,6 @@ const ModifiyPeed:React.FC<ModifiyPeedScreenProps>=({
               {data.content}
             </Ment>
           </ContentArea>
-          <FixCompleteArea>
-            <FixCompleteBtn onPress={FixComplete}>
-              <FixCompleteText>수정완료</FixCompleteText>
-            </FixCompleteBtn>
-          </FixCompleteArea>
         </KeyboardAvoidingView>
       </Container>
     </TouchableWithoutFeedback>
