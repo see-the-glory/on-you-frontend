@@ -4,7 +4,6 @@ import Tabs from "./Tabs";
 import ClubCreationStack from "./ClubCreationStack";
 import ClubStack from "./ClubStack";
 import HomeStack from "./HomeStack";
-import SearchStack from "./SearchStack";
 import ProfileStack from "./ProfileStack";
 import ClubManagementStack from "./ClubManagementStack";
 

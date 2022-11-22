@@ -127,18 +127,21 @@ const ClubScheduleAdd = ({
             <ItemView>
               <TouchableItem onPress={() => setShowDatePicker((prev) => !prev)}>
                 <ItemTitle>모임 시간</ItemTitle>
-                <ItemText>오전 10시 00분</ItemText>
+                <ItemText>
+                  {date.getHours() < 12 ? "오전" : "오후"} {date.getHours() > 12 ? date.getHours() - 12 : date.getHours() === 0 ? 12 : date.getHours()}시{" "}
+                  {date.getMinutes().toString().padStart(2, "0")}분
+                </ItemText>
               </TouchableItem>
             </ItemView>
 
             {Platform.OS === "android" ? (
-              <Collapsible collapsed={!showDatePicker} style={{ alignItems: "center", paddingVertical: 10 }}>
-                <ItemView>
+              <Collapsible collapsed={!showDatePicker}>
+                <ItemView style={{ width: "100%", alignItems: "center" }}>
                   <DatePicker date={date} mode="time" onDateChange={setDate} />
                 </ItemView>
               </Collapsible>
             ) : (
-              <Collapsible collapsed={!showDatePicker} style={{ paddingVertical: 10 }}>
+              <Collapsible collapsed={!showDatePicker}>
                 <ItemView>
                   <RNDateTimePicker mode="time" value={date} display="spinner" onChange={(_, value: Date) => setDate(value)} />
                 </ItemView>

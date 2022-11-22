@@ -10,10 +10,11 @@ import ClubTabBar from "../../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { ClubApi, ClubApplyRequest, ClubRoleResponse } from "../../api";
+import { Club, ClubApi, ClubApplyRequest, ClubResponse, ClubRoleResponse, ClubSchedulesResponse } from "../../api";
 import { useSelector } from "react-redux";
 import ClubJoinModal from "./ClubJoinModal";
 import { useToast } from "react-native-toast-notifications";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Container = styled.View`
   flex: 1;
@@ -59,6 +60,7 @@ const ClubTopTabs = ({
   const queryClient = useQueryClient();
   const token = useSelector((state) => state.AuthReducers.authToken);
   const toast = useToast();
+  const [data, setData] = useState<Club>(clubData);
   const [joinModalVisible, setJoinModalVisible] = useState(false);
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
   // Header Height Definition
@@ -85,7 +87,7 @@ const ClubTopTabs = ({
   const clubEdit = () => {
     return navigation.navigate("ClubManagementStack", {
       screen: "ClubManagementMain",
-      clubData,
+      clubData: data,
     });
   };
 
@@ -101,28 +103,64 @@ const ClubTopTabs = ({
 
   const clubSubmit = (memo: string) => {
     const requestData: ClubApplyRequest = {
-      clubId: clubData.id,
+      clubId: data.id,
       memo,
       token,
     };
 
-    mutation.mutate(requestData);
+    clubApplyMutation.mutate(requestData);
     setJoinModalVisible(false);
   };
+
+  const { refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.resultCode === "OK") {
+        setData(res.data);
+      } else {
+        toast.show(`Error Code: ${res.status}`, {
+          type: "error",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error getClub ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "error",
+      });
+    },
+  });
 
   const {
     isLoading: clubRoleLoading,
     data: clubRole,
     isRefetching: isRefetchingClubRole,
     refetch: clubRoleRefetch,
-  } = useQuery<ClubRoleResponse>(["getClubRole", token, clubData.id], ClubApi.getClubRole, {
+  } = useQuery<ClubRoleResponse>(["getClubRole", token, data.id], ClubApi.getClubRole, {
     onSuccess: (res) => {},
     onError: (error) => {
-      console.log(error);
+      toast.show(`Role Request Error: ${error}`, {
+        type: "error",
+      });
     },
   });
 
-  const mutation = useMutation(ClubApi.applyClub, {
+  const { isLoading: schedulesLoading, data: schedules } = useQuery<ClubSchedulesResponse>(["getClubSchedules", data.id], ClubApi.getClubSchedules, {
+    onSuccess: (res) => {
+      if (res.status !== 200) {
+        toast.show(`Schedule Request Error Code: ${res.status}`, {
+          type: "error",
+        });
+      }
+    },
+    onError: (error) => {
+      toast.show(`Schedule Request Error: ${error}`, {
+        type: "error",
+      });
+    },
+  });
+
+  const clubApplyMutation = useMutation(ClubApi.applyClub, {
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
         toast.show(`가입 신청이 완료되었습니다.`, {
@@ -145,10 +183,23 @@ const ClubTopTabs = ({
         type: "error",
       });
     },
-    onSettled: (res, error) => {},
   });
 
-  const renderClubHome = useCallback((props) => <ClubHome {...props} scrollY={scrollY} headerDiff={headerDiff} />, [headerDiff]);
+  useFocusEffect(
+    useCallback(() => {
+      console.log(`${data.id} ClubTopTabs useFocusEffect!`);
+      clubDataRefetch();
+      clubRoleRefetch();
+    }, [])
+  );
+
+  const renderClubHome = useCallback(
+    (props) => {
+      props.route.params.clubData = data;
+      return <ClubHome {...props} scrollY={scrollY} headerDiff={headerDiff} clubRole={clubRole?.data} />;
+    },
+    [headerDiff, data, clubRole]
+  );
   const renderClubFeed = useCallback((props) => <ClubFeed {...props} scrollY={scrollY} headerDiff={headerDiff} />, [headerDiff]);
 
   return (
@@ -168,11 +219,12 @@ const ClubTopTabs = ({
       </NavigationView>
 
       <ClubHeader
-        imageURI={clubData.thumbnail}
-        name={clubData.name}
-        shortDesc={clubData.clubShortDesc}
-        categories={clubData.categories}
-        recruitStatus={clubData.recruitStatus}
+        imageURI={data.thumbnail}
+        name={data.name}
+        shortDesc={data.clubShortDesc}
+        categories={data.categories}
+        recruitStatus={data.recruitStatus}
+        schedules={schedules?.data}
         heightExpanded={heightExpanded}
         heightCollapsed={heightCollapsed}
         headerDiff={headerDiff}
@@ -198,14 +250,14 @@ const ClubTopTabs = ({
           tabBar={(props) => <ClubTabBar {...props} />}
           sceneContainerStyle={{ position: "absolute", zIndex: 1 }}
         >
-          <TopTab.Screen options={{ tabBarLabel: "모임 정보" }} name="ClubHome" component={renderClubHome} initialParams={{ clubData }} />
+          <TopTab.Screen options={{ tabBarLabel: "모임 정보" }} name="ClubHome" component={renderClubHome} initialParams={{ clubData: data }} />
           <TopTab.Screen options={{ tabBarLabel: "게시물" }} name="ClubFeed" component={renderClubFeed} />
         </TopTab.Navigator>
       </Animated.View>
 
       {clubRoleLoading ? <></> : <FloatingActionButton role={clubRole?.data?.role} applyStatus={clubRole?.data?.applyStatus} onPressEdit={clubEdit} onPressJoin={clubJoin} />}
 
-      <ClubJoinModal visible={joinModalVisible} clubName={clubData.name} clubSubmit={clubSubmit}>
+      <ClubJoinModal visible={joinModalVisible} clubName={data.name} clubSubmit={clubSubmit}>
         <ModalHeaderRight>
           <ModalCloseButton
             onPress={() => {

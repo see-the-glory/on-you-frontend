@@ -7,14 +7,8 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
-# Add any project specific keep options here:
+# react-native-reanimated
+-keep class com.swmansion.reanimated.** { *; }
+-keep class com.facebook.react.turbomodule.** { *; }
 
--keep class com.kakao.** { *; }
--keepattributes Signature
--keepclassmembers class * {
-  public static <fields>;
-  public *;
-}
--keep class com.kakao.sdk.**.model.* { <fields>; }
--keep class * extends com.google.gson.TypeAdapter
--dontwarn android.support.v4.**,org.slf4j.**,com.google.android.gms.**
+# Add any project specific keep options here:

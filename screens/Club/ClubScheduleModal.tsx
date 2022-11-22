@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Modal, useWindowDimensions } from "react-native";
-import Carousel from "react-native-snap-carousel";
+// import Carousel from "react-native-snap-carousel";
 import { RefinedSchedule } from "../../Types/Club";
 import { Feather, Ionicons, Entypo } from "@expo/vector-icons";
 import styled from "styled-components/native";
@@ -155,7 +155,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
           zIndex: 1,
         }}
       >
-        <Carousel
+        {/* <Carousel
           ref={(c) => {
             setCarousel(c);
           }}
@@ -241,7 +241,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
               </ContentView>
             </Container>
           )}
-        />
+        /> */}
       </Animated.View>
     </Modal>
   );

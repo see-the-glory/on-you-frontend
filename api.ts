@@ -3,6 +3,7 @@ const BASE_URL = "http://3.39.190.23:8080";
 interface BaseResponse {
   resultCode: string;
   transactionTime: string;
+  status: number;
 }
 
 export interface Category {
@@ -113,12 +114,10 @@ export interface CategoryResponse extends BaseResponse {
 
 export interface ClubResponse extends BaseResponse {
   data: Club;
-  status: number;
 }
 
 export interface ClubUpdateResponse extends BaseResponse {
   data: Club;
-  status: number;
 }
 
 export interface ClubsResponse extends BaseResponse {
@@ -264,6 +263,7 @@ export interface ClubUpdateRequest {
     clubShortDesc?: string;
     clubLongDesc?: string | null;
     contactPhone?: string | null;
+    recruitStatus?: string | null;
   };
   token: string;
   clubId: number;
@@ -421,18 +421,19 @@ const getClubs = ({ queryKey, pageParam }: any) => {
     headers: {
       authorization: `${clubsParams.token}`,
     },
-  }).then((res) => res.json());
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
 };
 
 const getClub = ({ queryKey }: any) => {
   const [_key, token, clubId]: [string, string, number] = queryKey;
-  console.log(_key, token, clubId);
   return fetch(`${BASE_URL}/api/clubs/${clubId}`, {
     headers: {
       authorization: `${token}`,
     },
   }).then(async (res) => {
-    return { status: res.status, ...(await res.json()) };
+    return { ...(await res.json()), status: res.status };
   });
 };
 
@@ -578,7 +579,9 @@ const changeRole = (req: ChangeRoleRequest) => {
 
 const getClubSchedules = ({ queryKey }: any) => {
   const [_key, clubId]: [string, number] = queryKey;
-  return fetch(`${BASE_URL}/api/clubs/${clubId}/schedules`).then((res) => res.json());
+  return fetch(`${BASE_URL}/api/clubs/${clubId}/schedules`).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
 };
 
 const createClubSchedule = async (req: ClubScheduleCreationRequest) => {
@@ -591,7 +594,7 @@ const createClubSchedule = async (req: ClubScheduleCreationRequest) => {
     },
     body: JSON.stringify(req.body),
   }).then(async (res) => {
-    return { status: res.status, json: await res.json() };
+    return { ...(await res.json()), status: res.status };
   });
 };
 

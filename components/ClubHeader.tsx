@@ -111,7 +111,7 @@ const ContentText = styled(CustomText)`
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 const AnimatedFadeOutBox = Animated.createAnimatedComponent(View);
 
-const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, categories, recruitStatus, heightExpanded, heightCollapsed, headerDiff, scrollY }) => {
+const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, categories, recruitStatus, schedules, heightExpanded, heightCollapsed, headerDiff, scrollY }) => {
   const fadeIn = scrollY.interpolate({
     inputRange: [0, headerDiff],
     outputRange: [-1, 1],
@@ -176,11 +176,11 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
               <DetailInfoView>
                 <DetailInfoContent>
                   <Ionicons name="calendar" size={15} color="yellow" style={{ marginRight: 5 }} />
-                  <ContentText>May 7 | 14:00 PM</ContentText>
+                  {schedules && schedules.length > 0 ? <ContentText>구현하세요</ContentText> : <ContentText>일정 없음</ContentText>}
                 </DetailInfoContent>
                 <DetailInfoContent>
                   <Ionicons name="md-person-circle-outline" size={15} color="yellow" style={{ marginRight: 5 }} />
-                  {recruitStatus.toUpperCase() === "OPEN" ? <ContentText>멤버 모집 중!</ContentText> : <ContentText>멤버 모집 기간 아님</ContentText>}
+                  {recruitStatus && recruitStatus.toUpperCase() === "OPEN" ? <ContentText>멤버 모집 중!</ContentText> : <ContentText>멤버 모집 기간 아님</ContentText>}
                 </DetailInfoContent>
               </DetailInfoView>
             </InformationView>

@@ -83,7 +83,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
         </Shadow>
         <SlidingTabContainer tabWidth={TAB_WIDTH}>
           <SlidingTab style={{ transform: [{ translateX }] }}>
-            <Shadow distance={3} offset={[0, -18]} viewStyle={{ borderRadius: TAB_WIDTH }}>
+            <Shadow distance={3} offset={[0, -18]} style={{ borderRadius: TAB_WIDTH }}>
               <Circle tabWidth={TAB_WIDTH} />
             </Shadow>
           </SlidingTab>

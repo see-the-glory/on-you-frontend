@@ -237,7 +237,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
     setMemberData();
   }, [kickOutMap]);
 
-  const loading = bundles?.length === 0 ? true : false;
+  const loading = bundles && bundles?.length !== 0 ? false : true;
 
   return (
     <Container>
@@ -250,7 +250,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
         <SectionList
           refreshing={refreshing}
           onRefresh={onRefresh}
-          sections={bundles}
+          sections={bundles ?? []}
           keyExtractor={(item: MemberList, index: number) => String(index)}
           contentContainerStyle={{ paddingTop: 10, paddingHorizontal: 20, width: "100%" }}
           renderSectionHeader={({ section: { title } }) => (
