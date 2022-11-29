@@ -135,6 +135,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
               <ItemTitle>간단 소개</ItemTitle>
               <ShortDescInput
                 placeholder="36자 이내로 간단 소개글을 적어주세요."
+                placeholderTextColor="#B0B0B0"
                 value={clubShortDesc}
                 textAlign="center"
                 multiline={true}
@@ -149,6 +150,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
               <ItemTitle>상세 소개</ItemTitle>
               <LongDescInput
                 placeholder="모임의 상세 소개글을 적어주세요."
+                placeholderTextColor="#B0B0B0"
                 value={clubLongDesc}
                 textAlign="left"
                 multiline={true}

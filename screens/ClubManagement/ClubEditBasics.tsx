@@ -140,7 +140,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   const [maxNumberInfinity, setMaxNumberInfinity] = useState<boolean>(clubData.maxNumber ? false : true);
   const [phoneNumber, setPhoneNumber] = useState(clubData.contactPhone ?? "");
   const [organizationName, setOrganizationName] = useState(clubData.organizationName ?? "");
-  const [isApproveRequired, setIsApproveRequired] = useState("Y");
+  const [isApproveRequired, setIsApproveRequired] = useState(clubData.isApprovedRequired);
   const [selectCategory1, setCategory1] = useState(clubData.categories[0]?.id ?? -1);
   const [selectCategory2, setCategory2] = useState(clubData.categories[1]?.id ?? -1);
   const [categoryBundle, setCategoryBundle] = useState<Array<Category[]>>();
@@ -282,6 +282,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
               <ItemTextInput
                 value={clubName}
                 placeholder="모임명 16자 이내 (특수문자 불가)"
+                placeholderTextColor="#B0B0B0"
                 maxLength={16}
                 onEndEditing={() => {
                   if (clubName === "") {
@@ -302,6 +303,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                 <ItemTextInput
                   keyboardType="number-pad"
                   placeholder="최대 수용가능 정원 수"
+                  placeholderTextColor="#B0B0B0"
                   onPressIn={() => {
                     if (maxNumberInfinity === false) setMaxNumber((prev) => prev.split(" ")[0]);
                   }}
@@ -359,6 +361,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
               <ItemTextInput
                 value={organizationName}
                 placeholder="모임이 소속된 교회 또는 담당자가 섬기는 교회명"
+                placeholderTextColor="#B0B0B0"
                 maxLength={16}
                 onChangeText={(name) => setOrganizationName(name)}
                 returnKeyType="done"
