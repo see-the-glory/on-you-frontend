@@ -32,7 +32,7 @@ export type ModifiyPeedScreenProps = NativeStackScreenProps<RootStackParamList,"
 export type ReportPeedScreenProps = NativeStackScreenProps<RootStackParamList,"FeedReport">
 
 export interface FeedData extends Feed{
-  id:number | undefined;
+  id:number;
   userId: number;
   isEnd: boolean
 }
