@@ -123,7 +123,7 @@ const Tabs = () => (
   <Host
     children={
       <Tab.Navigator
-        initialRouteName="Home"
+        initialRouteName="Clubs"
         sceneContainerStyle={{ backgroundColor: "white" }}
         screenOptions={{ tabBarShowLabel: false, headerShown: false }}
         tabBar={(props) => <CustomTabBar {...props} />}
