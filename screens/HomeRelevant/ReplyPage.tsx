@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
+  Alert, Animated, Dimensions,
   FlatList,
   Keyboard,
   KeyboardAvoidingView,
-  Platform,
+  Platform, RefreshControl,
+  SafeAreaView,
   ScrollView,
   StatusBar,
-  TouchableWithoutFeedback,
+  Text,
+  TouchableWithoutFeedback, useWindowDimensions,
   View
 } from "react-native";
 import styled from "styled-components/native";
@@ -16,7 +18,7 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import {
   FeedApi,
-  FeedReplyRequest,
+  FeedReplyRequest, FeedsResponse,
   getReply,
   getUserInfo,
   Reply,
@@ -24,8 +26,12 @@ import {
   UserApi,
   UserInfoResponse
 } from "../../api";
-import { ModifiyPeedScreenProps } from "../../types/feed";
+import { ModifiyPeedScreenProps } from "../../types/Feed";
 import { useToast } from "react-native-toast-notifications";
+import {SwipeListView,SwipeRow} from 'react-native-swipe-list-view';
+import { AntDesign } from '@expo/vector-icons';
+const window = Dimensions.get("window");
+
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -35,17 +41,38 @@ const Container = styled.SafeAreaView`
   height: 100%;
   position: relative;
   width: 100%;
+  flex: 1;
 `;
 
 const CommentList = styled.View`
   height: 95%;
+`
+const SwipeHiddenItemContainer = styled.View`
+  flex: 1;
+  height: 100%;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+`
+const SwipeHiddenItem = styled.View`
+  width: 70px;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+`
+const SwipeHiddenItemText = styled.Text`
+  color: black;
+  font-size: 14px;
+  text-align: center;
 `
 
 const CommentArea = styled.View`
   flex: 1;
   flex-direction: row;
   width: 100%;
-  margin: 10px 20px 0 20px;
+  padding: 10px 20px 0 20px;
+  position: relative;
+  background-color: #ffffff;;
 `;
 
 const CommentImg = styled.Image`
@@ -79,6 +106,19 @@ const CommentRemainder = styled.View`
   flex-direction: row;
 `;
 
+const NoReplyText = styled.Text`
+  font-size: 20px;
+  text-align: center;
+  left: 0;
+  right: 0;
+  margin: auto;
+  color: #B0B0B0;
+`
+
+const NoReplyScrollView = styled.ScrollView`
+  padding-Top: 50%;
+`
+
 const Time = styled.Text`
   font-size: 10px;
   font-weight: 300;
@@ -90,15 +130,15 @@ const ReplyArea = styled.View`
   display: flex;
   flex-direction: row;
   padding: 1% 0 0 20px;
-  border: solid 0.5px #c4c4c4;
-  height: 100%;
+  height: auto;
+
 `;
 
 const ReplyInputArea = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 88%;
+  width: 88%;;
 `
 
 const ReplyInput = styled.TextInput`
@@ -132,21 +172,23 @@ const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const token = useSelector((state:any) => state.AuthReducers.authToken);
   const queryClient = useQueryClient();
-
   const [content, setContent] = useState("");
-
 
   /** 리플 데이터   */
   const { data: replys, isLoading: replysLoading } =
     useQuery<ReplyReponse>(["getReply",token,feedData.id], FeedApi.getReply,{
       onSuccess: (res) => {
-        // console.log(res);
+        setContent('');
       },
       onError: (err) => {
         console.log(`[getFeeds error] ${err}`);
       },
     });
-
+  const {
+    isLoading: feedsLoading,
+    data: feeds,
+    isRefetching: isRefetchingFeeds,
+  } = useQuery<FeedsResponse>(["getFeeds", {token}], FeedApi.getFeeds, {});
 
   /** 유저 데이터   */
   const {
@@ -155,14 +197,19 @@ const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
   } = useQuery<UserInfoResponse>(["userInfo", token], UserApi.getUserInfo);
 
   // console.log(userInfo?.data.id);
-
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await queryClient.refetchQueries(["getReply"]);
+    await queryClient.refetchQueries(["getFeeds"]);
+    setRefreshing(false);
+  };
   //댓글추가
   const mutation = useMutation( FeedApi.ReplyFeed, {
     onSuccess: (res) => {
       if (res.status === 200) {
         console.log(res)
-        setRefreshing(false);
-
+        onRefresh();
+        setContent('');
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
@@ -171,75 +218,123 @@ const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
     onError: (error) => {
       console.log("--- Error ---");
       console.log(`error: ${error}`);
-      // return navigate("Tabs", {
-      //   screen: "Home",
-      // });
     },
     onSettled: (res, error) => {},
   });
 
   const RelpyFeed=()=>{
     if(content === ''){
-      /* toast.show("댓글 공백으로 하지 마세요",{
-         type: 'warning'
-       })*/
-      Alert.alert('공백임')
+      Alert.alert('댓글을 입력하세요.')
+    }else{
+      const data = {
+        id: feedData.id,
+        content: content,
+      };
+      Keyboard.dismiss();
 
+      const likeRequestData: FeedReplyRequest=
+        {
+          data,
+          token,
+        }
+      mutation.mutate(likeRequestData);
     }
-    const data = {
-      id: feedData.id,
-      content: content,
-    };
-    Keyboard.dismiss();
-    // console.log(data);
-    const likeRequestData: FeedReplyRequest=
-      {
-        data,
-        token,
+  }
+
+  const timeLine =(date) =>{
+    const start = new Date(date);
+    const end = new Date(); // 현재 날짜
+
+    let diff = (end - start); // 경과 시간
+
+    const times = [
+      {time: "분", milliSeconds: 1000 * 60},
+      {time: "시간", milliSeconds: 1000 * 60 * 60},
+      {time: "일", milliSeconds: 1000 * 60 * 60 * 24},
+      {time: "개월", milliSeconds: 1000 * 60 * 60 * 24 * 30},
+      {time: "년", milliSeconds: 1000 * 60 * 60 * 24 * 365},
+    ].reverse();
+
+    // 년 단위부터 알맞는 단위 찾기
+    for (const value of times) {
+      const betweenTime = Math.floor(diff / value.milliSeconds);
+
+      // 큰 단위는 0보다 작은 소수 단위 나옴
+      if (betweenTime > 0) {
+        return `${betweenTime}${value.time} 전`;
       }
+    }
 
-    mutation.mutate(likeRequestData);
-  };
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await queryClient.refetchQueries(["replys"]);
-    setRefreshing(false);
-  };
+    // 모든 단위가 맞지 않을 시
+    return "방금 전";
+  }
 
   return replysLoading ? (
     <Loader>
       <ActivityIndicator/>
     </Loader>
   ):(
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Container>
-        <CommentList>
-          <FlatList
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            keyExtractor={(item: Reply, index: number) => String(index)}
-            data={replys?.data}
-            renderItem={({ item, index }: { item: Reply; index: number }) => (
-              <ScrollView>
-                <CommentArea key={index}>
-                  <CommentImg source={{ uri: item.thumbnail }} />
-                  <View style={{ marginBottom: 20, top: 7 }}>
-                    <CommentMent>
-                      <CommentId>{item.userName}</CommentId>
-                      <Comment>{item.content}</Comment>
-                    </CommentMent>
-                    <CommentRemainder>
-                      <Time>{item.created}</Time>
-                    </CommentRemainder>
-                  </View>
-                </CommentArea>
-              </ScrollView>
-            )}
-          />
-        </CommentList>
-        {/*keyboardStatus android: 갑자기 안됨. ios: ?*/}
-        <KeyboardAvoidingView behavior={Platform.select({ios: 'padding', android: undefined})} style={{flex: 1}}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}
+                          keyboardVerticalOffset={Platform.OS === "ios" ? 110 : 100} style={{ flex: 1 }}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <>
+          <CommentList>
+            {replys?.data.length !== 0 ?
+              <SafeAreaView style={{flex: 1}}>
+                <SwipeListView
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  keyExtractor={(item: Reply, index: number) => String(index)}
+                  data={replys?.data}
+                  disableVirtualization={false}
+                  leftOpenValue={0}
+                  rightOpenValue={-70}
+                  renderItem={({ item, index }: { item: Reply; index: number }) => (
+                    <ScrollView>
+                      <CommentArea key={index}>
+                        <CommentImg source={{ uri: item.thumbnail }} />
+                        <View style={{ marginBottom: 20, top: 7 }}>
+                          <CommentMent>
+                            <CommentId>{item.userName}</CommentId>
+                            <Comment>{item.content}</Comment>
+                          </CommentMent>
+                          <CommentRemainder>
+                            <Time>{timeLine(item.created)}</Time>
+                          </CommentRemainder>
+                        </View>
+                      </CommentArea>
+                    </ScrollView>
+                  )}
+                  renderHiddenItem={(item, index) => (
+                    <SwipeHiddenItemContainer>
+                      <SwipeHiddenItem>
+                        <SwipeHiddenItemText></SwipeHiddenItemText>
+                      </SwipeHiddenItem>
+                      <SwipeHiddenItem style={{backgroundColor: 'skyblue'}}>
+                        <SwipeHiddenItemText>
+                          <AntDesign name="delete" size={24} color="black" />
+                        </SwipeHiddenItemText>
+                      </SwipeHiddenItem>
+                    </SwipeHiddenItemContainer>
+                  )}
+                />
+              </SafeAreaView>
+              :
+              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <NoReplyScrollView
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }>
+                  <CommentArea>
+                    <NoReplyText>아직 등록된 댓글이 없습니다. {"\n"} 첫 댓글을 남겨보세요</NoReplyText>
+                  </CommentArea>
+                </NoReplyScrollView>
+              </TouchableWithoutFeedback>
+            }
+          </CommentList>
           <ReplyArea>
             <ReplyImg
               source={{
@@ -274,9 +369,9 @@ const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
               </ReplyButton>
             </ReplyInputArea>
           </ReplyArea>
-        </KeyboardAvoidingView>
-      </Container>
-    </TouchableWithoutFeedback>
+        </>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 export default ReplyPage;

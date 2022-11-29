@@ -24,7 +24,7 @@ const ReportFin = styled.Text`
   margin-top: 20px;
 `;
 
-export default function ReportComplete({ navigation: { navigate } }) {
+const ReportComplete =() => {
   return (
     <Container>
       <ReportView>
@@ -34,3 +34,4 @@ export default function ReportComplete({ navigation: { navigate } }) {
     </Container>
   );
 }
+export default ReportComplete

@@ -1,5 +1,5 @@
 import { Feather, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
 import {
   Alert,
   Dimensions,
@@ -10,7 +10,12 @@ import {
   useWindowDimensions,
   View,
   ActivityIndicator,
-  Platform, StatusBar, ScrollView, VirtualizedList,RefreshControl
+  Platform,
+  StatusBar,
+  ScrollView,
+  VirtualizedList,
+  RefreshControl,
+  Animated
 } from "react-native";
 import {
   useInfiniteQuery,
@@ -34,17 +39,16 @@ import {
   ClubCreationRequest,
   FeedLikeRequest,
   FeedReverseLikeRequest,
-  Club
+  Club, ClubsParams
 } from "../api";
 import CustomText from "../components/CustomText";
 import {
   FeedData,
   HomeScreenProps,
-} from "../types/feed";
+} from "../types/Feed";
 import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
-import { SliderBox } from "react-native-image-slider-box";
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { ImageSlider } from "react-native-image-slider-banner";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -52,10 +56,11 @@ const Loader = styled.SafeAreaView`
   align-items: center;
   padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
 `;
+
 const Container = styled.SafeAreaView`
   flex: 1;
   top: ${Platform.OS === 'android' ? 5 : 0}%;
-  padding-bottom:  ${Platform.OS === 'android' ? 5 : 0}%;
+  padding-bottom:  ${Platform.OS === 'android' ? 6 : 0}%;
 `;
 
 const HeaderView = styled.View<{ size: number }>`
@@ -63,8 +68,9 @@ const HeaderView = styled.View<{ size: number }>`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 5px ${(props) => props.size}px 10px ${(props) => props.size}px;
+  padding: 0 ${(props) => props.size}px 0 ${(props) => props.size}px;
   margin-bottom: 10px;
+  position: sticky;
 `;
 
 const SubView = styled.View`
@@ -172,7 +178,7 @@ const FloatingButton = styled.TouchableOpacity`
 const FeedContainer = styled.View`
   flex: 1;
   width: 100%;
-  margin-bottom: 30px;
+  margin-bottom: ${Platform.OS === 'ios' ? 20 : 30}px;
   padding: 0 20px 0 20px;
 `;
 
@@ -248,7 +254,6 @@ const Home:React.FC<HomeScreenProps> = ({
                                           navigation:{navigate},
                                         })=> {
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [isModalVisible, setModalVisible] = useState(false);
   const queryClient = useQueryClient();
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const SCREEN_PADDING_SIZE = 20;
@@ -258,12 +263,12 @@ const Home:React.FC<HomeScreenProps> = ({
 
   //모달
   const modalizeRef = useRef<Modalize>(null);
-  const onOpen = (feedData:Feed) => {
-    modalizeRef.current?.open(feedData);
+  const onOpen = () => {
+    modalizeRef.current?.open();
   };
-
   //heart선택
   const [heartMap, setHeartMap] = useState(new Map());
+
   //피드
   const {
     isLoading: feedsLoading,
@@ -272,6 +277,7 @@ const Home:React.FC<HomeScreenProps> = ({
   } = useQuery<FeedsResponse>(["getFeeds", {token}], FeedApi.getFeeds, {
     //useQuery(["getFeeds", token], FeedApi.getFeeds, {
     onSuccess: (res) => {
+      console.log('home call')
       setIsPageTransition(false);
       let heartDataMap = new Map();
 
@@ -292,28 +298,23 @@ const Home:React.FC<HomeScreenProps> = ({
     isRefetching: isRefetchingFeeds,
     hasNextPage,
     refetch: feedRefetch,
+    fetchNextPage
   } = useInfiniteQuery<FeedsResponse>(["getFeeds", {token}], FeedApi.getFeeds, {
-    //useQuery(["getFeeds", token], FeedApi.getFeeds, {
     getNextPageParam: (currentPage) => {
       if (currentPage) {
         return currentPage.hasNext === false ? null : currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor;
       }
     },
     onSuccess: (res) => {
+      console.log('homeCall')
+      console.log(res)
       setIsPageTransition(false);
       /!*let heartDataMap = new Map();
-      let modalMap = new Map();*!/
-      console.log(res+'ress')
-      /!*for (let i = 0; i < res?.pages..length; ++i) {
-        heartDataMap.set(res?.responses?.content[i].id, false);
-        //나중에 api 호출했을때는 false자리에 id 불러오듯이 값 받아와야함.
+
+      for (let i = 0; i < res?.data?.length; ++i) {
+        heartDataMap.set(res?.data[i].id, false);
       }
-      for (let i = 0; i < res?.responses?.content?.length; ++i) {
-        modalMap.set(res?.responses?.content[i]?.id, res?.responses?.content[i].id);
-        //나중에 api 호출했을때는 false자리에 id 불러오듯이 값 받아와야함.
-      }*!/
-      /!*setHeartMap(heartDataMap);
-      setModaltMap(modalMap);*!/
+      setHeartMap(heartDataMap);*!/
     },
     onError: (err) => {
       console.log(err);
@@ -331,6 +332,7 @@ const Home:React.FC<HomeScreenProps> = ({
   const LikeMutation = useMutation( FeedApi.likeCount, {
     onSuccess: (res) => {
       if (res.status === 200) {
+        console.log(res)
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
@@ -344,19 +346,19 @@ const Home:React.FC<HomeScreenProps> = ({
   });
 
   const LikeFeed=(feedData:Feed)=>{
+    feedData.likeYn = true
     const data = {
       id: feedData.id,
     };
-    console.log(data);
+
     const likeRequestData: FeedLikeRequest=
       {
         data,
         token,
       }
-
     LikeMutation.mutate(likeRequestData);
+    console.log(data);
   };
-
 
   //ReverseLike
   const LikeReverseMutation = useMutation( FeedApi.likeCountReverse, {
@@ -366,7 +368,6 @@ const Home:React.FC<HomeScreenProps> = ({
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
-        // return navigate("Home", {});
       }
     },
     onError: (error) => {
@@ -378,26 +379,19 @@ const Home:React.FC<HomeScreenProps> = ({
   });
 
   const LikeReverseFeed=(feedData:Feed)=>{
+    feedData.likeYn = false
     const data = {
       id: feedData.id,
     };
-    console.log(data);
+
     const likeRequestData: FeedLikeRequest=
       {
         data,
         token,
       }
-
-    LikeMutation.mutate(likeRequestData);
+    LikeReverseMutation.mutate(likeRequestData);
+    console.log(data);
   };
-
-  const feedSize = Math.round(SCREEN_WIDTH / 3) - 1;
-
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-    setRefreshing(false);
-  };
-
 
   const goToReply = (feedData: Feed) => {
     navigate("HomeStack", {
@@ -411,7 +405,7 @@ const Home:React.FC<HomeScreenProps> = ({
       screen: "ModifiyPeed",
       feedData,
     });
-    setModalVisible(!isModalVisible);
+    modalizeRef.current?.close()
   };
 
   const goToClub = () => {
@@ -426,11 +420,7 @@ const Home:React.FC<HomeScreenProps> = ({
       screen: "Accusation",
       feedData,
     });
-    setModalVisible(!isModalVisible);
-  };
-
-  const closeModal = () => {
-    setModalVisible(!isModalVisible);
+    modalizeRef.current?.close()
   };
 
   const deleteCheck = (feedData:Feed) => {
@@ -447,13 +437,45 @@ const Home:React.FC<HomeScreenProps> = ({
       ],
       { cancelable: false }
     );
-    setModalVisible(!isModalVisible);
   };
   const onRefresh = async () => {
     setRefreshing(true);
-    await queryClient.refetchQueries(["feeds"]);
+    await queryClient.refetchQueries(["getFeeds"]);
     setRefreshing(false);
   };
+
+  //시간측정
+  const timeLine =(date:any) =>{
+    const start = new Date(date);
+    const end = new Date(); // 현재 날짜
+
+    let diff = (end - start); // 경과 시간
+
+    const times = [
+      {time: "분", milliSeconds: 1000 * 60},
+      {time: "시간", milliSeconds: 1000 * 60 * 60},
+      {time: "일", milliSeconds: 1000 * 60 * 60 * 24},
+      {time: "개월", milliSeconds: 1000 * 60 * 60 * 24 * 30},
+      {time: "년", milliSeconds: 1000 * 60 * 60 * 24 * 365},
+    ].reverse();
+    // 년 단위부터 알맞는 단위 찾기
+    for (const value of times) {
+      const betweenTime = Math.floor(diff / value.milliSeconds);
+      // 큰 단위는 0보다 작은 소수 단위 나옴
+      if (betweenTime > 0) {
+        return `${betweenTime}${value.time} 전`;
+      }
+    }
+    // 모든 단위가 맞지 않을 시
+    return "방금 전";
+  }
+
+/*
+  const loadMore = () => {
+    if (hasNextPage) fetchNextPage();
+  };
+*/
+
 
   const loading = feedsLoading && userInfoLoading;
 
@@ -475,13 +497,17 @@ const Home:React.FC<HomeScreenProps> = ({
             </SubView>
           </HeaderView>
           <FlatList
+            showsHorizontalScrollIndicator={false}
             refreshing={refreshing}
             onRefresh={onRefresh}
-            keyExtractor={(item: Feed, index: number) => String(index)}
+            // onEndReached={loadMore}
             data={feeds?.data}
+            // data={feeds?.pages?.map((page) => page?.responses?.content).flat()}
+            disableVirtualization={false}
+            keyExtractor={(item: Feed, index: number) => String(index)}
             renderItem={({ item, index }: { item: Feed; index: number }) => (
-              <ScrollView>
-                <FeedHeader key={index}>
+              <>
+                <FeedHeader>
                   <FeedUser>
                     <UserImage
                       source={{
@@ -490,8 +516,7 @@ const Home:React.FC<HomeScreenProps> = ({
                     />
                     <UserInfo>
                       <UserId>{item.userName}</UserId>
-                      <UserId>{myName}</UserId>
-                      <UserId>{item.id}</UserId>
+                      <UserId>{item.likeYn.toString()}</UserId>
                       <ClubBox>
                         <ClubName>{item.clubName}</ClubName>
                       </ClubBox>
@@ -499,7 +524,7 @@ const Home:React.FC<HomeScreenProps> = ({
                   </FeedUser>
                   <View>
                     <ModalIcon
-                      onPress={()=>onOpen(item)}>
+                      onPress={()=>onOpen()}>
                       <Ionicons name="ellipsis-vertical" size={20} color={"black"} />
                       <Text>{item.id}</Text>
                     </ModalIcon>
@@ -516,7 +541,7 @@ const Home:React.FC<HomeScreenProps> = ({
                           <ModalView>
                             <ModalText onPress={() => goToModifiy(item)}>수정</ModalText>
                             <ModalText style={{ color: "red" }} onPress={()=>deleteCheck(item)}>
-                              삭제2
+                              삭제
                             </ModalText>
                             <Text>{item.userName},{myName},{item.id}</Text>
                           </ModalView>
@@ -526,29 +551,46 @@ const Home:React.FC<HomeScreenProps> = ({
                             <Text>{item.userName},{myName},{item.id}</Text>
                           </ModalView>
                         }
-                        <ModalView>
-                        </ModalView>
                       </ModalContainer>
                     </Modalize>
                   </Portal>
                 </FeedHeader>
                 <FeedMain>
                   <FeedImage>
-                    <SliderBox images={item.imageUrls[0]===undefined? ["https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg","https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"]
-                      : [item.imageUrls[0],item.imageUrls[1]]} sliderBoxHeight={FEED_IMAGE_SIZE}/>
+                    <ImageSlider
+                      data={[
+                        {img: item.imageUrls[0]},
+                        {img: 'https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg'},
+                        {img: item.imageUrls[0]},
+                      ]}
+                      closeIconColor="#fff"
+                      preview={true}
+                      caroselImageStyle={{resizeMode: 'cover'}}
+                      indicatorContainerStyle={{bottom: 0}}
+                    />
+
                     {/*<ImageSource source={item.imageUrls[0]===undefined?{uri:"https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"}:{uri:item.imageUrls[0]}} size={FEED_IMAGE_SIZE}/>*/}
                   </FeedImage>
                   <FeedInfo>
                     <LeftInfo>
                       <InfoArea>
-                        <TouchableOpacity onPress={() => setHeartMap((prev) => new Map(prev).set(item.id, !prev.get(item.id)))}>
-                          {heartMap.get(item.id)?
-                            <TouchableOpacity onPress={()=>LikeFeed(item)}><Ionicons name="md-heart" size={20} color="red" /></TouchableOpacity>
-                            :
-                            <TouchableOpacity onPress={()=>LikeReverseFeed(item)}><Ionicons  name="md-heart-outline" size={20} color="black"/></TouchableOpacity>}
+                        <TouchableOpacity onPress= {() => setHeartMap((prev) => new Map(prev).set(item.id, !prev.get(item.id)))}>
+                          <TouchableOpacity onPress={item.likeYn.toString() === "true" ? () => LikeReverseFeed(item) : () => LikeFeed(item)}>
+                            {item.likeYn.toString() === "false" ?
+                              <Ionicons  name="md-heart-outline" size={20} color="black"/>
+                              :
+                              <Ionicons  name="md-heart" size={20} color="red"/>}
+                          </TouchableOpacity>
+                          {/*{heartMap.get(item.id)?
+                            <Ionicons name="md-heart" size={20} color="red"><TouchableOpacity onPress={()=>LikeFeed(item)}/></Ionicons>
+                            : <Ionicons  name="md-heart-outline" size={20} color="black"><TouchableOpacity onPress={()=>LikeReverseFeed(item)}/></Ionicons>
+                        }*/}
                         </TouchableOpacity>
-                        {heartMap.get(item.id) === true? <LikeClick ><NumberText>{item.likesCount +1}</NumberText></LikeClick>
-                          : <LikeClick><NumberText>{item.likesCount}</NumberText></LikeClick>}
+                        {item.likeYn.toString() === 'true' ?
+                          <NumberText>{item.likesCount +1}</NumberText>:<NumberText>{item.likesCount}</NumberText>
+                        }
+                        {/* {heartMap.get(item.id) === true?<NumberText>{likeCount +1}</NumberText>
+                          : <NumberText>{likeCount}</NumberText>}*/}
                       </InfoArea>
                       <InfoArea>
                         <TouchableOpacity onPress={() => goToReply(item)}>
@@ -558,7 +600,7 @@ const Home:React.FC<HomeScreenProps> = ({
                       </InfoArea>
                     </LeftInfo>
                     <RightInfo>
-                      <Timestamp>{item.created}</Timestamp>
+                      <Timestamp>{timeLine(item.created)}</Timestamp>
                     </RightInfo>
                   </FeedInfo>
                   <Content>
@@ -567,7 +609,7 @@ const Home:React.FC<HomeScreenProps> = ({
                     </Ment>
                   </Content>
                 </FeedMain>
-              </ScrollView>
+              </>
             )}
           />
         </FeedContainer>
