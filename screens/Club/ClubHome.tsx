@@ -25,7 +25,7 @@ const Loader = styled.View`
 
 const Break = styled.View<{ sep: number }>`
   width: 100%;
-  margin-bottom: ${(props) => props.sep}px;
+  margin-bottom: ${(props) => props.sep * 2}px;
   margin-top: ${(props) => props.sep}px;
   border-bottom-width: 1px;
   border-bottom-color: rgba(0, 0, 0, 0.2);
@@ -82,8 +82,6 @@ const ScheduleAddView = styled.TouchableOpacity`
   box-shadow: 1px 1px 2px gray;
   elevation: 5;
   padding: 20px 5px;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
 `;
 
 const ScheduleBadge = styled.View`
@@ -112,12 +110,8 @@ const ScheduleDateView = styled.View<{ index: number }>`
   background-color: ${(props) => (props.index === 0 ? "#eaff87" : "#CCCCCC")};
   justify-content: center;
   align-items: center;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
   padding: 7px 15px;
   elevation: 3;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
   min-height: 40px;
 `;
 
@@ -246,6 +240,11 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
       result.push({ isEnd: true });
 
       setScheduleData(result);
+    },
+    onError: (error) => {
+      toast.show(`스케줄 데이터를 불러오지 못했습니다. ${error}`, {
+        type: "error",
+      });
     },
   });
 
