@@ -151,13 +151,23 @@ const ClubScheduleAdd = ({
             <ItemView>
               <InputItem>
                 <ItemTitle>모임 장소</ItemTitle>
-                <ItemTextInput value={place} placeholder="직접 입력" maxLength={16} onChangeText={(text) => setPlace(text)} returnKeyType="done" returnKeyLabel="done" textAlign="right" />
+                <ItemTextInput
+                  value={place}
+                  placeholder="직접 입력"
+                  placeholderTextColor="#B0B0B0"
+                  maxLength={16}
+                  onChangeText={(text) => setPlace(text)}
+                  returnKeyType="done"
+                  returnKeyLabel="done"
+                  textAlign="right"
+                />
               </InputItem>
             </ItemView>
             <MemoView>
               <ItemTitle>메모</ItemTitle>
               <MemoInput
                 placeholder="스케줄에 대한 메모를 남겨주세요."
+                placeholderTextColor="#B0B0B0"
                 value={memo}
                 textAlign="left"
                 multiline={true}

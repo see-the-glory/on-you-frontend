@@ -57,11 +57,9 @@ const ClubTopTabs = ({
   },
   navigation,
 }) => {
-  const queryClient = useQueryClient();
   const token = useSelector((state) => state.AuthReducers.authToken);
   const toast = useToast();
   const [data, setData] = useState<Club>(clubData);
-  const [joinModalVisible, setJoinModalVisible] = useState(false);
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
   // Header Height Definition
   const { top } = useSafeAreaInsets();
@@ -97,25 +95,15 @@ const ClubTopTabs = ({
         type: "warning",
       });
     } else {
-      setJoinModalVisible(true);
+      navigation.navigate("ClubJoin", { clubData: data });
     }
-  };
-
-  const clubSubmit = (memo: string) => {
-    const requestData: ClubApplyRequest = {
-      clubId: data.id,
-      memo,
-      token,
-    };
-
-    clubApplyMutation.mutate(requestData);
-    setJoinModalVisible(false);
   };
 
   const { refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
         setData(res.data);
+        console.log(`${res.data.id} contactPhone: ${res.data.contactPhone}`);
       } else {
         toast.show(`Error Code: ${res.status}`, {
           type: "error",
@@ -134,7 +122,6 @@ const ClubTopTabs = ({
   const {
     isLoading: clubRoleLoading,
     data: clubRole,
-    isRefetching: isRefetchingClubRole,
     refetch: clubRoleRefetch,
   } = useQuery<ClubRoleResponse>(["getClubRole", token, data.id], ClubApi.getClubRole, {
     onSuccess: (res) => {},
@@ -155,31 +142,6 @@ const ClubTopTabs = ({
     },
     onError: (error) => {
       toast.show(`Schedule Request Error: ${error}`, {
-        type: "error",
-      });
-    },
-  });
-
-  const clubApplyMutation = useMutation(ClubApi.applyClub, {
-    onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
-        toast.show(`가입 신청이 완료되었습니다.`, {
-          type: "success",
-        });
-      } else {
-        console.log(`mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "error",
-        });
-      }
-      clubRoleRefetch();
-    },
-    onError: (error) => {
-      console.log("--- Error ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
         type: "error",
       });
     },
@@ -256,18 +218,6 @@ const ClubTopTabs = ({
       </Animated.View>
 
       {clubRoleLoading ? <></> : <FloatingActionButton role={clubRole?.data?.role} applyStatus={clubRole?.data?.applyStatus} onPressEdit={clubEdit} onPressJoin={clubJoin} />}
-
-      <ClubJoinModal visible={joinModalVisible} clubName={data.name} clubSubmit={clubSubmit}>
-        <ModalHeaderRight>
-          <ModalCloseButton
-            onPress={() => {
-              setJoinModalVisible(false);
-            }}
-          >
-            <Ionicons name="close" size={24} color="black" />
-          </ModalCloseButton>
-        </ModalHeaderRight>
-      </ClubJoinModal>
     </Container>
   );
 };
