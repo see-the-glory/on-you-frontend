@@ -104,12 +104,12 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   const token = useSelector((state) => state.AuthReducers.authToken);
   const [clubShortDesc, setClubShortDesc] = useState<string>("");
   const [clubLongDesc, setClubLongDesc] = useState<string>("");
-
-  console.log(category1, category2, clubName, maxNumber, isApproveRequired, phoneNumber, organizationName, imageURI);
+  const [disableSubmit, setDisableSubmit] = useState<boolean>(false);
 
   const mutation = useMutation(ClubApi.createClub, {
     onSuccess: (res) => {
       console.log(res);
+      setDisableSubmit(false);
       if (res.status === 200) {
         return navigate("ClubCreationSuccess", {
           clubData: res.data,
@@ -123,6 +123,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
     onError: (error) => {
       console.log("--- Error ---");
       console.log(`error: ${error}`);
+      setDisableSubmit(false);
       return navigate("ClubCreationFail", {});
     },
     onSettled: (res, error) => {},
@@ -163,6 +164,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
             token,
           };
 
+    setDisableSubmit(true);
     mutation.mutate(requestData);
   };
 
@@ -184,6 +186,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
               <ItemTitle>간단 소개</ItemTitle>
               <ShortDescInput
                 placeholder="36자 이내로 간단 소개글을 적어주세요."
+                placeholderTextColor="#B0B0B0"
                 value={clubShortDesc}
                 textAlign="center"
                 multiline={true}
@@ -197,6 +200,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
               <ItemTitle>상세 소개</ItemTitle>
               <LongDescInput
                 placeholder="모임의 상세 소개글을 적어주세요."
+                placeholderTextColor="#B0B0B0"
                 value={clubLongDesc}
                 textAlign="left"
                 multiline={true}
@@ -207,7 +211,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
             </ContentItem>
           </Content>
           <FooterView>
-            <NextButton onPress={onSubmit} disabled={clubShortDesc === "" || clubLongDesc === ""}>
+            <NextButton onPress={onSubmit} disabled={clubShortDesc === "" || clubLongDesc === "" || disableSubmit}>
               <ButtonText>완료</ButtonText>
             </NextButton>
           </FooterView>

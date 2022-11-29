@@ -21,6 +21,7 @@ export interface Club {
   clubLongDesc: string | null;
   announcement: string | null;
   organizationName: string;
+  isApprovedRequired: string;
   members: Member[];
   maxNumber: number;
   recruitNumber: number;
@@ -72,7 +73,7 @@ export interface User {
   interests: [];
 }
 export interface Feed {
-  id: number ;
+  id: number;
   clubId: number;
   clubName: string;
   userId: number;
@@ -88,7 +89,7 @@ export interface Feed {
 }
 
 export interface Reply {
-  id:number;
+  id: number;
   userId: number;
   userName: string;
   content: string;
@@ -136,11 +137,11 @@ export interface FeedsResponse extends BaseResponse {
   };
   size: number;
 }
-export interface ModifiedReponse extends BaseResponse{
+export interface ModifiedReponse extends BaseResponse {
   data: Feed;
 }
-export interface FeedsLikeReponse extends BaseResponse{
-  data:Feed[]
+export interface FeedsLikeReponse extends BaseResponse {
+  data: Feed[];
 }
 export interface UserInfoResponse extends BaseResponse {
   data: User;
@@ -152,7 +153,7 @@ export interface ReportResponse extends BaseResponse {
   data: Report[];
 }
 export interface FeedsParams {
-  id:number|undefined;
+  id: number | undefined;
   token: string;
 }
 
@@ -167,8 +168,8 @@ export interface ClubsParams {
   showMy: number;
 }
 
-export interface ReplyParams{
-  id:number;
+export interface ReplyParams {
+  id: number;
   token: string;
 }
 export interface ClubSchedulesResponse extends BaseResponse {
@@ -186,13 +187,13 @@ export interface ClubCreationRequest {
   } | null;
   data: {
     category1Id: number;
-    category2Id: number | null;
+    category2Id?: number | null;
     isApproveRequired: string;
     clubShortDesc: string;
     clubLongDesc: string | null;
     clubName: string;
     clubMaxMember: number;
-    phoneNumber: string;
+    contactPhone: string;
     organizationName: string;
   };
   token: string;
@@ -203,7 +204,7 @@ export interface FeedCreationRequest {
     uri: string;
     type: string;
     name: string | undefined;
-  }|null;
+  } | null;
   data: {
     userId?: number;
     content?: string;
@@ -211,44 +212,43 @@ export interface FeedCreationRequest {
   token: string;
 }
 
-export interface FeedUpdateRequest{
+export interface FeedUpdateRequest {
   image?: {
     uri: string;
     type: string;
     name: string | undefined;
   };
   data: {
-    id:number | undefined
+    id: number | undefined;
     // access: string
     content: string;
   };
   token: string;
 }
-export interface FeedLikeRequest{
-  data:{
-    id?:number,
-    userId?: number,
+export interface FeedLikeRequest {
+  data: {
+    id?: number;
+    userId?: number;
   };
   token: string;
 }
 
-export interface FeedReverseLikeRequest{
-  data:{
-    id:number,
-    userId: number
+export interface FeedReverseLikeRequest {
+  data: {
+    id: number;
+    userId: number;
   };
   token: string;
 }
 
-export interface FeedReportRequest{
-  data:{
-    id:number | undefined,
-    userId:number,
-    reason: string,
+export interface FeedReportRequest {
+  data: {
+    id: number | undefined;
+    userId: number;
+    reason: string;
   };
   token: string;
 }
-
 
 export interface ClubUpdateRequest {
   image?: {
@@ -342,26 +342,26 @@ export interface SignUp {
   phoneNumber?: string;
 }
 
-export interface getFeedLike{
-  data:{
-    id?: number;
-  }
-  token:string;
-}
-
-export interface FeedReplyRequest{
+export interface getFeedLike {
   data: {
     id?: number;
-    content?: string;
-  }
+  };
   token: string;
 }
 
-export interface FeedDeleteRequest{
-  data:{
+export interface FeedReplyRequest {
+  data: {
     id?: number;
-  }
-  token:string;
+    content?: string;
+  };
+  token: string;
+}
+
+export interface FeedDeleteRequest {
+  data: {
+    id?: number;
+  };
+  token: string;
 }
 
 // Categories
@@ -397,15 +397,15 @@ const getFeeds = ({ queryKey }: any) => {
 /**피드 선택*/
 const getSelectFeeds = ({ queryKey }: any) => {
   const [_key, token, id]: [string, string, number] = queryKey;
-  console.log(id+'id')
+  console.log(id + "id");
   return fetch(`${BASE_URL}/api/feeds/${id}`, {
     method: "GET",
     headers: {
-      authorization: `${token}`
-    }
+      authorization: `${token}`,
+    },
   }).then(async (res) => {
-    if(res.status === 200) return {status: res.status, ...(await res.json())}
-    else return {status: res.status}
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
   });
 };
 
@@ -482,7 +482,7 @@ const createFeed = async (req: FeedCreationRequest) => {
 };
 
 const updateFeed = async (req: FeedUpdateRequest) => {
-  console.log(req.data.id+'realId')
+  console.log(req.data.id + "realId");
 
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}`, {
     method: "PUT",
@@ -492,8 +492,8 @@ const updateFeed = async (req: FeedUpdateRequest) => {
     },
     body: JSON.stringify(req.data),
   }).then(async (res) => {
-    if(res.status === 200) return {status: res.status, ...(await res.json())}
-    else return {status: res.status}
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
   });
 };
 
@@ -512,7 +512,7 @@ const createClub = async (req: ClubCreationRequest) => {
   return fetch(`${BASE_URL}/api/clubs`, {
     method: "POST",
     headers: {
-      "content-type": "multipart/form-data",
+      "Content-Type": "multipart/form-data",
       authorization: `${req.token}`,
       Accept: "*/*",
     },
@@ -540,7 +540,7 @@ const updateClub = async (req: ClubUpdateRequest) => {
   return fetch(`${BASE_URL}/api/clubs/${req.clubId}`, {
     method: "PUT",
     headers: {
-      "content-type": "multipart/form-data",
+      "Content-Type": "multipart/form-data",
       authorization: `${req.token}`,
       Accept: "*/*",
     },
@@ -554,7 +554,7 @@ const applyClub = (req: ClubApplyRequest) => {
   return fetch(`${BASE_URL}/api/clubs/apply`, {
     method: "POST",
     headers: {
-      "content-type": "application/json",
+      "Content-Type": "application/json",
       authorization: `${req.token}`,
     },
     body: JSON.stringify({ clubId: req.clubId, memo: req.memo }),
@@ -568,7 +568,7 @@ const changeRole = (req: ChangeRoleRequest) => {
   return fetch(`${BASE_URL}/api/clubs/${req.clubId}/changeRole`, {
     method: "POST",
     headers: {
-      "content-type": "application/json",
+      "Content-Type": "application/json",
       authorization: `${req.token}`,
     },
     body: JSON.stringify(req.data),
@@ -588,7 +588,7 @@ const createClubSchedule = async (req: ClubScheduleCreationRequest) => {
   return fetch(`${BASE_URL}/api/clubs/schedules`, {
     method: "POST",
     headers: {
-      "content-type": "application/json",
+      "Content-Type": "application/json",
       authorization: `${req.token}`,
       Accept: "*/*",
     },
@@ -695,22 +695,22 @@ const selectMyClubs = ({ queryKey }: any) => {
 
 /**피드신고*/
 const reportFeed = (req: FeedReportRequest) => {
-  console.log(req.data.id)
-  console.log(req.data.reason)
+  console.log(req.data.id);
+  console.log(req.data.reason);
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}/report?reason=${req.data.reason}`, {
     method: "PUT",
     headers: {
       Authorization: `${req.token}`,
     },
   }).then(async (res) => {
-    if(res.status === 200) return {status: res.status, ...(await res.json())}
-    else return {status: res.status}
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
   });
 };
 
 /**피드좋아요*/
-const likeCount = (req:getFeedLike) =>{
-  console.log('LikeFeed')
+const likeCount = (req: getFeedLike) => {
+  console.log("LikeFeed");
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}/likes`, {
     method: "POST",
     headers: {
@@ -718,14 +718,14 @@ const likeCount = (req:getFeedLike) =>{
       Authorization: `${req.token}`,
     },
   }).then(async (res) => {
-    if(res.status === 200) return {status: res.status, ...(await res.json())}
-    else return {status: res.status}
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
   });
-}
+};
 
 /**피드 좋아요 취소*/
-const likeCountReverse = (req:getFeedLike) => {
-  console.log('LikeFeedCancle')
+const likeCountReverse = (req: getFeedLike) => {
+  console.log("LikeFeedCancle");
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}/likes`, {
     method: "PUT",
     headers: {
@@ -733,20 +733,21 @@ const likeCountReverse = (req:getFeedLike) => {
       Authorization: `${req.token}`,
     },
   }).then(async (res) => {
-    if(res.status === 200) return {status: res.status, ...(await res.json())}
-    else return {status: res.status}
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
   });
-}
+};
 
 /**댓글호출*/
-const getReply = ({queryKey}:any) => {
+const getReply = ({ queryKey }: any) => {
   const [_key, token, id]: [string, string, number] = queryKey;
   return fetch(`${BASE_URL}/api/feeds/${id}/comments`, {
     method: "GET",
     headers: {
       Authorization: `${token}`,
     },
-  }) .then((res) => res.json())
+  })
+    .then((res) => res.json())
     .then((res) => {
       if (res.resultCode !== "OK") new Error("API Response Error.");
       else {
@@ -758,7 +759,7 @@ const getReply = ({queryKey}:any) => {
 };
 
 /**댓글달기*/
-const ReplyFeed = (req:FeedReplyRequest) =>{
+const ReplyFeed = (req: FeedReplyRequest) => {
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}/comment`, {
     method: "POST",
     headers: {
@@ -767,14 +768,14 @@ const ReplyFeed = (req:FeedReplyRequest) =>{
     },
     body: JSON.stringify(req.data),
   }).then(async (res) => {
-    if(res.status === 200) return {status: res.status, ...(await res.json())}
-    else return {status: res.status}
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
   });
-}
+};
 
 /**피드삭제*/
-const feedDelete = (req:FeedDeleteRequest) => {
-  console.log('feedDelete')
+const feedDelete = (req: FeedDeleteRequest) => {
+  console.log("feedDelete");
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}`, {
     method: "DELETE",
     headers: {
@@ -824,4 +825,3 @@ export const FeedApi = {
 };
 
 export const CommonApi = { getJWT };
-
