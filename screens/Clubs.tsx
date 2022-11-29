@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { ActivityIndicator, FlatList, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { Feather, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
@@ -70,6 +70,17 @@ const HeaderItemText = styled(CustomText)`
 
 const MainView = styled.View`
   flex: 1;
+`;
+
+const EmptyView = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const EmptyText = styled(CustomText)`
+  font-size: 14px;
+  color: #bdbdbd;
 `;
 
 const FloatingButton = styled.TouchableOpacity`
@@ -393,6 +404,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             </Loader>
           ) : (
             <FlatList
+              contentContainerStyle={{ flexGrow: 1 }}
               refreshing={refreshing}
               onRefresh={onRefresh}
               onEndReached={loadMore}
@@ -419,6 +431,11 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                     recruitStatus={item.recruitStatus}
                   />
                 </TouchableOpacity>
+              )}
+              ListEmptyComponent={() => (
+                <EmptyView>
+                  <EmptyText style={{ justifyContent: "center", alignItems: "center" }}>{`조건에 해당하는 모임이 없습니다.`}</EmptyText>
+                </EmptyView>
               )}
             />
           )}
