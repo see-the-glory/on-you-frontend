@@ -44,15 +44,15 @@ const AccText = styled.Text`
 `;
 
 interface ReportReason{
-     title:string,
-    reason:string,
+  title:string,
+  reason:string,
 }
 
 const Accusation:React.FC<ReportPeedScreenProps>=({ navigation:
   { navigate},route:{params:{
   feedData
 }} }) =>{
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state:any) => state.AuthReducers.authToken);
 
   console.log(feedData.id)
   const[reportReason,setReportReason]=useState<ReportReason[]>();

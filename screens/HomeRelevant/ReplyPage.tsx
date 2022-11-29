@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert, Animated, Dimensions,
   FlatList,
   Keyboard,
   KeyboardAvoidingView,
-  Platform,
+  Platform, RefreshControl,
+  SafeAreaView,
   ScrollView,
   StatusBar,
   Text,
@@ -17,7 +18,7 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import {
   FeedApi,
-  FeedReplyRequest,
+  FeedReplyRequest, FeedsResponse,
   getReply,
   getUserInfo,
   Reply,
@@ -25,9 +26,10 @@ import {
   UserApi,
   UserInfoResponse
 } from "../../api";
-import { ModifiyPeedScreenProps } from "../../types/feed";
+import { ModifiyPeedScreenProps } from "../../types/Feed";
 import { useToast } from "react-native-toast-notifications";
-import Swipeable from 'react-native-gesture-handler/Swipeable';
+import {SwipeListView,SwipeRow} from 'react-native-swipe-list-view';
+import { AntDesign } from '@expo/vector-icons';
 const window = Dimensions.get("window");
 
 
@@ -39,10 +41,29 @@ const Container = styled.SafeAreaView`
   height: 100%;
   position: relative;
   width: 100%;
+  flex: 1;
 `;
 
 const CommentList = styled.View`
   height: 95%;
+`
+const SwipeHiddenItemContainer = styled.View`
+  flex: 1;
+  height: 100%;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+`
+const SwipeHiddenItem = styled.View`
+  width: 70px;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+`
+const SwipeHiddenItemText = styled.Text`
+  color: black;
+  font-size: 14px;
+  text-align: center;
 `
 
 const CommentArea = styled.View`
@@ -50,6 +71,8 @@ const CommentArea = styled.View`
   flex-direction: row;
   width: 100%;
   padding: 10px 20px 0 20px;
+  position: relative;
+  background-color: #ffffff;;
 `;
 
 const CommentImg = styled.Image`
@@ -92,6 +115,10 @@ const NoReplyText = styled.Text`
   color: #B0B0B0;
 `
 
+const NoReplyScrollView = styled.ScrollView`
+  padding-Top: 50%;
+`
+
 const Time = styled.Text`
   font-size: 10px;
   font-weight: 300;
@@ -104,13 +131,14 @@ const ReplyArea = styled.View`
   flex-direction: row;
   padding: 1% 0 0 20px;
   height: auto;
+
 `;
 
 const ReplyInputArea = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 88%;
+  width: 88%;;
 `
 
 const ReplyInput = styled.TextInput`
@@ -146,18 +174,21 @@ const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
   const queryClient = useQueryClient();
   const [content, setContent] = useState("");
 
-
   /** 리플 데이터   */
   const { data: replys, isLoading: replysLoading } =
     useQuery<ReplyReponse>(["getReply",token,feedData.id], FeedApi.getReply,{
       onSuccess: (res) => {
-        // console.log(res);
+        setContent('');
       },
       onError: (err) => {
         console.log(`[getFeeds error] ${err}`);
       },
     });
-
+  const {
+    isLoading: feedsLoading,
+    data: feeds,
+    isRefetching: isRefetchingFeeds,
+  } = useQuery<FeedsResponse>(["getFeeds", {token}], FeedApi.getFeeds, {});
 
   /** 유저 데이터   */
   const {
@@ -166,14 +197,19 @@ const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
   } = useQuery<UserInfoResponse>(["userInfo", token], UserApi.getUserInfo);
 
   // console.log(userInfo?.data.id);
-
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await queryClient.refetchQueries(["getReply"]);
+    await queryClient.refetchQueries(["getFeeds"]);
+    setRefreshing(false);
+  };
   //댓글추가
   const mutation = useMutation( FeedApi.ReplyFeed, {
     onSuccess: (res) => {
       if (res.status === 200) {
         console.log(res)
-        setRefreshing(false);
-
+        onRefresh();
+        setContent('');
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
@@ -195,7 +231,7 @@ const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
         content: content,
       };
       Keyboard.dismiss();
-      // console.log(data);
+
       const likeRequestData: FeedReplyRequest=
         {
           data,
@@ -203,97 +239,139 @@ const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
         }
       mutation.mutate(likeRequestData);
     }
-    return content.length==0
+  }
+
+  const timeLine =(date) =>{
+    const start = new Date(date);
+    const end = new Date(); // 현재 날짜
+
+    let diff = (end - start); // 경과 시간
+
+    const times = [
+      {time: "분", milliSeconds: 1000 * 60},
+      {time: "시간", milliSeconds: 1000 * 60 * 60},
+      {time: "일", milliSeconds: 1000 * 60 * 60 * 24},
+      {time: "개월", milliSeconds: 1000 * 60 * 60 * 24 * 30},
+      {time: "년", milliSeconds: 1000 * 60 * 60 * 24 * 365},
+    ].reverse();
+
+    // 년 단위부터 알맞는 단위 찾기
+    for (const value of times) {
+      const betweenTime = Math.floor(diff / value.milliSeconds);
+
+      // 큰 단위는 0보다 작은 소수 단위 나옴
+      if (betweenTime > 0) {
+        return `${betweenTime}${value.time} 전`;
+      }
     }
 
-
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await queryClient.refetchQueries(["replys"]);
-    setRefreshing(false);
-  };
+    // 모든 단위가 맞지 않을 시
+    return "방금 전";
+  }
 
   return replysLoading ? (
     <Loader>
       <ActivityIndicator/>
     </Loader>
   ):(
-    <Container>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}
-                            keyboardVerticalOffset={Platform.OS === "ios" ? 110 : undefined} style={{ flex: 1 }}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <>
-            <CommentList>
-              {replys?.data.length !== 0 ?
-              <FlatList
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                keyExtractor={(item: Reply, index: number) => String(index)}
-                data={replys?.data}
-                disableVirtualization={false}
-                renderItem={({ item, index }: { item: Reply; index: number }) => (
-                  <ScrollView>
-                    <CommentArea key={index}>
-                      <CommentImg source={{ uri: item.thumbnail }} />
-                      <View style={{ marginBottom: 20, top: 7 }}>
-                        <CommentMent>
-                          <CommentId>{item.userName}</CommentId>
-                          <Comment>{item.content}</Comment>
-                        </CommentMent>
-                        <CommentRemainder>
-                          <Time>{item.created}</Time>
-                        </CommentRemainder>
-                      </View>
-                    </CommentArea>
-                  </ScrollView>
-                )}
-              />:
-                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <CommentArea>
-                  <NoReplyText>아직 등록된 댓글이 없습니다. {"\n"} 첫 댓글을 남겨보세요</NoReplyText>
-                </CommentArea>
-                </TouchableWithoutFeedback>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}
+                          keyboardVerticalOffset={Platform.OS === "ios" ? 110 : 100} style={{ flex: 1 }}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <>
+          <CommentList>
+            {replys?.data.length !== 0 ?
+              <SafeAreaView style={{flex: 1}}>
+                <SwipeListView
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  keyExtractor={(item: Reply, index: number) => String(index)}
+                  data={replys?.data}
+                  disableVirtualization={false}
+                  leftOpenValue={0}
+                  rightOpenValue={-70}
+                  renderItem={({ item, index }: { item: Reply; index: number }) => (
+                    <ScrollView>
+                      <CommentArea key={index}>
+                        <CommentImg source={{ uri: item.thumbnail }} />
+                        <View style={{ marginBottom: 20, top: 7 }}>
+                          <CommentMent>
+                            <CommentId>{item.userName}</CommentId>
+                            <Comment>{item.content}</Comment>
+                          </CommentMent>
+                          <CommentRemainder>
+                            <Time>{timeLine(item.created)}</Time>
+                          </CommentRemainder>
+                        </View>
+                      </CommentArea>
+                    </ScrollView>
+                  )}
+                  renderHiddenItem={(item, index) => (
+                    <SwipeHiddenItemContainer>
+                      <SwipeHiddenItem>
+                        <SwipeHiddenItemText></SwipeHiddenItemText>
+                      </SwipeHiddenItem>
+                      <SwipeHiddenItem style={{backgroundColor: 'skyblue'}}>
+                        <SwipeHiddenItemText>
+                          <AntDesign name="delete" size={24} color="black" />
+                        </SwipeHiddenItemText>
+                      </SwipeHiddenItem>
+                    </SwipeHiddenItemContainer>
+                  )}
+                />
+              </SafeAreaView>
+              :
+              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <NoReplyScrollView
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }>
+                  <CommentArea>
+                    <NoReplyText>아직 등록된 댓글이 없습니다. {"\n"} 첫 댓글을 남겨보세요</NoReplyText>
+                  </CommentArea>
+                </NoReplyScrollView>
+              </TouchableWithoutFeedback>
+            }
+          </CommentList>
+          <ReplyArea>
+            <ReplyImg
+              source={{
+                uri: userInfo?.data.thumbnail === null ? "https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userInfo?.data.thumbnail,
+              }}
+            />
+            <ReplyInputArea>
+              {replys?.data.length === null ?
+                <ReplyInput
+                  placeholder="댓글을 입력해보세요..."
+                  onChangeText={(content) => setContent(content)}
+                  autoCompleteType="off"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  multiline={true}
+                  returnKeyType="done"
+                  returnKeyLabel="done"
+                />:
+                <ReplyInput
+                  placeholder="댓글을 입력해보세요..."
+                  onChangeText={(content) => setContent(content)}
+                  autoCompleteType="off"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  multiline={true}
+                  returnKeyType="done"
+                  returnKeyLabel="done"
+                />
               }
-            </CommentList>
-            <ReplyArea>
-              <ReplyImg
-                source={{
-                  uri: userInfo?.data.thumbnail === null ? "https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userInfo?.data.thumbnail,
-                }}
-              />
-              <ReplyInputArea>
-                {replys?.data.length === null ?
-                  <ReplyInput
-                    placeholder="댓글을 입력해보세요..."
-                    onChangeText={(content) => setContent(content)}
-                    autoCompleteType="off"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    multiline={true}
-                    returnKeyType="done"
-                    returnKeyLabel="done"
-                  />:
-                  <ReplyInput
-                    placeholder="댓글을 입력해보세요..."
-                    onChangeText={(content) => setContent(content)}
-                    autoCompleteType="off"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    multiline={true}
-                    returnKeyType="done"
-                    returnKeyLabel="done"
-                  />
-                }
-                <ReplyButton onPress={RelpyFeed}>
-                  <ReplyDone>게시</ReplyDone>
-                </ReplyButton>
-              </ReplyInputArea>
-            </ReplyArea>
-          </>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </Container>
+              <ReplyButton onPress={RelpyFeed}>
+                <ReplyDone>게시</ReplyDone>
+              </ReplyButton>
+            </ReplyInputArea>
+          </ReplyArea>
+        </>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 export default ReplyPage;
