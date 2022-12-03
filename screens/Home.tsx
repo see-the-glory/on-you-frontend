@@ -15,14 +15,9 @@ import {
   ScrollView,
   VirtualizedList,
   RefreshControl,
-  Animated
+  Animated,
 } from "react-native";
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient
-} from "react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import {
@@ -39,13 +34,11 @@ import {
   ClubCreationRequest,
   FeedLikeRequest,
   FeedReverseLikeRequest,
-  Club, ClubsParams
+  Club,
+  ClubsParams,
 } from "../api";
 import CustomText from "../components/CustomText";
-import {
-  FeedData,
-  HomeScreenProps,
-} from "../types/Feed";
+import { FeedData, HomeScreenProps } from "../types/Feed";
 import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { ImageSlider } from "react-native-image-slider-banner";
@@ -59,8 +52,8 @@ const Loader = styled.SafeAreaView`
 
 const Container = styled.SafeAreaView`
   flex: 1;
-  top: ${Platform.OS === 'android' ? 5 : 0}%;
-  padding-bottom:  ${Platform.OS === 'android' ? 6 : 0}%;
+  top: ${Platform.OS === "android" ? 5 : 0}%;
+  padding-bottom: ${Platform.OS === "android" ? 6 : 0}%;
 `;
 
 const HeaderView = styled.View<{ size: number }>`
@@ -69,14 +62,15 @@ const HeaderView = styled.View<{ size: number }>`
   align-items: center;
   justify-content: space-between;
   padding: 0 ${(props) => props.size}px 0 ${(props) => props.size}px;
-  margin-bottom: 10px;
-  position: sticky;
+  margin-bottom: 20px;
+  poistion: fixed;
 `;
 
 const SubView = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  margin-right: 7px;
 `;
 
 const LogoImage = styled.Image`
@@ -93,9 +87,12 @@ const LogoText = styled(CustomText)`
 `;
 
 const UserImage = styled.Image`
-  width: 42.5px;
-  height: 42.5px;
+  width: 40px;
+  height: 40px;
   border-radius: 100px;
+  border-style: solid;
+  border-color: #dddddd;
+  border-width: 1.5px;
   background-color: #c4c4c4;
 `;
 
@@ -178,7 +175,7 @@ const FloatingButton = styled.TouchableOpacity`
 const FeedContainer = styled.View`
   flex: 1;
   width: 100%;
-  margin-bottom: ${Platform.OS === 'ios' ? 20 : 30}px;
+  margin-bottom: ${Platform.OS === "ios" ? 20 : 30}px;
   padding: 0 20px 0 20px;
 `;
 
@@ -197,6 +194,7 @@ const FeedUser = styled.View`
 
 const UserInfo = styled.View`
   padding-left: 10px;
+  padding-bottom: 2px;
 `;
 const FeedMain = styled.View``;
 const FeedImage = styled.View``;
@@ -204,7 +202,7 @@ const FeedInfo = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 5px 10px 5px;
+  padding: 7px 5px 5px 5px;
 `;
 const LeftInfo = styled.View`
   flex-direction: row;
@@ -215,8 +213,7 @@ const InfoArea = styled.View`
   padding-right: 10px;
 `;
 
-const LikeClick=styled.TouchableOpacity`
-`
+const LikeClick = styled.TouchableOpacity``;
 
 const NumberText = styled.Text`
   font-size: 12px;
@@ -230,13 +227,13 @@ const Timestamp = styled.Text`
 `;
 
 const Content = styled.View`
-  padding: 0 12px 0 12px;
+  padding: 0 12px 0 10px;
 `;
 
 const Ment = styled(CustomText)`
   width: 100%;
   color: black;
-  font-size: 12px;
+  font-size: 14px;
 `;
 
 const ImageSource = styled.Image<{ size: number }>`
@@ -244,21 +241,18 @@ const ImageSource = styled.Image<{ size: number }>`
   height: ${(props) => props.size}px;
 `;
 
-
 interface HeartType {
   feedId: number;
   heart: boolean;
 }
 
-const Home:React.FC<HomeScreenProps> = ({
-                                          navigation:{navigate},
-                                        })=> {
+const Home: React.FC<HomeScreenProps> = ({ navigation: { navigate } }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
-  const SCREEN_PADDING_SIZE = 20;
+  const SCREEN_PADDING_SIZE = 0;
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
-  const token = useSelector((state:any) => state.AuthReducers.authToken);
+  const token = useSelector((state: any) => state.AuthReducers.authToken);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
 
   //모달
@@ -270,14 +264,10 @@ const Home:React.FC<HomeScreenProps> = ({
   const [heartMap, setHeartMap] = useState(new Map());
 
   //피드
-  const {
-    isLoading: feedsLoading,
-    data: feeds,
-    isRefetching: isRefetchingFeeds,
-  } = useQuery<FeedsResponse>(["getFeeds", {token}], FeedApi.getFeeds, {
+  const { isLoading: feedsLoading, data: feeds, isRefetching: isRefetchingFeeds } = useQuery<FeedsResponse>(["getFeeds", { token }], FeedApi.getFeeds, {
     //useQuery(["getFeeds", token], FeedApi.getFeeds, {
     onSuccess: (res) => {
-      console.log('home call')
+      console.log("home call");
       setIsPageTransition(false);
       let heartDataMap = new Map();
 
@@ -328,11 +318,11 @@ const Home:React.FC<HomeScreenProps> = ({
   let myName = userInfo?.data?.name;
   let myId = userInfo?.data?.id;
 
-//Like
-  const LikeMutation = useMutation( FeedApi.likeCount, {
+  //Like
+  const LikeMutation = useMutation(FeedApi.likeCount, {
     onSuccess: (res) => {
       if (res.status === 200) {
-        console.log(res)
+        console.log(res);
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
@@ -345,26 +335,25 @@ const Home:React.FC<HomeScreenProps> = ({
     onSettled: (res, error) => {},
   });
 
-  const LikeFeed=(feedData:Feed)=>{
-    feedData.likeYn = true
+  const LikeFeed = (feedData: Feed) => {
+    feedData.likeYn = true;
     const data = {
       id: feedData.id,
     };
 
-    const likeRequestData: FeedLikeRequest=
-      {
-        data,
-        token,
-      }
+    const likeRequestData: FeedLikeRequest = {
+      data,
+      token,
+    };
     LikeMutation.mutate(likeRequestData);
     console.log(data);
   };
 
   //ReverseLike
-  const LikeReverseMutation = useMutation( FeedApi.likeCountReverse, {
+  const LikeReverseMutation = useMutation(FeedApi.likeCountReverse, {
     onSuccess: (res) => {
       if (res.status === 200) {
-        console.log(res)
+        console.log(res);
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
@@ -378,17 +367,16 @@ const Home:React.FC<HomeScreenProps> = ({
     onSettled: (res, error) => {},
   });
 
-  const LikeReverseFeed=(feedData:Feed)=>{
-    feedData.likeYn = false
+  const LikeReverseFeed = (feedData: Feed) => {
+    feedData.likeYn = false;
     const data = {
       id: feedData.id,
     };
 
-    const likeRequestData: FeedLikeRequest=
-      {
-        data,
-        token,
-      }
+    const likeRequestData: FeedLikeRequest = {
+      data,
+      token,
+    };
     LikeReverseMutation.mutate(likeRequestData);
     console.log(data);
   };
@@ -400,12 +388,12 @@ const Home:React.FC<HomeScreenProps> = ({
     });
   };
 
-  const goToModifiy = (feedData:Feed) => {
+  const goToModifiy = (feedData: Feed) => {
     navigate("HomeStack", {
       screen: "ModifiyPeed",
       feedData,
     });
-    modalizeRef.current?.close()
+    modalizeRef.current?.close();
   };
 
   const goToClub = () => {
@@ -415,15 +403,15 @@ const Home:React.FC<HomeScreenProps> = ({
     });
   };
 
-  const goToAccusation = (feedData:Feed) => {
+  const goToAccusation = (feedData: Feed) => {
     navigate("HomeStack", {
       screen: "Accusation",
       feedData,
     });
-    modalizeRef.current?.close()
+    modalizeRef.current?.close();
   };
 
-  const deleteCheck = (feedData:Feed) => {
+  const deleteCheck = (feedData: Feed) => {
     Alert.alert(
       "게시글을 삭제하시겠어요?",
       "30일 이내에 내 활동의 최근 삭제 항목에서 이 게시물을 복원할 수 있습니다." + "30일이 지나면 영구 삭제 됩니다. ",
@@ -445,18 +433,18 @@ const Home:React.FC<HomeScreenProps> = ({
   };
 
   //시간측정
-  const timeLine =(date:any) =>{
+  const timeLine = (date: any) => {
     const start = new Date(date);
     const end = new Date(); // 현재 날짜
 
-    let diff = (end - start); // 경과 시간
+    let diff = end - start; // 경과 시간
 
     const times = [
-      {time: "분", milliSeconds: 1000 * 60},
-      {time: "시간", milliSeconds: 1000 * 60 * 60},
-      {time: "일", milliSeconds: 1000 * 60 * 60 * 24},
-      {time: "개월", milliSeconds: 1000 * 60 * 60 * 24 * 30},
-      {time: "년", milliSeconds: 1000 * 60 * 60 * 24 * 365},
+      { time: "분", milliSeconds: 1000 * 60 },
+      { time: "시간", milliSeconds: 1000 * 60 * 60 },
+      { time: "일", milliSeconds: 1000 * 60 * 60 * 24 },
+      { time: "개월", milliSeconds: 1000 * 60 * 60 * 24 * 30 },
+      { time: "년", milliSeconds: 1000 * 60 * 60 * 24 * 365 },
     ].reverse();
     // 년 단위부터 알맞는 단위 찾기
     for (const value of times) {
@@ -468,22 +456,21 @@ const Home:React.FC<HomeScreenProps> = ({
     }
     // 모든 단위가 맞지 않을 시
     return "방금 전";
-  }
+  };
 
-/*
+  /*
   const loadMore = () => {
     if (hasNextPage) fetchNextPage();
   };
 */
 
-
   const loading = feedsLoading && userInfoLoading;
 
-  return loading ?(
+  return loading ? (
     <Loader>
-      <ActivityIndicator/>
+      <ActivityIndicator />
     </Loader>
-  ):(
+  ) : (
     <>
       <Container>
         <FeedContainer>
@@ -493,7 +480,7 @@ const Home:React.FC<HomeScreenProps> = ({
               <LogoText>OnYou</LogoText>
             </SubView>
             <SubView>
-              <MaterialIcons name="add-photo-alternate" onPress={goToClub} style={{ left: 9 }} size={19} color="black" />
+              <MaterialIcons name="add-photo-alternate" onPress={goToClub} style={{ left: 9 }} size={22} color="black" />
             </SubView>
           </HeaderView>
           <FlatList
@@ -516,41 +503,39 @@ const Home:React.FC<HomeScreenProps> = ({
                     />
                     <UserInfo>
                       <UserId>{item.userName}</UserId>
-                      <UserId>{item.likeYn.toString()}</UserId>
+                      {/* <UserId>{item.likeYn.toString()}</UserId> */}
                       <ClubBox>
                         <ClubName>{item.clubName}</ClubName>
                       </ClubBox>
                     </UserInfo>
                   </FeedUser>
                   <View>
-                    <ModalIcon
-                      onPress={()=>onOpen()}>
+                    <ModalIcon onPress={() => onOpen()}>
                       <Ionicons name="ellipsis-vertical" size={20} color={"black"} />
-                      <Text>{item.id}</Text>
+                      {/* <Text>{item.id}</Text> */}
                     </ModalIcon>
                   </View>
                   <Portal>
-                    <Modalize
-                      ref={modalizeRef}
-                      modalHeight={250}
-                      handlePosition="inside"
-                      modalStyle={{ borderTopLeftRadius: 50, borderTopRightRadius: 50 }}
-                    >
-                      <ModalContainer >
-                        {userInfo?.data.id===item.userId ?
+                    <Modalize ref={modalizeRef} modalHeight={250} handlePosition="inside" modalStyle={{ borderTopLeftRadius: 50, borderTopRightRadius: 50 }}>
+                      <ModalContainer>
+                        {userInfo?.data.id === item.userId ? (
                           <ModalView>
                             <ModalText onPress={() => goToModifiy(item)}>수정</ModalText>
-                            <ModalText style={{ color: "red" }} onPress={()=>deleteCheck(item)}>
+                            <ModalText style={{ color: "red" }} onPress={() => deleteCheck(item)}>
                               삭제
                             </ModalText>
-                            <Text>{item.userName},{myName},{item.id}</Text>
+                            <Text>
+                              {item.userName},{myName},{item.id}
+                            </Text>
                           </ModalView>
-                          :
+                        ) : (
                           <ModalView>
-                            <ModalText onPress={()=> goToAccusation(item)}>신고</ModalText>
-                            <Text>{item.userName},{myName},{item.id}</Text>
+                            <ModalText onPress={() => goToAccusation(item)}>신고</ModalText>
+                            <Text>
+                              {item.userName},{myName},{item.id}
+                            </Text>
                           </ModalView>
-                        }
+                        )}
                       </ModalContainer>
                     </Modalize>
                   </Portal>
@@ -558,15 +543,11 @@ const Home:React.FC<HomeScreenProps> = ({
                 <FeedMain>
                   <FeedImage>
                     <ImageSlider
-                      data={[
-                        {img: item.imageUrls[0]},
-                        {img: 'https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg'},
-                        {img: item.imageUrls[0]},
-                      ]}
+                      data={[{ img: item.imageUrls[0] }, { img: "https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg" }, { img: item.imageUrls[0] }]}
                       closeIconColor="#fff"
                       preview={true}
-                      caroselImageStyle={{resizeMode: 'cover'}}
-                      indicatorContainerStyle={{bottom: 0}}
+                      caroselImageStyle={{ resizeMode: "cover" }}
+                      indicatorContainerStyle={{ bottom: 0 }}
                     />
 
                     {/*<ImageSource source={item.imageUrls[0]===undefined?{uri:"https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"}:{uri:item.imageUrls[0]}} size={FEED_IMAGE_SIZE}/>*/}
@@ -574,21 +555,16 @@ const Home:React.FC<HomeScreenProps> = ({
                   <FeedInfo>
                     <LeftInfo>
                       <InfoArea>
-                        <TouchableOpacity onPress= {() => setHeartMap((prev) => new Map(prev).set(item.id, !prev.get(item.id)))}>
+                        <TouchableOpacity onPress={() => setHeartMap((prev) => new Map(prev).set(item.id, !prev.get(item.id)))}>
                           <TouchableOpacity onPress={item.likeYn.toString() === "true" ? () => LikeReverseFeed(item) : () => LikeFeed(item)}>
-                            {item.likeYn.toString() === "false" ?
-                              <Ionicons  name="md-heart-outline" size={20} color="black"/>
-                              :
-                              <Ionicons  name="md-heart" size={20} color="red"/>}
+                            {item.likeYn.toString() === "false" ? <Ionicons name="md-heart-outline" size={20} color="black" /> : <Ionicons name="md-heart" size={20} color="red" />}
                           </TouchableOpacity>
                           {/*{heartMap.get(item.id)?
                             <Ionicons name="md-heart" size={20} color="red"><TouchableOpacity onPress={()=>LikeFeed(item)}/></Ionicons>
                             : <Ionicons  name="md-heart-outline" size={20} color="black"><TouchableOpacity onPress={()=>LikeReverseFeed(item)}/></Ionicons>
                         }*/}
                         </TouchableOpacity>
-                        {item.likeYn.toString() === 'true' ?
-                          <NumberText>{item.likesCount +1}</NumberText>:<NumberText>{item.likesCount}</NumberText>
-                        }
+                        {item.likeYn.toString() === "true" ? <NumberText>{item.likesCount + 1}</NumberText> : <NumberText>{item.likesCount}</NumberText>}
                         {/* {heartMap.get(item.id) === true?<NumberText>{likeCount +1}</NumberText>
                           : <NumberText>{likeCount}</NumberText>}*/}
                       </InfoArea>
@@ -604,9 +580,7 @@ const Home:React.FC<HomeScreenProps> = ({
                     </RightInfo>
                   </FeedInfo>
                   <Content>
-                    <Ment>
-                      {item.content}
-                    </Ment>
+                    <Ment>{item.content}</Ment>
                   </Content>
                 </FeedMain>
               </>
