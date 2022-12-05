@@ -38,7 +38,7 @@ import {
   ClubsParams,
 } from "../api";
 import CustomText from "../components/CustomText";
-import { FeedData, HomeScreenProps } from "../types/Feed";
+import { FeedData, HomeScreenProps } from "../types/feed";
 import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { ImageSlider } from "react-native-image-slider-banner";
@@ -63,7 +63,7 @@ const HeaderView = styled.View<{ size: number }>`
   justify-content: space-between;
   padding: 0 ${(props) => props.size}px 0 ${(props) => props.size}px;
   margin-bottom: 20px;
-  poistion: fixed;
+  position: sticky;
 `;
 
 const SubView = styled.View`
@@ -246,7 +246,11 @@ interface HeartType {
   heart: boolean;
 }
 
-const Home: React.FC<HomeScreenProps> = ({ navigation: { navigate } }) => {
+const Home:React.FC<HomeScreenProps> = ({
+                                          navigation:{navigate},
+                                          route:{params:{feedData}}
+                                        })=> {
+
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
@@ -257,59 +261,37 @@ const Home: React.FC<HomeScreenProps> = ({ navigation: { navigate } }) => {
 
   //모달
   const modalizeRef = useRef<Modalize>(null);
-  const onOpen = () => {
-    modalizeRef.current?.open();
-  };
-  //heart선택
-  const [heartMap, setHeartMap] = useState(new Map());
+  const onOpen = (feedData:any) => {
+    modalizeRef?.current?.open(feedData);
 
+  };
+    //heart선택
+  const [heartMap, setHeartMap] = useState(new Map());
+  const [clickModal, setClickModal] = useState(new Map([]));
   //피드
-  const { isLoading: feedsLoading, data: feeds, isRefetching: isRefetchingFeeds } = useQuery<FeedsResponse>(["getFeeds", { token }], FeedApi.getFeeds, {
-    //useQuery(["getFeeds", token], FeedApi.getFeeds, {
+  const {
+    isLoading: feedsLoading,
+    data: feeds,
+    isRefetching: isRefetchingFeeds,
+  } = useQuery<FeedsResponse>(["getFeeds", {token}], FeedApi.getFeeds, {
     onSuccess: (res) => {
-      console.log("home call");
+      console.log('homeCall')
       setIsPageTransition(false);
       let heartDataMap = new Map();
+      let clickModalMap = new Map();
 
       for (let i = 0; i < res?.data?.length; ++i) {
         heartDataMap.set(res?.data[i].id, false);
-        //나중에 api 호출했을때는 false자리에 id 불러오듯이 값 받아와야함.
+        clickModalMap.set(res?.data[i].id, res?.data[i].id);
       }
       setHeartMap(heartDataMap);
+      setClickModal(clickModalMap)
     },
     onError: (err) => {
       console.log(err);
     },
   });
-  //무한스크롤
-  /*const {
-    isLoading: feedsLoading,
-    data: feeds,
-    isRefetching: isRefetchingFeeds,
-    hasNextPage,
-    refetch: feedRefetch,
-    fetchNextPage
-  } = useInfiniteQuery<FeedsResponse>(["getFeeds", {token}], FeedApi.getFeeds, {
-    getNextPageParam: (currentPage) => {
-      if (currentPage) {
-        return currentPage.hasNext === false ? null : currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor;
-      }
-    },
-    onSuccess: (res) => {
-      console.log('homeCall')
-      console.log(res)
-      setIsPageTransition(false);
-      /!*let heartDataMap = new Map();
 
-      for (let i = 0; i < res?.data?.length; ++i) {
-        heartDataMap.set(res?.data[i].id, false);
-      }
-      setHeartMap(heartDataMap);*!/
-    },
-    onError: (err) => {
-      console.log(err);
-    },
-  });*/
   //User
   const {
     isLoading: userInfoLoading, // true or false
@@ -319,10 +301,11 @@ const Home: React.FC<HomeScreenProps> = ({ navigation: { navigate } }) => {
   let myId = userInfo?.data?.id;
 
   //Like
-  const LikeMutation = useMutation(FeedApi.likeCount, {
+  const LikeMutation = useMutation( FeedApi.likeCount, {
     onSuccess: (res) => {
       if (res.status === 200) {
-        console.log(res);
+        // onRefresh();
+        console.log(res)
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
@@ -335,25 +318,31 @@ const Home: React.FC<HomeScreenProps> = ({ navigation: { navigate } }) => {
     onSettled: (res, error) => {},
   });
 
-  const LikeFeed = (feedData: Feed) => {
-    feedData.likeYn = true;
+  const LikeFeed=(feedData:Feed)=>{
+    if(feedData.likeYn.toString() === 'true'){
+      feedData.likeYn=false
+    }else{
+      feedData.likeYn = true
+    }
     const data = {
       id: feedData.id,
     };
 
-    const likeRequestData: FeedLikeRequest = {
-      data,
-      token,
-    };
+    const likeRequestData: FeedLikeRequest=
+      {
+        data,
+        token,
+      }
     LikeMutation.mutate(likeRequestData);
     console.log(data);
   };
 
-  //ReverseLike
-  const LikeReverseMutation = useMutation(FeedApi.likeCountReverse, {
+  const FeedDeleteMutation = useMutation( FeedApi.feedDelete, {
     onSuccess: (res) => {
       if (res.status === 200) {
-        console.log(res);
+        console.log(res)
+        onRefresh();
+        modalizeRef.current?.close()
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
@@ -362,22 +351,23 @@ const Home: React.FC<HomeScreenProps> = ({ navigation: { navigate } }) => {
     onError: (error) => {
       console.log("--- Error ---");
       console.log(`error: ${error}`);
-      // return navigate("Home", {});
     },
     onSettled: (res, error) => {},
   });
 
-  const LikeReverseFeed = (feedData: Feed) => {
-    feedData.likeYn = false;
+  /**FeedDelete*/
+  const FeedDelete=(feedData:Feed)=>{
+    feedData.likeYn = true
     const data = {
       id: feedData.id,
     };
 
-    const likeRequestData: FeedLikeRequest = {
-      data,
-      token,
-    };
-    LikeReverseMutation.mutate(likeRequestData);
+    const likeRequestData: FeedLikeRequest=
+      {
+        data,
+        token,
+      }
+    FeedDeleteMutation.mutate(likeRequestData);
     console.log(data);
   };
 
@@ -411,7 +401,7 @@ const Home: React.FC<HomeScreenProps> = ({ navigation: { navigate } }) => {
     modalizeRef.current?.close();
   };
 
-  const deleteCheck = (feedData: Feed) => {
+  const deleteCheck = (feedData:Feed) => {
     Alert.alert(
       "게시글을 삭제하시겠어요?",
       "30일 이내에 내 활동의 최근 삭제 항목에서 이 게시물을 복원할 수 있습니다." + "30일이 지나면 영구 삭제 됩니다. ",
@@ -421,7 +411,7 @@ const Home: React.FC<HomeScreenProps> = ({ navigation: { navigate } }) => {
           onPress: () => console.log("삭제 Api 호출"),
           style: "cancel",
         },
-        { text: "네", onPress: () => Alert.alert("삭제되었습니다.") },
+        { text: "네", onPress: () =>FeedDelete(feedData) },
       ],
       { cancelable: false }
     );
@@ -509,36 +499,33 @@ const Home: React.FC<HomeScreenProps> = ({ navigation: { navigate } }) => {
                       </ClubBox>
                     </UserInfo>
                   </FeedUser>
-                  <View>
-                    <ModalIcon onPress={() => onOpen()}>
-                      <Ionicons name="ellipsis-vertical" size={20} color={"black"} />
-                      {/* <Text>{item.id}</Text> */}
-                    </ModalIcon>
-                  </View>
-                  <Portal>
-                    <Modalize ref={modalizeRef} modalHeight={250} handlePosition="inside" modalStyle={{ borderTopLeftRadius: 50, borderTopRightRadius: 50 }}>
-                      <ModalContainer>
-                        {userInfo?.data.id === item.userId ? (
-                          <ModalView>
-                            <ModalText onPress={() => goToModifiy(item)}>수정</ModalText>
-                            <ModalText style={{ color: "red" }} onPress={() => deleteCheck(item)}>
-                              삭제
-                            </ModalText>
-                            <Text>
-                              {item.userName},{myName},{item.id}
-                            </Text>
-                          </ModalView>
-                        ) : (
-                          <ModalView>
-                            <ModalText onPress={() => goToAccusation(item)}>신고</ModalText>
-                            <Text>
-                              {item.userName},{myName},{item.id}
-                            </Text>
-                          </ModalView>
-                        )}
-                      </ModalContainer>
-                    </Modalize>
-                  </Portal>
+                  <TouchableOpacity onPress={()=>setClickModal((prev)=>new Map(prev).set(item.id, prev.get(item.id)))}>
+                    <ModalArea>
+                      <ModalIcon
+                        onPress={() => {onOpen(item.id)}}>
+                        <Ionicons name="ellipsis-vertical" size={20} color={"black"} />
+                        <Text>{item.id}</Text>
+                      </ModalIcon>
+                      <Portal>
+                        <Modalize
+                          ref={modalizeRef}
+                          modalHeight={300}
+                          handlePosition="inside"
+                        >
+                          <ModalContainer key={index}>
+                            <ModalView>
+                              <ModalText onPress={() => goToModifiy(item)}>수정</ModalText>
+                              <ModalText style={{ color: "red" }} onPress={()=>deleteCheck(item)}>
+                                삭제
+                              </ModalText>
+                              <ModalText onPress={()=> goToAccusation(item)}>신고</ModalText>
+                              <Text>{item.userName}, {myName}, {item.id}, {clickModal.get(item.id)}</Text>
+                            </ModalView>
+                          </ModalContainer>
+                        </Modalize>
+                      </Portal>
+                    </ModalArea>
+                  </TouchableOpacity>
                 </FeedHeader>
                 <FeedMain>
                   <FeedImage>
@@ -548,6 +535,7 @@ const Home: React.FC<HomeScreenProps> = ({ navigation: { navigate } }) => {
                       preview={true}
                       caroselImageStyle={{ resizeMode: "cover" }}
                       indicatorContainerStyle={{ bottom: 0 }}
+                      size={FEED_IMAGE_SIZE}
                     />
 
                     {/*<ImageSource source={item.imageUrls[0]===undefined?{uri:"https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"}:{uri:item.imageUrls[0]}} size={FEED_IMAGE_SIZE}/>*/}
@@ -556,17 +544,11 @@ const Home: React.FC<HomeScreenProps> = ({ navigation: { navigate } }) => {
                     <LeftInfo>
                       <InfoArea>
                         <TouchableOpacity onPress={() => setHeartMap((prev) => new Map(prev).set(item.id, !prev.get(item.id)))}>
-                          <TouchableOpacity onPress={item.likeYn.toString() === "true" ? () => LikeReverseFeed(item) : () => LikeFeed(item)}>
-                            {item.likeYn.toString() === "false" ? <Ionicons name="md-heart-outline" size={20} color="black" /> : <Ionicons name="md-heart" size={20} color="red" />}
+                          <TouchableOpacity onPress={()=>LikeFeed(item)}>
+                          {item.likeYn.toString() === "false" ? <Ionicons name="md-heart-outline" size={20} color="black" /> : <Ionicons name="md-heart" size={20} color="red" />}
                           </TouchableOpacity>
-                          {/*{heartMap.get(item.id)?
-                            <Ionicons name="md-heart" size={20} color="red"><TouchableOpacity onPress={()=>LikeFeed(item)}/></Ionicons>
-                            : <Ionicons  name="md-heart-outline" size={20} color="black"><TouchableOpacity onPress={()=>LikeReverseFeed(item)}/></Ionicons>
-                        }*/}
                         </TouchableOpacity>
                         {item.likeYn.toString() === "true" ? <NumberText>{item.likesCount + 1}</NumberText> : <NumberText>{item.likesCount}</NumberText>}
-                        {/* {heartMap.get(item.id) === true?<NumberText>{likeCount +1}</NumberText>
-                          : <NumberText>{likeCount}</NumberText>}*/}
                       </InfoArea>
                       <InfoArea>
                         <TouchableOpacity onPress={() => goToReply(item)}>
