@@ -684,13 +684,15 @@ const FindUserPw = (req: FindPwRequest) => {
 };
 
 const selectMyClubs = ({ queryKey }: any) => {
-  const [_key, token]: [string, string] = queryKey;
+  const [_key, token, clubId]: [string, string, number] = queryKey;
+  console.log(_key, token, clubId);
   return fetch(`${BASE_URL}/api/clubs/my`, {
-    method: "GET",
     headers: {
       authorization: `${token}`,
     },
-  }).then((res) => res.json());
+  }).then(async (res) => {
+    return { status: res.status, ...(await res.json()) };
+  });
 };
 
 /**피드신고*/

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import { Dimensions, Animated } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
@@ -49,7 +50,6 @@ const MyClubImg = styled.Image`
   width: 33px;
   height: 33px;
   border-radius: 50px;
-  background-color: red;
 `;
 
 const MyClubTextBox = styled.View``;
@@ -66,7 +66,7 @@ const DeleteBox = styled.View`
   background-color: #ff714b;
 `;
 
-const MyClub = (props) => {
+const MyClub: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigation: { navigate } }, props) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
 
   const [clubData, setClubData] = useState<Club[]>();
@@ -75,8 +75,6 @@ const MyClub = (props) => {
     isLoading: myClubInfoLoading, // true or false
     data: myClub,
   } = useQuery<Club>(["selectMyClubs", token], UserApi.selectMyClubs);
-
-  console.log(clubData);
 
   const rightSwipe = (progress, dragX) => {
     const scale = dragX.interpolate({
@@ -105,7 +103,7 @@ const MyClub = (props) => {
   return (
     <Container>
       <Title>가입한 모임 List</Title>
-      {clubData?.map((club, index) => (
+      {myClub?.data.map((club, index) => (
         <MyClubWrap key={index}>
           <Swipeable renderRightActions={rightSwipe}>
             <MyClubBox style={{ width: SCREEN_WIDTH }}>

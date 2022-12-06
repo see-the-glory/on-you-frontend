@@ -347,7 +347,7 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
           <Title>교회</Title>
           <Input autoCorrect={false} placeholder="시광교회" defaultValue={userData.organizationName} onChangeText={(text) => setOrganizationName(text)} />
         </Form>
-        <Form>
+        {/* <Form>
           <Title>관심사(3개 이상 택)</Title>
           <CategoryView>
             {interestsKor.map((category, index) => (
@@ -363,7 +363,7 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
               </CategoryItem>
             ))}
           </CategoryView>
-        </Form>
+        </Form> */}
       </Container>
     </TouchableWithoutFeedback>
   );
