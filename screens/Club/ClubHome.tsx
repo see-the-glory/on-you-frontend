@@ -25,7 +25,7 @@ const Loader = styled.View`
 
 const Break = styled.View<{ sep: number }>`
   width: 100%;
-  margin-bottom: ${(props) => props.sep * 2}px;
+  margin-bottom: ${(props) => props.sep}px;
   margin-top: ${(props) => props.sep}px;
   border-bottom-width: 1px;
   border-bottom-color: rgba(0, 0, 0, 0.2);
@@ -342,17 +342,17 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     >
       <SectionView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
         <TitleView>
-          <Entypo name="megaphone" size={16} color="#295AF5" />
+          <Entypo name="megaphone" size={16} color="black" />
           <SectionTitle>ABOUT</SectionTitle>
         </TitleView>
         <ContentView>
           <ContentText>{clubData.clubLongDesc}</ContentText>
         </ContentView>
-        <Break sep={7} />
+        <Break sep={15} />
       </SectionView>
       <SectionView>
         <TitleView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
-          <Ionicons name="calendar" size={16} color="#295AF5" />
+          <Ionicons name="calendar" size={16} color="black" />
           <SectionTitle>SCHEDULE</SectionTitle>
         </TitleView>
         {clubRole?.role && clubRole?.role !== "PENDING" ? (
@@ -426,9 +426,9 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         )}
       </SectionView>
       <SectionView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
-        <Break sep={7} />
+        <Break sep={15} />
         <TitleView>
-          <Feather name="users" size={16} color="#295AF5" />
+          <Feather name="users" size={16} color="black" />
           <SectionTitle>MEMBER</SectionTitle>
         </TitleView>
         <MemberView>

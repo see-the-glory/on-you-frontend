@@ -10,10 +10,10 @@ import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.SafeAreaView`
   flex: 1;
-  padding: 0px 20px;
 `;
 const MainView = styled.ScrollView`
   height: 100%;
+  padding: 0px 20px;
 `;
 
 const Header = styled.View`

@@ -5,6 +5,7 @@ import ClubTopTabs from "../screens/Club/ClubTopTabs";
 import { Entypo } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 import ClubJoin from "../screens/Club/ClubJoin";
+import ClubNotification from "../screens/Club/ClubNotification";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -12,7 +13,7 @@ const ClubStack = ({
   route: {
     params: { clubData },
   },
-  navigation,
+  navigation: { navigate },
 }) => {
   return (
     <NativeStack.Navigator
@@ -39,7 +40,7 @@ const ClubStack = ({
         options={{
           title: "스케줄 등록",
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.navigate("ClubTopTabs", { clubData })}>
+            <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
               <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
@@ -53,8 +54,21 @@ const ClubStack = ({
         options={{
           title: "클럽 가입 신청",
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.navigate("ClubTopTabs", { clubData })}>
+            <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
               <Entypo name="chevron-thin-left" size={20} color="black" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+
+      <NativeStack.Screen
+        name="ClubNotification"
+        component={ClubNotification}
+        options={{
+          title: "소식",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
+              <Entypo name="chevron-thin-left" size={20} color="black"></Entypo>
             </TouchableOpacity>
           ),
         }}

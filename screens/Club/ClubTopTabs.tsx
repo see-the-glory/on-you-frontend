@@ -55,7 +55,7 @@ const ClubTopTabs = ({
   route: {
     params: { clubData },
   },
-  navigation,
+  navigation: { navigate, popToTop },
 }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
   const toast = useToast();
@@ -82,21 +82,25 @@ const ClubTopTabs = ({
     extrapolate: "clamp",
   });
   // Function in Modal
-  const clubEdit = () => {
-    return navigation.navigate("ClubManagementStack", {
+  const goClubEdit = () => {
+    navigate("ClubManagementStack", {
       screen: "ClubManagementMain",
       clubData: data,
     });
   };
 
-  const clubJoin = () => {
+  const goClubJoin = () => {
     if (clubRole?.data?.applyStatus === "APPLIED") {
       toast.show("가입신청서가 이미 전달되었습니다.", {
         type: "warning",
       });
     } else {
-      navigation.navigate("ClubJoin", { clubData: data });
+      navigate("ClubJoin", { clubData: data });
     }
+  };
+
+  const goClubNotification = () => {
+    navigate("ClubNotification");
   };
 
   const { refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
@@ -155,6 +159,8 @@ const ClubTopTabs = ({
     }, [])
   );
 
+  
+
   const renderClubHome = useCallback(
     (props) => {
       props.route.params.clubData = data;
@@ -169,13 +175,16 @@ const ClubTopTabs = ({
       <StatusBar barStyle={"light-content"} />
       <NavigationView height={HEADER_HEIGHT}>
         <LeftNavigationView>
-          <TouchableOpacity onPress={() => navigation.popToTop()}>
+          <TouchableOpacity onPress={() => popToTop()}>
             <Entypo name="chevron-thin-left" size={20} color="white" />
           </TouchableOpacity>
         </LeftNavigationView>
         <RightNavigationView>
+          <TouchableOpacity onPress={goClubNotification} style={{ marginRight: 10 }}>
+            <Ionicons name="mail-outline" size={24} color="white" />
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)} style={{ marginRight: 10 }}>
-            {heartSelected ? <Ionicons name="md-heart" size={20} color="white" /> : <Ionicons name="md-heart-outline" size={24} color="white" />}
+            {heartSelected ? <Ionicons name="md-heart" size={24} color="white" /> : <Ionicons name="md-heart-outline" size={24} color="white" />}
           </TouchableOpacity>
         </RightNavigationView>
       </NavigationView>
@@ -217,7 +226,7 @@ const ClubTopTabs = ({
         </TopTab.Navigator>
       </Animated.View>
 
-      {clubRoleLoading ? <></> : <FloatingActionButton role={clubRole?.data?.role} applyStatus={clubRole?.data?.applyStatus} onPressEdit={clubEdit} onPressJoin={clubJoin} />}
+      {clubRoleLoading ? <></> : <FloatingActionButton role={clubRole?.data?.role} applyStatus={clubRole?.data?.applyStatus} onPressEdit={goClubEdit} onPressJoin={goClubJoin} />}
     </Container>
   );
 };
