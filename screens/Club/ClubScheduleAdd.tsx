@@ -118,7 +118,7 @@ const ClubScheduleAdd = ({
             onPressArrowRight={(addMonth) => addMonth()}
             renderHeader={(date) => (
               <CalendarHeader>
-                <CustomText style={{ fontFamily: "NotoSansKR-Bold", fontSize: 18, lineHeight: 24 }}>{date.getMonth()}</CustomText>
+                <CustomText style={{ fontFamily: "NotoSansKR-Bold", fontSize: 18, lineHeight: 24 }}>{date.getMonth() + 1}</CustomText>
                 <CustomText style={{ fontSize: 12, color: "#737373" }}>{date.getFullYear()}</CustomText>
               </CalendarHeader>
             )}
