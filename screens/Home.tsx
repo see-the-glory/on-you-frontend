@@ -1,4 +1,4 @@
-import { Feather, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { createIconSetFromFontello, Feather, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
 import {
   Alert,
@@ -63,7 +63,6 @@ const HeaderView = styled.View<{ size: number }>`
   justify-content: space-between;
   padding: 0 ${(props) => props.size}px 0 ${(props) => props.size}px;
   margin-bottom: 20px;
-  position: sticky;
 `;
 
 const SubView = styled.View`
@@ -265,17 +264,28 @@ const Home:React.FC<HomeScreenProps> = ({
     modalizeRef?.current?.open(feedData);
 
   };
-    //heart선택
+
+  //heart선택
   const [heartMap, setHeartMap] = useState(new Map());
   const [clickModal, setClickModal] = useState(new Map([]));
-  //피드
+
+  //getFeeds ( 무한 스크롤 )
   const {
     isLoading: feedsLoading,
     data: feeds,
     isRefetching: isRefetchingFeeds,
-  } = useQuery<FeedsResponse>(["getFeeds", {token}], FeedApi.getFeeds, {
+    hasNextPage,
+    refetch: feedsRefetch,
+    fetchNextPage,
+  } = useInfiniteQuery<FeedsResponse>(["feeds", {token}], FeedApi.getFeeds, {
+    getNextPageParam: (currentPage) => {
+      if (currentPage) {
+        return currentPage.hasNext === false ? null : currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor;
+      }
+    },
     onSuccess: (res) => {
-      console.log('homeCall')
+      console.log('getFeeds onSuccess')
+      // console.log("res.pages[0].responses:", res.pages[0].responses)
       setIsPageTransition(false);
       let heartDataMap = new Map();
       let clickModalMap = new Map();
@@ -291,6 +301,10 @@ const Home:React.FC<HomeScreenProps> = ({
       console.log(err);
     },
   });
+
+  const loadMore = () => {
+    if (hasNextPage) fetchNextPage();
+  };
 
   //User
   const {
@@ -448,12 +462,6 @@ const Home:React.FC<HomeScreenProps> = ({
     return "방금 전";
   };
 
-  /*
-  const loadMore = () => {
-    if (hasNextPage) fetchNextPage();
-  };
-*/
-
   const loading = feedsLoading && userInfoLoading;
 
   return loading ? (
@@ -477,9 +485,9 @@ const Home:React.FC<HomeScreenProps> = ({
             showsHorizontalScrollIndicator={false}
             refreshing={refreshing}
             onRefresh={onRefresh}
-            // onEndReached={loadMore}
-            data={feeds?.data}
-            // data={feeds?.pages?.map((page) => page?.responses?.content).flat()}
+            onEndReached={loadMore}
+            onEndReachedThreshold={2}
+            data={feeds?.pages.map((page) => page?.responses?.content).flat()}
             disableVirtualization={false}
             keyExtractor={(item: Feed, index: number) => String(index)}
             renderItem={({ item, index }: { item: Feed; index: number }) => (
