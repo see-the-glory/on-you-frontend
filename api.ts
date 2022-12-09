@@ -1,3 +1,5 @@
+import { createIconSetFromFontello } from "@expo/vector-icons";
+
 const BASE_URL = "http://3.39.190.23:8080";
 
 interface BaseResponse {
@@ -367,18 +369,6 @@ export interface FeedDeleteRequest {
 // Categories
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
-/**피드호출*/
-const getFeeds = ({ queryKey }: any) => {
-  const [_key, feedsParams]: [string, FeedsParams] = queryKey;
-  return fetch(`${BASE_URL}/api/feeds`, {
-    headers: {
-      authorization: `${feedsParams.token}`,
-    },
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
-  });
-};
 /**피드 무한스크롤*/
 /*const getFeeds = ({ queryKey,pageParams }: any) => {
   const [_key, feedsParams]: [string, FeedsParams] = queryKey;
@@ -409,6 +399,32 @@ const getSelectFeeds = ({ queryKey }: any) => {
   });
 };
 
+/**피드호출*/
+// const getFeeds = ({ queryKey }: any) => {
+//   const [_key, feedsParams]: [string, FeedsParams] = queryKey;
+//   return fetch(`${BASE_URL}/api/feeds`, {
+//     headers: {
+//       authorization: `${feedsParams.token}`,
+//     },
+//   }).then(async (res) => {
+//     if (res.status === 200) return { status: res.status, ...(await res.json()) };
+//     else return { status: res.status };
+//   });
+// };
+
+const getFeeds = ({ queryKey, pageParam }: any) => {
+  const [_key, feedsParams]: [string, FeedsParams] = queryKey;
+  let parameters = feedsParams ? `cursor=${pageParam}` : "";
+  console.log("feed parameter: ", parameters);
+  return fetch(`${BASE_URL}/api/feeds?${parameters}`, {
+    headers: {
+      authorization: `${feedsParams.token}`,
+    },
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
+};
+
 const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
   let parameters = `categoryId=${clubsParams.categoryId ?? 0}&showMy=${clubsParams.showMy}&showRecruitingOnly=${clubsParams.showRecruiting}`;
@@ -416,7 +432,7 @@ const getClubs = ({ queryKey, pageParam }: any) => {
   parameters += clubsParams.maxMember !== null ? `&max=${clubsParams.maxMember}` : "";
   parameters += `&sort=${clubsParams.sortType}&orderBy=${clubsParams.orderBy}`;
   parameters += pageParam ? `&cursor=${pageParam}` : "";
-  console.log(parameters);
+  console.log("club parameter: ", parameters);
   return fetch(`${BASE_URL}/api/clubs?${parameters}`, {
     headers: {
       authorization: `${clubsParams.token}`,
