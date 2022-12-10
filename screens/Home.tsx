@@ -305,6 +305,8 @@ const Home:React.FC<HomeScreenProps> = ({
     },
   });
 
+  const [fetchedFeedList, setFetchedFeedList] = useState(feeds?.pages.map((page) => page?.responses?.content).flat())
+
   const loadMore = () => {
     if (hasNextPage) fetchNextPage();
   };
@@ -437,7 +439,7 @@ const Home:React.FC<HomeScreenProps> = ({
   };
   const onRefresh = async () => {
     setRefreshing(true);
-    await queryClient.refetchQueries(["getFeeds"]);
+    await queryClient.refetchQueries(["feeds"]);
     setRefreshing(false);
   };
 
@@ -493,6 +495,7 @@ const Home:React.FC<HomeScreenProps> = ({
             onEndReached={loadMore}
             onEndReachedThreshold={2}
             data={feeds?.pages.map((page) => page?.responses?.content).flat()}
+            // data={fetchedFeedList}
             disableVirtualization={false}
             keyExtractor={(item: Feed, index: number) => String(index)}
             renderItem={({ item, index }: { item: Feed; index: number }) => (
