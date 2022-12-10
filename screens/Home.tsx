@@ -257,11 +257,14 @@ const Home:React.FC<HomeScreenProps> = ({
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
   const token = useSelector((state: any) => state.AuthReducers.authToken);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
+  const [modalFeedData, setModalFeedData] =  useState('');
 
   //모달
   const modalizeRef = useRef<Modalize>(null);
-  const onOpen = (feedData:any) => {
-    modalizeRef?.current?.open(feedData);
+  const onOpen = (feedData:Feed) => {
+    console.log("Before Modal Passed FeedId:", feedData.id);
+    setModalFeedData(feedData);
+    modalizeRef?.current?.open(feedData.id);
 
   };
 
@@ -393,8 +396,9 @@ const Home:React.FC<HomeScreenProps> = ({
   };
 
   const goToModifiy = (feedData: Feed) => {
+    console.log("After Modal passed feedId:",feedData.id)
     navigate("HomeStack", {
-      screen: "ModifiyPeed",
+      screen: "ModifiyFeed",
       feedData,
     });
     modalizeRef.current?.close();
@@ -416,6 +420,7 @@ const Home:React.FC<HomeScreenProps> = ({
   };
 
   const deleteCheck = (feedData:Feed) => {
+    console.log("After Modal passed feedId:",feedData.id)
     Alert.alert(
       "게시글을 삭제하시겠어요?",
       "30일 이내에 내 활동의 최근 삭제 항목에서 이 게시물을 복원할 수 있습니다." + "30일이 지나면 영구 삭제 됩니다. ",
@@ -510,7 +515,7 @@ const Home:React.FC<HomeScreenProps> = ({
                   <TouchableOpacity onPress={()=>setClickModal((prev)=>new Map(prev).set(item.id, prev.get(item.id)))}>
                     <ModalArea>
                       <ModalIcon
-                        onPress={() => {onOpen(item.id)}}>
+                        onPress={() => {onOpen(item)}}>
                         <Ionicons name="ellipsis-vertical" size={20} color={"black"} />
                         <Text>{item.id}</Text>
                       </ModalIcon>
@@ -522,12 +527,11 @@ const Home:React.FC<HomeScreenProps> = ({
                         >
                           <ModalContainer key={index}>
                             <ModalView>
-                              <ModalText onPress={() => goToModifiy(item)}>수정</ModalText>
-                              <ModalText style={{ color: "red" }} onPress={()=>deleteCheck(item)}>
+                              <ModalText onPress={() => goToModifiy(modalFeedData)}>수정</ModalText>
+                              <ModalText style={{ color: "red" }} onPress={()=>deleteCheck(modalFeedData)}>
                                 삭제
                               </ModalText>
-                              <ModalText onPress={()=> goToAccusation(item)}>신고</ModalText>
-                              <Text>{item.userName}, {myName}, {item.id}, {clickModal.get(item.id)}</Text>
+                              <ModalText onPress={()=> goToAccusation(modalFeedData)}>신고</ModalText>
                             </ModalView>
                           </ModalContainer>
                         </Modalize>
