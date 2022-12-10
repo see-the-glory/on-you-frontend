@@ -3,7 +3,7 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { useMutation, useQuery } from "react-query";
 import { useSelector } from "react-redux";
-import { ReportPeedScreenProps } from "../../types/feed";
+import { ReportFeedScreenProps } from "../../types/feed";
 import { FeedApi, FeedLikeRequest, FeedReportRequest } from "../../api";
 
 const Container = styled.SafeAreaView`
@@ -48,13 +48,14 @@ interface ReportReason{
   reason:string,
 }
 
-const Accusation:React.FC<ReportPeedScreenProps>=({ navigation:
+const Accusation:React.FC<ReportFeedScreenProps>=({ navigation:
   { navigate},
                                                     route:{params:{feedData}} }) =>{
   const token = useSelector((state) => state.AuthReducers.authToken);
 
   console.log(feedData.id)
   const[reportReason,setReportReason]=useState<ReportReason[]>();
+  
   const mutation = useMutation( FeedApi.reportFeed, {
     onSuccess: (res) => {
       if (res.status === 200) {

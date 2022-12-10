@@ -111,7 +111,7 @@ const ClubName = styled.Text`
 `;
 
 //ModalStyle
-const PeedId = styled.Text`
+const FeedId = styled.Text`
   color: black;
   font-size: 15px;
   left: 7px;
@@ -377,7 +377,7 @@ const HomeList: React.FC<FeedListProps>=({
 
   const goToModifiy = () => {
     navigate("HomeStack", {
-      screen: "ModifiyPeed",
+      screen: "ModifiyFeed",
     });
     setModalVisible(!isModalVisible);
   };

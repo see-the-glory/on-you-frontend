@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Tabs from "./Tabs";
 import Profile from "../screens/Profile";
-import CreateHomePeed from "../screens/HomeRelevant/CreateHomePeed";
+import CreateHomeFeed from "../screens/HomeRelevant/CreateHomeFeed";
 import Accusation from "../screens/HomeRelevant/Accusation";
-import ModifiyPeed from "../screens/HomeRelevant/ModifiyPeed";
+import ModifiyFeed from "../screens/HomeRelevant/ModifiyFeed";
 import ImageSelecter from "../screens/HomeRelevant/ImageSelecter";
 import ReportComplete from "../screens/HomeRelevant/ReportComplete";
 import ReplyPage from "../screens/HomeRelevant/ReplyPage";
@@ -99,8 +99,8 @@ const HomeStack = ({
         }}
       />
       <NativeStack.Screen
-        name="CreateHomePeed"
-        component={CreateHomePeed}
+        name="CreateHomeFeed"
+        component={CreateHomeFeed}
         initialParams={{feedData}}
         options={{
           title: "새 게시물",
@@ -127,8 +127,8 @@ const HomeStack = ({
         }}
       />
       <NativeStack.Screen
-        name="ModifiyPeed"
-        component={ModifiyPeed}
+        name="ModifiyFeed"
+        component={ModifiyFeed}
         initialParams={{feedData}}
         options={{
           title: "수정",
