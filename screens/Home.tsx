@@ -146,8 +146,8 @@ const ModalView = styled.View`
 const ModalText = styled.Text`
   font-weight: bold;
   text-align: center;
-  font-size: 20px;
-  padding: 30px;
+  font-size: 18px;
+  margin: 30px 0 0 0;
   width: 100%;
   color: black;
   height: auto;
@@ -523,21 +523,34 @@ const Home:React.FC<HomeScreenProps> = ({
                         <Text>{item.id}</Text>
                       </ModalIcon>
                       <Portal>
+                        { modalFeedData.userId === myId ? (
                         <Modalize
                           ref={modalizeRef}
-                          modalHeight={300}
+                          modalHeight={150}
                           handlePosition="inside"
                         >
                           <ModalContainer key={index}>
                             <ModalView>
                               <ModalText onPress={() => goToModifiy(modalFeedData)}>수정</ModalText>
-                              <ModalText style={{ color: "red" }} onPress={()=>deleteCheck(modalFeedData)}>
-                                삭제
-                              </ModalText>
+                              <ModalText style={{ color: "red" }} onPress={() => deleteCheck(modalFeedData)}>
+                                  삭제
+                                </ModalText>
+                            </ModalView>
+                          </ModalContainer>
+                        </Modalize>
+                        ):(
+                          <Modalize
+                          ref={modalizeRef}
+                          modalHeight={75}
+                          handlePosition="inside"
+                          >
+                          <ModalContainer key={index}>
+                            <ModalView>
                               <ModalText onPress={()=> goToAccusation(modalFeedData)}>신고</ModalText>
                             </ModalView>
                           </ModalContainer>
                         </Modalize>
+                        )}
                       </Portal>
                     </ModalArea>
                   </TouchableOpacity>
