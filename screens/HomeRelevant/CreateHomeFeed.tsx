@@ -56,7 +56,7 @@ const ButtonText = styled.Text`
   color: white;
 `;
 
-export default function CreateHomePeed({ navigation: { navigate } }) {
+export default function CreateHomeFeed({ navigation: { navigate } }) {
   const [displayName, setDisplayName] = useState("");
   const [response, setResponse] = useState(null);
   const Stack = createNativeStackNavigator();

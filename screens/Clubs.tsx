@@ -211,7 +211,6 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     },
     onSuccess: (res) => {
       setIsPageTransition(false);
-      console.log("clubs: ", clubs);
     },
     onError: (err) => {
       console.log(err);

@@ -246,7 +246,7 @@ interface HeartType {
 }
 
 const Home:React.FC<HomeScreenProps> = ({
-                                          navigation:{navigate},
+                                          navigation,
                                           route:{params:{feedData}}
                                         })=> {
 
@@ -293,12 +293,12 @@ const Home:React.FC<HomeScreenProps> = ({
       let heartDataMap = new Map();
       let clickModalMap = new Map();
 
-      for (let i = 0; i < res?.data?.length; ++i) {
-        heartDataMap.set(res?.data[i].id, false);
-        clickModalMap.set(res?.data[i].id, res?.data[i].id);
-      }
-      setHeartMap(heartDataMap);
-      setClickModal(clickModalMap)
+      // for (let i = 0; i < res?.data?.length; ++i) {
+      //   heartDataMap.set(res?.data[i].id, false);
+      //   clickModalMap.set(res?.data[i].id, res?.data[i].id);
+      // }
+      // setHeartMap(heartDataMap);
+      // setClickModal(clickModalMap)
     },
     onError: (err) => {
       console.log(err);
@@ -391,7 +391,7 @@ const Home:React.FC<HomeScreenProps> = ({
   };
 
   const goToReply = (feedData: Feed) => {
-    navigate("HomeStack", {
+    navigation.navigate("HomeStack", {
       screen: "ReplyPage",
       feedData,
     });
@@ -399,7 +399,7 @@ const Home:React.FC<HomeScreenProps> = ({
 
   const goToModifiy = (feedData: Feed) => {
     console.log("After Modal passed feedId:",feedData.id)
-    navigate("HomeStack", {
+    navigation.navigate("HomeStack", {
       screen: "ModifiyFeed",
       feedData,
     });
@@ -407,14 +407,14 @@ const Home:React.FC<HomeScreenProps> = ({
   };
 
   const goToClub = () => {
-    return navigate("HomeStack", {
+    return navigation.navigate("HomeStack", {
       screen: "MyClubSelector",
       userId: myId,
     });
   };
 
   const goToAccusation = (feedData: Feed) => {
-    navigate("HomeStack", {
+    navigation.navigate("HomeStack", {
       screen: "Accusation",
       feedData,
     });
@@ -438,10 +438,20 @@ const Home:React.FC<HomeScreenProps> = ({
     );
   };
   const onRefresh = async () => {
+    console.log("onRefresh executed");
     setRefreshing(true);
-    await queryClient.refetchQueries(["feeds"]);
-    setRefreshing(false);
+    await queryClient.refetchQueries(["feeds"]).then(() =>{
+      setRefreshing(false)
+    }
+    );
   };
+
+  const unsubscribe = navigation.addListener('focus', () => {
+    onRefresh();
+  });
+  useEffect(() => {
+    return () => unsubscribe();
+  });
 
   //시간측정
   const timeLine = (date: any) => {
@@ -520,7 +530,7 @@ const Home:React.FC<HomeScreenProps> = ({
                       <ModalIcon
                         onPress={() => {onOpen(item)}}>
                         <Ionicons name="ellipsis-vertical" size={20} color={"black"} />
-                        <Text>{item.id}</Text>
+                        {/* <Text>{item.id}</Text> */}
                       </ModalIcon>
                       <Portal>
                         { modalFeedData.userId === myId ? (
