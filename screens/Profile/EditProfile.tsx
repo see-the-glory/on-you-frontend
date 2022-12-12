@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { TouchableOpacity, Text, NativeModules, Alert } from "react-native";
+import { TouchableOpacity, Text, NativeModules, Alert, Platform } from "react-native";
 import { Keyboard, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import * as ImagePicker from "expo-image-picker";
@@ -9,6 +9,10 @@ import { UserApi, UserInfoRequest, User, Category, ClubApi, CategoryResponse } f
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { EditProfileScreenProps } from "../../Types/User";
 import { NavigationRouteContext } from "@react-navigation/native";
+import Collapsible from "react-native-collapsible";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
+import DatePicker from "react-native-date-picker";
+import CustomText from "../../components/CustomText";
 
 Date.prototype.format = function (f) {
   if (!this.valueOf()) return " ";
@@ -174,6 +178,19 @@ const CategoryText = styled.Text<{ selected: boolean }>`
   ${(props) => (props.selected ? "white" : "black")}
 `;
 
+const ItemView = styled.View`
+  margin: 5px 0px;
+  border-bottom-width: 1px;
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+`;
+
+const ItemText = styled(CustomText)`
+  font-size: 16px;
+  line-height: 21px;
+  color: #6f6f6f;
+  padding-bottom: 5px;
+`;
+
 const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userData }, navigation: { navigate, setOptions, goBack } }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
 
@@ -184,10 +201,11 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [sex, setSex] = useState("");
-  const [birthday, setBirthday] = useState("");
+  const [birthday, setBirthday] = useState<string>(userData?.birthday);
   const [phone, setPhone] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [interests, setInterests] = useState("");
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
   const mutation = useMutation(UserApi.updateUserInfo, {
     onSuccess: (res) => {
@@ -258,20 +276,10 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
 
   const placeholder = "날짜를 입력해주세요";
 
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [text, onChangeText] = useState("");
-
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
 
   const handleConfirm = (date) => {
     console.warn("dateFormat: ", date.format("yyyy/MM/dd"));
-    hideDatePicker();
     onChangeText(date.format("yyyy/MM/dd"));
   };
 
@@ -327,17 +335,22 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
         </Form>
         <Form>
           <Title>생년월일</Title>
-          <TextBtn onPress={showDatePicker}>
-            <Input
-              pointerEvents="none"
-              placeholder="yyyy/MM/dd"
-              placeholderTextColor="#000000"
-              underlineColorAndroid="transparent"
-              editable={false}
-              defaultValue={userData.birthday}
-              onChangeText={(text) => setBirthday(text)}
-            />
+          <TextBtn onPress={() => setShowDatePicker((prev) => !prev)} style={{ borderBottomWidth: 1, borderBottomColor: "#cecece" }}>
+            <ItemText>{birthday}</ItemText>
           </TextBtn>
+          {Platform.OS === "android" ? (
+            <Collapsible collapsed={!showDatePicker}>
+              <ItemView style={{ width: "100%", alignItems: "center" }}>
+                <DatePicker date={new Date(birthday)} mode="date" onDateChange={(value) => setBirthday(value.toISOString().split("T")[0])} />
+              </ItemView>
+            </Collapsible>
+          ) : (
+            <Collapsible collapsed={!showDatePicker}>
+              <ItemView>
+                <RNDateTimePicker mode="date" value={new Date(birthday)} display="spinner" onChange={(_, value: Date) => setBirthday(value.toISOString().split("T")[0])} />
+              </ItemView>
+            </Collapsible>
+          )}
         </Form>
         <Form>
           <Title>연락처</Title>
