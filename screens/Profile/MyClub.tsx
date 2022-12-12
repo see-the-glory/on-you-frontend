@@ -117,6 +117,17 @@ const MyClub: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigat
           </Swipeable>
         </MyClubWrap>
       ))}
+      <Title>가입 대기중인 List</Title>
+      <MyClubWrap>
+        <MyClubBox>
+          <MyClubImgBox>
+            <MyClubImg />
+          </MyClubImgBox>
+          <MyClubBox>
+            <MyClubText></MyClubText>
+          </MyClubBox>
+        </MyClubBox>
+      </MyClubWrap>
     </Container>
   );
 };

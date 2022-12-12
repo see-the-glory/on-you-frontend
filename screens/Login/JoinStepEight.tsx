@@ -129,7 +129,7 @@ const JoinStepEight: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ nav
       setErrortext(false);
       storeData();
       navigate("LoginStack", {
-        screen: "JoinStepNine",
+        screen: "JoinConfirm",
         name: userName.name,
         email: userName.email,
         password: userName.password,
