@@ -91,7 +91,7 @@ export interface Feed {
 }
 
 export interface Reply {
-  id: number;
+  commentId: number;
   userId: number;
   userName: string;
   content: string;
@@ -365,24 +365,14 @@ export interface FeedDeleteRequest {
   };
   token: string;
 }
-
+export interface ReplyDeleteRequest {
+  data: {
+    id?: number;
+  };
+  token: string;
+}
 // Categories
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
-
-/**피드 무한스크롤*/
-/*const getFeeds = ({ queryKey,pageParams }: any) => {
-  const [_key, feedsParams]: [string, FeedsParams] = queryKey;
-  let parameters = pageParams ? `&cursor=${pageParams}`:"";
-  console.log(parameters)
-  return fetch(`${BASE_URL}/api/feeds`, {
-    headers: {
-      authorization: `${feedsParams.token}`,
-    },
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
-  });
-};*/
 
 /**피드 선택*/
 const getSelectFeeds = ({ queryKey }: any) => {
@@ -398,19 +388,6 @@ const getSelectFeeds = ({ queryKey }: any) => {
     else return { status: res.status };
   });
 };
-
-/**피드호출*/
-// const getFeeds = ({ queryKey }: any) => {
-//   const [_key, feedsParams]: [string, FeedsParams] = queryKey;
-//   return fetch(`${BASE_URL}/api/feeds`, {
-//     headers: {
-//       authorization: `${feedsParams.token}`,
-//     },
-//   }).then(async (res) => {
-//     if (res.status === 200) return { status: res.status, ...(await res.json()) };
-//     else return { status: res.status };
-//   });
-// };
 
 const getFeeds = ({ queryKey, pageParam }: any) => {
   const [_key, feedsParams]: [string, FeedsParams] = queryKey;
@@ -804,6 +781,18 @@ const feedDelete = (req: FeedDeleteRequest) => {
     else return { status: res.status };
   });
 };
+const ReplyDelete = (req: ReplyDeleteRequest) => {
+  console.log("replyDelete");
+  return fetch(`${BASE_URL}/api/comments/${req.data.id}`, {
+    method: "DELETE",
+    headers: {
+      authorization: `${req.token}`,
+    },
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
+};
 
 export const ClubApi = {
   getCategories,
@@ -840,6 +829,7 @@ export const FeedApi = {
   ReplyFeed,
   getSelectFeeds,
   feedDelete,
+  ReplyDelete
 };
 
 export const CommonApi = { getJWT };

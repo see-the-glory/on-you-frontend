@@ -18,11 +18,11 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import {
   Feed,
-  FeedApi,
+  FeedApi, FeedLikeRequest,
   FeedReplyRequest, FeedsResponse,
   getReply,
   getUserInfo,
-  Reply,
+  Reply, ReplyDeleteRequest,
   ReplyReponse,
   UserApi,
   UserInfoResponse
@@ -242,9 +242,39 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
       mutation.mutate(likeRequestData);
     }
   }
+  const ReplyDeleteMutation = useMutation( FeedApi.ReplyDelete, {
+    onSuccess: (res) => {
+      if (res.status === 200) {
+        console.log(res)
+        onRefresh();
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(res);
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+    },
+    onSettled: (res, error) => {},
+  });
 
+  /**RelpyDelete*/
+  const ReplyDelete=(feedData:Reply)=>{
+    const data = {
+      id: feedData.commentId,
+    };
+    console.log(data);
+    const likeRequestData: ReplyDeleteRequest=
+      {
+        data,
+        token,
+      }
+    ReplyDeleteMutation.mutate(likeRequestData);
+
+  };
   /**댓글삭제*/
-  const deleteCheck = (feedData:Feed) => {
+  const deleteCheck = (replyData:Reply) => {
     Alert.alert(
       "댓글을 삭제하시겠어요?",
       "",
@@ -254,16 +284,15 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
           onPress: () => console.log("삭제 Api 호출"),
           style: "cancel",
         },
-        { text: "네", onPress: () =>Alert.alert('댓글삭제')},
+        { text: "네", onPress: () =>ReplyDelete(replyData)},
       ],
       { cancelable: false }
     );
-    onRefresh();
   };
 
-  const timeLine =(date) =>{
-    const start = new Date(date);
-    const end = new Date(); // 현재 날짜
+  const timeLine =(date:any) =>{
+    const start:any = new Date(date);
+    const end:any = new Date(); // 현재 날짜
 
     let diff = (end - start); // 경과 시간
 
@@ -331,8 +360,8 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
                         <SwipeHiddenItemText></SwipeHiddenItemText>
                       </SwipeHiddenItem>
                       <SwipeHiddenItem style={{backgroundColor: 'skyblue'}}>
-                        <SwipeHiddenItemText onPress={()=>deleteCheck(item)}>
-                          <AntDesign name="delete" size={24} color="black" />
+                        <SwipeHiddenItemText onPress={()=>deleteCheck(item.item)}>
+                        <AntDesign name="delete" size={24} color="black" />
                         </SwipeHiddenItemText>
                       </SwipeHiddenItem>
                     </SwipeHiddenItemContainer>
@@ -366,7 +395,7 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
               {replys?.data.length === null ?
                 <ReplyInput
                   placeholder="댓글을 입력해보세요..."
-                  onChangeText={(content) => setContent(content)}
+                  onChangeText={(content:any) => setContent(content)}
                   autoCompleteType="off"
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -377,7 +406,7 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
                 />:
                 <ReplyInput
                   placeholder="댓글을 입력해보세요..."
-                  onChangeText={(content) => setContent(content)}
+                  onChangeText={(content:any) => setContent(content)}
                   autoCompleteType="off"
                   autoCapitalize="none"
                   autoCorrect={false}
