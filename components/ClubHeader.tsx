@@ -151,14 +151,14 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
           <AnimatedFadeOutBox style={{ opacity: fadeOut }}>
             <InformationView>
               <CategoryView>
-                {categories[0] ? (
+                {categories?.length > 0 ? (
                   <CategoryBox>
                     <CategoryNameText>{categories[0].name}</CategoryNameText>
                   </CategoryBox>
                 ) : (
                   <></>
                 )}
-                {categories[1] ? (
+                {categories?.length > 1 ? (
                   <CategoryBox>
                     <CategoryNameText>{categories[1].name}</CategoryNameText>
                   </CategoryBox>
