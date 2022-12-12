@@ -84,7 +84,7 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ nav
   const [errortext, setErrortext] = useState(false);
 
   const pwInputRef = createRef();
-  const pwReg = /^[a-zA-Z0-9]+$/;
+  const pwReg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
 
   useEffect(() => {
     const getData = async () => {
@@ -115,7 +115,7 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ nav
   };
 
   const validate = () => {
-    if (!pwReg.test(userPw) || !pwReg.test(userPw2) || userPw !== userPw2 || userPw.length < 6 || userPw2.length < 6) {
+    if (!pwReg.test(userPw) || !pwReg.test(userPw2) || userPw !== userPw2 || userPw.length < 8 || userPw2.length < 8) {
       setErrortext(true);
       return;
     } else {
@@ -149,7 +149,7 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ nav
           <AskText>비밀번호를 설정해주세요.</AskText>
           <SubText>로그인 정보로 활용됩니다.</SubText>
           <Input
-            placeholder="영문, 숫자 포함 6자 이상"
+            placeholder="영문, 숫자, 특수문자 포함 8자 이상"
             placeholderTextColor={"#B0B0B0"}
             secureTextEntry={true}
             autoCorrect={false}
@@ -161,7 +161,7 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ nav
           {errortext === true || !pwReg.test(userPw) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
           <AskText>비밀번호를 다시 입력해주세요.</AskText>
           <Input
-            placeholder="영문, 숫자 포함 6자 이상"
+            placeholder="영문, 숫자, 특수문자 포함 8자 이상"
             placeholderTextColor={"#B0B0B0"}
             secureTextEntry={true}
             autoCorrect={false}
@@ -174,7 +174,7 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ nav
           {userPw !== userPw2 ? <Error>비밀번호가 일치하지 않습니다.</Error> : null}
         </Wrap>
         <Wrap>
-          <Button onPress={validate} disabled={!pwReg.test(userPw) || !pwReg.test(userPw2) || userPw !== userPw2 || userPw.length < 6 || userPw2.length < 6}>
+          <Button onPress={validate} disabled={!pwReg.test(userPw) || !pwReg.test(userPw2) || userPw !== userPw2 || userPw.length < 8 || userPw2.length < 8}>
             <ButtonTitle>다음</ButtonTitle>
           </Button>
         </Wrap>

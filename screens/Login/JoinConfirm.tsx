@@ -1,13 +1,12 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import { useMutation, useQuery } from "react-query";
 import { UserApi, UserInfoRequest, User, SignUp } from "../../api";
 import { useSelector, useDispatch } from "react-redux";
 import { Login } from "../../store/Actions";
 import styled from "styled-components/native";
-import { resolveUri } from "expo-asset/build/AssetSources";
+import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.View`
   width: 100%;
@@ -96,10 +95,25 @@ const ButtonTitle = styled.Text`
 const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate }, route: { params: name, email, password } }) => {
   const [userName, setUserName] = useState(name);
 
+  const toast = useToast();
+
   const mutation = useMutation(UserApi.registerUserInfo, {
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
         console.log(`success`);
+        navigate("LoginStack", {
+          screen: "JoinStepSuccess",
+          email: name?.email,
+          password: name?.password,
+        });
+      } else if (res.status === 404) {
+        console.log(res);
+        toast.show("이미 가입된 사용자입니다.", {
+          type: "warning",
+        });
+        navigate("LoginStack", {
+          screen: "JoinStepOne",
+        });
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
@@ -132,11 +146,6 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
 
   const goToNext = () => {
     onSubmit();
-    navigate("LoginStack", {
-      screen: "JoinStepSuccess",
-      email: name?.email,
-      password: name?.password,
-    });
   };
 
   return (
@@ -179,14 +188,14 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
             <TextInfo>{name?.church}</TextInfo>
           </TextWrap>
         </Form>
-        <Form>
+        {/* <Form>
           <TitleBorder>
             <Title>관심 카테고리</Title>
           </TitleBorder>
-        </Form>
+        </Form> */}
       </Wrap>
       <Wrap>
-        <Button onPress={goToNext}>
+        <Button onPress={onSubmit}>
           <ButtonTitle>일치합니다</ButtonTitle>
         </Button>
       </Wrap>
