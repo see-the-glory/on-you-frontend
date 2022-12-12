@@ -23,7 +23,7 @@ const Container = styled.SafeAreaView`
 `;
 const FeedUser = styled.View`
   flex-direction: row;
-  padding: 20px 0 0 0px;
+  padding: 20px 0 0 20px;
 `;
 
 const UserInfo = styled.View`
@@ -78,7 +78,9 @@ const Content = styled.View`
   padding: 0 12px 0 12px;
 `;
 
-const ContentArea = styled.View``;
+const ContentArea = styled.View`
+  left: 25px;
+`;
 const ImageArea = styled.View`
   // padding-bottom: 1px;
 `;
@@ -91,8 +93,8 @@ const Ment = styled(CustomTextInput)`
 `;
 
 const ImageSource = styled.Image<{ size: number }>`
-  width: ${(props) => props.size}px;
-  height: ${(props) => props.size}px;
+  width: ${(props:any) => props.size}px;
+  height: ${(props:any) => props.size}px;
 `;
 
 interface FeedEditItem {
@@ -107,7 +109,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
     params: { feedData },
   },
 }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state:any) => state.AuthReducers.authToken);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const SCREEN_PADDING_SIZE = 20;
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
@@ -209,7 +211,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
           {/* </ImageArea> */}
           <ContentArea>
             <Ment
-              onChangeText={(content) => setContent(content)}
+              onChangeText={(content:any) => setContent(content)}
               placeholderTextColor="#B0B0B0"
               placeholder="게시글 입력 ..."
               textAlign="left"

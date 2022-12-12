@@ -18,11 +18,11 @@ import styled from "styled-components/native";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { FeedApi, FeedCreationRequest, FeedsResponse } from "../../api";
-import { FeedCreateScreenProps } from '../../types/Feed';
-// @ts-ignore
-import { ImageBrowser } from "expo-image-picker-multiple";
+import { FeedCreateScreenProps,  } from '../../types/feed';
+import CustomTextInput from "../../components/CustomTextInput";
+import CustomText from "../../components/CustomText";
 import { useNavigation } from "@react-navigation/native";
-// import ImagePicker from 'react-native-image-crop-picker';
+import { ImageSlider } from "react-native-image-slider-banner";
 interface ValueInfo {
   str: string;
   isHT: boolean;
@@ -35,7 +35,7 @@ const Container = styled.SafeAreaView`
 `;
 const ImagePickerView = styled.View`
   width: 100%;
-  height: 55%;
+  height: ${Platform.OS === 'android' ? 62 : 65}%;
   align-items: center;
   top: ${Platform.OS === 'android' ? 3 : 0}%;
 `;
@@ -70,14 +70,14 @@ const ImageCrop = styled.View`
   left: 30%;
 `;
 
-const ImagePickerText = styled.Text`
+const ImagePickerText = styled(CustomText)`
   font-size: 10px;
   color: white;
   text-align: center;
   padding: 50px 0;
 `;
 
-const FeedText = styled.TextInput`
+const FeedText = styled(CustomTextInput)`
   margin: 13px 15px 15px 30px;
   color: black;
   height: 100px;
@@ -115,7 +115,7 @@ const FeedCreateArea = styled.View`
 
 const FeedCreateBtn = styled.TouchableOpacity`
 `
-const FeedCreateText = styled.Text`
+const FeedCreateText = styled(CustomText)`
   font-size: 15px;
   color: #63abff;
   font-weight: bold;
@@ -127,14 +127,10 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
   const Stack = createNativeStackNavigator();
   const [refreshing, setRefreshing] = useState(false);
   //사진권한 허용
-  const [imageURI, setImageURI] = useState<string | null>(null);
+  let [imageURI, setImageURI] = useState<any>(null)
   const [loading, setLoading] = useState(false);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
   let [alert, alertSet] = useState(true);
-
-  console.log(userId+'userId')
-  console.log(clubId+'clubId')
-  console.log(imageURI+'imageURI')
 
   const getValueInfos = (value: string): ValueInfo[] => {
     if (value.length === 0) {
@@ -159,36 +155,26 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
 
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 16) * 9);
-  const [postText, setPostText] = useState("");
   const token = useSelector((state:any) => state.AuthReducers.authToken);
-  const onText = (text: React.SetStateAction<string>) => setPostText(text);
   const [content, setContent] = useState("")
   const navigation = useNavigation();
   const queryClient = useQueryClient();
+
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
+    let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
       quality: 1,
       aspect: [16,9],
-      allowsmultipleselection: true,
+      allowsMultipleSelection: true,
+      selectionLimit: 5,
     });
-
-    if (!result.cancelled) {
-      setImageURI(result.uri);
+    for(let i=0; i<result?.assets?.length; i++){
+      if (!result.canceled) {
+        setImageURI(result.assets[i].uri);
+      }
     }
   };
-
-  /*  const pickMultiImage  = () => {
-      ImagePicker.openPicker({
-        width: 300,
-        height: 400,
-        cropping: true,
-        multiple: true
-      }).then(image => {
-        console.log(image);
-      });
-    }*/
+  console.log(imageURI)
   const {
     isLoading: feedsLoading,
     data: feeds,
@@ -207,14 +193,13 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
         navigate("Tabs", {
           screen: "Home",
           feedData:res.data,
-          onRefresh
         });
         onRefresh();
       }
       else {
         console.log(`mutation success but please check status code`);
         console.log(`status: ${res.status}`);
-        console.log(res.json);
+        console.log(res.json+'json');
         return navigate("Tabs", {
           screen: "Home",
         });
@@ -235,7 +220,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
       clubId: clubId,
       content: content,
     };
-    const splitedURI = new String(imageURI).split("/");
+    const splitedURI = String(imageURI).split("/");
 
     const requestData: FeedCreationRequest =
       imageURI === null
@@ -255,7 +240,8 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
         };
 
     mutation.mutate(requestData);
-    console.log(data)
+    console.log(data+'data')
+    onRefresh();
   };
 
   useEffect(()=>{
@@ -279,6 +265,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
 
   /** X선택시 사진 없어지는 태그 */
   const ImageCancle = () => {
+    // setShowImages(showImages.filter((_, index) => index !== id));
     console.log('imageCancle')
   };
 
@@ -296,7 +283,13 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
               <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={1}>
                 {imageURI ? (
                   // <PickedImage height={imageHeight} source={{ uri: imageURI }} />
-                  <PickedImage height={imageHeight} source={{ uri: imageURI }} />
+                  <ImageSlider
+                    data={[{img: [imageURI][0]},{img: [imageURI][1]},{img: imageURI}]}
+                    closeIconColor="#fff"
+                    preview={true}
+                    caroselImageStyle={{ resizeMode: "stretch",height: 450 }}
+                    indicatorContainerStyle={{ bottom: 0 }}
+                  />
                 ) : (
                   <PickBackground>
                     {alert ? (
@@ -311,10 +304,10 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                 )}
               </ImagePickerButton>
             </ImagePickerView>
-
+            {/* <SelectImage source={{ uri: imageURI.assets[0].uri}} />*/}
             <SelectImageView>
               <SelectImageArea onPress={ImageFIx}>
-                <SelectImage source={{ uri: imageURI }} />
+                <SelectImage  imageURI={imageURI} />
                 {imageURI === null ? null :
                   <ImageCancleBtn onPress={ImageCancle}>
                     <CancleIcon>
@@ -324,7 +317,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                 }
               </SelectImageArea>
               <SelectImageArea onPress={ImageFIx}>
-                <SelectImage source={{ uri: imageURI }} />
+                <SelectImage  imageURI={imageURI} />
                 {imageURI === null ? null :
                   <ImageCancleBtn onPress={ImageCancle}>
                     <CancleIcon>
@@ -334,7 +327,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                 }
               </SelectImageArea>
               <SelectImageArea onPress={ImageFIx}>
-                <SelectImage source={{ uri: imageURI }} />
+                <SelectImage  imageURI={imageURI} />
                 {imageURI === null ? null :
                   <ImageCancleBtn onPress={ImageCancle}>
                     <CancleIcon>
@@ -344,7 +337,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                 }
               </SelectImageArea>
               <SelectImageArea onPress={ImageFIx}>
-                <SelectImage source={{ uri: imageURI }} />
+                <SelectImage  imageURI={imageURI} />
                 {imageURI === null ? null :
                   <ImageCancleBtn onPress={ImageCancle}>
                     <CancleIcon>
@@ -354,7 +347,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                 }
               </SelectImageArea>
               <SelectImageArea onPress={ImageFIx}>
-                <SelectImage source={{ uri: imageURI }} />
+                <SelectImage  imageURI={imageURI} />
                 {imageURI === null ? null :
                   <ImageCancleBtn onPress={ImageCancle}>
                     <CancleIcon>
@@ -364,10 +357,9 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                 }
               </SelectImageArea>
             </SelectImageView>
-
             <FeedText
               placeholder="사진과 함께 남길 게시글을 작성해 보세요."
-              onChangeText={(content) => setContent(content)}
+              onChangeText={(content:any) => setContent(content)}
               autoCapitalize="none"
               autoCorrect={false}
               multiline={true}
