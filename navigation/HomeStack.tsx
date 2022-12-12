@@ -24,8 +24,11 @@ const ImageSelectSave = styled.Text`
 const NativeStack = createNativeStackNavigator();
 
 const HomeStack = ({
-                     navigation: { navigate },
-                     route:{params:{feedData,userId,clubId}} }) => {
+  navigation: { navigate },
+  route: {
+    params: { feedData, userId, clubId },
+  },
+}) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
 
   const cancleCreate = () => {
@@ -50,6 +53,8 @@ const HomeStack = ({
       screenOptions={{
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
+        headerTitleAlign: "center",
+        headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
       }}
     >
       <NativeStack.Screen
@@ -68,7 +73,7 @@ const HomeStack = ({
       <NativeStack.Screen
         name="ImageSelecter"
         component={ImageSelecter}
-        initialParams={{userId,clubId}}
+        initialParams={{ userId, clubId }}
         options={{
           title: "",
           headerLeft: () => (
@@ -87,7 +92,7 @@ const HomeStack = ({
       <NativeStack.Screen
         name="MyClubSelector"
         component={MyClubSelector}
-        initialParams={{userId}}
+        initialParams={{ userId }}
         options={{
           title: "나의 모임",
           headerLeft: () => (
@@ -101,7 +106,7 @@ const HomeStack = ({
       <NativeStack.Screen
         name="CreateHomeFeed"
         component={CreateHomeFeed}
-        initialParams={{feedData}}
+        initialParams={{ feedData }}
         options={{
           title: "새 게시물",
           headerLeft: () => (
@@ -115,7 +120,7 @@ const HomeStack = ({
       <NativeStack.Screen
         name="ReplyPage"
         component={ReplyPage}
-        initialParams={{feedData}}
+        initialParams={{ feedData }}
         options={{
           title: "댓글",
           headerLeft: () => (
@@ -129,7 +134,7 @@ const HomeStack = ({
       <NativeStack.Screen
         name="ModifiyFeed"
         component={ModifiyFeed}
-        initialParams={{feedData}}
+        initialParams={{ feedData }}
         options={{
           title: "수정",
           headerLeft: () => (
@@ -148,7 +153,7 @@ const HomeStack = ({
       <NativeStack.Screen
         name="Accusation"
         component={Accusation}
-        initialParams={{feedData}}
+        initialParams={{ feedData }}
         options={{
           title: "신고",
           headerLeft: () => (
