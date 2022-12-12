@@ -31,6 +31,8 @@ import { ModifiyFeedScreenProps } from "../../types/feed";
 import { useToast } from "react-native-toast-notifications";
 import {SwipeListView,SwipeRow} from 'react-native-swipe-list-view';
 import { AntDesign, Ionicons } from "@expo/vector-icons";
+import CustomTextInput from "../../components/CustomTextInput";
+import CustomText from "../../components/CustomText";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -71,7 +73,7 @@ const CommentArea = styled.View`
   width: 100%;
   padding: 10px 20px 0 20px;
   position: relative;
-  background-color: #ffffff;;
+  background-color: #ffffff;
 `;
 
 const CommentImg = styled.Image`
@@ -81,14 +83,14 @@ const CommentImg = styled.Image`
   flex-grow: 0;
   background-color: #c4c4c4;
 `;
-const CommentId = styled.Text`
+const CommentId = styled(CustomText)`
   color: black;
   font-size: 12px;
   left: 8px;
   font-weight: bold;
 `;
 
-const Comment = styled.Text`
+const Comment = styled(CustomText)`
   color: black;
   margin-left: 10px;
   width: 200px;
@@ -105,8 +107,8 @@ const CommentRemainder = styled.View`
   flex-direction: row;
 `;
 
-const NoReplyText = styled.Text`
-  font-size: 20px;
+const NoReplyText = styled(CustomText)`
+  font-size: 15px;
   text-align: center;
   left: 0;
   right: 0;
@@ -118,7 +120,7 @@ const NoReplyScrollView = styled.ScrollView`
   padding-Top: 50%;
 `
 
-const Time = styled.Text`
+const Time = styled(CustomText)`
   font-size: 10px;
   font-weight: 300;
   color: #8e8e8e;
@@ -141,7 +143,7 @@ const ReplyInputArea = styled.View`
 
 `
 
-const ReplyInput = styled.TextInput`
+const ReplyInput = styled(CustomTextInput)`
   color: #b0b0b0;
   left: 15px;
   width: 80%;
@@ -154,7 +156,7 @@ const ReplyImg = styled.Image`
 `;
 
 const ReplyButton = styled.TouchableOpacity``;
-const ReplyDone = styled.Text`
+const ReplyDone = styled(CustomText)`
   color: #63abff;
   font-size: 15px;
   font-weight: bold;
@@ -271,7 +273,7 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
         token,
       }
     ReplyDeleteMutation.mutate(likeRequestData);
-
+    console.log(data)
   };
   /**댓글삭제*/
   const deleteCheck = (replyData:Reply) => {

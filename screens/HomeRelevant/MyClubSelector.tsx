@@ -10,6 +10,9 @@ import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { Club, ClubApi, ClubsParams, ClubsResponse, Feed } from "../../api";
 import { MyClubSelectorScreenProps } from "../../types/feed";
+import { useNavigation } from "@react-navigation/native";
+import { ImageSlider } from "react-native-image-slider-banner";
+import CustomText from "../../components/CustomText";
 const Container = styled.SafeAreaView`
   flex: 1;
   height: 100%;
@@ -17,7 +20,7 @@ const Container = styled.SafeAreaView`
   width: 100%;
 `;
 
-const IntroText = styled.Text`
+const IntroText = styled(CustomText)`
   text-align: right;
   padding: 5px 14px 0 0;
   font-size: 10px;
@@ -50,14 +53,14 @@ const ClubMy = styled.View`
   justify-content: center;
   padding-top: 3%;
 `;
-const ClubId = styled.Text`
+const ClubId = styled(CustomText)`
   padding-left: 2%;
   color: black;
   font-size: 12px;
   font-weight: bold;
 `;
 
-const Comment = styled.Text`
+const Comment = styled(CustomText)`
   color: black;
   margin-left: 10px;
   width: 200px;
@@ -88,7 +91,7 @@ const CtgrText = styled.View`
   margin: 3px 5px 3px 5px;
 `;
 
-const OrganizationName = styled.Text`
+const OrganizationName = styled(CustomText)`
   width: auto;
   height: auto;
   font-size: 12px;
@@ -96,7 +99,7 @@ const OrganizationName = styled.Text`
   text-align: center;
   color: #fff;
 `;
-const CreatorName = styled.Text`
+const CreatorName = styled(CustomText)`
   width: auto;
   height: auto;
   font-size: 12px;

@@ -5,16 +5,16 @@ import { useMutation, useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import { ReportFeedScreenProps } from "../../types/feed";
 import { FeedApi, FeedLikeRequest, FeedReportRequest } from "../../api";
-
+import CustomText from "../../components/CustomText";
 const Container = styled.SafeAreaView`
   position: relative;
   height: 100%;
 `;
 
 const AccTop = styled.View`
-  margin-top: 20px;
   top: 20px;
   position: relative;
+  left: 20px;
 `;
 
 const AccInfo = styled.View`
@@ -23,12 +23,16 @@ const AccInfo = styled.View`
 `;
 
 const AccHeader = styled.Text`
-  font-size: 25px;
+  font-size: 22px;
   padding-bottom: 15px;
   position: relative;
 `;
+const AccSubHeader = styled(CustomText)`
+  font-size: 13px;
+  color: darkgray;
+`
 
-const AccTitle = styled.Text`
+const AccTitle = styled(CustomText)`
   text-align: center;
   font-size: 30px;
   top: 20px;
@@ -36,11 +40,11 @@ const AccTitle = styled.Text`
   color: red;
 `;
 
-const AccText = styled.Text`
+const AccText = styled(CustomText)`
   font-size: 20px;
-  border: 1px solid black;
+  border: 0.5px solid lightgray;
   padding: 15px;
-  color: red;
+  color: black;
 `;
 
 interface ReportReason{
@@ -102,8 +106,8 @@ const Accusation:React.FC<ReportFeedScreenProps>=({ navigation:
       {/*<AccTitle>신고</AccTitle>*/}
       <View>
         <AccTop>
-          <AccHeader>이 게시물을 신고하는 이유</AccHeader>
-          <Text>지식재산권 침해를 신고하는 경우를 제외하고 회원님의 신고는 익명으로 처리됩니다. 누군가 위급한 상황에 있다고 생각된다면 즉시 현지 응급 서비스 기관에 연락하시기 바랍니다.</Text>
+          <AccHeader>신고가 필요한 게시물인가요?</AccHeader>
+          <AccSubHeader>신고유형을 선택해 주세요. 관리자에게 신고 접수가 진행됩니다.</AccSubHeader>
         </AccTop>
         <AccInfo>
           <TouchableOpacity>
