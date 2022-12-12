@@ -245,11 +245,12 @@ interface HeartType {
   heart: boolean;
 }
 
-const Home:React.FC<HomeScreenProps> = ({
-                                          navigation,
-                                          route:{params:{feedData}}
-                                        })=> {
-
+const Home: React.FC<HomeScreenProps> = ({
+  navigation,
+  route: {
+    params: { feedData },
+  },
+}) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
@@ -257,15 +258,14 @@ const Home:React.FC<HomeScreenProps> = ({
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
   const token = useSelector((state: any) => state.AuthReducers.authToken);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
-  const [modalFeedData, setModalFeedData] =  useState('');
+  const [modalFeedData, setModalFeedData] = useState("");
 
   //모달
   const modalizeRef = useRef<Modalize>(null);
-  const onOpen = (feedData:Feed) => {
+  const onOpen = (feedData: Feed) => {
     console.log("Before Modal Passed FeedId:", feedData.id);
     setModalFeedData(feedData);
     modalizeRef?.current?.open(feedData.id);
-
   };
 
   //heart선택
@@ -280,14 +280,14 @@ const Home:React.FC<HomeScreenProps> = ({
     hasNextPage,
     refetch: feedsRefetch,
     fetchNextPage,
-  } = useInfiniteQuery<FeedsResponse>(["feeds", {token}], FeedApi.getFeeds, {
+  } = useInfiniteQuery<FeedsResponse>(["feeds", { token }], FeedApi.getFeeds, {
     getNextPageParam: (currentPage) => {
       if (currentPage) {
         return currentPage.hasNext === false ? null : currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor;
       }
     },
     onSuccess: (res) => {
-      console.log('getFeeds onSuccess')
+      console.log("getFeeds onSuccess");
       // console.log("res.pages[0].responses:", res.pages[0].responses)
       setIsPageTransition(false);
       let heartDataMap = new Map();
@@ -305,7 +305,7 @@ const Home:React.FC<HomeScreenProps> = ({
     },
   });
 
-  const [fetchedFeedList, setFetchedFeedList] = useState(feeds?.pages.map((page) => page?.responses?.content).flat())
+  const [fetchedFeedList, setFetchedFeedList] = useState(feeds?.pages?.map((page) => page?.responses?.content).flat());
 
   const loadMore = () => {
     if (hasNextPage) fetchNextPage();
@@ -320,11 +320,11 @@ const Home:React.FC<HomeScreenProps> = ({
   let myId = userInfo?.data?.id;
 
   //Like
-  const LikeMutation = useMutation( FeedApi.likeCount, {
+  const LikeMutation = useMutation(FeedApi.likeCount, {
     onSuccess: (res) => {
       if (res.status === 200) {
         // onRefresh();
-        console.log(res)
+        console.log(res);
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
@@ -337,31 +337,30 @@ const Home:React.FC<HomeScreenProps> = ({
     onSettled: (res, error) => {},
   });
 
-  const LikeFeed=(feedData:Feed)=>{
-    if(feedData.likeYn.toString() === 'true'){
-      feedData.likeYn=false
-    }else{
-      feedData.likeYn = true
+  const LikeFeed = (feedData: Feed) => {
+    if (feedData.likeYn.toString() === "true") {
+      feedData.likeYn = false;
+    } else {
+      feedData.likeYn = true;
     }
     const data = {
       id: feedData.id,
     };
 
-    const likeRequestData: FeedLikeRequest=
-      {
-        data,
-        token,
-      }
+    const likeRequestData: FeedLikeRequest = {
+      data,
+      token,
+    };
     LikeMutation.mutate(likeRequestData);
     console.log(data);
   };
 
-  const FeedDeleteMutation = useMutation( FeedApi.feedDelete, {
+  const FeedDeleteMutation = useMutation(FeedApi.feedDelete, {
     onSuccess: (res) => {
       if (res.status === 200) {
-        console.log(res)
+        console.log(res);
         onRefresh();
-        modalizeRef.current?.close()
+        modalizeRef.current?.close();
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
@@ -375,17 +374,16 @@ const Home:React.FC<HomeScreenProps> = ({
   });
 
   /**FeedDelete*/
-  const FeedDelete=(feedData:Feed)=>{
-    feedData.likeYn = true
+  const FeedDelete = (feedData: Feed) => {
+    feedData.likeYn = true;
     const data = {
       id: feedData.id,
     };
 
-    const likeRequestData: FeedLikeRequest=
-      {
-        data,
-        token,
-      }
+    const likeRequestData: FeedLikeRequest = {
+      data,
+      token,
+    };
     FeedDeleteMutation.mutate(likeRequestData);
     console.log(data);
   };
@@ -398,7 +396,7 @@ const Home:React.FC<HomeScreenProps> = ({
   };
 
   const goToModifiy = (feedData: Feed) => {
-    console.log("After Modal passed feedId:",feedData.id)
+    console.log("After Modal passed feedId:", feedData.id);
     navigation.navigate("HomeStack", {
       screen: "ModifiyFeed",
       feedData,
@@ -421,8 +419,8 @@ const Home:React.FC<HomeScreenProps> = ({
     modalizeRef.current?.close();
   };
 
-  const deleteCheck = (feedData:Feed) => {
-    console.log("After Modal passed feedId:",feedData.id)
+  const deleteCheck = (feedData: Feed) => {
+    console.log("After Modal passed feedId:", feedData.id);
     Alert.alert(
       "게시글을 삭제하시겠어요?",
       "30일 이내에 내 활동의 최근 삭제 항목에서 이 게시물을 복원할 수 있습니다." + "30일이 지나면 영구 삭제 됩니다. ",
@@ -432,7 +430,7 @@ const Home:React.FC<HomeScreenProps> = ({
           onPress: () => console.log("삭제 Api 호출"),
           style: "cancel",
         },
-        { text: "네", onPress: () =>FeedDelete(feedData) },
+        { text: "네", onPress: () => FeedDelete(feedData) },
       ],
       { cancelable: false }
     );
@@ -440,13 +438,12 @@ const Home:React.FC<HomeScreenProps> = ({
   const onRefresh = async () => {
     console.log("onRefresh executed");
     setRefreshing(true);
-    await queryClient.refetchQueries(["feeds"]).then(() =>{
-      setRefreshing(false)
-    }
-    );
+    await queryClient.refetchQueries(["feeds"]).then(() => {
+      setRefreshing(false);
+    });
   };
 
-  const unsubscribe = navigation.addListener('focus', () => {
+  const unsubscribe = navigation.addListener("focus", () => {
     onRefresh();
   });
   useEffect(() => {
@@ -525,41 +522,36 @@ const Home:React.FC<HomeScreenProps> = ({
                       </ClubBox>
                     </UserInfo>
                   </FeedUser>
-                  <TouchableOpacity onPress={()=>setClickModal((prev)=>new Map(prev).set(item.id, prev.get(item.id)))}>
+                  <TouchableOpacity onPress={() => setClickModal((prev) => new Map(prev).set(item.id, prev.get(item.id)))}>
                     <ModalArea>
                       <ModalIcon
-                        onPress={() => {onOpen(item)}}>
+                        onPress={() => {
+                          onOpen(item);
+                        }}
+                      >
                         <Ionicons name="ellipsis-vertical" size={20} color={"black"} />
                         {/* <Text>{item.id}</Text> */}
                       </ModalIcon>
                       <Portal>
-                        { modalFeedData.userId === myId ? (
-                        <Modalize
-                          ref={modalizeRef}
-                          modalHeight={150}
-                          handlePosition="inside"
-                        >
-                          <ModalContainer key={index}>
-                            <ModalView>
-                              <ModalText onPress={() => goToModifiy(modalFeedData)}>수정</ModalText>
-                              <ModalText style={{ color: "red" }} onPress={() => deleteCheck(modalFeedData)}>
+                        {modalFeedData.userId === myId ? (
+                          <Modalize ref={modalizeRef} modalHeight={150} handlePosition="inside">
+                            <ModalContainer key={index}>
+                              <ModalView>
+                                <ModalText onPress={() => goToModifiy(modalFeedData)}>수정</ModalText>
+                                <ModalText style={{ color: "red" }} onPress={() => deleteCheck(modalFeedData)}>
                                   삭제
                                 </ModalText>
-                            </ModalView>
-                          </ModalContainer>
-                        </Modalize>
-                        ):(
-                          <Modalize
-                          ref={modalizeRef}
-                          modalHeight={75}
-                          handlePosition="inside"
-                          >
-                          <ModalContainer key={index}>
-                            <ModalView>
-                              <ModalText onPress={()=> goToAccusation(modalFeedData)}>신고</ModalText>
-                            </ModalView>
-                          </ModalContainer>
-                        </Modalize>
+                              </ModalView>
+                            </ModalContainer>
+                          </Modalize>
+                        ) : (
+                          <Modalize ref={modalizeRef} modalHeight={75} handlePosition="inside">
+                            <ModalContainer key={index}>
+                              <ModalView>
+                                <ModalText onPress={() => goToAccusation(modalFeedData)}>신고</ModalText>
+                              </ModalView>
+                            </ModalContainer>
+                          </Modalize>
                         )}
                       </Portal>
                     </ModalArea>
@@ -582,8 +574,8 @@ const Home:React.FC<HomeScreenProps> = ({
                     <LeftInfo>
                       <InfoArea>
                         <TouchableOpacity onPress={() => setHeartMap((prev) => new Map(prev).set(item.id, !prev.get(item.id)))}>
-                          <TouchableOpacity onPress={()=>LikeFeed(item)}>
-                          {item.likeYn.toString() === "false" ? <Ionicons name="md-heart-outline" size={20} color="black" /> : <Ionicons name="md-heart" size={20} color="red" />}
+                          <TouchableOpacity onPress={() => LikeFeed(item)}>
+                            {item.likeYn.toString() === "false" ? <Ionicons name="md-heart-outline" size={20} color="black" /> : <Ionicons name="md-heart" size={20} color="red" />}
                           </TouchableOpacity>
                         </TouchableOpacity>
                         {item.likeYn.toString() === "true" ? <NumberText>{item.likesCount + 1}</NumberText> : <NumberText>{item.likesCount}</NumberText>}
