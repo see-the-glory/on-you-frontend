@@ -18,21 +18,21 @@ export interface Category {
 
 export interface Club {
   id: number;
-  name: string;
-  clubShortDesc: string | null;
-  clubLongDesc: string | null;
-  announcement: string | null;
-  organizationName: string;
-  isApprovedRequired: string;
-  members: Member[];
-  maxNumber: number;
-  recruitNumber: number;
-  thumbnail: string | null;
-  recruitStatus: string | null;
-  creatorName: string;
-  created: string;
-  categories: Category[];
-  contactPhone: string | null;
+  name?: string;
+  clubShortDesc?: string | null;
+  clubLongDesc?: string | null;
+  announcement?: string | null;
+  organizationName?: string;
+  isApprovedRequired?: string;
+  members?: Member[];
+  maxNumber?: number;
+  recruitNumber?: number;
+  thumbnail?: string | null;
+  recruitStatus?: string | null;
+  creatorName?: string;
+  created?: string;
+  categories?: Category[];
+  contactPhone?: string | null;
   customCursor?: string;
 }
 

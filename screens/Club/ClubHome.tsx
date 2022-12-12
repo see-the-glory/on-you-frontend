@@ -280,7 +280,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     const memberBundle: Member[][] = [];
     const managerBundle: Member[][] = [];
 
-    for (let i = 0; i < clubData.members.length; ++i) {
+    for (let i = 0; i < clubData?.members?.length; ++i) {
       if (clubData.members[i].role?.toUpperCase() === "MASTER") {
         setMasterData(clubData.members[i]);
       } else if (clubData.members[i].role?.toUpperCase() === "MANAGER") {
