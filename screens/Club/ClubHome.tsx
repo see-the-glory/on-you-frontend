@@ -204,7 +204,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const [masterData, setMasterData] = useState<Member>();
   const toast = useToast();
   const memberCountPerLine = Math.floor((SCREEN_WIDTH - SCREEN_PADDING_SIZE) / (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING));
-
   const {
     isLoading: scheduleLoading,
     data: schedules,
@@ -212,6 +211,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     isRefetching: isRefetchingSchedules,
   } = useQuery<ClubSchedulesResponse>(["getClubSchedules", clubData.id], ClubApi.getClubSchedules, {
     onSuccess: (res) => {
+      console.log(res);
       const week = ["일", "월", "화", "수", "목", "금", "토"];
       const result: RefinedSchedule[] = [];
       for (let i = 0; i < res?.data?.length; ++i) {
@@ -245,32 +245,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
       toast.show(`스케줄 데이터를 불러오지 못했습니다. ${error}`, {
         type: "error",
       });
-    },
-  });
-
-  const scheduleMutation = useMutation(ClubApi.createClubSchedule, {
-    onSuccess: (res) => {
-      if (res.status === 200 && res.json?.resultCode === "OK") {
-        setScheduleAddVisible(false);
-        toast.show("일정 등록이 완료되었습니다.", {
-          type: "success",
-        });
-        scheduleRefetch();
-      } else {
-        toast.show("일정 등록에 실패했습니다.", {
-          type: "warning",
-        });
-        console.log(`mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res.json);
-      }
-    },
-    onError: (error) => {
-      toast.show("일정 등록에 실패했습니다.", {
-        type: "warning",
-      });
-      console.log("--- Error ---");
-      console.log(`error: ${error}`);
     },
   });
 

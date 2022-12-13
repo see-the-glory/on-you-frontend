@@ -2,11 +2,15 @@ import React, { useLayoutEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
-import { Calendar } from "react-native-calendars";
+import { Calendar, CalendarProvider } from "react-native-calendars";
 import CustomTextInput from "../../components/CustomTextInput";
 import Collapsible from "react-native-collapsible";
 import DatePicker from "react-native-date-picker";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import { useSelector } from "react-redux";
+import { useToast } from "react-native-toast-notifications";
+import { ClubApi, ClubScheduleCreationRequest } from "../../api";
+import { useMutation } from "react-query";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -75,20 +79,87 @@ const MemoInput = styled(CustomTextInput)`
 `;
 
 const ClubScheduleAdd = ({
-  navigation: { navigate, setOptions },
+  navigation: { navigate, goBack, setOptions },
   route: {
     params: { clubData },
   },
 }) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
+  const toast = useToast();
   const [place, setPlace] = useState<string>("");
   const [memo, setMemo] = useState<string>("");
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-  const [date, setDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date().toString().split("T")[0]);
+  const [dateTime, setDateTime] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<string>("");
   const markedDate = {
     [selectedDate]: { selected: true },
   };
-  const save = () => {};
+
+  const scheduleMutation = useMutation(ClubApi.createClubSchedule, {
+    onSuccess: (res) => {
+      console.log(res);
+      if (res.status === 200 && res.resultCode === "OK") {
+        toast.show("일정 등록이 완료되었습니다.", {
+          type: "success",
+        });
+        goBack();
+      } else {
+        toast.show("일정 등록에 실패했습니다.", {
+          type: "warning",
+        });
+        console.log(`mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res);
+      }
+    },
+    onError: (error) => {
+      toast.show("일정 등록에 실패했습니다.", {
+        type: "warning",
+      });
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+    },
+  });
+
+  const save = () => {
+    /** Data Validation */
+    let validate = true;
+    let dangerMsg = "";
+    if (selectedDate === "") {
+      validate = false;
+      dangerMsg = "달력에서 날짜를 선택하세요.";
+    } else if (place === "") {
+      validate = false;
+      dangerMsg = "모임 장소를 입력하세요.";
+    } else if (memo === "") {
+      validate = false;
+      dangerMsg = "메모를 입력하세요.";
+    }
+
+    if (!validate) {
+      toast.show(dangerMsg, {
+        type: "danger",
+      });
+      return;
+    }
+
+    const startDate = `${selectedDate}T${dateTime.toISOString().split("T")[1]}`.split(".")[0];
+    const endDate = `${startDate.split("T")[0]}T23:59:59`;
+
+    const requestData: ClubScheduleCreationRequest = {
+      token,
+      body: {
+        clubId: clubData.id,
+        content: memo,
+        location: place,
+        name: "schedule",
+        startDate,
+        endDate,
+      },
+    };
+    scheduleMutation.mutate(requestData);
+  };
+
   useLayoutEffect(() => {
     setOptions({
       headerRight: () => (
@@ -97,7 +168,7 @@ const ClubScheduleAdd = ({
         </TouchableOpacity>
       ),
     });
-  }, []);
+  }, [selectedDate, dateTime, place, memo]);
 
   return (
     <Container>
@@ -109,7 +180,9 @@ const ClubScheduleAdd = ({
               arrowColor: "#6F6F6F",
               dotColor: "#FF714B",
               selectedDayBackgroundColor: "#FF714B",
+              todayTextColor: "#FF714B",
             }}
+            context={{ date: "" }}
             markedDates={markedDate}
             onDayPress={(day) => {
               setSelectedDate(day.dateString);
@@ -128,8 +201,8 @@ const ClubScheduleAdd = ({
               <TouchableItem onPress={() => setShowDatePicker((prev) => !prev)}>
                 <ItemTitle>모임 시간</ItemTitle>
                 <ItemText>
-                  {date.getHours() < 12 ? "오전" : "오후"} {date.getHours() > 12 ? date.getHours() - 12 : date.getHours() === 0 ? 12 : date.getHours()}시{" "}
-                  {date.getMinutes().toString().padStart(2, "0")}분
+                  {dateTime.getHours() < 12 ? "오전" : "오후"} {dateTime.getHours() > 12 ? dateTime.getHours() - 12 : dateTime.getHours() === 0 ? 12 : dateTime.getHours()}시{" "}
+                  {dateTime.getMinutes().toString().padStart(2, "0")}분
                 </ItemText>
               </TouchableItem>
             </ItemView>
@@ -137,13 +210,13 @@ const ClubScheduleAdd = ({
             {Platform.OS === "android" ? (
               <Collapsible collapsed={!showDatePicker}>
                 <ItemView style={{ width: "100%", alignItems: "center" }}>
-                  <DatePicker date={date} mode="time" onDateChange={setDate} />
+                  <DatePicker date={dateTime} mode="time" onDateChange={setDateTime} />
                 </ItemView>
               </Collapsible>
             ) : (
               <Collapsible collapsed={!showDatePicker}>
                 <ItemView>
-                  <RNDateTimePicker mode="time" value={date} display="spinner" onChange={(_, value: Date) => setDate(value)} />
+                  <RNDateTimePicker mode="time" value={dateTime} display="spinner" onChange={(_, value: Date) => setDateTime(value)} />
                 </ItemView>
               </Collapsible>
             )}
