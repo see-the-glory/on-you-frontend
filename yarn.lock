@@ -6043,9 +6043,9 @@
   "version" "17.0.2"
 
 "react-native-calendars@^1.1291.1":
-  "integrity" "sha512-L2MK2t3kbnDg2RoU12UAoQyNrUpDYdj2MyIfg13YrwVb8BuI/gc0q/VpEinY3iz5ETHiFsTLkCsAFwSj7xbZWw=="
-  "resolved" "https://registry.npmjs.org/react-native-calendars/-/react-native-calendars-1.1291.1.tgz"
-  "version" "1.1291.1"
+  "integrity" "sha512-4TjLEg/aIC6ohD7K1MkUedkcw8eNzsWS56abPonkXHxzO+zBpY5beKpwrmFZwlq4ZRadMv8Dp2TsW2Nld6JONg=="
+  "resolved" "https://registry.npmjs.org/react-native-calendars/-/react-native-calendars-1.1292.0.tgz"
+  "version" "1.1292.0"
   dependencies:
     "hoist-non-react-statics" "^3.3.1"
     "immutable" "^4.0.0-rc.12"

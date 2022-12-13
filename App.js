@@ -85,7 +85,9 @@ export default function App() {
           duration={3000}
           animationType="zoom-in"
           style={{ borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8, fontFamily: "NotoSansKR-Regular" }}
-          icon={<Ionicons name="checkmark-circle" size={18} color="white" />}
+          successIcon={<Ionicons name="checkmark-circle" size={18} color="white" />}
+          warningIcon={<Ionicons name="checkmark-circle" size={18} color="white" />}
+          dangerIcon={<Ionicons name="close-circle" size={18} color="white" />}
         >
           <NavigationContainer>
             <RootNavigation />
