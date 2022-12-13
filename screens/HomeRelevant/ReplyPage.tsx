@@ -267,16 +267,17 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
       id: feedData.commentId,
     };
     console.log(data);
-    const likeRequestData: ReplyDeleteRequest=
+    const replyRequestData: ReplyDeleteRequest=
       {
         data,
         token,
       }
-    ReplyDeleteMutation.mutate(likeRequestData);
+    ReplyDeleteMutation.mutate(replyRequestData);
     console.log(data)
   };
   /**댓글삭제*/
   const deleteCheck = (replyData:Reply) => {
+    console.log(replyData.commentId)
     Alert.alert(
       "댓글을 삭제하시겠어요?",
       "",

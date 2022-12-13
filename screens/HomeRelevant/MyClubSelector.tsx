@@ -8,10 +8,9 @@ import {
 } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Club, ClubApi, ClubsParams, ClubsResponse, Feed } from "../../api";
+import { Club, ClubApi, ClubResponse, ClubsParams, ClubsResponse, Feed, UserApi } from "../../api";
 import { MyClubSelectorScreenProps } from "../../types/feed";
-import { useNavigation } from "@react-navigation/native";
-import { ImageSlider } from "react-native-image-slider-banner";
+import CustomTextInput from "../../components/CustomTextInput";
 import CustomText from "../../components/CustomText";
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -113,7 +112,7 @@ const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min
 
 const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { navigate},
                                                                route:{params:{userId}} }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state:any) => state.AuthReducers.authToken);
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
     token,
@@ -130,18 +129,12 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
+
   const {
-    isLoading: clubsLoading,
-    data: clubs,
-    isRefetching: isRefetchingClubs,
-  } = useQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
-    onSuccess: (res) => {
-      setIsPageTransition(false);
-    },
-    onError: (err) => {
-      console.log(err);
-    },
-  });
+    isLoading: myClubInfoLoading, // true or false
+    data: myClub,
+  } = useQuery<ClubResponse>(["selectMyClubs", token], UserApi.selectMyClubs);
+
 
   const goToImageSelect = (clubData:Club) =>{
     return navigate("HomeStack", {
@@ -164,30 +157,27 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
         {loading ? (
           <ActivityIndicator />
         ) : (
-          <FlatList
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            keyExtractor={(item: Club, index: number) => String(index)}
-            data={clubs?.responses?.content}
-            renderItem={({ item, index }: { item: Club; index: number }) => (
-              <ClubArea onPress={() => goToImageSelect(item)}>
-                <ClubImg source={{ uri: item.thumbnail }} />
-                <ClubMy>
-                  <CommentMent>
-                    <ClubId>{item.clubShortDesc}</ClubId>
-                  </CommentMent>
-                  <CommentRemainder>
-                    <CtrgArea>
-                      <CtgrText>
-                        <OrganizationName>{item.organizationName}</OrganizationName>
-                        <CreatorName>{item.creatorName}</CreatorName>
-                      </CtgrText>
-                    </CtrgArea>
-                  </CommentRemainder>
-                </ClubMy>
-              </ClubArea>
-            )}
-          />
+          <FlatList refreshing={refreshing} onRefresh={onRefresh}
+                    keyExtractor={(item: Club, index: number) => String(index)}
+                    data={myClub?.data}
+                    renderItem={({ item, index }: { item: Club; index: number }) => (
+                      <ClubArea onPress={() => goToImageSelect(item)}>
+                        <ClubImg source={{ uri: item.thumbnail }} />
+                        <ClubMy>
+                          <CommentMent>
+                            <ClubId>{item.clubShortDesc}</ClubId>
+                          </CommentMent>
+                          <CommentRemainder>
+                            <CtrgArea>
+                              <CtgrText>
+                                <OrganizationName>{item.organizationName}</OrganizationName>
+                                <CreatorName>{item.creatorName}</CreatorName>
+                              </CtgrText>
+                            </CtrgArea>
+                          </CommentRemainder>
+                        </ClubMy>
+                      </ClubArea>
+                    )}/>
         )}
       </ReplyContainer>
     </Container>
