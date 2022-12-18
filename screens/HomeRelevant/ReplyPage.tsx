@@ -46,7 +46,7 @@ const Container = styled.SafeAreaView`
 `;
 
 const CommentList = styled.View`
-  height: 95%;
+  height: 92%;
 `
 const SwipeHiddenItemContainer = styled.View`
   flex: 1;
@@ -139,30 +139,32 @@ const ReplyInputArea = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 88%;
+  width: 85%;
 
 `
 
 const ReplyInput = styled(CustomTextInput)`
+  font-size: 14px;
   color: #b0b0b0;
   left: 15px;
+  margin-top: 5px;
   width: 80%;
 `;
 
 const ReplyImg = styled.Image`
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   border-radius: 100px;
 `;
 
 const ReplyButton = styled.TouchableOpacity``;
 const ReplyDone = styled(CustomText)`
   color: #63abff;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: bold;
   width: 30px;
   height: 24px;
-  top: 15%;
+  // top: 15%;
 `;
 
 const ModalIcon = styled.TouchableOpacity``;
@@ -199,6 +201,8 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
     isLoading: userInfoLoading, // true or false
     data: userInfo,
   } = useQuery<UserInfoResponse>(["userInfo", token], UserApi.getUserInfo);
+
+  let myId = userInfo?.data.id;
 
   // console.log(userInfo?.data.id);
   const onRefresh = async () => {
@@ -358,17 +362,21 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
                     </ScrollView>
                   )}
                   renderHiddenItem={(item, index) => (
-                    <SwipeHiddenItemContainer>
-                      <SwipeHiddenItem>
-                        <SwipeHiddenItemText></SwipeHiddenItemText>
-                      </SwipeHiddenItem>
-                      <SwipeHiddenItem style={{backgroundColor: 'skyblue'}}>
-                        <SwipeHiddenItemText onPress={()=>deleteCheck(item.item)}>
-                        <AntDesign name="delete" size={24} color="black" />
-                        </SwipeHiddenItemText>
-                      </SwipeHiddenItem>
-                    </SwipeHiddenItemContainer>
-                  )}
+                    item.item.userId === myId ? (
+                      <SwipeHiddenItemContainer>
+                        <SwipeHiddenItem>
+                          <SwipeHiddenItemText></SwipeHiddenItemText>
+                        </SwipeHiddenItem>
+                        <SwipeHiddenItem style={{backgroundColor: 'skyblue'}}>
+                          <SwipeHiddenItemText onPress={()=>deleteCheck(item.item)}>
+                          <AntDesign name="delete" size={24} color="black" />
+                          </SwipeHiddenItemText>
+                        </SwipeHiddenItem>
+                      </SwipeHiddenItemContainer>
+                      )
+                      :
+                      (<></>)
+                    )}
                 />
               </SafeAreaView>
               :
