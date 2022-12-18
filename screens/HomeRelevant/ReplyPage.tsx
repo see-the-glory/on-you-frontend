@@ -200,6 +200,8 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
     data: userInfo,
   } = useQuery<UserInfoResponse>(["userInfo", token], UserApi.getUserInfo);
 
+  let myId = userInfo?.data.id;
+
   // console.log(userInfo?.data.id);
   const onRefresh = async () => {
     setRefreshing(true);
@@ -358,17 +360,21 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
                     </ScrollView>
                   )}
                   renderHiddenItem={(item, index) => (
-                    <SwipeHiddenItemContainer>
-                      <SwipeHiddenItem>
-                        <SwipeHiddenItemText></SwipeHiddenItemText>
-                      </SwipeHiddenItem>
-                      <SwipeHiddenItem style={{backgroundColor: 'skyblue'}}>
-                        <SwipeHiddenItemText onPress={()=>deleteCheck(item.item)}>
-                        <AntDesign name="delete" size={24} color="black" />
-                        </SwipeHiddenItemText>
-                      </SwipeHiddenItem>
-                    </SwipeHiddenItemContainer>
-                  )}
+                    item.item.userId === myId ? (
+                      <SwipeHiddenItemContainer>
+                        <SwipeHiddenItem>
+                          <SwipeHiddenItemText></SwipeHiddenItemText>
+                        </SwipeHiddenItem>
+                        <SwipeHiddenItem style={{backgroundColor: 'skyblue'}}>
+                          <SwipeHiddenItemText onPress={()=>deleteCheck(item.item)}>
+                          <AntDesign name="delete" size={24} color="black" />
+                          </SwipeHiddenItemText>
+                        </SwipeHiddenItem>
+                      </SwipeHiddenItemContainer>
+                      )
+                      :
+                      (<></>)
+                    )}
                 />
               </SafeAreaView>
               :

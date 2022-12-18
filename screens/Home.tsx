@@ -53,7 +53,7 @@ const Loader = styled.SafeAreaView`
 const Container = styled.SafeAreaView`
   flex: 1;
   top: ${Platform.OS === "android" ? 5 : 0}%;
-  padding-bottom: ${Platform.OS === "android" ? 6 : 0}%;
+  // padding-bottom: ${Platform.OS === "android" ? 6 : 0}%;
 `;
 
 const HeaderView = styled.View<{ size: number }>`
@@ -418,6 +418,10 @@ const Home: React.FC<HomeScreenProps> = ({
     modalizeRef.current?.close();
   };
 
+  const goToClubHome = (clubId) => {
+
+  }
+
   const deleteCheck = (feedData: Feed) => {
     console.log("After Modal passed feedId:", feedData.id);
     Alert.alert(
@@ -517,7 +521,7 @@ const Home: React.FC<HomeScreenProps> = ({
                       <UserId>{item.userName}</UserId>
                       {/* <UserId>{item.likeYn.toString()}</UserId> */}
                       <ClubBox>
-                        <ClubName>{item.clubName}</ClubName>
+                        <ClubName onPress={() => goToClub(item.clubId)} >{item.clubName}</ClubName>
                       </ClubBox>
                     </UserInfo>
                   </FeedUser>
