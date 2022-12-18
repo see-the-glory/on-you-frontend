@@ -403,6 +403,19 @@ const Home: React.FC<HomeScreenProps> = ({
     modalizeRef.current?.close();
   };
 
+  const goToClubStack = (clubData: Club) => {
+
+    let clubNagivateData: Club = {
+      id: clubData.clubId
+    }
+
+    console.log("clubNagivateData", clubNagivateData);
+    return navigation.navigate("ClubStack", {
+      screen: "ClubTopTabs",
+      clubData: clubNagivateData,
+    });
+  };
+
   const goToClub = () => {
     return navigation.navigate("HomeStack", {
       screen: "MyClubSelector",
@@ -521,7 +534,7 @@ const Home: React.FC<HomeScreenProps> = ({
                       <UserId>{item.userName}</UserId>
                       {/* <UserId>{item.likeYn.toString()}</UserId> */}
                       <ClubBox>
-                        <ClubName onPress={() => goToClub(item.clubId)} >{item.clubName}</ClubName>
+                        <ClubName onPress={() => goToClubStack(item)} >{item.clubName}</ClubName>
                       </ClubBox>
                     </UserInfo>
                   </FeedUser>
