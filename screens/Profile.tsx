@@ -186,7 +186,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
             </ChevronBox>
           </MenuItem>
         </TouchMenu>
-        <TouchMenu>
+        {/* <TouchMenu>
           <MenuItem onPress={goToNotificationSettings}>
             <MaterialCommunityIcons name="bell-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
             <MenuItemText>알림설정</MenuItemText>
@@ -194,7 +194,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
               <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
             </ChevronBox>
           </MenuItem>
-        </TouchMenu>
+        </TouchMenu> */}
         <TouchMenu>
           <MenuItem onPress={goToNotice}>
             <MaterialCommunityIcons name="gate-not" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
