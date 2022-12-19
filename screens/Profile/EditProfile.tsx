@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TouchableOpacity, Text, NativeModules, Alert, Platform } from "react-native";
 import { Keyboard, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
@@ -13,55 +14,7 @@ import Collapsible from "react-native-collapsible";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import DatePicker from "react-native-date-picker";
 import CustomText from "../../components/CustomText";
-
-Date.prototype.format = function (f) {
-  if (!this.valueOf()) return " ";
-
-  var weekName = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
-  var d = this;
-
-  return f.replace(/(yyyy|yy|MM|dd|E|hh|mm|ss|a\/p)/gi, function ($1) {
-    switch ($1) {
-      case "yyyy":
-        return d.getFullYear();
-      case "yy":
-        return (d.getFullYear() % 1000).zf(2);
-      case "MM":
-        return (d.getMonth() + 1).zf(2);
-      case "dd":
-        return d.getDate().zf(2);
-      case "E":
-        return weekName[d.getDay()];
-      case "HH":
-        return d.getHours().zf(2);
-      case "hh":
-        return ((h = d.getHours() % 12) ? h : 12).zf(2);
-      case "mm":
-        return d.getMinutes().zf(2);
-      case "ss":
-        return d.getSeconds().zf(2);
-      case "a/p":
-        return d.getHours() < 12 ? "오전" : "오후";
-      default:
-        return $1;
-    }
-  });
-};
-
-String.prototype.string = function (len) {
-  var s = "",
-    i = 0;
-  while (i++ < len) {
-    s += this;
-  }
-  return s;
-};
-String.prototype.zf = function (len) {
-  return "0".string(len - this.length) + this;
-};
-Number.prototype.zf = function (len) {
-  return this.toString().zf(len);
-};
+import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.View`
   flex: 1;
@@ -197,24 +150,35 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
   const interestsEng = ["READING", "GODLY", "VOLUNTEER", "EXERCISE", "CULTURE", "GAME", "CREATURE", "DEVELOPMENT", "FOOD", "TRAVEL", "PET", "ETC"];
   const interestsKor = ["📚 독서", "🙏 경건생활", "💗 봉사", "⚽ 운동", "🎈 문화생활", "🎲 게임", "💡 창작", "📂 자기개발", "🍕 음식", "🏝 여행", "🐼 반려동물", "🔍 기타"];
 
-  const [thumbnail, setThumbnail] = useState("");
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [sex, setSex] = useState("");
+  const [thumbnail, setThumbnail] = useState<string>(userData?.thumbnail);
+  /* const [email, setEmail] = useState<string>(userData?.email); */
+  const [name, setName] = useState<string>(userData?.name);
+  const [sex, setSex] = useState<string>(userData?.sex === "M" ? "남자" : "여자");
   const [birthday, setBirthday] = useState<string>(userData?.birthday);
-  const [phone, setPhone] = useState("");
-  const [organizationName, setOrganizationName] = useState("");
+  const [phone, setPhone] = useState<string>(userData?.phoneNumber);
+  const [organizationName, setOrganizationName] = useState<string>(userData?.organizationName);
   const [interests, setInterests] = useState("");
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const toast = useToast();
 
   const mutation = useMutation(UserApi.updateUserInfo, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.json?.resultCode === "OK") {
-        return goBack();
+      console.log(res);
+      if (res.status === 200) {
+        navigate("ProfileStack", {
+          screen: "Profile",
+        });
+        console.log(res.json);
+        toast.show("저장에 성공하였습니다.", {
+          type: "warning",
+        });
       } else {
         console.log(`mutation success but please check status code`);
         console.log(`status: ${res.status}`);
-        console.log(res.json);
+        console.log(`${res.json}`);
+        toast.show("저장에 실패하였습니다.", {
+          type: "warning",
+        });
       }
     },
     onError: (error) => {
@@ -225,11 +189,26 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
   });
 
   const onSubmit = () => {
-    const data = { /* phone, */ name, birthday, email /* thumbnail, organizationName, interests */ };
+    const data = {
+      name,
+      birthday,
+      phone,
+      organizationName,
+    };
 
     console.log(data);
 
-    const requestData: UserInfoRequest = { data, token };
+    const splitedURI = new String(thumbnail).split("/");
+
+    const requestData: UserInfoRequest = {
+      data,
+      token,
+      image: {
+        uri: thumbnail.replace("file://", ""),
+        type: "image/jpeg",
+        name: splitedURI[splitedURI.length - 1],
+      },
+    };
 
     mutation.mutate(requestData);
   };
@@ -256,8 +235,6 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
     }
   }, [phone]);
 
-  const [imageURI, setImageURI] = useState<string | null>(null);
-
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 4) * 3);
 
@@ -270,17 +247,8 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
     });
 
     if (result.cancelled === false) {
-      setImageURI(result.uri);
+      setThumbnail(result.uri);
     }
-  };
-
-  const placeholder = "날짜를 입력해주세요";
-
-  const [text, onChangeText] = useState("");
-
-  const handleConfirm = (date) => {
-    console.warn("dateFormat: ", date.format("yyyy/MM/dd"));
-    onChangeText(date.format("yyyy/MM/dd"));
   };
 
   const [approvalMethod, setApprovalMethod] = useState<number>(0);
@@ -303,35 +271,18 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
         <ImagePickerView>
           <ImagePickerWrap>
             <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={0.8}>
-              <PickedImage
-                height={imageHeight}
-                source={{ uri: userData.thumbnail === null ? "http://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userData.thumbnail }}
-              />
+              <PickedImage height={imageHeight} source={{ uri: thumbnail ? thumbnail : "http://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" }} />
             </ImagePickerButton>
           </ImagePickerWrap>
           <ProfileText onPress={pickImage}>프로필 사진 설정</ProfileText>
         </ImagePickerView>
         <Form>
           <Title>이름</Title>
-          <Input autoCorrect={false} placeholder="이정규" defaultValue={userData.name} onChangeText={(text) => setName(text)} />
+          <Input autoCorrect={false} placeholder="홍길동" defaultValue={userData.name} onChangeText={(text) => setName(text)} />
         </Form>
         <Form>
           <Title>성별</Title>
-          <Input autoCorrect={false} placeholder="남자" defaultValue={userData.sex === "M" ? "남자" : "여자"} onChangeText={(text) => setSex(text)} />
-          {/* <FieldContentView>
-            <FieldContentLine>
-              <Button onPress={() => setApprovalMethod(0)} activeOpacity={0.5}>
-                {approvalMethod ? <MaterialCommunityIcons name="radiobox-blank" size={20} color="#E8E8E8" /> : <MaterialCommunityIcons name="radiobox-marked" size={20} color="#ff714b" />}
-                <FieldContentText> 남자</FieldContentText>
-              </Button>
-            </FieldContentLine>
-            <FieldContentLine>
-              <Button onPress={() => setApprovalMethod(1)} activeOpacity={0.5}>
-                {approvalMethod ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#ff714b" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#E8E8E8" />}
-                <FieldContentText> 여자</FieldContentText>
-              </Button>
-            </FieldContentLine>
-          </FieldContentView> */}
+          <Input autoCorrect={false} placeholder="남자 or 여자" defaultValue={userData.sex === "M" ? "남자" : "여자"} onChangeText={(text) => setSex(text === "남자" ? "M" : "F")} />
         </Form>
         <Form>
           <Title>생년월일</Title>

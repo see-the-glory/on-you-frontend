@@ -316,7 +316,7 @@ export interface FindPwRequest {
 
 export interface UserInfoRequest {
   token: string;
-  image: {
+  image?: {
     uri: string;
     type: string;
     name: string | undefined;
@@ -632,7 +632,8 @@ const updateUserInfo = (req: UserInfoRequest) => {
     },
     body,
   }).then(async (res) => {
-    return { status: res.status, json: await res.json() };
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
   });
 };
 
@@ -827,7 +828,7 @@ export const FeedApi = {
   ReplyFeed,
   getSelectFeeds,
   feedDelete,
-  ReplyDelete
+  ReplyDelete,
 };
 
 export const CommonApi = { getJWT };
