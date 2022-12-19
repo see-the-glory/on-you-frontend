@@ -1,5 +1,3 @@
-import { createIconSetFromFontello } from "@expo/vector-icons";
-
 const BASE_URL = "http://3.39.190.23:8080";
 
 interface BaseResponse {
@@ -463,7 +461,7 @@ const createFeed = async (req: FeedCreationRequest) => {
   return fetch(`${BASE_URL}/api/feeds`, {
     method: "POST",
     headers: {
-      "content-type": "application/json",
+      "Content-Type": "multipart/form-data",
       authorization: `${req.token}`,
       Accept: "*/*",
     },
