@@ -229,31 +229,33 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
     onSettled: (res, error) => {},
   });
 
-  const onSubmit = () => {
+ const onSubmit = () => {
     const data={
       clubId: clubId,
       content: content,
     };
 
     const splitedURI = String(imageURI).split("/");
-    const requestData: FeedCreationRequest =
-      imageURI.length === 0
-        ? {
-          image: null,
-          data,
-          token,
-        }
-        : {
-          image: {
-            uri: imageURI[imageURI.length-1].replace("file://", ""),
-            type: "image/jpeg",
-            name: splitedURI[splitedURI.length - 1],
-          },
-          data,
-          token,
-        };
-    mutation.mutate(requestData);
-    onRefresh();
+    for(let i=0; i<imageURI.length; i++){
+      const requestData: FeedCreationRequest =
+        imageURI.length === 0
+          ? {
+            image: null,
+            data,
+            token,
+          }
+          : {
+            image: {
+              uri: imageURI[i].replace("file://", ""),
+              type: "image/jpeg",
+              name: splitedURI[splitedURI.length - 1],
+            },
+            data,
+            token,
+          };
+      mutation.mutate(requestData);
+      onRefresh();
+    }
   };
 
   useEffect(()=>{
