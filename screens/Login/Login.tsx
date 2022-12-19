@@ -8,6 +8,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, useEffect, useRef } from "react";
 import { TouchableOpacity, Text, NativeModules, Alert, Keyboard, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
+import { useToast } from "react-native-toast-notifications";
 import { Ionicons } from "@expo/vector-icons";
 
 const Container = styled.View`
@@ -72,17 +73,30 @@ const LoginTitle = styled.Text`
 const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const toast = useToast();
 
   const mutation = useMutation(CommonApi.getJWT, {
     onSuccess: (res) => {
+      if (res.status === 200) {
+        console.log(`success`);
+        // redux 저장
+        dispatch(Login(res.token));
+      } else {
+        console.log(`mutation success but please check status code`);
+        console.log(res);
+        toast.show("로그인 정보를 확인해주세요.", {
+          type: "warning",
+        });
+      }
       console.log(res.status);
-      // redux 저장
-      dispatch(Login(res.token));
     },
     onError: (error) => {
       console.log("--- Error ---");
       console.log(error);
       // Toast Message 출력.
+      toast.show("로그인 정보를 확인해주세요.", {
+        type: "warning",
+      });
     },
   });
 
