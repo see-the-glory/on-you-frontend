@@ -203,22 +203,21 @@ export interface ClubCreationData {
   contactPhone: string;
   organizationName: string;
 }
+
+export interface ImageType {
+  uri: string;
+  type: string;
+  name?: string;
+}
+
 export interface ClubCreationRequest {
-  image?: {
-    uri: string;
-    type: string;
-    name: string | undefined;
-  } | null;
+  image?: ImageType | null;
   data: ClubCreationData;
   token: string;
 }
 
 export interface FeedCreationRequest {
-  image?: {
-    uri: string;
-    type: string;
-    name: string | undefined;
-  } | null;
+  image?: ImageType[] | null;
   data: {
     userId?: number;
     content?: string;
@@ -227,11 +226,7 @@ export interface FeedCreationRequest {
 }
 
 export interface FeedUpdateRequest {
-  image?: {
-    uri: string;
-    type: string;
-    name: string | undefined;
-  };
+  image?: ImageType[] | null;
   data: {
     id: number | undefined;
     // access: string
@@ -265,11 +260,7 @@ export interface FeedReportRequest {
 }
 
 export interface ClubUpdateRequest {
-  image?: {
-    uri: string;
-    type: string;
-    name: string | undefined;
-  };
+  image?: ImageType;
   data?: {
     clubName?: string;
     clubMaxMember?: number;
@@ -468,8 +459,8 @@ const getClubRole = ({ queryKey }: any) => {
 const createFeed = async (req: FeedCreationRequest) => {
   const body = new FormData();
 
-  if (req.image !== null) {
-    body.append("file", req.image);
+  if (req.image) {
+    for (let i = 0; i < req.image?.length; i++) body.append("file", req.image[i]);
   }
 
   body.append("feedCreateRequest", {
