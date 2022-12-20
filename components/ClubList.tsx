@@ -106,13 +106,13 @@ const ShortDescText = styled(CustomText)`
 `;
 
 interface ClubListProps {
-  thumbnailPath: string | null;
-  organizationName: string;
-  clubName: string;
-  memberNum: number;
-  clubShortDesc: string | null;
-  categories: Category[];
-  recruitStatus: string | null;
+  thumbnailPath?: string | null;
+  organizationName?: string;
+  clubName?: string;
+  memberNum?: number;
+  clubShortDesc?: string | null;
+  categories?: Category[];
+  recruitStatus?: string | null;
 }
 
 const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, clubName, memberNum, clubShortDesc, categories, recruitStatus }) => {
@@ -121,7 +121,7 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
   return (
     <Club>
       <ThumbnailView>
-        <ThumbnailImage source={thumbnailPath === null ? require("../assets/basic.jpg") : { uri: thumbnailPath }} size={colSize}></ThumbnailImage>
+        <ThumbnailImage source={thumbnailPath === null || thumbnailPath === undefined ? require("../assets/basic.jpg") : { uri: thumbnailPath }} size={colSize}></ThumbnailImage>
         <Gradient size={colSize} colors={["transparent", "rgba(0, 0, 0, 0.8)"]} start={{ x: 0.5, y: 0.65 }}>
           {recruitStatus === "OPEN" ? (
             <RecruitView>
@@ -141,7 +141,7 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
       </ThumbnailView>
 
       <ClubInfo>
-        {clubShortDesc !== null && clubShortDesc.length > 0 ? (
+        {clubShortDesc && clubShortDesc.length > 0 ? (
           <DescView>
             <ShortDescText>{clubShortDesc}</ShortDescText>
           </DescView>
@@ -153,14 +153,14 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
             <FontAwesome5 name="cross" size={6} color="#A5A5A5" />
             <TagText style={{ color: "#A5A5A5", marginLeft: 3 }}>{organizationName}</TagText>
           </Tag>
-          {categories[0] ? (
+          {categories && categories[0] ? (
             <Tag color={"#B4B4B4"}>
               <TagText style={{ color: "white" }}>{categories[0].name}</TagText>
             </Tag>
           ) : (
             <></>
           )}
-          {categories[1] ? (
+          {categories && categories[1] ? (
             <Tag color={"#B4B4B4"}>
               <TagText style={{ color: "white" }}>{categories[1].name}</TagText>
             </Tag>

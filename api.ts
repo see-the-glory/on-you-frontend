@@ -114,8 +114,8 @@ export interface Report {
 export interface ClubRole {
   clubId: number;
   userId: number;
-  role: "MASTER" | "MANAGER" | "MEMBER" | undefined;
-  applyStatus: "APPLIED" | "APPROVED" | undefined;
+  role?: "MASTER" | "MANAGER" | "MEMBER" | "PENDING";
+  applyStatus?: "APPLIED" | "APPROVED";
 }
 
 export interface CategoryResponse extends BaseResponse {
@@ -460,16 +460,9 @@ const getClubRole = ({ queryKey }: any) => {
     headers: {
       authorization: `${token}`,
     },
-  })
-    .then((res) => res.json())
-    .then((res) => {
-      if (res.resultCode !== "OK") new Error("API Response Error.");
-      else {
-        res.data.applyStatus = res.data.applyStatus ?? undefined;
-        res.data.role = res.data.role ?? undefined;
-      }
-      return res;
-    });
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
 };
 
 const createFeed = async (req: FeedCreationRequest) => {

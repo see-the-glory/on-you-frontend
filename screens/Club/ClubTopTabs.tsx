@@ -100,7 +100,7 @@ const ClubTopTabs = ({
   };
 
   const goClubNotification = () => {
-    navigate("ClubNotification", { clubData: data });
+    navigate("ClubNotification", { clubData: data, clubRole: clubRole?.data });
   };
 
   const { refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
@@ -128,7 +128,16 @@ const ClubTopTabs = ({
     data: clubRole,
     refetch: clubRoleRefetch,
   } = useQuery<ClubRoleResponse>(["getClubRole", token, data.id], ClubApi.getClubRole, {
-    onSuccess: (res) => {},
+    onSuccess: (res) => {
+      if (res.status !== 200 || res.resultCode !== "OK") {
+        console.log(`query fail`);
+        console.log(`getClubRole status: ${res.status}`);
+        console.log(res);
+        toast.show("멤버 등급 정보를 불러오지 못했습니다.", {
+          type: "error",
+        });
+      }
+    },
     onError: (error) => {
       toast.show(`Role Request Error: ${error}`, {
         type: "error",
@@ -178,9 +187,13 @@ const ClubTopTabs = ({
           </TouchableOpacity>
         </LeftNavigationView>
         <RightNavigationView>
-          <TouchableOpacity onPress={goClubNotification} style={{ marginRight: 10 }}>
-            <Ionicons name="mail-outline" size={24} color="white" />
-          </TouchableOpacity>
+          {clubRole?.data?.role && clubRole.data.role !== "PENDING" ? (
+            <TouchableOpacity onPress={goClubNotification} style={{ marginRight: 10 }}>
+              <Ionicons name="mail-outline" size={24} color="white" />
+            </TouchableOpacity>
+          ) : (
+            <></>
+          )}
           <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)} style={{ marginRight: 10 }}>
             {heartSelected ? <Ionicons name="md-heart" size={24} color="white" /> : <Ionicons name="md-heart-outline" size={24} color="white" />}
           </TouchableOpacity>
