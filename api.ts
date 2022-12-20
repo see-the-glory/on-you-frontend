@@ -36,6 +36,15 @@ export interface Club {
   customCursor?: string;
 }
 
+export interface Notification {
+  actionerId: number | null;
+  actionerName: string | null;
+  actioneeId: number | null;
+  actioneeName: string | null;
+  actionType: string;
+  applyMessage: string | null;
+}
+
 export interface Member {
   id: number;
   organizationName: string;
@@ -131,6 +140,10 @@ export interface ClubsResponse extends BaseResponse {
   size: number;
 }
 
+export interface ClubNotificationsResponse extends BaseResponse {
+  data: Notification;
+}
+
 export interface FeedsResponse extends BaseResponse {
   hasNext: boolean;
   data: Feed[];
@@ -181,23 +194,24 @@ export interface ClubSchedulesResponse extends BaseResponse {
 export interface ClubRoleResponse extends BaseResponse {
   data: ClubRole;
 }
+export interface ClubCreationData {
+  category1Id: number;
+  category2Id?: number | null;
+  isApproveRequired: string;
+  clubShortDesc: string;
+  clubLongDesc: string | null;
+  clubName: string;
+  clubMaxMember: number;
+  contactPhone: string;
+  organizationName: string;
+}
 export interface ClubCreationRequest {
   image?: {
     uri: string;
     type: string;
     name: string | undefined;
   } | null;
-  data: {
-    category1Id: number;
-    category2Id?: number | null;
-    isApproveRequired: string;
-    clubShortDesc: string;
-    clubLongDesc: string | null;
-    clubName: string;
-    clubMaxMember: number;
-    contactPhone: string;
-    organizationName: string;
-  };
+  data: ClubCreationData;
   token: string;
 }
 
@@ -286,6 +300,18 @@ export interface ClubScheduleCreationRequest {
 export interface ClubApplyRequest {
   clubId: number;
   memo: string;
+  token: string;
+}
+
+export interface ClubApproveRequest {
+  clubId: number;
+  userId: number;
+  token: string;
+}
+
+export interface ClubRejectRequest {
+  clubId: number;
+  userId: number;
   token: string;
 }
 
@@ -556,6 +582,39 @@ const applyClub = (req: ClubApplyRequest) => {
   });
 };
 
+const approveToClubJoin = (req: ClubApproveRequest) => {
+  return fetch(`${BASE_URL}/api/clubs/approve`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `${req.token}`,
+    },
+    body: JSON.stringify({ clubId: req.clubId, userId: req.userId }),
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
+};
+
+const rejectToClubJoin = (req: ClubRejectRequest) => {
+  return fetch(`${BASE_URL}/api/clubs/reject`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `${req.token}`,
+    },
+    body: JSON.stringify({ clubId: req.clubId, userId: req.userId }),
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
+};
+
+const getClubNotifications = ({ queryKey }: any) => {
+  const [_key, clubId]: [string, number] = queryKey;
+  return fetch(`${BASE_URL}/api/notifications/club/${clubId}`).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
+};
+
 const changeRole = (req: ChangeRoleRequest) => {
   console.log(req);
   return fetch(`${BASE_URL}/api/clubs/${req.clubId}/changeRole`, {
@@ -806,6 +865,9 @@ export const ClubApi = {
   getClubRole,
   applyClub,
   selectMyClubs,
+  getClubNotifications,
+  approveToClubJoin,
+  rejectToClubJoin,
 };
 
 export const UserApi = {
@@ -829,7 +891,7 @@ export const FeedApi = {
   ReplyFeed,
   getSelectFeeds,
   feedDelete,
-  ReplyDelete
+  ReplyDelete,
 };
 
 export const CommonApi = { getJWT };

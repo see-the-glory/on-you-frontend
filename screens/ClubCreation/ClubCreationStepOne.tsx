@@ -104,7 +104,7 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
     const categoryViewSize = 3;
     let pos = 0;
 
-    while (pos < category.data.length) {
+    while (pos < category?.data?.length) {
       result.push(category.data.slice(pos, pos + categoryViewSize));
       pos += categoryViewSize;
     }
@@ -164,7 +164,7 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
         <>
           <NextButton
             onPress={() => {
-              if (selectCategory1 === null && selectCategory2 === null) {
+              if ((selectCategory1 === null && selectCategory2 === null) || (selectCategory1 === -1 && selectCategory2 === -1)) {
                 return Alert.alert("카테고리를 선택하세요!");
               } else {
                 return navigate("ClubCreationStepTwo", {

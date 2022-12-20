@@ -81,6 +81,8 @@ const EmptyView = styled.View`
 const EmptyText = styled(CustomText)`
   font-size: 14px;
   color: #bdbdbd;
+  justify-content: center;
+  align-items: center;
 `;
 
 const FloatingButton = styled.TouchableOpacity`
@@ -434,7 +436,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               )}
               ListEmptyComponent={() => (
                 <EmptyView>
-                  <EmptyText style={{ justifyContent: "center", alignItems: "center" }}>{`조건에 해당하는 모임이 없습니다.`}</EmptyText>
+                  <EmptyText>{`조건에 해당하는 모임이 없습니다.`}</EmptyText>
                 </EmptyView>
               )}
             />
