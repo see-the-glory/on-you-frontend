@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { ActivityIndicator, FlatList, StatusBar, Text, TouchableOpacity, View } from "react-native";
-import { Item } from "react-native-picker-select";
+import { ActivityIndicator, FlatList, StatusBar, TouchableOpacity, View } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useQuery } from "react-query";
 import styled from "styled-components/native";
-import { Club, ClubApi, Notification } from "../../api";
+import { ClubApi, Notification } from "../../api";
 import CustomText from "../../components/CustomText";
 import NotificationItem from "../../components/NotificationItem";
 
@@ -34,9 +33,9 @@ const EmptyText = styled(CustomText)`
 `;
 
 const ClubNotification = ({
-  navigation: { navigate, goback },
+  navigation: { navigate },
   route: {
-    params: { clubData },
+    params: { clubData, clubRole },
   },
 }) => {
   const toast = useToast();
@@ -45,10 +44,16 @@ const ClubNotification = ({
     isLoading: notiLoading,
     data: notifications,
     refetch: notiRefetch,
-    isRefetching: isRefetchingNoti,
   } = useQuery(["getClubNotifications", clubData.id], ClubApi.getClubNotifications, {
     onSuccess: (res) => {
-      console.log(res);
+      if (res.status !== 200 || res.resultCode !== "OK") {
+        console.log(`query fail`);
+        console.log(`getClubNotifications status: ${res.status}`);
+        console.log(res);
+        toast.show("모임 소식정보를 불러오지 못했습니다.", {
+          type: "error",
+        });
+      }
     },
     onError: (error) => {
       toast.show(`모임 소식 정보를 불러오지 못했습니다. ${error}`, {
@@ -64,11 +69,18 @@ const ClubNotification = ({
   };
 
   const onPressItem = (item: Notification) => {
-    if (item.actionType === "APPLY") {
-      return navigate("ClubApplication", {
-        clubData,
-        actionerName: item.actionerName,
-        applyMessage: item.applyMessage,
+    if (clubRole && ["MASTER", "MANAGER"].includes(clubRole?.role)) {
+      if (item.actionType === "APPLY") {
+        return navigate("ClubApplication", {
+          clubData,
+          actionerName: item.actionerName,
+          actionerId: item.actionerId,
+          applyMessage: item.applyMessage,
+        });
+      }
+    } else {
+      toast.show("가입신청서를 볼 수 있는 권한이 없습니다.", {
+        type: "warning",
       });
     }
   };

@@ -427,7 +427,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                     thumbnailPath={item.thumbnail}
                     organizationName={item.organizationName}
                     clubName={item.name}
-                    memberNum={item.members.filter((member) => member.role !== "PENDING").length}
+                    memberNum={item.members?.filter((member) => member.role !== "PENDING").length}
                     clubShortDesc={item.clubShortDesc}
                     categories={item.categories}
                     recruitStatus={item.recruitStatus}

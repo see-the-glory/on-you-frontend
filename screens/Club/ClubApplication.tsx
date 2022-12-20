@@ -1,7 +1,13 @@
 import React from "react";
-import { Alert, StatusBar } from "react-native";
+import { Entypo } from "@expo/vector-icons";
+import { useLayoutEffect } from "react";
+import { Alert, StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
+import { useSelector } from "react-redux";
+import { ClubApi, ClubApproveRequest, ClubRejectRequest } from "../../api";
+import { useMutation } from "react-query";
+import { useToast } from "react-native-toast-notifications";
 
 const SCREEN_PADDING_SIZE = 20;
 
@@ -59,26 +65,108 @@ const ButtonText = styled(CustomText)`
   color: white;
 `;
 
-const reject = () => {
-  Alert.alert("가입 거절", "정말로 가입을 거절하시겠습니까?", [
-    { text: "아니요", onPress: () => {} },
-    { text: "예", onPress: () => {} },
-  ]);
-};
-
-const approve = () => {
-  Alert.alert("가입 승인", "정말로 가입을 승인하시겠습니까?", [
-    { text: "아니요", onPress: () => {} },
-    { text: "예", onPress: () => {} },
-  ]);
-};
-
 const ClubApplication = ({
   route: {
-    params: { clubData, actionerName, applyMessage },
+    params: { clubData, actionerName, actionerId, applyMessage },
   },
-  navigation: { navigate },
+  navigation: { navigate, goBack, setOptions },
 }) => {
+  const token = useSelector((state) => state.AuthReducers.authToken);
+  const toast = useToast();
+  const rejectMutation = useMutation(ClubApi.rejectToClubJoin, {
+    onSuccess: (res) => {
+      console.log(res);
+      if (res.status === 200 && res.resultCode === "OK") {
+        toast.show(`가입신청을 거절했습니다.`, {
+          type: "warning",
+        });
+        navigate("ClubTopTabs", { clubData });
+      } else {
+        console.log(`rejectToClubJoin mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res);
+        toast.show(`${res.message} (Error Code: ${res.status})`, {
+          type: "error",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error rejectToClubJoin ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "error",
+      });
+    },
+  });
+  const approveMutation = useMutation(ClubApi.approveToClubJoin, {
+    onSuccess: (res) => {
+      console.log(res);
+      if (res.status === 200 && res.resultCode === "OK") {
+        toast.show(`가입신청을 수락했습니다.`, {
+          type: "success",
+        });
+        navigate("ClubTopTabs", { clubData });
+      } else {
+        console.log(`approveToClubJoin mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res);
+        toast.show(`${res.message} (Error Code: ${res.status})`, {
+          type: "error",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error approveToClubJoin ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "error",
+      });
+    },
+  });
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={goBack}>
+          <Entypo name="chevron-thin-left" size={20} color="black"></Entypo>
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
+  const reject = () => {
+    Alert.alert("가입 거절", "정말로 가입을 거절하시겠습니까?", [
+      { text: "아니요", onPress: () => {} },
+      {
+        text: "예",
+        onPress: () => {
+          let data: ClubRejectRequest = {
+            clubId: clubData.id,
+            userId: actionerId,
+            token,
+          };
+          rejectMutation.mutate(data);
+        },
+      },
+    ]);
+  };
+
+  const approve = () => {
+    Alert.alert("가입 승인", "정말로 가입을 승인하시겠습니까?", [
+      { text: "아니요", onPress: () => {} },
+      {
+        text: "예",
+        onPress: () => {
+          let data: ClubApproveRequest = {
+            clubId: clubData.id,
+            userId: actionerId,
+            token,
+          };
+          approveMutation.mutate(data);
+        },
+      },
+    ]);
+  };
+
   return (
     <Container>
       <StatusBar barStyle={"default"} />

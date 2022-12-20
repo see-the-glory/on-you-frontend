@@ -79,14 +79,8 @@ const ClubStack = ({
       <NativeStack.Screen
         name="ClubApplication"
         component={ClubApplication}
-        initialParams={{ clubData }}
         options={{
           title: "가입요청",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("ClubNotification", { clubData })}>
-              <Entypo name="chevron-thin-left" size={20} color="black"></Entypo>
-            </TouchableOpacity>
-          ),
         }}
       />
     </NativeStack.Navigator>
