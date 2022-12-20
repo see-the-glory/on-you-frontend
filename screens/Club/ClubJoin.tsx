@@ -111,7 +111,7 @@ const ClubJoin = ({
             placeholderTextColor="#B0B0B0"
             textAlign="left"
             multiline={true}
-            maxLength={500}
+            maxLength={100}
             textAlignVertical="top"
             onChangeText={(text: string) => setMemo(text)}
           />

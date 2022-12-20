@@ -344,8 +344,8 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
               item.isEnd === false ? (
                 <ScheduleView
                   onPress={() => {
-                    setScheduleVisible(true);
-                    setSelectedSchedule(index);
+                    // setScheduleVisible(true);
+                    // setSelectedSchedule(index);
                   }}
                 >
                   {index === 0 ? (
@@ -365,7 +365,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
                     <ScheduleDetailItemView>
                       <Feather name="clock" size={10} color="#CCCCCC" style={{ marginRight: 5 }} />
                       <ScheduleText>
-                        {`${item.ampm} ${item.hour}시`} {item.minute !== "0" ? `${item.minute} 분` : ""}
+                        {`${item.ampm} ${item.hour} 시`} {item.minute !== "0" ? `${item.minute} 분` : ""}
                       </ScheduleText>
                     </ScheduleDetailItemView>
                     <ScheduleDetailItemView>
@@ -427,7 +427,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
               return (
                 <MemberLineView key={index}>
                   {bundle.map((item, index) => {
-                    return <CircleIcon key={index} size={MEMBER_ICON_SIZE} uri={item.thumbnail} name={item.name} badge={"check-circle"} />;
+                    return <CircleIcon key={index} size={MEMBER_ICON_SIZE} uri={item.thumbnail} name={item.name} kerning={MEMBER_ICON_KERNING} badge={"check-circle"} />;
                   })}
                 </MemberLineView>
               );

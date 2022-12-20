@@ -100,7 +100,7 @@ const ClubTopTabs = ({
   };
 
   const goClubNotification = () => {
-    navigate("ClubNotification");
+    navigate("ClubNotification", { clubData: data });
   };
 
   const { refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
@@ -158,8 +158,6 @@ const ClubTopTabs = ({
       clubRoleRefetch();
     }, [])
   );
-
-  
 
   const renderClubHome = useCallback(
     (props) => {

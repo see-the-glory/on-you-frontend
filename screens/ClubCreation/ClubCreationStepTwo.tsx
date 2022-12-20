@@ -163,7 +163,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
     });
 
     if (result.canceled === false) {
-      setImageURI(result.uri);
+      setImageURI(result.assets[0].uri);
     }
   };
 

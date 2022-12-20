@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from "react-native";
+import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { ClubApi, ClubCreationRequest } from "../../api";
+import { ClubApi, ClubCreationData, ClubCreationRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
 import { ClubCreationStepThreeScreenProps } from "../../Types/Club";
@@ -102,6 +103,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   navigation: { navigate },
 }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
+  const toast = useToast();
   const [clubShortDesc, setClubShortDesc] = useState<string>("");
   const [clubLongDesc, setClubLongDesc] = useState<string>("");
   const [disableSubmit, setDisableSubmit] = useState<boolean>(false);
@@ -130,7 +132,17 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   });
 
   const onSubmit = () => {
-    const data = {
+    if (category1 === -1 && category2 === -1) {
+      toast.show(`카테고리가 설정되어있지 않습니다.`, {
+        type: "error",
+      });
+      return;
+    } else if (category1 === -1 && category2 !== -1) {
+      category1 = category2;
+      category2 = -1;
+    }
+
+    const data: ClubCreationData = {
       category1Id: category1,
       clubName,
       clubMaxMember: maxNumber,
@@ -143,8 +155,6 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
 
     if (category2 !== -1) data.category2Id = category2;
 
-    console.log(data);
-
     const splitedURI = new String(imageURI).split("/");
 
     const requestData: ClubCreationRequest =
@@ -156,7 +166,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
           }
         : {
             image: {
-              uri: imageURI.replace("file://", ""),
+              uri: Platform.OS === "android" ? imageURI : imageURI.replace("file://", ""),
               type: "image/jpeg",
               name: splitedURI[splitedURI.length - 1],
             },
@@ -164,6 +174,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
             token,
           };
 
+    console.log(requestData);
     setDisableSubmit(true);
     mutation.mutate(requestData);
   };
