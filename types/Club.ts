@@ -77,12 +77,12 @@ export interface ClubHomeParamList {
 
 // ClubHome Header
 export interface ClubHomeHaederProps extends ClubHomeParamList {
-  imageURI: string | null;
-  name: string;
-  shortDesc: string | null;
-  categories: Category[];
-  recruitStatus: string | null;
-  schedules: Schedule[] | undefined;
+  imageURI?: string | null;
+  name?: string;
+  shortDesc?: string | null;
+  categories?: Category[];
+  recruitStatus?: string | null;
+  schedules?: Schedule[] | undefined;
   heightExpanded: number;
   heightCollapsed: number;
 }

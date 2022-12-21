@@ -121,7 +121,7 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
   return (
     <Club>
       <ThumbnailView>
-        <ThumbnailImage source={thumbnailPath === null || thumbnailPath === undefined ? require("../assets/basic.jpg") : { uri: thumbnailPath }} size={colSize}></ThumbnailImage>
+        <ThumbnailImage source={thumbnailPath ? { uri: thumbnailPath } : require("../assets/basic.jpg")} size={colSize}></ThumbnailImage>
         <Gradient size={colSize} colors={["transparent", "rgba(0, 0, 0, 0.8)"]} start={{ x: 0.5, y: 0.65 }}>
           {recruitStatus === "OPEN" ? (
             <RecruitView>

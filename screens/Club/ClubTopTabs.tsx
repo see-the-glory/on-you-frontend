@@ -91,12 +91,17 @@ const ClubTopTabs = ({
 
   const goClubJoin = () => {
     if (clubRole?.data?.applyStatus === "APPLIED") {
-      toast.show("가입신청서가 이미 전달되었습니다.", {
+      return toast.show("가입신청서가 이미 전달되었습니다.", {
         type: "warning",
       });
-    } else {
-      navigate("ClubJoin", { clubData: data });
     }
+    if (data?.recruitStatus === "CLOSE") {
+      return toast.show("멤버 모집 기간이 아닙니다.", {
+        type: "warning",
+      });
+    }
+
+    navigate("ClubJoin", { clubData: data });
   };
 
   const goClubNotification = () => {
