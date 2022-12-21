@@ -124,7 +124,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
 
   return (
     <Header>
-      <ImageBackground style={{ width: "100%", height: heightExpanded }} source={imageURI === null ? require("../assets/basic.jpg") : { uri: imageURI }} height={heightExpanded}>
+      <ImageBackground style={{ width: "100%", height: heightExpanded }} source={imageURI ? { uri: imageURI } : require("../assets/basic.jpg")}>
         <AnimatedBlurView
           intensity={70}
           tint="dark"
@@ -151,14 +151,14 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
           <AnimatedFadeOutBox style={{ opacity: fadeOut }}>
             <InformationView>
               <CategoryView>
-                {categories?.length > 0 ? (
+                {categories && categories?.length > 0 ? (
                   <CategoryBox>
                     <CategoryNameText>{categories[0].name}</CategoryNameText>
                   </CategoryBox>
                 ) : (
                   <></>
                 )}
-                {categories?.length > 1 ? (
+                {categories && categories?.length > 1 ? (
                   <CategoryBox>
                     <CategoryNameText>{categories[1].name}</CategoryNameText>
                   </CategoryBox>

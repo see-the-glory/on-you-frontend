@@ -103,7 +103,7 @@ const FloatingButton = styled.TouchableOpacity`
 
 const ModalContainer = styled.View`
   flex: 1;
-  padding: 30px 20px 20px 20px;
+  padding: 35px 20px 20px 20px;
 `;
 
 const ItemView = styled.View`
@@ -113,43 +113,49 @@ const ItemView = styled.View`
 `;
 
 const ItemLeftView = styled.View`
-  flex: 1;
+  flex: 0.23;
 `;
 const ItemRightView = styled.View`
-  flex: 4;
+  flex: 0.77;
 `;
 const ItemNameText = styled(CustomText)`
   font-family: "NotoSansKR-Medium";
-  font-size: 15px;
-  line-height: 21px;
+  font-size: 16px;
+  line-height: 22px;
 `;
 const ItemContentView = styled.View``;
 const ItemContentText = styled(CustomText)`
+  font-size: 14px;
+`;
+const ItemContentSubText = styled(CustomText)`
   font-size: 13px;
 `;
-const ItemContentSubText = styled(CustomText)``;
 const ItemContentButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
 `;
 
 const CheckBox = styled.View`
-  height: 75%;
+  height: 15px;
+  width: 15px;
+  justify-content: center;
+  align-items: center;
   border: 1px solid rgba(0, 0, 0, 0.1);
   margin-left: 5px;
   background-color: white;
 `;
 
 const SubmitButton = styled.TouchableOpacity`
-  height: 50px;
+  height: 60px;
   justify-content: center;
   align-items: center;
   background-color: #ff714b;
 `;
 const SubmitText = styled(CustomText)`
-  font-size: 20px;
-  line-height: 26px;
+  font-size: 23px;
+  line-height: 32px;
   font-family: "NotoSansKR-Medium";
+  padding-bottom: 10px;
   color: white;
 `;
 
@@ -162,7 +168,8 @@ const SortingItemButton = styled.TouchableOpacity`
   margin: 3px 0px;
 `;
 const SortingItemText = styled(CustomText)<{ selected: boolean }>`
-  font-size: 13px;
+  font-size: 15px;
+  line-height: 20px;
   color: ${(props) => (props.selected ? "#FF714B" : "#b0b0b0")};
   font-family: ${(props) => (props.selected ? "NotoSansKR-Medium" : "NotoSansKR-Regular")};
 `;
@@ -384,7 +391,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               }}
             ></View>
             <HeaderItem>
-              <HeaderItemText>최신순</HeaderItemText>
+              <HeaderItemText>{sortItem ? sortItem[selectedSortIndex].title : "최신순"}</HeaderItemText>
               <TouchableOpacity
                 style={{
                   height: 35,
@@ -450,8 +457,9 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
       <Portal>
         <Modalize
           ref={filteringSheetRef}
-          modalHeight={250}
+          modalHeight={270}
           handlePosition="inside"
+          handleStyle={{ top: 14, height: 3, width: 35 }}
           modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
           FooterComponent={
             <SubmitButton
@@ -533,7 +541,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
       </Portal>
 
       <Portal>
-        <Modalize ref={sortingSheetRef} modalHeight={250} handlePosition="inside" modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+        <Modalize ref={sortingSheetRef} modalHeight={260} handlePosition="inside" handleStyle={{ top: 14, height: 3, width: 35 }} modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
           <ModalContainer>
             <SortingItemView>
               {sortItem?.map((item, index) => (

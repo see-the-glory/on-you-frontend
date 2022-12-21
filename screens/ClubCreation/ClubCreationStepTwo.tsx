@@ -150,9 +150,9 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   const [imageURI, setImageURI] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [organizationName, setOrganizationName] = useState<string>("");
-
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 4) * 3);
+  let specialChar = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -200,15 +200,21 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
             <ItemTitle>모임 이름</ItemTitle>
             <ItemTextInput
               value={clubName}
-              placeholder="모임명 16자 이내 (특수문자 불가)"
+              placeholder="모임명 8자 이내 (특수문자 불가)"
               placeholderTextColor="#B0B0B0"
-              maxLength={16}
+              maxLength={8}
               onEndEditing={() => {
                 if (clubName === "") {
-                  toast.show("모임 이름을 공백으로 설정할 수 없습니다.", {
+                  return toast.show("모임 이름을 공백으로 설정할 수 없습니다.", {
                     type: "warning",
                   });
                 }
+                if (specialChar.test(clubName)) {
+                  return toast.show("모임 이름에 특수문자가 있습니다.", {
+                    type: "warning",
+                  });
+                }
+                setClubName((prev) => prev.trim());
               }}
               onChangeText={(name) => setClubName(name)}
               returnKeyType="done"
@@ -291,6 +297,15 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
           <NextButton
             onPress={() => {
               /** Validation */
+              if (clubName === "") {
+                return toast.show("모임 이름은 공백으로 설정할 수 없습니다.", {
+                  type: "warning",
+                });
+              } else if (specialChar.test(clubName)) {
+                return toast.show("모임 이름에 특수문자가 포함되어 있습니다.", {
+                  type: "warning",
+                });
+              }
               navigate("ClubCreationStepThree", {
                 category1,
                 category2,
