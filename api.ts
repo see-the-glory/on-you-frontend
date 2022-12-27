@@ -35,12 +35,15 @@ export interface Club {
 }
 
 export interface Notification {
-  actionerId: number | null;
-  actionerName: string | null;
-  actioneeId: number | null;
-  actioneeName: string | null;
-  actionType: string;
-  applyMessage: string | null;
+  actionId: number;
+  actionerId?: number | null;
+  actionerName?: string | null;
+  actioneeId?: number | null;
+  actioneeName?: string | null;
+  actionType?: string;
+  applyMessage?: string | null;
+  created?: string;
+  processDone?: boolean;
 }
 
 export interface Member {
@@ -294,12 +297,14 @@ export interface ClubApplyRequest {
 
 export interface ClubApproveRequest {
   clubId: number;
+  actionId: number;
   userId: number;
   token: string;
 }
 
 export interface ClubRejectRequest {
   clubId: number;
+  actionId: number;
   userId: number;
   token: string;
 }
@@ -571,7 +576,7 @@ const approveToClubJoin = (req: ClubApproveRequest) => {
       "Content-Type": "application/json",
       authorization: `${req.token}`,
     },
-    body: JSON.stringify({ clubId: req.clubId, userId: req.userId }),
+    body: JSON.stringify({ clubId: req.clubId, actionId: req.actionId, userId: req.userId }),
   }).then(async (res) => {
     return { ...(await res.json()), status: res.status };
   });
@@ -584,7 +589,7 @@ const rejectToClubJoin = (req: ClubRejectRequest) => {
       "Content-Type": "application/json",
       authorization: `${req.token}`,
     },
-    body: JSON.stringify({ clubId: req.clubId, userId: req.userId }),
+    body: JSON.stringify({ clubId: req.clubId, actionId: req.actionId, userId: req.userId }),
   }).then(async (res) => {
     return { ...(await res.json()), status: res.status };
   });
