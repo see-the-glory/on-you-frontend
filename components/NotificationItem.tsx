@@ -37,7 +37,7 @@ interface NotificationItemProps {
 
 const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, clubData }) => {
   moment().tz("Asia/Seoul");
-  moment.locale("ko", {
+  moment.updateLocale("ko", {
     relativeTime: {
       future: "%s 후",
       past: "%s 전",
