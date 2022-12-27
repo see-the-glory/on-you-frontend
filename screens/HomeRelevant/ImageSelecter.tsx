@@ -1,7 +1,6 @@
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as ImagePicker from "expo-image-picker";
-import * as Permissions from "expo-permissions";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -24,10 +23,9 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { FeedApi, FeedCreationRequest, FeedsResponse } from "../../api";
 import { FeedCreateScreenProps } from "../../types/feed";
-// @ts-ignore
-import { ImageBrowser } from "expo-image-picker-multiple";
 import { useNavigation } from "@react-navigation/native";
 import { ImageSlider } from "react-native-image-slider-banner";
+import reactImagePicker from 'react-native-image-picker';
 interface ValueInfo {
   str: string;
   isHT: boolean;
@@ -118,22 +116,28 @@ const FeedCreateArea = styled.View`
 
 const FeedCreateBtn = styled.TouchableOpacity``;
 const FeedCreateText = styled.Text`
-  font-size: 20px;
+  font-size: 15px;
   color: #63abff;
   font-weight: bold;
   padding: 10px;
 `;
 
+const ImageSource = styled.Image<{ size: number }>`
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
+`;
+
 const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
-  route: {
-    params: { clubId, userId },
-  },
-  navigation: { navigate },
-}) => {
+                                                          route: {
+                                                            params: { clubId, userId },
+                                                          },
+                                                          navigation: { navigate },
+                                                        }) => {
   const Stack = createNativeStackNavigator();
   const [refreshing, setRefreshing] = useState(false);
   //사진권한 허용
   const [imageURI, setImageURI] = useState<any>("");
+  const [choiceImage, setChoiceImage] = useState();
   const [loading, setLoading] = useState(false);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
   const [alert, alertSet] = useState(true);
@@ -177,7 +181,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
         }*/
 
     let result: any = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
       aspect: [16, 9],
       allowsMultipleSelection: true,
@@ -239,7 +243,9 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
     for (let i = 0; i < imageURI.length; i++) {
       const splitedURI = String(imageURI[i]).split("/");
       if (requestData.image) {
-        requestData.image.push({ uri: Platform.OS === "android" ? imageURI[i] : imageURI[i].replace("file://", ""), type: "image/jpeg", name: splitedURI[splitedURI.length - 1] });
+        requestData.image.push({ uri: Platform.OS === "android" ? imageURI[i] : imageURI[i].replace("file://", ""),
+          type: "image/jpeg",
+          name: splitedURI[splitedURI.length - 1] });
       }
     }
     mutation.mutate(requestData);
@@ -265,31 +271,28 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
    * 이미지 리스트 선택하면 사진 크게보는쪽 사진뜨게
    */
   const ImageFIx = (i: any) => {
-    console.log("imageFix");
-    return (
+    setChoiceImage(imageURI[i])
+    /*return (
       <View key={i}>
         <ImageSlider data={[{ img: imageURI[i] }]} preview={false} caroselImageStyle={{ resizeMode: "stretch", height: 420 }} indicatorContainerStyle={{ bottom: 0 }} />
       </View>
-    );
+    );*/
   };
 
   /** X선택시 사진 없어지는 태그 */
-  const ImageCancle = () => {
-    if (imageURI.length > 0) {
-      setImageURI("");
-      console.log("imageCancle");
-    }
+  const ImageCancle = (q:any) => {
+    console.log('imageCancle')
   };
 
   /*이미지 선택영역**/
   const imagePreview = [];
   for (let i = 0; i < imageURI.length; i += 1) {
     imagePreview.push(
-      <SelectImageArea key={i} onPress={ImageFIx}>
-        <SelectImage source={{ uri: imageURI[i] }} onPress={() => ImageFIx(i)} />
+      <SelectImageArea key={i} onPress={() => ImageFIx(i)}>
+        <SelectImage source={{ uri: imageURI[i] }}  />
         {imageURI === null ? null : (
-          <ImageCancleBtn>
-            <CancleIcon onPress={ImageCancle}>
+          <ImageCancleBtn onPress={()=>ImageCancle(i)}>
+            <CancleIcon >
               <AntDesign name="close" size={15} color="white" />
             </CancleIcon>
           </ImageCancleBtn>
@@ -304,12 +307,17 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
   for (let i = 0; i < imageURI.length; i++) {
     imageList.push({ img: imageURI[i] });
   }
-  imageChoice.push(<ImageSlider data={imageList} preview={false} caroselImageStyle={{ resizeMode: "stretch", height: 420 }} indicatorContainerStyle={{ bottom: 0 }} />);
+  imageChoice.push(
+    <ImageSource source={{uri: choiceImage}} size={400}/>
+  );
+  /*  <ImageSlider data={imageList} preview={false} caroselImageStyle={{ resizeMode: "stretch", height: 420 }}
+                 indicatorContainerStyle={{ bottom: 0 }}
+    />)*/
 
   return (
     <Container>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardAvoidingView behavior={Platform.select({ ios: "position", android: "padding" })} style={{ flex: 1 }}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios"? "position": "padding" } style={{ flex: 1 }}>
           <>
             <ImagePickerView>
               {Object.keys(imageURI).length !== 0 ? (
@@ -331,7 +339,9 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
             </ImagePickerView>
             {/* <SelectImage source={{ uri: imageURI.assets[0].uri}} />*/}
             <SelectImageView>
-              <View style={{ display: "flex", flexDirection: "row" }}>{imagePreview}</View>
+              <View style={{ display: "flex", flexDirection: "row" }}>
+                {imagePreview}
+              </View>
             </SelectImageView>
             <FeedText
               placeholder="사진과 함께 남길 게시글을 작성해 보세요."

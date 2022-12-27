@@ -273,7 +273,7 @@ const Home: React.FC<HomeScreenProps> = ({
 
   //heart선택
   const [heartMap, setHeartMap] = useState(new Map());
-
+  const [feedImageLength,setImageLength] = useState<any>();
   //getFeeds ( 무한 스크롤 )
   const {
     isLoading: feedsLoading,
@@ -298,11 +298,16 @@ const Home: React.FC<HomeScreenProps> = ({
         heartDataMap.set(res?.data[i].id, false);
       }
       setHeartMap(heartDataMap);
+    /*  for(let i=0; i<feeds?.pages[0]?.responses?.content.length; i++){
+        console.log(i)
+        // setImageLength(i)
+      }*/
     },
     onError: (err) => {
       console.log(err);
     },
   });
+
 
   const [fetchedFeedList, setFetchedFeedList] = useState(feeds?.pages.map((page) => page?.responses?.content).flat())
 
@@ -397,7 +402,7 @@ const Home: React.FC<HomeScreenProps> = ({
   const goToModifiy = (feedData: Feed) => {
     console.log("After Modal passed feedId:",feedData.id)
     navigation.navigate("HomeStack", {
-      screen: "ModifiyFeed",
+      screen: "ModifiyPeed",
       feedData,
     });
     modalizeRef.current?.close();
@@ -430,10 +435,6 @@ const Home: React.FC<HomeScreenProps> = ({
     });
     modalizeRef.current?.close();
   };
-
-  const goToClubHome = (clubId) => {
-
-  }
 
   const deleteCheck = (feedData: Feed) => {
     console.log("After Modal passed feedId:", feedData.id);
@@ -494,7 +495,7 @@ const Home: React.FC<HomeScreenProps> = ({
 
   const loading = feedsLoading && userInfoLoading;
 
-  return loading ? (
+ return loading ? (
     <Loader>
       <ActivityIndicator />
     </Loader>
@@ -527,12 +528,11 @@ const Home: React.FC<HomeScreenProps> = ({
                   <FeedUser>
                     <UserImage
                       source={{
-                        uri: userInfo?.data.thumbnail === null ? "https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userInfo?.data.thumbnail,
+                        uri: userInfo?.data.thumbnail
                       }}
                     />
                     <UserInfo>
                       <UserId>{item.userName}</UserId>
-                      {/* <UserId>{item.likeYn.toString()}</UserId> */}
                       <ClubBox>
                         <ClubName onPress={() => goToClubStack(item)} >{item.clubName}</ClubName>
                       </ClubBox>
@@ -579,17 +579,19 @@ const Home: React.FC<HomeScreenProps> = ({
                 </FeedHeader>
                 <FeedMain>
                   <FeedImage>
-                    <ImageSlider
-                      data={[{ img: item.imageUrls[0] }, { img: item.imageUrls[1]},{ img: item.imageUrls[2] }]}
+                    {item.imageUrls?.length > 1 ? (
+                      <ImageSlider
+                        data={[{ img: item.imageUrls[0]}, {img: item.imageUrls[1]},{img: item.imageUrls[2] }]}
                       closeIconColor="#fff"
-                      preview={true}
-                      caroselImageStyle={{resizeMode: 'stretch',height: 400}}
+                      preview={false}
+                      caroselImageStyle={{resizeMode: 'cover',height: 400}}
                       indicatorContainerStyle={{ bottom: 0 }}
                       size={FEED_IMAGE_SIZE}
                     />
-
-                    {/*<ImageSource source={item.imageUrls[0]===undefined?{uri:"https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg"}:{uri:item.imageUrls[0]}} size={FEED_IMAGE_SIZE}/>*/}
-                  </FeedImage>
+                    ):(
+                      <ImageSource source={{uri: item.imageUrls[0]}} size={400}/>
+                    ) }
+                   </FeedImage>
                   <FeedInfo>
                     <LeftInfo>
                       <InfoArea>

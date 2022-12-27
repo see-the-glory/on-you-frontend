@@ -27,7 +27,7 @@ import {
   UserApi,
   UserInfoResponse
 } from "../../api";
-import { ModifiyFeedScreenProps } from "../../types/feed";
+import { ModifiyPeedScreenProps } from "../../types/feed"
 import { useToast } from "react-native-toast-notifications";
 import {SwipeListView,SwipeRow} from 'react-native-swipe-list-view';
 import { AntDesign, Ionicons } from "@expo/vector-icons";
@@ -73,7 +73,6 @@ const CommentArea = styled.View`
   width: 100%;
   padding: 10px 20px 0 20px;
   position: relative;
-  background-color: #ffffff;
 `;
 
 const CommentImg = styled.Image`
@@ -130,9 +129,8 @@ const Time = styled(CustomText)`
 const ReplyArea = styled.View`
   display: flex;
   flex-direction: row;
-  padding: 1% 0 0 20px;
-  height: auto;
-  bottom: ${Platform.OS === 'ios' ? 3 : 0}%;
+  padding: 0 0 0 20px;
+  top: 10px;
 `;
 
 const ReplyInputArea = styled.View`
@@ -140,7 +138,6 @@ const ReplyInputArea = styled.View`
   justify-content: space-between;
   align-items: center;
   width: 85%;
-
 `
 
 const ReplyInput = styled(CustomTextInput)`
@@ -164,13 +161,12 @@ const ReplyDone = styled(CustomText)`
   font-weight: bold;
   width: 30px;
   height: 24px;
-  // top: 15%;
 `;
 
 const ModalIcon = styled.TouchableOpacity``;
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
+const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
                                                       navigation:{navigate},
                                                       route: { params: { feedData }},
                                                     }) => {
