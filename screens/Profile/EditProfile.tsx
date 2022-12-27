@@ -155,27 +155,44 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
   const [name, setName] = useState<string>(userData?.name);
   const [sex, setSex] = useState<string>(userData?.sex === "M" ? "남자" : "여자");
   const [birthday, setBirthday] = useState<string>(userData?.birthday);
-  const [phone, setPhone] = useState<string>(userData?.phoneNumber);
+  const [phoneNumber, setPhoneNumber] = useState<string>(userData?.phoneNumber);
   const [organizationName, setOrganizationName] = useState<string>(userData?.organizationName);
   const [interests, setInterests] = useState("");
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const toast = useToast();
 
+  const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 4) * 3);
+
+  const pickImage = async () => {
+    const result: any = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (result.cancelled) {
+      return null;
+    }
+
+    console.log("result : ", result);
+    setThumbnail(result.uri);
+  };
+
   const mutation = useMutation(UserApi.updateUserInfo, {
     onSuccess: (res) => {
-      console.log(res);
+      console.log("res: ", res);
       if (res.status === 200) {
         navigate("ProfileStack", {
           screen: "Profile",
         });
-        console.log(res.json);
         toast.show("저장에 성공하였습니다.", {
           type: "warning",
         });
       } else {
         console.log(`mutation success but please check status code`);
         console.log(`status: ${res.status}`);
-        console.log(`${res.json}`);
         toast.show("저장에 실패하였습니다.", {
           type: "warning",
         });
@@ -192,11 +209,11 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
     const data = {
       name,
       birthday,
-      phone,
+      phoneNumber,
       organizationName,
     };
 
-    console.log(data);
+    console.log("data : ", data);
 
     const splitedURI = new String(thumbnail).split("/");
 
@@ -209,14 +226,14 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
         name: splitedURI[splitedURI.length - 1],
       },
     };
-
+    console.log("requestData : ", requestData);
     mutation.mutate(requestData);
   };
 
   useEffect(() => {
     setOptions({
       headerRight: () => (
-        <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })} onPressIn={onSubmit}>
+        <TouchableOpacity onPress={onSubmit}>
           <Text style={{ color: "#2995FA" }}>저장</Text>
         </TouchableOpacity>
       ),
@@ -224,32 +241,16 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
   }, []);
 
   useEffect(() => {
-    if (phone.length === 10) {
-      setPhone(phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3"));
+    if (phoneNumber.length === 10) {
+      setPhoneNumber(phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3"));
     }
-    if (phone.length === 12) {
-      setPhone(phone.replace(/-/g, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3"));
+    if (phoneNumber.length === 12) {
+      setPhoneNumber(phoneNumber.replace(/-/g, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3"));
     }
-    if (phone.length === 13) {
-      setPhone(phone.replace(/-/g, "").replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3"));
+    if (phoneNumber.length === 13) {
+      setPhoneNumber(phoneNumber.replace(/-/g, "").replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3"));
     }
-  }, [phone]);
-
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
-  const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 4) * 3);
-
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
-      aspect: [16, 9],
-      quality: 1,
-    });
-
-    if (result.cancelled === false) {
-      setThumbnail(result.uri);
-    }
-  };
+  }, [phoneNumber]);
 
   const [approvalMethod, setApprovalMethod] = useState<number>(0);
 
@@ -271,7 +272,7 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
         <ImagePickerView>
           <ImagePickerWrap>
             <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={0.8}>
-              <PickedImage height={imageHeight} source={{ uri: thumbnail ? thumbnail : "http://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" }} />
+              <PickedImage height={imageHeight} source={{ uri: thumbnail }} />
             </ImagePickerButton>
           </ImagePickerWrap>
           <ProfileText onPress={pickImage}>프로필 사진 설정</ProfileText>
@@ -305,7 +306,7 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
         </Form>
         <Form>
           <Title>연락처</Title>
-          <Input keyboardType="numeric" placeholder="010-xxxx-xxxx" autoCorrect={false} defaultValue={userData.phoneNumber} onChangeText={(phone) => setPhone(phone)} maxLength={13} />
+          <Input keyboardType="numeric" placeholder="010-xxxx-xxxx" autoCorrect={false} defaultValue={userData.phoneNumber} onChangeText={(phone) => setPhoneNumber(phone)} maxLength={13} />
         </Form>
         <Form>
           <Title>교회</Title>

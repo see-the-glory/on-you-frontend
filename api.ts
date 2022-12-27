@@ -614,7 +614,7 @@ const getUserInfo = ({ queryKey }: any) => {
 const updateUserInfo = (req: UserInfoRequest) => {
   const body = new FormData();
 
-  if (req.image !== null) {
+  if (req.image) {
     body.append("file", req.image);
   }
 
