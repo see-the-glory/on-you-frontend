@@ -4,7 +4,7 @@ import Tabs from "./Tabs";
 import Profile from "../screens/Profile";
 import CreateHomeFeed from "../screens/HomeRelevant/CreateHomeFeed";
 import Accusation from "../screens/HomeRelevant/Accusation";
-import ModifiyFeed from "../screens/HomeRelevant/ModifiyFeed";
+import ModifiyPeed from "../screens/HomeRelevant/ModifiyPeed";
 import ImageSelecter from "../screens/HomeRelevant/ImageSelecter";
 import ReportComplete from "../screens/HomeRelevant/ReportComplete";
 import ReplyPage from "../screens/HomeRelevant/ReplyPage";
@@ -12,8 +12,6 @@ import MyClubSelector from "../screens/HomeRelevant/MyClubSelector";
 import { Text, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
-import { useQuery, useMutation } from "react-query";
-import { Feed, FeedCreationRequest, FeedsResponse } from "../api";
 import styled from "styled-components/native";
 
 const ImageSelectSave = styled.Text`
@@ -132,8 +130,8 @@ const HomeStack = ({
         }}
       />
       <NativeStack.Screen
-        name="ModifiyFeed"
-        component={ModifiyFeed}
+        name="ModifiyPeed"
+        component={ModifiyPeed}
         initialParams={{ feedData }}
         options={{
           title: "수정",

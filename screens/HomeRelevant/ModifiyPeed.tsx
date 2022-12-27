@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import styled from "styled-components/native";
 import { Keyboard, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions, View } from "react-native";
 import { useSelector } from "react-redux";
 import { useMutation, useQuery } from "react-query";
 import { Feed, FeedApi, FeedUpdateRequest, ModifiedReponse, UserApi, UserInfoResponse } from "../../api";
-import { ModifiyFeedScreenProps } from "../../types/feed";
+import { ModifiyPeedScreenProps } from "../../types/feed";
 import { RootStackParamList } from "../../types/Club";
 import { useNavigation } from "@react-navigation/native";
 import CustomTextInput from "../../components/CustomTextInput";
 import CustomText from "../../components/CustomText";
+import {
+  ImageSlider
+} from "react-native-image-slider-banner";
+import { Modalize } from "react-native-modalize";
+import { Portal } from "react-native-portalize";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -42,7 +47,6 @@ const UserImage = styled.Image`
 
 const UserId = styled(CustomText)`
   color: black;
-  font-family: "NotoSansKR-Bold";
   font-size: 14px;
   margin-bottom: 5px;
 `;
@@ -80,6 +84,7 @@ const Content = styled.View`
 
 const ContentArea = styled.View`
   left: 25px;
+  flex:1;
 `;
 const ImageArea = styled.View`
   // padding-bottom: 1px;
@@ -103,7 +108,7 @@ interface FeedEditItem {
   screen: keyof RootStackParamList;
 }
 
-const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
+const ModifiyPeed: React.FC<ModifiyPeedScreenProps> = ({
   navigation: { navigate },
   route: {
     params: { feedData },
@@ -118,6 +123,12 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
   const [data, setData] = useState<Feed>(feedData);
   const [items, setItems] = useState<FeedEditItem[]>();
   const navigation = useNavigation();
+
+  const modalizeRef = useRef<Modalize>(null);
+  const onOpen = () => {
+    console.log("Before Modal Passed FeedId");
+    modalizeRef?.current?.open();
+  };
   //피드호출
   const {
     isLoading: feedsLoading,
@@ -188,34 +199,48 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
     });
   }, [navigation, FixComplete]);
 
+  const imageChoice = [];
+  const imageList = [];
+  for (let i = 0; i < feedData.imageUrls.length; i++) {
+    imageList.push({ img: feedData.imageUrls[i] });
+  }
+  imageChoice.push(<ImageSlider
+    data={imageList} preview={false}
+    caroselImageStyle={{ resizeMode: "stretch", height: 350 }}
+    indicatorContainerStyle={{ bottom: -150 }}
+    />);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Container>
         <KeyboardAvoidingView behavior={Platform.select({ ios: "position", android: "position" })} style={{ flex: 1 }}>
-          {/* <ImageArea> */}
           <FeedUser>
             <UserImage source={{ uri: userInfo?.data.thumbnail }} />
             <UserInfo>
               <UserId>{data.userName}</UserId>
-              <ClubBox>
+              <ClubBox onPres={onOpen}>
                 <ClubName>{data.clubName}</ClubName>
               </ClubBox>
+             {/* <Portal>
+                <Modalize
+                  ref={modalizeRef}
+                  modalHeight={200}
+                  handlePosition="inside"
+                >
+                  <View>123</View>
+                </Modalize>
+              </Portal>*/}
             </UserInfo>
           </FeedUser>
           <FeedImage>
-            <ImageSource
-              source={data.imageUrls[0] === undefined ? { uri: "https://i.pinimg.com/564x/eb/24/52/eb24524c5c645ce204414237b999ba11.jpg" } : { uri: data.imageUrls[0] }}
-              size={FEED_IMAGE_SIZE}
-            />
+            <View>{imageChoice}</View>
           </FeedImage>
-          {/* </ImageArea> */}
           <ContentArea>
             <Ment
               onChangeText={(content:any) => setContent(content)}
               placeholderTextColor="#B0B0B0"
               placeholder="게시글 입력 ..."
               textAlign="left"
-              textAlignVertical="top"
               multiline={true}
               maxLength={1000}
               returnKeyType="done"
@@ -229,4 +254,4 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
     </TouchableWithoutFeedback>
   );
 };
-export default ModifiyFeed;
+export default ModifiyPeed;

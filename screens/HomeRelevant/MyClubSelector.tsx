@@ -135,7 +135,6 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
     data: myClub,
   } = useQuery<ClubResponse>(["selectMyClubs", token], UserApi.selectMyClubs);
 
-
   const goToImageSelect = (clubData:Club) =>{
     return navigate("HomeStack", {
       screen:'ImageSelecter',
@@ -157,10 +156,11 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
         {loading ? (
           <ActivityIndicator />
         ) : (
-          <FlatList refreshing={refreshing} onRefresh={onRefresh}
-                    keyExtractor={(item: Club, index: number) => String(index)}
-                    data={myClub?.data}
-                    renderItem={({ item, index }: { item: Club; index: number }) => (
+          <FlatList
+            refreshing={refreshing} onRefresh={onRefresh}
+            keyExtractor={(item: Club, index: number) => String(index)}
+            data={myClub?.data}
+            renderItem={({ item, index }: { item: Club; index: number }) => (
                       <ClubArea onPress={() => goToImageSelect(item)}>
                         <ClubImg source={{ uri: item.thumbnail }} />
                         <ClubMy>
@@ -170,8 +170,7 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
                           <CommentRemainder>
                             <CtrgArea>
                               <CtgrText>
-                                <OrganizationName>{item.organizationName}</OrganizationName>
-                                <CreatorName>{item.creatorName}</CreatorName>
+                                <OrganizationName>{item.categories[0].name}</OrganizationName>
                               </CtgrText>
                             </CtrgArea>
                           </CommentRemainder>
