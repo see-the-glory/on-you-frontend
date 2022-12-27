@@ -33,18 +33,15 @@ const EmptyText = styled(CustomText)`
 `;
 
 const ClubNotification = ({
-  navigation: { navigate },
+  navigation: { navigate, addListener },
   route: {
     params: { clubData, clubRole },
   },
 }) => {
   const toast = useToast();
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const {
-    isLoading: notiLoading,
-    data: notifications,
-    refetch: notiRefetch,
-  } = useQuery(["getClubNotifications", clubData.id], ClubApi.getClubNotifications, {
+  const [notifications, setNotifications] = useState<Notification[]>();
+  const { isLoading: notiLoading, refetch: notiRefetch } = useQuery(["getClubNotifications", clubData.id], ClubApi.getClubNotifications, {
     onSuccess: (res) => {
       if (res.status !== 200 || res.resultCode !== "OK") {
         console.log(`query fail`);
@@ -53,6 +50,8 @@ const ClubNotification = ({
         toast.show("모임 소식정보를 불러오지 못했습니다.", {
           type: "error",
         });
+      } else {
+        setNotifications(res.data.reverse());
       }
     },
     onError: (error) => {
@@ -73,6 +72,7 @@ const ClubNotification = ({
       if (item.actionType === "APPLY") {
         return navigate("ClubApplication", {
           clubData,
+          actionId: item.actionId,
           actionerName: item.actionerName,
           actionerId: item.actionerId,
           applyMessage: item.applyMessage,
@@ -96,7 +96,7 @@ const ClubNotification = ({
         contentContainerStyle={{ flexGrow: 1, marginVertical: 10, paddingHorizontal: SCREEN_PADDING_SIZE }}
         refreshing={refreshing}
         onRefresh={onRefresh}
-        data={notifications.data}
+        data={notifications}
         ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
         keyExtractor={(item: Notification, index: number) => String(index)}
         renderItem={({ item, index }: { item: Notification; index: number }) => (

@@ -67,7 +67,7 @@ const ButtonText = styled(CustomText)`
 
 const ClubApplication = ({
   route: {
-    params: { clubData, actionerName, actionerId, applyMessage },
+    params: { clubData, actionId, actionerName, actionerId, applyMessage },
   },
   navigation: { navigate, goBack, setOptions },
 }) => {
@@ -80,7 +80,7 @@ const ClubApplication = ({
         toast.show(`가입신청을 거절했습니다.`, {
           type: "warning",
         });
-        navigate("ClubTopTabs", { clubData });
+        goBack();
       } else {
         console.log(`rejectToClubJoin mutation success but please check status code`);
         console.log(`status: ${res.status}`);
@@ -105,7 +105,7 @@ const ClubApplication = ({
         toast.show(`가입신청을 수락했습니다.`, {
           type: "success",
         });
-        navigate("ClubTopTabs", { clubData });
+        goBack();
       } else {
         console.log(`approveToClubJoin mutation success but please check status code`);
         console.log(`status: ${res.status}`);
@@ -141,6 +141,7 @@ const ClubApplication = ({
         onPress: () => {
           let data: ClubRejectRequest = {
             clubId: clubData.id,
+            actionId: actionId,
             userId: actionerId,
             token,
           };
@@ -158,6 +159,7 @@ const ClubApplication = ({
         onPress: () => {
           let data: ClubApproveRequest = {
             clubId: clubData.id,
+            actionId: actionId,
             userId: actionerId,
             token,
           };
