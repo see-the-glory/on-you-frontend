@@ -134,7 +134,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   const onSubmit = () => {
     if (category1 === -1 && category2 === -1) {
       toast.show(`카테고리가 설정되어있지 않습니다.`, {
-        type: "error",
+        type: "warning",
       });
       return;
     } else if (category1 === -1 && category2 !== -1) {
@@ -204,6 +204,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
                 maxLength={36}
                 textAlignVertical="center"
                 onChangeText={(value: string) => setClubShortDesc(value)}
+                includeFontPadding={false}
               />
               <ItemText>ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!</ItemText>
             </ContentItem>
@@ -218,6 +219,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
                 maxLength={1000}
                 textAlignVertical="top"
                 onChangeText={(value: string) => setClubLongDesc(value)}
+                includeFontPadding={false}
               />
             </ContentItem>
           </Content>

@@ -73,6 +73,7 @@ export interface ClubHomeParamList {
   scrollY: Animated.Value;
   headerDiff: number;
   clubRole?: ClubRole;
+  schedules?: RefinedSchedule[];
 }
 
 // ClubHome Header
@@ -102,12 +103,12 @@ export interface ClubHomeFloatingButtonProps {
 }
 
 export interface RefinedSchedule extends Schedule {
-  year: string;
-  month: string;
-  day: string;
-  dayOfWeek: string;
-  hour: string;
-  minute: string;
-  ampm: string;
-  isEnd: boolean;
+  year?: string;
+  month?: string;
+  day?: string;
+  dayOfWeek?: string;
+  hour?: string;
+  minute?: string;
+  ampm?: string;
+  isEnd?: boolean;
 }

@@ -63,7 +63,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, c
         </Header>
         <TextView>
           <ItemBoldText processDone={notificationData.processDone}>{notificationData.actionerName}</ItemBoldText>
-          <ItemText processDone={notificationData.processDone}>{`${notificationData.actionId}님이 `}</ItemText>
+          <ItemText processDone={notificationData.processDone}>{`님이 `}</ItemText>
           <ItemBoldText processDone={notificationData.processDone}>{clubData.name}</ItemBoldText>
           <ItemText processDone={notificationData.processDone}>{` 가입을 희망합니다.`}</ItemText>
         </TextView>

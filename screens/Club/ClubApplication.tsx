@@ -86,7 +86,7 @@ const ClubApplication = ({
         console.log(`status: ${res.status}`);
         console.log(res);
         toast.show(`${res.message} (Error Code: ${res.status})`, {
-          type: "error",
+          type: "warning",
         });
       }
     },
@@ -94,7 +94,7 @@ const ClubApplication = ({
       console.log("--- Error rejectToClubJoin ---");
       console.log(`error: ${error}`);
       toast.show(`Error Code: ${error}`, {
-        type: "error",
+        type: "warning",
       });
     },
   });
@@ -111,7 +111,7 @@ const ClubApplication = ({
         console.log(`status: ${res.status}`);
         console.log(res);
         toast.show(`${res.message} (Error Code: ${res.status})`, {
-          type: "error",
+          type: "warning",
         });
       }
     },
@@ -119,7 +119,7 @@ const ClubApplication = ({
       console.log("--- Error approveToClubJoin ---");
       console.log(`error: ${error}`);
       toast.show(`Error Code: ${error}`, {
-        type: "error",
+        type: "warning",
       });
     },
   });

@@ -111,7 +111,7 @@ const Break = styled.View<{ sep: number }>`
 
 interface ScheduleModalProps {
   visible: boolean;
-  scheduleData: RefinedSchedule[];
+  scheduleData?: RefinedSchedule[];
   selectIndex: number;
   children: object;
 }

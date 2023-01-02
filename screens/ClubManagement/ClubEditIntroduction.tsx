@@ -87,7 +87,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
         console.log(`status: ${res.status}`);
         console.log(res);
         toast.show(`Error Code: ${res.status}`, {
-          type: "error",
+          type: "warning",
         });
       }
     },
@@ -95,7 +95,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
       console.log("--- Error ---");
       console.log(`error: ${error}`);
       toast.show(`Error Code: ${error}`, {
-        type: "error",
+        type: "warning",
       });
     },
     onSettled: (res, error) => {},
@@ -142,6 +142,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
                 maxLength={36}
                 textAlignVertical="center"
                 onChangeText={(value: string) => setClubShortDesc(value)}
+                includeFontPadding={false}
               />
               <ItemText>ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!</ItemText>
             </ContentItem>
@@ -157,6 +158,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
                 maxLength={1000}
                 textAlignVertical="top"
                 onChangeText={(value: string) => setClubLongDesc(value)}
+                includeFontPadding={false}
               />
             </ContentItem>
           </Content>
