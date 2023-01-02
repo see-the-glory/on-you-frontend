@@ -6,7 +6,7 @@ import styled from "styled-components/native";
 import * as ImagePicker from "expo-image-picker";
 import { useMutation, useQuery } from "react-query";
 import { useSelector, useDispatch } from "react-redux";
-import { UserApi, UserUpdateRequest } from "../../api";
+import { UserApi, UserUpdateRequest, UserInfoRequest } from "../../api";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { EditProfileScreenProps } from "../../Types/User";
 import { NavigationRouteContext } from "@react-navigation/native";
@@ -15,6 +15,7 @@ import RNDateTimePicker from "@react-native-community/datetimepicker";
 import DatePicker from "react-native-date-picker";
 import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
+import CustomTextInput from "../../components/CustomTextInput";
 
 const Container = styled.View`
   flex: 1;
@@ -68,13 +69,16 @@ const Form = styled.View`
   padding: 0 5px;
 `;
 
-const Title = styled.Text`
+const Title = styled(CustomText)`
   color: #b0b0b0;
   font-size: 10px;
+  line-height: 15px;
   margin-bottom: 10px;
 `;
 
-const Input = styled.TextInput`
+const Input = styled(CustomTextInput)`
+  font-size: 14px;
+  line-height: 20px;
   border-bottom-width: 1px;
   border-bottom-color: #cecece;
   padding-bottom: 5px;
@@ -138,13 +142,12 @@ const ItemView = styled.View`
 `;
 
 const ItemText = styled(CustomText)`
-  font-size: 16px;
+  font-size: 14px;
   line-height: 21px;
-  color: #6f6f6f;
   padding-bottom: 5px;
 `;
 
-const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userData }, navigation: { navigate, setOptions, goBack } }) => {
+const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ route: { params: userData }, navigation: { navigate, setOptions, goBack } }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
 
   const [imageURI, setImageURI] = useState<string | null>(userData?.thumbnail);
@@ -162,8 +165,8 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
 
   const mutation = useMutation(UserApi.updateUserInfo, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        navigate("ProfileStack", {
+      if (res.status === 200 && res.resultCode === "OK") {
+        navigate("Tabs", {
           screen: "Profile",
         });
         toast.show("저장에 성공하였습니다.", {
@@ -197,7 +200,7 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
 
     const splitedURI = new String(imageURI).split("/");
 
-    const updateData: UserUpdateRequest =
+    const updateData: UserInfoRequest =
       imageURI === null
         ? {
             data,
@@ -223,8 +226,8 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
       quality: 1,
     });
 
-    if (result.cancelled === false) {
-      setImageURI(result.uri);
+    if (result.canceled === false) {
+      setImageURI(result.assets[0].uri);
     }
   };
 
@@ -275,11 +278,11 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
         </ImagePickerView>
         <Form>
           <Title>이름</Title>
-          <Input autoCorrect={false} placeholder="홍길동" defaultValue={userData.name} onChangeText={(text) => setName(text)} />
+          <Input autoCorrect={false} placeholder="홍길동" defaultValue={name} onChangeText={(text) => setName(text)} />
         </Form>
         <Form>
           <Title>성별</Title>
-          <Input autoCorrect={false} placeholder="남자 or 여자" defaultValue={userData.sex === "M" ? "남자" : "여자"} onChangeText={(text) => setSex(text === "남자" ? "M" : "F")} />
+          <Input autoCorrect={false} placeholder="남자 or 여자" defaultValue={sex} onChangeText={(text) => setSex(text === "남자" ? "M" : "F")} />
         </Form>
         <Form>
           <Title>생년월일</Title>
@@ -309,11 +312,11 @@ const EditProfile: React.FC<EditProfileScreenProps> = ({ route: { params: userDa
         </Form>
         <Form>
           <Title>연락처</Title>
-          <Input keyboardType="numeric" placeholder="010-xxxx-xxxx" autoCorrect={false} defaultValue={userData.phoneNumber} onChangeText={(phone) => setPhoneNumber(phone)} maxLength={13} />
+          <Input keyboardType="numeric" placeholder="010-xxxx-xxxx" autoCorrect={false} defaultValue={phoneNumber} onChangeText={(phone) => setPhoneNumber(phone)} maxLength={13} />
         </Form>
         <Form>
           <Title>교회</Title>
-          <Input autoCorrect={false} placeholder="시광교회" defaultValue={userData.organizationName} onChangeText={(text) => setOrganizationName(text)} />
+          <Input autoCorrect={false} placeholder="시광교회" defaultValue={organizationName} onChangeText={(text) => setOrganizationName(text)} />
         </Form>
         {/* <Form>
           <Title>관심사(3개 이상 택)</Title>

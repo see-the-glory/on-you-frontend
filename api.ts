@@ -671,7 +671,7 @@ const getUserInfo = ({ queryKey }: any) => {
   }).then((response) => response.json());
 };
 
-const updateUserInfo = (req: UserUpdateRequest) => {
+const updateUserInfo = (req: UserInfoRequest) => {
   const body = new FormData();
 
   if (req.image) {
@@ -679,7 +679,7 @@ const updateUserInfo = (req: UserUpdateRequest) => {
   }
 
   if (req.data) {
-    body.append("UserUpdateRequest", {
+    body.append("userUpdateRequest", {
       string: JSON.stringify(req.data),
       type: "application/json",
     });
