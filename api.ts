@@ -354,6 +354,18 @@ export interface UserInfoRequest {
   };
 }
 
+export interface UserUpdateRequest {
+  image?: ImageType | null;
+  data?: {
+    birthday?: string;
+    name?: string;
+    organizationName?: string;
+    sex?: string;
+    phoneNumber?: string;
+  };
+  token: string;
+}
+
 export interface SignUp {
   birthday?: string;
   email?: string;
@@ -659,17 +671,19 @@ const getUserInfo = ({ queryKey }: any) => {
   }).then((response) => response.json());
 };
 
-const updateUserInfo = (req: UserInfoRequest) => {
+const updateUserInfo = (req: UserUpdateRequest) => {
   const body = new FormData();
 
   if (req.image) {
     body.append("file", req.image);
   }
 
-  body.append("UserInfoRequest", {
-    string: JSON.stringify(req.data),
-    type: "application/json",
-  });
+  if (req.data) {
+    body.append("UserUpdateRequest", {
+      string: JSON.stringify(req.data),
+      type: "application/json",
+    });
+  }
 
   return fetch(`${BASE_URL}/api/user`, {
     method: "PUT",
