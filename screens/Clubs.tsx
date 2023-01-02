@@ -64,8 +64,8 @@ const HeaderItem = styled.View`
 `;
 
 const HeaderItemText = styled(CustomText)`
-  font-size: 11px;
-  line-height: 15px;
+  font-size: 13px;
+  line-height: 18px;
 `;
 
 const MainView = styled.View`
@@ -136,12 +136,12 @@ const ItemContentButton = styled.TouchableOpacity`
 `;
 
 const CheckBox = styled.View`
-  height: 15px;
-  width: 15px;
+  height: 17px;
+  width: 17px;
   justify-content: center;
   align-items: center;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  margin-left: 5px;
+  margin-left: 8px;
   background-color: white;
 `;
 
@@ -485,7 +485,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 >
                   <ItemContentText>멤버 모집중인 모임만 보기</ItemContentText>
                   <CheckBox>
-                    <Ionicons name="checkmark-sharp" size={10} color={showRecruiting ? "#FF714B" : "white"} />
+                    <Ionicons name="checkmark-sharp" size={15} color={showRecruiting ? "#FF714B" : "white"} />
                   </CheckBox>
                 </ItemContentButton>
               </ItemRightView>
@@ -531,7 +531,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 >
                   <ItemContentText>내가 가입된 모임만 보기</ItemContentText>
                   <CheckBox>
-                    <Ionicons name="checkmark-sharp" size={10} color={showMy ? "#FF714B" : "#e8e8e8"} />
+                    <Ionicons name="checkmark-sharp" size={15} color={showMy ? "#FF714B" : "#e8e8e8"} />
                   </CheckBox>
                 </ItemContentButton>
               </ItemRightView>

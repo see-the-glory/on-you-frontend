@@ -63,7 +63,7 @@ const ClubJoin = ({
         console.log(`status: ${res.status}`);
         console.log(res);
         toast.show(`Error Code: ${res.status}`, {
-          type: "error",
+          type: "warning",
         });
       }
     },
@@ -71,7 +71,7 @@ const ClubJoin = ({
       console.log("--- Error ---");
       console.log(`error: ${error}`);
       toast.show(`Error Code: ${error}`, {
-        type: "error",
+        type: "warning",
       });
     },
   });
@@ -114,6 +114,7 @@ const ClubJoin = ({
             maxLength={100}
             textAlignVertical="top"
             onChangeText={(text: string) => setMemo(text)}
+            includeFontPadding={false}
           />
         </MainView>
       </KeyboardAvoidingView>

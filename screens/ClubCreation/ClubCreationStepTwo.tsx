@@ -219,6 +219,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
               onChangeText={(name) => setClubName(name)}
               returnKeyType="done"
               returnKeyLabel="done"
+              includeFontPadding={false}
             />
           </ContentItem>
           <ContentItem>
@@ -247,6 +248,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
                     });
                 }}
                 editable={!maxNumberInfinity}
+                includeFontPadding={false}
               />
               <CheckButton
                 onPress={() => {
@@ -277,7 +279,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
           </ContentItem>
           <ContentItem>
             <ItemTitle>모임 담당자 연락처</ItemTitle>
-            <ItemTextInput keyboardType="numeric" placeholder="010-0000-0000" maxLength={13} onChangeText={(phone) => setPhoneNumber(phone)} value={phoneNumber} />
+            <ItemTextInput keyboardType="numeric" placeholder="010-0000-0000" maxLength={13} onChangeText={(phone) => setPhoneNumber(phone)} value={phoneNumber} includeFontPadding={false} />
           </ContentItem>
           <ContentItem>
             <ItemTitle>모임 소속 교회</ItemTitle>
@@ -289,6 +291,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
               onChangeText={(name) => setOrganizationName(name)}
               returnKeyType="done"
               returnKeyLabel="done"
+              includeFontPadding={false}
             />
           </ContentItem>
         </Content>

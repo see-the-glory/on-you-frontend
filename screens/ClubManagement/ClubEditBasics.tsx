@@ -135,14 +135,14 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
 }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
   const toast = useToast();
-  const [clubName, setClubName] = useState(clubData.name);
-  const [maxNumber, setMaxNumber] = useState(clubData.maxNumber === 0 ? "무제한 정원" : `${String(clubData.maxNumber)} 명`);
+  const [clubName, setClubName] = useState<string>(clubData.name ?? "");
+  const [maxNumber, setMaxNumber] = useState<string>(clubData.maxNumber === 0 ? "무제한 정원" : `${String(clubData.maxNumber)} 명`);
   const [maxNumberInfinity, setMaxNumberInfinity] = useState<boolean>(clubData.maxNumber ? false : true);
-  const [phoneNumber, setPhoneNumber] = useState(clubData.contactPhone ?? "");
-  const [organizationName, setOrganizationName] = useState(clubData.organizationName ?? "");
-  const [isApproveRequired, setIsApproveRequired] = useState(clubData.isApprovedRequired);
-  const [selectCategory1, setCategory1] = useState(clubData.categories[0]?.id ?? -1);
-  const [selectCategory2, setCategory2] = useState(clubData.categories[1]?.id ?? -1);
+  const [phoneNumber, setPhoneNumber] = useState<string>(clubData.contactPhone ?? "");
+  const [organizationName, setOrganizationName] = useState<string>(clubData.organizationName ?? "");
+  const [isApproveRequired, setIsApproveRequired] = useState<string>(clubData.isApprovedRequired ?? "");
+  const [selectCategory1, setCategory1] = useState((clubData.categories && clubData.categories[0]?.id) ?? -1);
+  const [selectCategory2, setCategory2] = useState((clubData.categories && clubData.categories[1]?.id) ?? -1);
   const [categoryBundle, setCategoryBundle] = useState<Array<Category[]>>();
   const [imageURI, setImageURI] = useState<string | null>(null);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -168,7 +168,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
         console.log(`status: ${res.status}`);
         console.log(res);
         toast.show(`Error Code: ${res.status}`, {
-          type: "error",
+          type: "warning",
         });
       }
     },
@@ -176,7 +176,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
       console.log("--- Error updateClub ---");
       console.log(`error: ${error}`);
       toast.show(`Error Code: ${error}`, {
-        type: "error",
+        type: "warning",
       });
     },
     onSettled: (res, error) => {},
@@ -205,14 +205,28 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   }, [phoneNumber]);
 
   const save = () => {
+    let category1 = selectCategory1;
+    let category2 = selectCategory2;
+    if (category1 === -1 && category2 === -1) {
+      toast.show(`카테고리가 설정되어있지 않습니다.`, {
+        type: "warning",
+      });
+      return;
+    } else if (category1 === -1 && category2 !== -1) {
+      category1 = category2;
+      category2 = -1;
+    }
+
     const contactPhone = phoneNumber.replace(/-/g, "");
     const data = {
+      category1Id: category1,
       clubName,
       clubMaxMember: maxNumberInfinity ? 0 : Number(maxNumber.split(" ")[0]),
       isApproveRequired,
       organizationName,
       contactPhone: contactPhone === "" ? null : contactPhone,
     };
+    if (category2 !== -1) data.category2Id = category2;
 
     const splitedURI = new String(imageURI).split("/");
 
@@ -225,7 +239,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
           }
         : {
             image: {
-              uri: imageURI.replace("file://", ""),
+              uri: Platform.OS === "android" ? imageURI : imageURI.replace("file://", ""),
               type: "image/jpeg",
               name: splitedURI[splitedURI.length - 1],
             },
@@ -245,8 +259,8 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
       quality: 1,
     });
 
-    if (result.cancelled === false) {
-      setImageURI(result.uri);
+    if (result.canceled === false) {
+      setImageURI(result.assets[0].uri);
     }
   };
 
@@ -292,9 +306,10 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                     setClubName(clubData.name);
                   }
                 }}
-                onChangeText={(name) => setClubName(name)}
+                onChangeText={(name: string) => setClubName(name)}
                 returnKeyType="done"
                 returnKeyLabel="done"
+                includeFontPadding={false}
               />
             </ContentItem>
             <ContentItem>
@@ -315,7 +330,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                   }
                   value={maxNumber}
                   maxLength={6}
-                  onChangeText={(num) => {
+                  onChangeText={(num: string) => {
                     if (num.length < 3) setMaxNumber(num);
                     else
                       toast.show("최대 99명까지 가능합니다.", {
@@ -323,6 +338,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                       });
                   }}
                   editable={!maxNumberInfinity}
+                  includeFontPadding={false}
                 />
                 <CheckButton
                   onPress={() => {
@@ -354,7 +370,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
             </ContentItem>
             <ContentItem>
               <ItemTitle>모임 담당자 연락처</ItemTitle>
-              <ItemTextInput keyboardType="numeric" placeholder="010-0000-0000" maxLength={13} onChangeText={(phone) => setPhoneNumber(phone)} value={phoneNumber} />
+              <ItemTextInput keyboardType="numeric" placeholder="010-0000-0000" maxLength={13} onChangeText={(phone: string) => setPhoneNumber(phone)} value={phoneNumber} includeFontPadding={false} />
             </ContentItem>
             <ContentItem>
               <ItemTitle>모임 소속 교회</ItemTitle>
@@ -363,9 +379,10 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                 placeholder="모임이 소속된 교회 또는 담당자가 섬기는 교회명"
                 placeholderTextColor="#B0B0B0"
                 maxLength={16}
-                onChangeText={(name) => setOrganizationName(name)}
+                onChangeText={(name: string) => setOrganizationName(name)}
                 returnKeyType="done"
                 returnKeyLabel="done"
+                includeFontPadding={false}
               />
             </ContentItem>
             {categoryLoading ? (

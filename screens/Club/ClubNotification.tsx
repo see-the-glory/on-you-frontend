@@ -48,7 +48,7 @@ const ClubNotification = ({
         console.log(`getClubNotifications status: ${res.status}`);
         console.log(res);
         toast.show("모임 소식정보를 불러오지 못했습니다.", {
-          type: "error",
+          type: "warning",
         });
       } else {
         setNotifications(res.data.reverse());
@@ -56,7 +56,7 @@ const ClubNotification = ({
     },
     onError: (error) => {
       toast.show(`모임 소식 정보를 불러오지 못했습니다. ${error}`, {
-        type: "error",
+        type: "warning",
       });
     },
   });

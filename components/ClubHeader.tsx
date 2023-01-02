@@ -6,6 +6,7 @@ import { Animated } from "react-native";
 import { BlurView } from "expo-blur";
 import { ClubHomeHaederProps } from "../Types/Club";
 import CustomText from "./CustomText";
+import moment from "moment-timezone";
 
 const Header = styled.View`
   width: 100%;
@@ -121,7 +122,6 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
     inputRange: [0, headerDiff / 2, headerDiff],
     outputRange: [1, 0, 0],
   });
-
   return (
     <Header>
       <ImageBackground style={{ width: "100%", height: heightExpanded }} source={imageURI ? { uri: imageURI } : require("../assets/basic.jpg")}>
@@ -176,7 +176,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
               <DetailInfoView>
                 <DetailInfoContent>
                   <Ionicons name="calendar" size={15} color="yellow" style={{ marginRight: 5 }} />
-                  {schedules && schedules.length > 0 ? <ContentText>구현하세요</ContentText> : <ContentText>일정 없음</ContentText>}
+                  {schedules && schedules.length > 1 ? <ContentText>{moment(schedules[0].startDate).format("MMM D  |  hh:mm A")}</ContentText> : <ContentText>일정 없음</ContentText>}
                 </DetailInfoContent>
                 <DetailInfoContent>
                   <Ionicons name="md-person-circle-outline" size={15} color="yellow" style={{ marginRight: 5 }} />

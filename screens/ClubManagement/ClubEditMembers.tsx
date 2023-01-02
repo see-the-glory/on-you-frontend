@@ -97,7 +97,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
         console.log(`status: ${res.status}`);
         console.log(res);
         toast.show(`${res.message} (Error Code: ${res.status})`, {
-          type: "error",
+          type: "warning",
         });
       }
     },
@@ -105,7 +105,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
       console.log("--- Error changeRole ---");
       console.log(`error: ${error}`);
       toast.show(`Error Code: ${error}`, {
-        type: "error",
+        type: "warning",
       });
     },
     onSettled: (res, error) => {},

@@ -61,13 +61,13 @@ export interface Member {
 }
 
 export interface Schedule {
-  id: number;
-  name: string;
-  content: string;
-  members: Member[];
-  location: string;
-  startDate: string;
-  endDate: string | null;
+  id?: number;
+  name?: string;
+  content?: string;
+  members?: Member[];
+  location?: string;
+  startDate?: string;
+  endDate?: string | null;
 }
 
 export interface User {

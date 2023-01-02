@@ -166,7 +166,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
         }
       } else {
         toast.show(`Error Code: ${res.status}`, {
-          type: "error",
+          type: "warning",
         });
       }
     },
@@ -174,7 +174,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
       console.log("--- Error getClub ---");
       console.log(`error: ${error}`);
       toast.show(`Error Code: ${error}`, {
-        type: "error",
+        type: "warning",
       });
     },
   });
@@ -200,7 +200,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
         console.log(`status: ${res.status}`);
         console.log(res);
         toast.show(`Error Code: ${res.status}`, {
-          type: "error",
+          type: "warning",
         });
       }
     },
@@ -208,7 +208,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
       console.log("--- Error ---");
       console.log(`error: ${error}`);
       toast.show(`Error Code: ${error}`, {
-        type: "error",
+        type: "warning",
       });
     },
   });

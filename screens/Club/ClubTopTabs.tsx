@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Animated, Platform, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
+import { Animated, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
@@ -9,12 +9,13 @@ import ClubHeader from "../../components/ClubHeader";
 import ClubTabBar from "../../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Club, ClubApi, ClubApplyRequest, ClubResponse, ClubRoleResponse, ClubSchedulesResponse } from "../../api";
+import { useQuery } from "react-query";
+import { Club, ClubApi, ClubResponse, ClubRoleResponse, ClubSchedulesResponse } from "../../api";
 import { useSelector } from "react-redux";
-import ClubJoinModal from "./ClubJoinModal";
 import { useToast } from "react-native-toast-notifications";
 import { useFocusEffect } from "@react-navigation/native";
+import { RefinedSchedule } from "../../Types/Club";
+import moment from "moment-timezone";
 
 const Container = styled.View`
   flex: 1;
@@ -60,6 +61,7 @@ const ClubTopTabs = ({
   const token = useSelector((state) => state.AuthReducers.authToken);
   const toast = useToast();
   const [data, setData] = useState<Club>(clubData);
+  const [scheduleData, setScheduleData] = useState<RefinedSchedule[]>();
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
   // Header Height Definition
   const { top } = useSafeAreaInsets();
@@ -108,14 +110,13 @@ const ClubTopTabs = ({
     navigate("ClubNotification", { clubData: data, clubRole: clubRole?.data });
   };
 
-  const { refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
+  const { isLoading: clubLoading, refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
         setData(res.data);
-        console.log(`${res.data.id} contactPhone: ${res.data.contactPhone}`);
       } else {
         toast.show(`Error Code: ${res.status}`, {
-          type: "error",
+          type: "warning",
         });
       }
     },
@@ -123,7 +124,7 @@ const ClubTopTabs = ({
       console.log("--- Error getClub ---");
       console.log(`error: ${error}`);
       toast.show(`Error Code: ${error}`, {
-        type: "error",
+        type: "warning",
       });
     },
   });
@@ -139,28 +140,57 @@ const ClubTopTabs = ({
         console.log(`getClubRole status: ${res.status}`);
         console.log(res);
         toast.show("멤버 등급 정보를 불러오지 못했습니다.", {
-          type: "error",
+          type: "warning",
         });
       }
     },
     onError: (error) => {
       toast.show(`Role Request Error: ${error}`, {
-        type: "error",
+        type: "warning",
       });
     },
   });
 
-  const { isLoading: schedulesLoading, data: schedules } = useQuery<ClubSchedulesResponse>(["getClubSchedules", data.id], ClubApi.getClubSchedules, {
+  const { isLoading: schedulesLoading, refetch: schedulesRefetch } = useQuery<ClubSchedulesResponse>(["getClubSchedules", data.id], ClubApi.getClubSchedules, {
     onSuccess: (res) => {
       if (res.status !== 200) {
-        toast.show(`Schedule Request Error Code: ${res.status}`, {
-          type: "error",
+        return toast.show(`Schedule Request Error Code: ${res.status}`, {
+          type: "warning",
         });
       }
+
+      const week = ["일", "월", "화", "수", "목", "금", "토"];
+      const result: RefinedSchedule[] = [];
+      for (let i = 0; i < res?.data?.length; ++i) {
+        const date = new Date(res?.data[i].startDate);
+        const dayOfWeek = week[date.getDay()];
+        let refined: RefinedSchedule = {
+          id: res.data[i].id,
+          location: res.data[i].location,
+          name: res.data[i].name,
+          members: res.data[i].members,
+          startDate: res.data[i].startDate,
+          endDate: res.data[i].endDate,
+          content: res.data[i].content,
+          year: moment(res.data[i].startDate).format("YYYY"),
+          month: moment(res.data[i].startDate).format("MM"),
+          day: moment(res.data[i].startDate).format("DD"),
+          hour: moment(res.data[i].startDate).format("h"),
+          minute: moment(res.data[i].startDate).format("m"),
+          ampm: moment(res.data[i].startDate).format("A") === "AM" ? "오전" : "오후",
+          dayOfWeek: dayOfWeek,
+          isEnd: false,
+        };
+        result.push(refined);
+      }
+
+      result.push({ isEnd: true });
+
+      setScheduleData(result);
     },
     onError: (error) => {
       toast.show(`Schedule Request Error: ${error}`, {
-        type: "error",
+        type: "warning",
       });
     },
   });
@@ -170,15 +200,16 @@ const ClubTopTabs = ({
       console.log(`${data.id} ClubTopTabs useFocusEffect!`);
       clubDataRefetch();
       clubRoleRefetch();
+      schedulesRefetch();
     }, [])
   );
 
   const renderClubHome = useCallback(
     (props) => {
       props.route.params.clubData = data;
-      return <ClubHome {...props} scrollY={scrollY} headerDiff={headerDiff} clubRole={clubRole?.data} />;
+      return <ClubHome {...props} scrollY={scrollY} headerDiff={headerDiff} clubRole={clubRole?.data} schedules={scheduleData} />;
     },
-    [headerDiff, data, clubRole]
+    [headerDiff, data, clubRole, scheduleData]
   );
   const renderClubFeed = useCallback((props) => <ClubFeed {...props} scrollY={scrollY} headerDiff={headerDiff} />, [headerDiff]);
 
@@ -211,7 +242,7 @@ const ClubTopTabs = ({
         shortDesc={data.clubShortDesc}
         categories={data.categories}
         recruitStatus={data.recruitStatus}
-        schedules={schedules?.data}
+        schedules={scheduleData}
         heightExpanded={heightExpanded}
         heightCollapsed={heightCollapsed}
         headerDiff={headerDiff}

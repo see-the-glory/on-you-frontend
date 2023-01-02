@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
+import { KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import { Calendar, CalendarProvider } from "react-native-calendars";
@@ -229,10 +229,11 @@ const ClubScheduleAdd = ({
                   placeholder="직접 입력"
                   placeholderTextColor="#B0B0B0"
                   maxLength={16}
-                  onChangeText={(text) => setPlace(text)}
+                  onChangeText={(text: string) => setPlace(text)}
                   returnKeyType="done"
                   returnKeyLabel="done"
                   textAlign="right"
+                  includeFontPadding={false}
                 />
               </InputItem>
             </ItemView>
@@ -247,6 +248,7 @@ const ClubScheduleAdd = ({
                 maxLength={1000}
                 textAlignVertical="top"
                 onChangeText={(value: string) => setMemo(value)}
+                includeFontPadding={false}
               />
             </MemoView>
           </Content>
