@@ -62,7 +62,7 @@ const ClubJoin = ({
         console.log(`mutation success but please check status code`);
         console.log(`status: ${res.status}`);
         console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
+        toast.show(`${res.message} (Error Code: ${res.status})`, {
           type: "warning",
         });
       }

@@ -289,6 +289,12 @@ export interface ClubScheduleCreationRequest {
   };
 }
 
+export interface ClubScheduleJoinOrCancelRequest {
+  token: string;
+  clubId: number;
+  scheduleId: number;
+}
+
 export interface ClubApplyRequest {
   clubId: number;
   memo: string;
@@ -649,6 +655,19 @@ const createClubSchedule = async (req: ClubScheduleCreationRequest) => {
   });
 };
 
+const joinOrCancelClubSchedule = async (req: ClubScheduleJoinOrCancelRequest) => {
+  return fetch(`${BASE_URL}/api/clubs/${req.clubId}/schedules/${req.scheduleId}/joinOrCancel`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `${req.token}`,
+      Accept: "*/*",
+    },
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
+};
+
 const getJWT = (req: LoginRequest) => {
   return fetch(`${BASE_URL}/api/user/login`, {
     method: "POST",
@@ -864,6 +883,7 @@ export const ClubApi = {
   changeRole,
   getClubSchedules,
   createClubSchedule,
+  joinOrCancelClubSchedule,
   getClubRole,
   applyClub,
   selectMyClubs,

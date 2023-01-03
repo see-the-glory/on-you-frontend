@@ -298,8 +298,8 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
               item.isEnd === false ? (
                 <ScheduleView
                   onPress={() => {
-                    // setScheduleVisible(true);
-                    // setSelectedSchedule(index);
+                    setScheduleVisible(true);
+                    setSelectedSchedule(index);
                   }}
                 >
                   {index === 0 ? (
@@ -412,7 +412,14 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         </MemberView>
       </SectionView>
 
-      <ScheduleModal visible={scheduleVisible} scheduleData={schedules} selectIndex={selectedSchedule}>
+      <ScheduleModal
+        visible={scheduleVisible}
+        scheduleData={schedules}
+        selectIndex={selectedSchedule}
+        closeModal={() => {
+          setScheduleVisible(false);
+        }}
+      >
         <ModalHeaderRight>
           <ModalCloseButton
             onPress={() => {

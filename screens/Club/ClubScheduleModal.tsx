@@ -1,22 +1,28 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Modal, useWindowDimensions } from "react-native";
-// import Carousel from "react-native-snap-carousel";
+import { Animated, Modal, TouchableOpacity, useWindowDimensions } from "react-native";
 import { RefinedSchedule } from "../../Types/Club";
 import { Feather, Ionicons, Entypo } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
+import Carousel from "../../components/Carousel";
 
-const Container = styled.View`
+const ModalContainer = styled.View`
+  height: 480px;
+  justify-content: center;
+  align-items: center;
+`;
+const Container = styled.View<{ pageWidth: number; gap: number }>`
   background-color: white;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-  elevation: 1;
+  width: ${(props: any) => props.pageWidth}px;
+  margin: 0px ${(props: any) => props.gap / 2}px;
 `;
 const Header = styled.View<{ index: number }>`
   align-items: center;
   justify-content: center;
   width: 100%;
-  background-color: ${(props) => (props.index === 0 ? "#eaff87" : "#CCCCCC")};
+  background-color: ${(props: any) => (props.index === 0 ? "#eaff87" : "#CCCCCC")};
   padding-top: 10px;
   padding-bottom: 10px;
   border-top-left-radius: 10px;
@@ -34,16 +40,17 @@ const ScheduleTitle = styled(CustomText)`
   line-height: 32px;
 `;
 
-const ContentView = styled.View`
+const Content = styled.View`
   width: 100%;
-  padding: 10px 20px;
+  padding: 0px 20px;
   align-items: flex-start;
 `;
 
 const ContentItemView = styled.View`
   flex-direction: row;
-  padding: 6px 8px;
+  padding: 8px 8px;
   align-items: center;
+  justify-content: center;
 `;
 
 const ContentText = styled(CustomText)`
@@ -54,8 +61,8 @@ const ContentText = styled(CustomText)`
 `;
 const MemoScrollView = styled.ScrollView`
   width: 100%;
-  height: 210px;
-  padding: 10px;
+  height: 200px;
+  padding: 0px 8px;
 `;
 const Memo = styled(CustomText)`
   color: #6f6f6f;
@@ -66,7 +73,7 @@ const Memo = styled(CustomText)`
 const Footer = styled.View`
   align-items: center;
   width: 100%;
-  padding: 10px 0px;
+  margin: 20px 0px;
 `;
 
 const ApplyButton = styled.TouchableOpacity`
@@ -79,7 +86,6 @@ const ButtonText = styled(CustomText)`
   font-size: 12px;
   line-height: 16px;
   font-family: "NotoSansKR-Bold";
-
   color: #ff714b;
 `;
 
@@ -101,10 +107,9 @@ const PrevButton = styled(Entypo)`
 
 const Break = styled.View<{ sep: number }>`
   width: 100%;
-  height: 3px;
-  margin-bottom: ${(props) => props.sep}px;
-  margin-top: ${(props) => props.sep}px;
-  border-bottom-width: 0.5px;
+  margin-bottom: ${(props: any) => props.sep}px;
+  margin-top: ${(props: any) => props.sep}px;
+  border-bottom-width: 1px;
   border-bottom-color: rgba(0, 0, 0, 0.3);
   opacity: 0.5;
 `;
@@ -113,13 +118,16 @@ interface ScheduleModalProps {
   visible: boolean;
   scheduleData?: RefinedSchedule[];
   selectIndex: number;
+  closeModal: any;
   children: object;
 }
 
-const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, selectIndex, children }) => {
-  const [carousel, setCarousel] = useState<Carousel<RefinedSchedule> | null>();
+const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, selectIndex, closeModal, children }) => {
   const [showModal, setShowModal] = useState(visible);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
+  const gap = 32;
+  const offset = 12;
+  const pageWidth = SCREEN_WIDTH - (gap + offset) * 2;
   const opacity = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     toggleModal();
@@ -144,7 +152,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
   };
 
   return (
-    <Modal transparent visible={showModal} supportedOrientations={["landscape", "portrait"]}>
+    <Modal transparent visible={showModal} onRequestClose={closeModal} supportedOrientations={["landscape", "portrait"]}>
       <Animated.View
         style={{
           flex: 1,
@@ -155,93 +163,63 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
           zIndex: 1,
         }}
       >
-        {/* <Carousel
-          ref={(c) => {
-            setCarousel(c);
-          }}
-          data={scheduleData.slice(0, -1)}
-          sliderWidth={SCREEN_WIDTH}
-          sliderHeight={SCREEN_HEIGHT}
-          itemWidth={SCREEN_WIDTH}
-          slideStyle={{ paddingHorizontal: 50 }}
-          contentContainerCustomStyle={{
-            alignItems: "center",
-          }}
-          firstItem={selectIndex}
-          inactiveSlideOpacity={1}
-          inactiveSlideScale={1}
-          renderItem={({ item, index }: { item: RefinedSchedule; index: number }) => (
-            <Container>
-              {index !== 0 ? (
-                <PrevButton
-                  name="chevron-left"
-                  size={34}
-                  color="white"
-                  onPress={() => {
-                    carousel?.snapToPrev();
-                  }}
-                />
-              ) : (
-                <></>
-              )}
-              {index !== scheduleData.length - 2 ? (
-                <NextButton
-                  name="chevron-right"
-                  size={34}
-                  color="white"
-                  onPress={() => {
-                    carousel?.snapToNext();
-                  }}
-                />
-              ) : (
-                <></>
-              )}
-
-              <Header index={selectIndex}>
-                {children}
-                <ScheduleText>{item.year}</ScheduleText>
-                <ScheduleTitle>
-                  {item.month}/{item.day} {item.dayOfWeek}
-                </ScheduleTitle>
-              </Header>
-              <ContentView>
-                <ContentItemView>
-                  <Feather name="clock" size={16} color="black" />
-                  <ContentText>
-                    {`${item.ampm} ${item.hour}시`}
-                    {item.minute !== "0" ? ` ${item.minute}분` : ""}
-                  </ContentText>
-                </ContentItemView>
-                <Break sep={0} />
-                <ContentItemView>
-                  <Feather name="map-pin" size={16} color="black" />
-                  <ContentText>{item.location}</ContentText>
-                </ContentItemView>
-                <Break sep={0} />
-                <ContentItemView>
-                  <Feather name="users" size={16} color="black" />
-                </ContentItemView>
-                <Break sep={0} />
-                <ContentItemView>
-                  <Ionicons name="checkmark-sharp" size={16} color="black" />
-                  <ContentText>{`메모`}</ContentText>
-                </ContentItemView>
-                <MemoScrollView>
-                  <Memo>{item.content}</Memo>
-                </MemoScrollView>
+        <ModalContainer>
+          <Carousel
+            gap={gap}
+            offset={offset}
+            pageWidth={pageWidth}
+            pages={scheduleData?.slice(0, -1)}
+            keyExtractor={(item: RefinedSchedule, index: number) => String(index)}
+            initialScrollIndex={selectIndex}
+            renderItem={({ item, index }: { item: RefinedSchedule; index: number }) => (
+              <Container pageWidth={pageWidth} gap={gap}>
+                <Header index={index}>
+                  {children}
+                  <ScheduleText>{item.year}</ScheduleText>
+                  <ScheduleTitle>
+                    {item.month}/{item.day} {item.dayOfWeek}
+                  </ScheduleTitle>
+                </Header>
+                <Content>
+                  <ContentItemView>
+                    <Feather name="clock" size={16} color="black" />
+                    <ContentText>
+                      {`${item.ampm} ${item.hour}시`}
+                      {item.minute !== "0" ? ` ${item.minute}분` : ""}
+                    </ContentText>
+                  </ContentItemView>
+                  <Break sep={0} />
+                  <ContentItemView>
+                    <Feather name="map-pin" size={16} color="black" />
+                    <ContentText>{item.location}</ContentText>
+                  </ContentItemView>
+                  <Break sep={0} />
+                  <ContentItemView>
+                    <Feather name="users" size={16} color="black" />
+                  </ContentItemView>
+                  <Break sep={0} />
+                  <ContentItemView>
+                    <Ionicons name="checkmark-sharp" size={16} color="black" />
+                    <ContentText>{`메모`}</ContentText>
+                  </ContentItemView>
+                  <MemoScrollView>
+                    <Memo>{item.content}</Memo>
+                  </MemoScrollView>
+                </Content>
                 <Footer>
                   <ApplyButton
                     onPress={() => {
-                      console.log("attend");
+                      console.log(item);
+                      console.log(`attend: ${item.id}`);
                     }}
                   >
                     <ButtonText>참석</ButtonText>
                   </ApplyButton>
                 </Footer>
-              </ContentView>
-            </Container>
-          )}
-        /> */}
+              </Container>
+            )}
+          />
+        </ModalContainer>
       </Animated.View>
     </Modal>
   );
