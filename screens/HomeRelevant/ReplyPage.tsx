@@ -349,7 +349,9 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
                   renderItem={({ item, index }: { item: Reply; index: number }) => (
                     <ScrollView>
                       <CommentArea key={index}>
-                        <CommentImg source={{ uri: item.thumbnail }} />
+                        <CommentImg source={{
+                          uri: userInfo?.data.thumbnail === null ? "https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userInfo?.data.thumbnail,
+                        }} />
                         <View style={{ marginBottom: 20, top: 7 }}>
                           <CommentMent>
                             <CommentId>{item.userName}</CommentId>
@@ -364,20 +366,20 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
                   )}
                   renderHiddenItem={(item, index) => (
                     item.item.userId === myId ? (
-                      <SwipeHiddenItemContainer>
-                        <SwipeHiddenItem>
-                          <SwipeHiddenItemText></SwipeHiddenItemText>
-                        </SwipeHiddenItem>
-                        <SwipeHiddenItem style={{backgroundColor: 'skyblue'}}>
-                          <SwipeHiddenItemText onPress={()=>deleteCheck(item.item)}>
-                          <AntDesign name="delete" size={24} color="black" />
-                          </SwipeHiddenItemText>
-                        </SwipeHiddenItem>
-                      </SwipeHiddenItemContainer>
+                        <SwipeHiddenItemContainer>
+                          <SwipeHiddenItem>
+                            <SwipeHiddenItemText></SwipeHiddenItemText>
+                          </SwipeHiddenItem>
+                          <SwipeHiddenItem style={{backgroundColor: 'skyblue'}}>
+                            <SwipeHiddenItemText onPress={()=>deleteCheck(item.item)}>
+                              <AntDesign name="delete" size={24} color="black" />
+                            </SwipeHiddenItemText>
+                          </SwipeHiddenItem>
+                        </SwipeHiddenItemContainer>
                       )
                       :
                       (<></>)
-                    )}
+                  )}
                 />
               </SafeAreaView>
               :

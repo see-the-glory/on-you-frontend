@@ -173,9 +173,10 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
                                 {item.categories?.length>1?
                                   (
                                     <View style={{display:'flex',flexDirection:'row'}}>
-                                      <OrganizationName>{item.categories[0].name}</OrganizationName>
+                                      <OrganizationName>{item.categories?.map((name)=>{return name.name})}</OrganizationName>
+                                      {/*<OrganizationName>{item.categories[0].name}</OrganizationName>
                                       <OrganizationName>,</OrganizationName>
-                                      <OrganizationName>{item.categories[1].name}</OrganizationName>
+                                      <OrganizationName>{item.categories[1].name}</OrganizationName>*/}
                                     </View>
                                   ):(
                                     <OrganizationName>{item.categories[0].name}</OrganizationName>
