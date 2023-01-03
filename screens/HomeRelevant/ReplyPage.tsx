@@ -75,6 +75,7 @@ const CommentArea = styled.View`
   width: 100%;
   padding: 10px 20px 0 20px;
   position: relative;
+  background-color: #ffffff;
 `;
 
 const CommentImg = styled.Image`
