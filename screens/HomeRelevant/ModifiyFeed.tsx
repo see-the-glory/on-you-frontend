@@ -4,7 +4,7 @@ import { Keyboard, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity, 
 import { useSelector } from "react-redux";
 import { useMutation, useQuery } from "react-query";
 import { Feed, FeedApi, FeedUpdateRequest, ModifiedReponse, UserApi, UserInfoResponse } from "../../api";
-import { ModifiyPeedScreenProps } from "../../types/feed";
+import { ModifiyFeedScreenProps } from "../../types/feed";
 import { RootStackParamList } from "../../types/Club";
 import { useNavigation } from "@react-navigation/native";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -117,7 +117,7 @@ interface FeedEditItem {
   screen: keyof RootStackParamList;
 }
 
-const ModifiyPeed: React.FC<ModifiyPeedScreenProps> = ({
+const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
   navigation: { navigate },
   route: {
     params: { feedData },
@@ -208,16 +208,10 @@ const ModifiyPeed: React.FC<ModifiyPeedScreenProps> = ({
     });
   }, [navigation, FixComplete]);
 
-  const imageChoice = [];
   const imageList = [];
-  for (let i = 0; i < feedData.imageUrls.length; i++) {
-    imageList.push({ img: feedData.imageUrls[i] });
+  for (let i = 0; i < feedData?.imageUrls?.length; i++) {
+    imageList.push({ img: feedData?.imageUrls[i] });
   }
-  imageChoice.push(
-    <ImageSlider
-    data={imageList} preview={false}
-    caroselImageStyle={{ resizeMode: "cover", height: 350 }}
-    />);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -236,7 +230,10 @@ const ModifiyPeed: React.FC<ModifiyPeedScreenProps> = ({
             </UserInfo>
           </FeedUser>
             <FeedImage>
-                <View>{imageChoice}</View>
+              <ImageSlider
+                data={imageList} preview={false}
+                caroselImageStyle={{ resizeMode: "cover", height: 350 }}
+              />
             </FeedImage>
             <ContentArea>
               <Ment
@@ -257,4 +254,4 @@ const ModifiyPeed: React.FC<ModifiyPeedScreenProps> = ({
     </TouchableWithoutFeedback>
   );
 };
-export default ModifiyPeed;
+export default ModifiyFeed;
