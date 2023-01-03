@@ -61,7 +61,7 @@ const HeaderView = styled.View<{ size: number }>`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 0 ${(props:any) => props.size}px 0 ${(props:any) => props.size}px;
+  padding: 0 ${(props:any) => props.size}px 0 10px;
   margin-bottom: 20px;
 `;
 
@@ -150,7 +150,7 @@ const ModalText = styled(CustomText)`
   font-weight: bold;
   text-align: center;
   font-size: 18px;
-  margin: 30px 0 0 0;
+  padding: 30px 0 0 0;
   width: 100%;
   color: black;
   height: auto;
@@ -262,7 +262,7 @@ const Home: React.FC<HomeScreenProps> = ({
   const token = useSelector((state: any) => state.AuthReducers.authToken);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
   const [modalFeedData, setModalFeedData] =  useState<any>('');
-
+  const [imageURI, setImageURI] = useState<any>([]);
   //모달
   const modalizeRef = useRef<Modalize>(null);
   const onOpen = (feedData: Feed) => {
@@ -298,16 +298,18 @@ const Home: React.FC<HomeScreenProps> = ({
         heartDataMap.set(res?.data[i].id, false);
       }
       setHeartMap(heartDataMap);
-    /*  for(let i=0; i<feeds?.pages[0]?.responses?.content.length; i++){
-        console.log(i)
-        // setImageLength(i)
-      }*/
+      let array=[]
+      for(let i=0; i<res.pages[0].responses.content.length; i++){
+        // for(let v=0; v<res?.pages[0]?.responses?.content[i]?.imageUrls; v++){
+        array.push(feeds?.pages[0]?.responses?.content[i]?.imageUrls)
+        // }
+      }
+      setImageURI(array)
     },
     onError: (err) => {
       console.log(err);
     },
   });
-
 
   const [fetchedFeedList, setFetchedFeedList] = useState(feeds?.pages.map((page) => page?.responses?.content).flat())
 
@@ -440,7 +442,7 @@ const Home: React.FC<HomeScreenProps> = ({
     console.log("After Modal passed feedId:", feedData.id);
     Alert.alert(
       "게시글을 삭제하시겠어요?",
-      "",
+      "정말로 해당 게시물을 삭제하시겠습니까?",
       [
         {
           text: "아니요",
@@ -495,7 +497,24 @@ const Home: React.FC<HomeScreenProps> = ({
 
   const loading = feedsLoading && userInfoLoading;
 
- return loading ? (
+/*  const feedImage = [];
+  const feedImageList = [];
+  for(let i=0; i<imageURI.length; i++){ //피드갯수
+      feedImageList.push({img: feeds?.pages[0]?.responses?.content[i]?.imageUrls})
+  }
+  feedImage.push(
+    <ImageSlider
+      data={feedImageList}
+      closeIconColor="#fff"
+      preview={false}
+      caroselImageStyle={{resizeMode: 'cover',height: 400}}
+      indicatorContainerStyle={{ bottom: 0 }}
+      size={FEED_IMAGE_SIZE}
+    />
+  )
+console.log(imageURI)*/
+
+  return loading ? (
     <Loader>
       <ActivityIndicator />
     </Loader>
@@ -579,18 +598,21 @@ const Home: React.FC<HomeScreenProps> = ({
                 </FeedHeader>
                 <FeedMain>
                   <FeedImage>
-                    {item.imageUrls?.length > 1 ? (
-                      <ImageSlider
-                        data={[{ img: item.imageUrls[0]}, {img: item.imageUrls[1]},{img: item.imageUrls[2] }]}
-                      closeIconColor="#fff"
-                      preview={false}
-                      caroselImageStyle={{resizeMode: 'cover',height: 400}}
-                      indicatorContainerStyle={{ bottom: 0 }}
-                      size={FEED_IMAGE_SIZE}
-                    />
+                    {item.imageUrls?.length > 1 ?
+                      (
+                       /* <View>
+                          {feedImage}
+                        </View>*/
+                         <ImageSlider
+                            data={[{ img: item.imageUrls[0]}, {img: item.imageUrls[1]},{img: item.imageUrls[2] }]}
+                            preview={false}
+                            caroselImageStyle={{resizeMode: 'cover',height: 380}}
+                            // activeIndicatorStyle={{backgroundColor: 'orange'}}
+                            indicatorContainerStyle={{ bottom: 0 }}
+                            size={FEED_IMAGE_SIZE}/>
                     ):(
-                      <ImageSource source={{uri: item.imageUrls[0]}} size={400}/>
-                    ) }
+                      <ImageSource source={{uri: item.imageUrls[0]}} size={380}/>
+                    )}
                    </FeedImage>
                   <FeedInfo>
                     <LeftInfo>

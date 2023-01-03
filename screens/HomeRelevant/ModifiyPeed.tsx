@@ -14,6 +14,7 @@ import {
 } from "react-native-image-slider-banner";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
+import { MaterialIcons,Ionicons } from "@expo/vector-icons";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -47,15 +48,21 @@ const UserImage = styled.Image`
 
 const UserId = styled(CustomText)`
   color: black;
-  font-size: 14px;
-  margin-bottom: 5px;
+  font-size: 16px;
+  font-weight: bold;
 `;
+const ClubModIcon=styled.View`
+  display: flex;
+  flex-direction: row;
+`
 const ClubBox = styled.TouchableOpacity`
   padding: 3px 6px 3px 6px;
   background-color: #c4c4c4;
   justify-content: center;
   align-items: center;
   border-radius: 5px;
+  display: flex;
+  flex-direction: row;
 `;
 
 const ClubName = styled(CustomText)`
@@ -73,9 +80,11 @@ const FeedHeader = styled.View`
 `;
 
 const FeedImage = styled.View`
-  padding: 10px 10px;
+  padding: 10px 15px;
   justify-content: center;
   align-items: center;
+  height: 70%;
+  width: 100%;
 `;
 
 const Content = styled.View`
@@ -83,7 +92,7 @@ const Content = styled.View`
 `;
 
 const ContentArea = styled.View`
-  left: 25px;
+  padding: 0 20px ;
   flex:1;
 `;
 const ImageArea = styled.View`
@@ -193,7 +202,7 @@ const ModifiyPeed: React.FC<ModifiyPeedScreenProps> = ({
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={FixComplete}>
-          <CustomText style={{ color: "#2995FA", fontSize: 14, lineHeight: 20 }}>저장</CustomText>
+          <CustomText style={{ color: "#2995FA", fontSize: 18, lineHeight: 20 }}>저장</CustomText>
         </TouchableOpacity>
       ),
     });
@@ -204,10 +213,10 @@ const ModifiyPeed: React.FC<ModifiyPeedScreenProps> = ({
   for (let i = 0; i < feedData.imageUrls.length; i++) {
     imageList.push({ img: feedData.imageUrls[i] });
   }
-  imageChoice.push(<ImageSlider
+  imageChoice.push(
+    <ImageSlider
     data={imageList} preview={false}
-    caroselImageStyle={{ resizeMode: "stretch", height: 350 }}
-    indicatorContainerStyle={{ bottom: -150 }}
+    caroselImageStyle={{ resizeMode: "cover", height: 350 }}
     />);
 
   return (
@@ -218,37 +227,31 @@ const ModifiyPeed: React.FC<ModifiyPeedScreenProps> = ({
             <UserImage source={{ uri: userInfo?.data.thumbnail }} />
             <UserInfo>
               <UserId>{data.userName}</UserId>
-              <ClubBox onPres={onOpen}>
-                <ClubName>{data.clubName}</ClubName>
-              </ClubBox>
-             {/* <Portal>
-                <Modalize
-                  ref={modalizeRef}
-                  modalHeight={200}
-                  handlePosition="inside"
-                >
-                  <View>123</View>
-                </Modalize>
-              </Portal>*/}
+              <ClubModIcon>
+                <ClubBox onPres={onOpen}>
+                  <ClubName>{data.clubName}</ClubName>
+                </ClubBox>
+                <Ionicons name="pencil" size={18} style={{left: 3}} color="gray" />
+              </ClubModIcon>
             </UserInfo>
           </FeedUser>
-          <FeedImage>
-            <View>{imageChoice}</View>
-          </FeedImage>
-          <ContentArea>
-            <Ment
-              onChangeText={(content:any) => setContent(content)}
-              placeholderTextColor="#B0B0B0"
-              placeholder="게시글 입력 ..."
-              textAlign="left"
-              multiline={true}
-              maxLength={1000}
-              returnKeyType="done"
-              returnKeyLabel="done"
-            >
-              {data.content}
-            </Ment>
-          </ContentArea>
+            <FeedImage>
+                <View>{imageChoice}</View>
+            </FeedImage>
+            <ContentArea>
+              <Ment
+                onChangeText={(content:any) => setContent(content)}
+                placeholderTextColor="#B0B0B0"
+                placeholder="게시글 입력 ..."
+                textAlign="left"
+                multiline={true}
+                maxLength={1000}
+                returnKeyType="done"
+                returnKeyLabel="done"
+              >
+                {data.content}
+              </Ment>
+            </ContentArea>
         </KeyboardAvoidingView>
       </Container>
     </TouchableWithoutFeedback>

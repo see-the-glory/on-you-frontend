@@ -17,6 +17,7 @@ import {
   TouchableWithoutFeedback,
   useWindowDimensions,
   View,
+  ActivityIndicator
 } from "react-native";
 import styled from "styled-components/native";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -25,7 +26,7 @@ import { FeedApi, FeedCreationRequest, FeedsResponse } from "../../api";
 import { FeedCreateScreenProps } from "../../types/feed";
 import { useNavigation } from "@react-navigation/native";
 import { ImageSlider } from "react-native-image-slider-banner";
-import reactImagePicker from 'react-native-image-picker';
+import CustomText from "../../components/CustomText";
 interface ValueInfo {
   str: string;
   isHT: boolean;
@@ -115,16 +116,16 @@ const FeedCreateArea = styled.View`
 `;
 
 const FeedCreateBtn = styled.TouchableOpacity``;
-const FeedCreateText = styled.Text`
-  font-size: 15px;
+const FeedCreateText = styled(CustomText)`
+  font-size: 18px;
   color: #63abff;
   font-weight: bold;
   padding: 10px;
 `;
 
 const ImageSource = styled.Image<{ size: number }>`
-  width: ${(props) => props.size}px;
-  height: ${(props) => props.size}px;
+  width: ${(props:any) => props.size}px;
+  height: ${(props:any) => props.size}px;
 `;
 
 const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
@@ -228,28 +229,35 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
   });
 
   const onSubmit = () => {
-    const data = {
-      clubId: clubId,
-      content: content,
-    };
-
-    let requestData: FeedCreationRequest = {
-      image: [],
-      data,
-      token,
-    };
-    if (imageURI.length == 0) requestData.image = null;
-
-    for (let i = 0; i < imageURI.length; i++) {
-      const splitedURI = String(imageURI[i]).split("/");
-      if (requestData.image) {
-        requestData.image.push({ uri: Platform.OS === "android" ? imageURI[i] : imageURI[i].replace("file://", ""),
-          type: "image/jpeg",
-          name: splitedURI[splitedURI.length - 1] });
-      }
+    if (imageURI.length == 0){
+      Alert.alert('이미지를 선택하세요')
     }
-    mutation.mutate(requestData);
-  };
+    else if(content.length == 0){
+      Alert.alert('글을 작성하세요')
+    }
+        const data = {
+          clubId: clubId,
+          content: content,
+        };
+
+        let requestData: FeedCreationRequest = {
+          image: [],
+          data,
+          token,
+        };
+        if (imageURI.length == 0) requestData.image = null;
+
+        for (let i = 0; i < imageURI.length; i++) {
+          const splitedURI = String(imageURI[i]).split("/");
+          if (requestData.image) {
+            requestData.image.push({ uri: Platform.OS === "android" ? imageURI[i] : imageURI[i].replace("file://", ""),
+              type: "image/jpeg",
+              name: splitedURI[splitedURI.length - 1] });
+          }
+        }
+        mutation.mutate(requestData);
+        return  <ActivityIndicator size="large" /> //로딩바
+      };
 
   useEffect(() => {
     navigation.setOptions({
@@ -309,10 +317,10 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
   }
   imageChoice.push(
     <ImageSource source={{uri: choiceImage}} size={400}/>
+     /* <ImageSlider data={imageList} preview={false} caroselImageStyle={{ resizeMode: "stretch", height: 420 }}
+               indicatorContainerStyle={{ bottom: 0 }}
+  />*/
   );
-  /*  <ImageSlider data={imageList} preview={false} caroselImageStyle={{ resizeMode: "stretch", height: 420 }}
-                 indicatorContainerStyle={{ bottom: 0 }}
-    />)*/
 
   return (
     <Container>
