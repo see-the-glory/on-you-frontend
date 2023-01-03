@@ -14,7 +14,7 @@ const Container = styled.SafeAreaView`
 const AccTop = styled.View`
   top: 20px;
   position: relative;
-  left: 20px;
+  left: 10px;
 `;
 
 const AccInfo = styled.View`
@@ -45,6 +45,7 @@ const AccText = styled(CustomText)`
   border: 0.5px solid lightgray;
   padding: 15px;
   color: black;
+  line-height: normal;
 `;
 
 interface ReportReason{
@@ -55,7 +56,7 @@ interface ReportReason{
 const Accusation:React.FC<ReportFeedScreenProps>=({ navigation:
   { navigate},
                                                     route:{params:{feedData}} }) =>{
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state:any) => state.AuthReducers.authToken);
 
   console.log(feedData.id)
   const[reportReason,setReportReason]=useState<ReportReason[]>();

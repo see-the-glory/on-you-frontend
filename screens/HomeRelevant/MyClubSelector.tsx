@@ -170,7 +170,17 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
                           <CommentRemainder>
                             <CtrgArea>
                               <CtgrText>
-                                <OrganizationName>{item.categories[0].name}</OrganizationName>
+                                {item.categories?.length>1?
+                                  (
+                                    <View style={{display:'flex',flexDirection:'row'}}>
+                                      <OrganizationName>{item.categories[0].name}</OrganizationName>
+                                      <OrganizationName>,</OrganizationName>
+                                      <OrganizationName>{item.categories[1].name}</OrganizationName>
+                                    </View>
+                                  ):(
+                                    <OrganizationName>{item.categories[0].name}</OrganizationName>
+                                  )
+                                }
                               </CtgrText>
                             </CtrgArea>
                           </CommentRemainder>

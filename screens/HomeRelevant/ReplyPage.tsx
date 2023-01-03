@@ -129,8 +129,10 @@ const Time = styled(CustomText)`
 const ReplyArea = styled.View`
   display: flex;
   flex-direction: row;
-  padding: 0 0 0 20px;
-  top: 10px;
+  padding: 10px 0 0 20px;
+  border-style: solid;
+  border-top-color: #e9e9e9;
+  border-top-width: 2px;
 `;
 
 const ReplyInputArea = styled.View`
