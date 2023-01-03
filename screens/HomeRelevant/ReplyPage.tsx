@@ -27,7 +27,9 @@ import {
   UserApi,
   UserInfoResponse
 } from "../../api";
-import { ModifiyPeedScreenProps } from "../../types/feed"
+import {
+  ModifiyFeedScreenProps
+} from "../../types/feed";
 import { useToast } from "react-native-toast-notifications";
 import {SwipeListView,SwipeRow} from 'react-native-swipe-list-view';
 import { AntDesign, Ionicons } from "@expo/vector-icons";
@@ -168,7 +170,7 @@ const ReplyDone = styled(CustomText)`
 const ModalIcon = styled.TouchableOpacity``;
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const ReplyPage:React.FC<ModifiyPeedScreenProps> = ({
+const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
                                                       navigation:{navigate},
                                                       route: { params: { feedData }},
                                                     }) => {

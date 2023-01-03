@@ -199,7 +199,8 @@ const UserInfo = styled.View`
   padding-bottom: 2px;
 `;
 const FeedMain = styled.View``;
-const FeedImage = styled.View``;
+const FeedImage = styled.View`
+`;
 const FeedInfo = styled.View`
   flex-direction: row;
   justify-content: space-between;
@@ -404,7 +405,7 @@ const Home: React.FC<HomeScreenProps> = ({
   const goToModifiy = (feedData: Feed) => {
     console.log("After Modal passed feedId:",feedData.id)
     navigation.navigate("HomeStack", {
-      screen: "ModifiyPeed",
+      screen: "ModifiyFeed",
       feedData,
     });
     modalizeRef.current?.close();
@@ -600,16 +601,14 @@ console.log(imageURI)*/
                   <FeedImage>
                     {item.imageUrls?.length > 1 ?
                       (
-                       /* <View>
-                          {feedImage}
-                        </View>*/
                          <ImageSlider
-                            data={[{ img: item.imageUrls[0]}, {img: item.imageUrls[1]},{img: item.imageUrls[2] }]}
+                            data={item.imageUrls?.map((url)=>{return {img: url}})}
                             preview={false}
-                            caroselImageStyle={{resizeMode: 'cover',height: 380}}
-                            // activeIndicatorStyle={{backgroundColor: 'orange'}}
+                            caroselImageContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
+                            caroselImageStyle={{resizeMode: 'center',height: 380, left: -20}}
+                            activeIndicatorStyle={{backgroundColor: 'orange'}}
                             indicatorContainerStyle={{ bottom: 0 }}
-                            size={FEED_IMAGE_SIZE}/>
+                            />
                     ):(
                       <ImageSource source={{uri: item.imageUrls[0]}} size={380}/>
                     )}
