@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { ActivityIndicator, FlatList, StatusBar, TouchableOpacity, View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, DeviceEventEmitter, FlatList, StatusBar, TouchableOpacity, View } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useQuery } from "react-query";
 import styled from "styled-components/native";
@@ -67,6 +68,14 @@ const ClubNotification = ({
     setRefreshing(false);
   };
 
+  useEffect(() => {
+    let subscription = DeviceEventEmitter.addListener("NotificationRefresh", () => {
+      console.log("Notification - Refresh Event");
+      onRefresh();
+    });
+    return () => subscription.remove();
+  }, []);
+
   const onPressItem = (item: Notification) => {
     if (clubRole && ["MASTER", "MANAGER"].includes(clubRole?.role)) {
       if (item.actionType === "APPLY") {
@@ -100,7 +109,7 @@ const ClubNotification = ({
         ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
         keyExtractor={(item: Notification, index: number) => String(index)}
         renderItem={({ item, index }: { item: Notification; index: number }) => (
-          <TouchableOpacity onPress={() => onPressItem(item)}>
+          <TouchableOpacity onPress={() => onPressItem(item)} disabled={item.processDone}>
             <NotificationItem notificationData={item} clubData={clubData} />
           </TouchableOpacity>
         )}

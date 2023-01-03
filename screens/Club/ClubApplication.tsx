@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Entypo } from "@expo/vector-icons";
 import { useLayoutEffect } from "react";
-import { Alert, StatusBar, TouchableOpacity } from "react-native";
+import { Alert, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import { useSelector } from "react-redux";
@@ -131,6 +131,10 @@ const ClubApplication = ({
         </TouchableOpacity>
       ),
     });
+
+    return () => {
+      DeviceEventEmitter.emit("NotificationRefresh");
+    };
   }, []);
 
   const reject = () => {
