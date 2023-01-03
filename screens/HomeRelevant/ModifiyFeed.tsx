@@ -222,17 +222,22 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
             <UserInfo>
               <UserId>{data.userName}</UserId>
               <ClubModIcon>
-                <ClubBox onPres={onOpen}>
+                <ClubBox>
                   <ClubName>{data.clubName}</ClubName>
                 </ClubBox>
-                <Ionicons name="pencil" size={18} style={{left: 3}} color="gray" />
+                <TouchableOpacity onPress={onOpen}>
+                  <Ionicons name="pencil" size={18} style={{left: 3, top: 2}} color="gray" />
+                </TouchableOpacity>
               </ClubModIcon>
             </UserInfo>
           </FeedUser>
             <FeedImage>
               <ImageSlider
                 data={imageList} preview={false}
-                caroselImageStyle={{ resizeMode: "cover", height: 350 }}
+                caroselImageContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
+                caroselImageStyle={{resizeMode: 'center',height: 380, left: -20}}
+                activeIndicatorStyle={{backgroundColor: 'orange'}}
+                indicatorContainerStyle={{ bottom: 0 }}
               />
             </FeedImage>
             <ContentArea>
