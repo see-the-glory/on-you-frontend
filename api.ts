@@ -327,7 +327,8 @@ export interface ChangeRole {
 }
 
 export interface LoginRequest {
-  token: string;
+  email: string;
+  password: string;
 }
 
 export interface FindIdRequest {
@@ -687,7 +688,9 @@ const getUserInfo = ({ queryKey }: any) => {
     headers: {
       authorization: `${token}`,
     },
-  }).then((response) => response.json());
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
 };
 
 const updateUserInfo = (req: UserInfoRequest) => {

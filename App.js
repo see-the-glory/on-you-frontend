@@ -5,7 +5,7 @@ import AuthStack from "./navigation/AuthStack";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider, useSelector, useDispatch } from "react-redux";
 import { store } from "./store/Index";
-import { Init } from "./store/Actions";
+import { init } from "./store/Actions";
 import { ToastProvider } from "react-native-toast-notifications";
 import { Ionicons } from "@expo/vector-icons";
 import { LogBox, Platform, Text, TextInput, View } from "react-native";
@@ -26,7 +26,7 @@ const RootNavigation = () => {
     async function prepare() {
       try {
         console.log(`App Prepare!`);
-        await dispatch(Init());
+        dispatch(init());
         await Font.loadAsync({
           "NotoSansKR-Bold": require("./assets/fonts/NotoSansKR-Bold.otf"),
           "NotoSansKR-Regular": require("./assets/fonts/NotoSansKR-Regular.otf"),
@@ -44,8 +44,6 @@ const RootNavigation = () => {
             },
           };
         });
-
-        await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (e) {
         console.warn(e);
       } finally {

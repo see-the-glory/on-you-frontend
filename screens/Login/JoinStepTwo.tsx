@@ -1,11 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, useEffect, createRef } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
-import { useMutation } from "react-query";
-import { CommonApi } from "../../api";
-import { useDispatch } from "react-redux";
-import { Login } from "../../store/Actions";
+import React, { useState, createRef } from "react";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 
 const Container = styled.View`
@@ -75,62 +70,29 @@ const Error = styled.Text`
   margin-top: 7px;
 `;
 
-const JoinStepTwo: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate }, route: { params: name } }) => {
-  const [userName, setUserName] = useState(name);
-  const [userEmail, setUserEmail] = useState("");
-  const [errortext, setErrortext] = useState(false);
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        // AsyncStorage에서 inputData에 저장된 값 가져오기
-        const value = await AsyncStorage.getItem("userInfo");
-        // value에 값이 있으면 콘솔에 찍어줘
-        if (value !== null) {
-          console.log(value);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    // 함수 실행
-    getData();
-  }, []);
-
-  const storeData = async () => {
-    try {
-      await AsyncStorage.setItem("userInfo", JSON.stringify({ name: userName.name, email: userEmail }), () => {
-        console.log("유저정보 저장 완료");
-      });
-      console.log("등록 완료");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+const JoinStepTwo: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
+  navigation: { navigate },
+  route: {
+    params: { name },
+  },
+}) => {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState(false);
   const emailInputRef = createRef();
   const emailReg = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
-
   const validate = () => {
-    if (!emailReg.test(userEmail)) {
-      setErrortext(true);
+    if (!emailReg.test(email)) {
+      setError(true);
       return;
     } else {
-      setErrortext(false);
-      storeData();
+      setError(false);
       navigate("LoginStack", {
         screen: "JoinStepThree",
-        name: userName.name,
-        email: userEmail,
+        name,
+        email,
       });
     }
   };
-
-  /* const goToNext = () => {
-    navigate("LoginStack", {
-      screen: "JoinStepThree",
-    });
-  }; */
 
   return (
     <TouchableWithoutFeedback
@@ -149,15 +111,15 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
             placeholder="example@gmail.com"
             placeholderTextColor={"#B0B0B0"}
             autoCorrect={false}
-            onChangeText={(Email) => setUserEmail(Email)}
+            onChangeText={(email: string) => setEmail(email)}
             ref={emailInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
           />
-          {errortext === true || !emailReg.test(userEmail) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          {error === true || !emailReg.test(email) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
         </Wrap>
         <Wrap>
-          <Button onPress={validate} disabled={!emailReg.test(userEmail)}>
+          <Button onPress={validate} disabled={!emailReg.test(email)}>
             <ButtonTitle>다음</ButtonTitle>
           </Button>
         </Wrap>

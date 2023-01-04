@@ -1,11 +1,5 @@
-// import { KakaoOAuthToken, login as kakaoLogin } from "@react-native-seoul/kakao-login";
-import { useNavigation } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
-import { useMutation } from "react-query";
-import { CommonApi } from "../../api";
-import { useDispatch } from "react-redux";
-import { Login } from "../../store/Actions";
 import styled from "styled-components/native";
 
 const Container = styled.View`
@@ -74,27 +68,6 @@ const Main: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: 
       screen: "JoinStepOne",
     });
   };
-
-  const navigation = useNavigation();
-  const dispatch = useDispatch();
-
-  const mutation = useMutation(CommonApi.getJWT, {
-    onSuccess: (res) => {
-      // redux 저장
-      dispatch(Login(res.token));
-    },
-    onError: (error) => {
-      console.log("--- Error ---");
-      console.log(error);
-      // Toast Message 출력.
-    },
-  });
-
-  // const signInWithKakao = async () => {
-  //   const token: KakaoOAuthToken = await kakaoLogin();
-
-  //   mutation.mutate({ token: token.accessToken });
-  // };
 
   return (
     <Container>
