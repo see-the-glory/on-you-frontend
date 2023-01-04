@@ -1,10 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, createRef, useEffect } from "react";
-import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
-import { useMutation, useQuery } from "react-query";
-import { UserApi, UserInfoRequest, User, SignUp } from "../../api";
-import { useSelector, useDispatch } from "react-redux";
-import { Login } from "../../store/Actions";
+import React from "react";
+import { useMutation } from "react-query";
+import { UserApi, SignUp } from "../../api";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 
@@ -92,9 +89,12 @@ const ButtonTitle = styled.Text`
   font-weight: 700;
 `;
 
-const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate }, route: { params: name, email, password } }) => {
-  const [userName, setUserName] = useState(name);
-
+const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
+  navigation: { navigate },
+  route: {
+    params: { name, email, password, sex, birth, phone, church },
+  },
+}) => {
   const toast = useToast();
 
   const mutation = useMutation(UserApi.registerUserInfo, {
@@ -103,8 +103,8 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
         console.log(`success`);
         navigate("LoginStack", {
           screen: "JoinStepSuccess",
-          email: name?.email,
-          password: name?.password,
+          email,
+          password,
         });
       } else if (res.status === 404) {
         console.log(res);
@@ -115,26 +115,28 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
           screen: "JoinStepOne",
         });
       } else {
-        console.log(`mutation success but please check status code`);
+        console.log(`user register mutation success but please check status code`);
         console.log(res);
+        toast.show(`${res.error} (Error Code: ${res.status})`, {
+          type: "warning",
+        });
       }
     },
     onError: (error) => {
       console.log("--- Error ---");
       console.log(`error: ${error}`);
     },
-    onSettled: (res, error) => {},
   });
 
   const onSubmit = () => {
     const data = {
-      name: name?.name,
-      email: name?.email,
-      password: name?.password,
-      sex: name?.sex === "남성" ? "M" : "F",
-      birthday: name?.birth,
-      phoneNumber: name?.phone,
-      organizationName: name?.church,
+      name,
+      email,
+      password,
+      sex: sex === "남성" ? "M" : "F",
+      birthday: birth,
+      phoneNumber: phone,
+      organizationName: church,
     };
 
     const requestData: SignUp = data;
@@ -142,10 +144,6 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
     console.log(requestData);
 
     mutation.mutate(requestData);
-  };
-
-  const goToNext = () => {
-    onSubmit();
   };
 
   return (
@@ -160,11 +158,11 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
           </TitleBorder>
           <TextWrap>
             <TextTitle>이름</TextTitle>
-            <TextInfo>{name?.name}</TextInfo>
+            <TextInfo>{name}</TextInfo>
           </TextWrap>
           <TextWrap>
             <TextTitle>이메일</TextTitle>
-            <TextInfo>{name?.email}</TextInfo>
+            <TextInfo>{email}</TextInfo>
           </TextWrap>
         </Form>
         <Form>
@@ -173,26 +171,21 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
           </TitleBorder>
           <TextWrap>
             <TextTitle>성별</TextTitle>
-            <TextInfo>{name?.sex}</TextInfo>
+            <TextInfo>{sex}</TextInfo>
           </TextWrap>
           <TextWrap>
             <TextTitle>생년월일</TextTitle>
-            <TextInfo>{name?.birth}</TextInfo>
+            <TextInfo>{birth}</TextInfo>
           </TextWrap>
           <TextWrap>
             <TextTitle>연락처</TextTitle>
-            <TextInfo>{name?.phone}</TextInfo>
+            <TextInfo>{phone}</TextInfo>
           </TextWrap>
           <TextWrap>
             <TextTitle>출석교회</TextTitle>
-            <TextInfo>{name?.church}</TextInfo>
+            <TextInfo>{church}</TextInfo>
           </TextWrap>
         </Form>
-        {/* <Form>
-          <TitleBorder>
-            <Title>관심 카테고리</Title>
-          </TitleBorder>
-        </Form> */}
       </Wrap>
       <Wrap>
         <Button onPress={onSubmit}>

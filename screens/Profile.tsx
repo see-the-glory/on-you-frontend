@@ -1,7 +1,7 @@
 import React from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
-import { Logout } from "../store/Actions";
+import { logout } from "../store/Actions";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
@@ -120,7 +120,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   const dispatch = useDispatch();
 
   const goLogout = () => {
-    dispatch(Logout());
+    dispatch(logout());
   };
 
   const goToEditProfile = () => {

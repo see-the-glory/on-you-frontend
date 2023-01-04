@@ -1,15 +1,12 @@
-import { useMutation } from "react-query";
-import { CommonApi, LoginRequest } from "../../api";
+import { useMutation, useQuery } from "react-query";
+import { CommonApi, LoginRequest, UserApi, UserInfoResponse } from "../../api";
 import { useDispatch } from "react-redux";
-import { Login } from "../../store/Actions";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import Root from "../../navigation/Root";
+import { login, updateUser } from "../../store/Actions";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, useEffect, useRef } from "react";
-import { TouchableOpacity, Text, NativeModules, Alert, Keyboard, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
+import React, { useState } from "react";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
-import { Ionicons } from "@expo/vector-icons";
 
 const Container = styled.View`
   width: 100%;
@@ -71,30 +68,45 @@ const LoginTitle = styled.Text`
 `;
 
 const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
-  const navigation = useNavigation();
   const dispatch = useDispatch();
   const toast = useToast();
+  const [token, setToken] = useState<string>("");
+
+  useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.resultCode === "OK") {
+        dispatch(updateUser(res.data));
+        dispatch(login(token));
+      } else {
+        console.log(res);
+        toast.show(`유저 정보를 불러올 수 없습니다.`, {
+          type: "warning",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+    enabled: token ? true : false,
+  });
 
   const mutation = useMutation(CommonApi.getJWT, {
     onSuccess: (res) => {
       if (res.status === 200) {
-        console.log(`success`);
-        // redux 저장
-        dispatch(Login(res.token));
+        setToken(res.token);
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
-        toast.show("로그인 정보를 확인해주세요.", {
+        toast.show(`${res.message}`, {
           type: "warning",
         });
       }
-      console.log(res.status);
     },
     onError: (error) => {
       console.log("--- Error ---");
       console.log(error);
       // Toast Message 출력.
-      toast.show("로그인 정보를 확인해주세요.", {
+      toast.show("인터넷 연결을 확인해주세요.", {
         type: "warning",
       });
     },
@@ -103,12 +115,6 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // const signInWithKakao = async () => {
-  //   const token: KakaoOAuthToken = await kakaoLogin();
-
-  //   mutation.mutate({ token: token.accessToken });
-  // };
-
   const goToFindLoginInfo = () => {
     navigate("LoginStack", {
       screen: "FindLoginInfo",
@@ -116,20 +122,12 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
   };
 
   const onSubmit = () => {
-    const token = {
-      email: email,
-      password: password,
+    const requestData: LoginRequest = {
+      email,
+      password,
     };
 
-    const requestData: LoginRequest = token;
-
-    console.log(requestData);
-
     mutation.mutate(requestData);
-  };
-
-  const goToRoot = () => {
-    return <NavigationContainer>{<Root />}</NavigationContainer>;
   };
 
   return (

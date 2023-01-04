@@ -1,12 +1,11 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, createRef, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Keyboard, ScrollView, Alert, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
-import { useMutation } from "react-query";
-import { CommonApi, LoginRequest } from "../../api";
-import { useDispatch, useSelector } from "react-redux";
-import { Login } from "../../store/Actions";
+import React, { useState } from "react";
+import { useMutation, useQuery } from "react-query";
+import { CommonApi, LoginRequest, UserApi, UserInfoResponse } from "../../api";
+import { useDispatch } from "react-redux";
+import { login, updateUser } from "../../store/Actions";
 import styled from "styled-components/native";
+import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.View`
   width: 100%;
@@ -76,14 +75,37 @@ const Error = styled.Text`
   margin-bottom: 20px;
 `;
 
-const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate }, route: { params: name } }) => {
+const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
+  navigation: { navigate },
+  route: {
+    params: { email, password },
+  },
+}) => {
   const dispatch = useDispatch();
+  const [token, setToken] = useState<string>("");
+  const toast = useToast();
+  useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.resultCode === "OK") {
+        dispatch(updateUser(res.data));
+        dispatch(login(token));
+      } else {
+        console.log(res);
+        toast.show(`유저 정보를 불러올 수 없습니다.`, {
+          type: "warning",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+    enabled: token ? true : false,
+  });
 
   const mutation = useMutation(CommonApi.getJWT, {
     onSuccess: (res) => {
       console.log(res.status);
-      // redux 저장
-      dispatch(Login(res.token));
+      setToken(res.token);
     },
     onError: (error) => {
       console.log("--- Error ---");
@@ -94,8 +116,8 @@ const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ n
 
   const onSubmit = () => {
     const token = {
-      email: name?.email,
-      password: name?.password,
+      email,
+      password,
     };
 
     const requestData: LoginRequest = token;

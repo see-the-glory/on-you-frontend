@@ -5,6 +5,10 @@ import { Feather, Ionicons, Entypo } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import Carousel from "../../components/Carousel";
+import { useMutation } from "react-query";
+import { ClubApi, ClubScheduleJoinOrCancelRequest } from "../../api";
+import { useToast } from "react-native-toast-notifications";
+import { useSelector } from "react-redux";
 
 const ModalContainer = styled.View`
   height: 480px;
@@ -116,13 +120,16 @@ const Break = styled.View<{ sep: number }>`
 
 interface ScheduleModalProps {
   visible: boolean;
+  clubId: number;
   scheduleData?: RefinedSchedule[];
   selectIndex: number;
   closeModal: any;
   children: object;
 }
 
-const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, selectIndex, closeModal, children }) => {
+const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, scheduleData, selectIndex, closeModal, children }) => {
+  const toast = useToast();
+  const token = useSelector((state) => state.AuthReducers.authToken);
   const [showModal, setShowModal] = useState(visible);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const gap = 32;
@@ -149,6 +156,34 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
       }).start();
       setTimeout(() => setShowModal(false), 200);
     }
+  };
+
+  const mutation = useMutation(ClubApi.joinOrCancelClubSchedule, {
+    onSuccess: (res) => {
+      console.log(res);
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "warning",
+      });
+    },
+  });
+
+  const joinOrCancel = (scheduleId?: number) => {
+    if (scheduleId === undefined) {
+      return toast.show(`Schedule ID Error`, {
+        type: "warning",
+      });
+    }
+    let requestData: ClubScheduleJoinOrCancelRequest = {
+      token,
+      clubId,
+      scheduleId,
+    };
+
+    mutation.mutate(requestData);
   };
 
   return (
@@ -207,12 +242,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, scheduleData, se
                   </MemoScrollView>
                 </Content>
                 <Footer>
-                  <ApplyButton
-                    onPress={() => {
-                      console.log(item);
-                      console.log(`attend: ${item.id}`);
-                    }}
-                  >
+                  <ApplyButton onPress={() => joinOrCancel(item.id)}>
                     <ButtonText>참석</ButtonText>
                   </ApplyButton>
                 </Footer>

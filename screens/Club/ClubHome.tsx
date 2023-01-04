@@ -190,7 +190,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   clubRole,
   schedules,
 }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
   const [scheduleVisible, setScheduleVisible] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(-1);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -198,7 +197,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const [memberData, setMemberData] = useState<Member[][]>();
   const [managerData, setManagerData] = useState<Member[][]>();
   const [masterData, setMasterData] = useState<Member>();
-  const toast = useToast();
   const memberCountPerLine = Math.floor((SCREEN_WIDTH - SCREEN_PADDING_SIZE) / (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING));
 
   const getClubMembers = () => {
@@ -414,6 +412,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
 
       <ScheduleModal
         visible={scheduleVisible}
+        clubId={clubData.id}
         scheduleData={schedules}
         selectIndex={selectedSchedule}
         closeModal={() => {

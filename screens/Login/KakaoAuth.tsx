@@ -50,7 +50,7 @@ const KakaoAuth = () => {
   const mutation = useMutation(CommonApi.getJWT, {
     onSuccess: (res) => {
       // redux 저장
-      dispatch(Login(res.token));
+      dispatch(login(res.token));
     },
     onError: (error) => {
       console.log("--- Error ---");

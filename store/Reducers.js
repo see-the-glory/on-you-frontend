@@ -1,8 +1,12 @@
-const initialState = {
+const initialAuthState = {
   authToken: null,
 };
 
-export default (state = initialState, action) => {
+const initialUserState = {
+  user: null,
+};
+
+export const AuthReducers = (state = initialAuthState, action) => {
   switch (action.type) {
     case "LOGIN":
       return {
@@ -11,7 +15,23 @@ export default (state = initialState, action) => {
       };
     case "LOGOUT":
       return {
-        ...initialState,
+        ...initialAuthState,
+      };
+    default:
+      return state;
+  }
+};
+
+export const UserReducers = (state = initialUserState, action) => {
+  switch (action.type) {
+    case "UPDATE_USER":
+      return {
+        ...state,
+        user: action.payload,
+      };
+    case "DELETE_USER":
+      return {
+        ...initialUserState,
       };
     default:
       return state;
