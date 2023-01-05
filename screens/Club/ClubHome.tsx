@@ -1,13 +1,11 @@
 import React, { useLayoutEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, FlatList } from "react-native";
+import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
 import { ClubHomeScreenProps, ClubHomeParamList, RefinedSchedule } from "../../Types/Club";
 import { Member } from "../../api";
 import ScheduleModal from "./ClubScheduleModal";
 import CircleIcon from "../../components/CircleIcon";
-import { useToast } from "react-native-toast-notifications";
-import { useSelector } from "react-redux";
 import CustomText from "../../components/CustomText";
 
 const MEMBER_ICON_KERNING = 25;
@@ -199,6 +197,11 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const [masterData, setMasterData] = useState<Member>();
   const memberCountPerLine = Math.floor((SCREEN_WIDTH - SCREEN_PADDING_SIZE) / (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING));
 
+  useLayoutEffect(() => {
+    console.log(`${clubData.id} clubHome useLayoutEffect`);
+    getData();
+  }, []);
+
   const getClubMembers = () => {
     const members: Member[] = [];
     const manager: Member[] = [];
@@ -233,10 +236,10 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     setMemberLoading(false);
   };
 
-  useLayoutEffect(() => {
-    console.log(`${clubData.id} clubHome useLayoutEffect`);
-    getData();
-  }, []);
+  const closeScheduleModal = () => {
+    setScheduleVisible(false);
+    DeviceEventEmitter.emit("SchedulesRefetch");
+  };
 
   const loading = memberLoading;
 
@@ -416,13 +419,13 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         scheduleData={schedules}
         selectIndex={selectedSchedule}
         closeModal={() => {
-          setScheduleVisible(false);
+          closeScheduleModal();
         }}
       >
         <ModalHeaderRight>
           <ModalCloseButton
             onPress={() => {
-              setScheduleVisible(false);
+              closeScheduleModal();
             }}
           >
             <Ionicons name="close" size={24} color="black" />

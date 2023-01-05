@@ -1,6 +1,6 @@
-import React, { useState, useRef, useCallback, useMemo } from "react";
+import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Animated, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
+import { Animated, DeviceEventEmitter, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
@@ -59,6 +59,7 @@ const ClubTopTabs = ({
   navigation: { navigate, popToTop },
 }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
+  const me = useSelector((state) => state.UserReducers.user);
   const toast = useToast();
   const [data, setData] = useState<Club>(clubData);
   const [scheduleData, setScheduleData] = useState<RefinedSchedule[]>();
@@ -179,6 +180,7 @@ const ClubTopTabs = ({
           minute: moment(res.data[i].startDate).format("m"),
           ampm: moment(res.data[i].startDate).format("A") === "AM" ? "오전" : "오후",
           dayOfWeek: dayOfWeek,
+          participation: res.data[i].members?.map((member) => member.id).includes(me?.id),
           isEnd: false,
         };
         result.push(refined);
@@ -203,6 +205,15 @@ const ClubTopTabs = ({
       schedulesRefetch();
     }, [])
   );
+
+  useEffect(() => {
+    console.log("ClubTopTabs - add listner");
+    let subscription = DeviceEventEmitter.addListener("SchedulesRefetch", () => {
+      console.log("ClubTopTabs - Schedule Refetch Event");
+      schedulesRefetch();
+    });
+    return () => subscription.remove();
+  }, []);
 
   const renderClubHome = useCallback(
     (props) => {
