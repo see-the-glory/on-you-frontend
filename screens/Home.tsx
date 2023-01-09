@@ -53,7 +53,6 @@ const Loader = styled.SafeAreaView`
 const Container = styled.SafeAreaView`
   flex: 1;
   top: ${Platform.OS === "android" ? 5 : 0}%;
-  // padding-bottom: ${Platform.OS === "android" ? 6 : 0}%;
 `;
 
 const HeaderView = styled.View<{ size: number }>`
@@ -177,7 +176,7 @@ const FloatingButton = styled.TouchableOpacity`
 const FeedContainer = styled.View`
   flex: 1;
   width: 100%;
-  margin-bottom: ${Platform.OS === "ios" ? 20 : 30}px;
+  margin-bottom: ${Platform.OS === "ios" ? 0 : 30}px;
   padding: 0 20px 0 20px;
 `;
 
@@ -295,10 +294,10 @@ const Home: React.FC<HomeScreenProps> = ({
       setIsPageTransition(false);
       let heartDataMap = new Map();
 
-      for (let i = 0; i < res?.data?.length; ++i) {
+/*      for (let i = 0; i < res?.data?.length; ++i) {
         heartDataMap.set(res?.data[i].id, false);
       }
-      setHeartMap(heartDataMap);
+      setHeartMap(heartDataMap);*/
       let array=[]
       for(let i=0; i<res.pages[0].responses.content.length; i++){
         // for(let v=0; v<res?.pages[0]?.responses?.content[i]?.imageUrls; v++){
@@ -497,24 +496,6 @@ const Home: React.FC<HomeScreenProps> = ({
   };
 
   const loading = feedsLoading && userInfoLoading;
-
-/*  const feedImage = [];
-  const feedImageList = [];
-  for(let i=0; i<imageURI.length; i++){ //피드갯수
-      feedImageList.push({img: feeds?.pages[0]?.responses?.content[i]?.imageUrls})
-  }
-  feedImage.push(
-    <ImageSlider
-      data={feedImageList}
-      closeIconColor="#fff"
-      preview={false}
-      caroselImageStyle={{resizeMode: 'cover',height: 400}}
-      indicatorContainerStyle={{ bottom: 0 }}
-      size={FEED_IMAGE_SIZE}
-    />
-  )
-console.log(imageURI)*/
-
   return loading ? (
     <Loader>
       <ActivityIndicator />

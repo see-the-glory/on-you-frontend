@@ -17,7 +17,8 @@ import {
   TouchableWithoutFeedback,
   useWindowDimensions,
   View,
-  ActivityIndicator
+  ActivityIndicator,
+  Pressable
 } from "react-native";
 import styled from "styled-components/native";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -27,6 +28,10 @@ import { FeedCreateScreenProps } from "../../types/feed";
 import { useNavigation } from "@react-navigation/native";
 import { ImageSlider } from "react-native-image-slider-banner";
 import CustomText from "../../components/CustomText";
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import ImageCropPicker from 'react-native-image-crop-picker';
+
+
 interface ValueInfo {
   str: string;
   isHT: boolean;
@@ -142,7 +147,8 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
   const [loading, setLoading] = useState(false);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
   const [alert, alertSet] = useState(true);
-
+  const [response, setResponse]= useState(null)
+  const [isSubmitShow, setSubmitShow] = useState(true)
   const getValueInfos = (value: string): ValueInfo[] => {
     if (value.length === 0) {
       return [];
@@ -234,40 +240,48 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
     }
     else if(content.length == 0){
       Alert.alert('글을 작성하세요')
-    }
-        const data = {
-          clubId: clubId,
-          content: content,
-        };
+    }else{
+      setSubmitShow(false);
+      const data = {
+        clubId: clubId,
+        content: content,
+      };
 
-        let requestData: FeedCreationRequest = {
-          image: [],
-          data,
-          token,
-        };
-        if (imageURI.length == 0) requestData.image = null;
+      let requestData: FeedCreationRequest = {
+        image: [],
+        data,
+        token,
+      };
+      if (imageURI.length == 0) requestData.image = null;
 
-        for (let i = 0; i < imageURI.length; i++) {
-          const splitedURI = String(imageURI[i]).split("/");
-          if (requestData.image) {
-            requestData.image.push({ uri: Platform.OS === "android" ? imageURI[i] : imageURI[i].replace("file://", ""),
-              type: "image/jpeg",
-              name: splitedURI[splitedURI.length - 1] });
-          }
+      for (let i = 0; i < imageURI.length; i++) {
+        const splitedURI = String(imageURI[i]).split("/");
+        if (requestData.image) {
+          requestData.image.push({ uri: Platform.OS === "android" ? imageURI[i] : imageURI[i].replace("file://", ""),
+            type: "image/jpeg",
+            name: splitedURI[splitedURI.length - 1] });
         }
-        mutation.mutate(requestData);
-        return  <ActivityIndicator size="large" /> //로딩바
+      }
+      mutation.mutate(requestData);
+    }
       };
 
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity onPress={onSubmit}>
-          <FeedCreateText>저장</FeedCreateText>
+        <TouchableOpacity  onPress={() => {
+          onSubmit();
+        }}>
+          {
+            isSubmitShow ?
+              <FeedCreateText>저장</FeedCreateText> :
+              <ActivityIndicator/>
+          }
         </TouchableOpacity>
       ),
     });
-  }, [imageURI, content]);
+  }, [imageURI, content, isSubmitShow]);
+  console.log(isSubmitShow)
 
   useEffect(() => {
     let timer = setTimeout(() => {
@@ -313,15 +327,16 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
   const imageChoice = [];
   const imageList = [];
   for (let i = 0; i < imageURI.length; i++) {
-    imageList.push({ img: imageURI[i] });
+    imageList.push({ img: imageURI[i] }); //슬라이더용
   }
-  imageChoice.push(
-    <ImageSource source={{uri: choiceImage}} size={400}/>
-     /* <ImageSlider data={imageList} preview={false} caroselImageStyle={{ resizeMode: "stretch", height: 420 }}
+/*  imageChoice.push(
+    <ImageSource source={{uri: choiceImage}} size={400}/> //기본사진용
+      <ImageSlider data={imageList} preview={false} caroselImageStyle={{ resizeMode: "stretch", height: 420 }}
                indicatorContainerStyle={{ bottom: 0 }}
-  />*/
-  );
-
+  />
+  );*/
+// console.log(choiceImage)
+// console.log(imageList)
   return (
     <Container>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -329,7 +344,9 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
           <>
             <ImagePickerView>
               {Object.keys(imageURI).length !== 0 ? (
-                <View>{imageChoice}</View>
+                <ImageSlider data={imageList} preview={false} caroselImageStyle={{ resizeMode: "stretch", height: 420 }}
+                             indicatorContainerStyle={{ bottom: 0 }}
+                />
               ) : (
                 <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={1}>
                   <PickBackground>
@@ -345,7 +362,6 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
                 </ImagePickerButton>
               )}
             </ImagePickerView>
-            {/* <SelectImage source={{ uri: imageURI.assets[0].uri}} />*/}
             <SelectImageView>
               <View style={{ display: "flex", flexDirection: "row" }}>
                 {imagePreview}
