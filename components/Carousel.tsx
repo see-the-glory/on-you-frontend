@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, ListRenderItem } from "react-native";
+import { FlatList } from "react-native";
 import styled from "styled-components/native";
 
 interface CarouselProps {

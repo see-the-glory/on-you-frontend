@@ -110,5 +110,6 @@ export interface RefinedSchedule extends Schedule {
   hour?: string;
   minute?: string;
   ampm?: string;
+  participation?: boolean;
   isEnd?: boolean;
 }

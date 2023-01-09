@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Modal, TouchableOpacity, useWindowDimensions } from "react-native";
+import { Animated, Modal, useWindowDimensions } from "react-native";
 import { RefinedSchedule } from "../../Types/Club";
 import { Feather, Ionicons, Entypo } from "@expo/vector-icons";
 import styled from "styled-components/native";
@@ -9,6 +9,8 @@ import { useMutation } from "react-query";
 import { ClubApi, ClubScheduleJoinOrCancelRequest } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import { useSelector } from "react-redux";
+import CircleIcon from "../../components/CircleIcon";
+import CircleIconBundle from "../../components/CircleIconBundle";
 
 const ModalContainer = styled.View`
   height: 480px;
@@ -51,10 +53,23 @@ const Content = styled.View`
 `;
 
 const ContentItemView = styled.View`
+  height: 30px;
   flex-direction: row;
   padding: 8px 8px;
   align-items: center;
   justify-content: center;
+`;
+const ContentCollapsibleView = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  padding-left: 10px;
+`;
+
+const ContentMemberView = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
 `;
 
 const ContentText = styled(CustomText)`
@@ -63,6 +78,13 @@ const ContentText = styled(CustomText)`
   line-height: 15px;
   color: #6f6f6f;
 `;
+
+const ContentSubText = styled(CustomText)`
+  font-size: 9px;
+  line-height: 15px;
+  color: #8e8e8e;
+`;
+
 const MemoScrollView = styled.ScrollView`
   width: 100%;
   height: 200px;
@@ -80,17 +102,20 @@ const Footer = styled.View`
   margin: 20px 0px;
 `;
 
-const ApplyButton = styled.TouchableOpacity`
-  background-color: white;
-  padding: 5px 50px;
+const ApplyButton = styled.TouchableOpacity<{ participation: boolean }>`
+  width: 130px;
+  justify-content: center;
+  align-items: center;
+  background-color: ${(props: any) => (props.participation ? "#ff714b" : "white")};
+  padding: 5px 0px;
   border: 1px solid #ff714b;
 `;
 
-const ButtonText = styled(CustomText)`
+const ButtonText = styled(CustomText)<{ participation: boolean }>`
   font-size: 12px;
   line-height: 16px;
-  font-family: "NotoSansKR-Bold";
-  color: #ff714b;
+  font-family: "NotoSansKR-Medium";
+  color: ${(props: any) => (props.participation ? "white" : "#ff714b")};
 `;
 
 const NextButton = styled(Entypo)`
@@ -130,8 +155,9 @@ interface ScheduleModalProps {
 const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, scheduleData, selectIndex, closeModal, children }) => {
   const toast = useToast();
   const token = useSelector((state) => state.AuthReducers.authToken);
+  const me = useSelector((state) => state.UserReducers.user);
   const [showModal, setShowModal] = useState(visible);
-  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
+  const { width: SCREEN_WIDTH } = useWindowDimensions();
   const gap = 32;
   const offset = 12;
   const pageWidth = SCREEN_WIDTH - (gap + offset) * 2;
@@ -159,9 +185,6 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
   };
 
   const mutation = useMutation(ClubApi.joinOrCancelClubSchedule, {
-    onSuccess: (res) => {
-      console.log(res);
-    },
     onError: (error) => {
       console.log("--- Error ---");
       console.log(`error: ${error}`);
@@ -171,7 +194,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
     },
   });
 
-  const joinOrCancel = (scheduleId?: number) => {
+  const joinOrCancel = (index: number, scheduleId?: number) => {
     if (scheduleId === undefined) {
       return toast.show(`Schedule ID Error`, {
         type: "warning",
@@ -183,7 +206,21 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
       scheduleId,
     };
 
-    mutation.mutate(requestData);
+    mutation.mutate(requestData, {
+      onSuccess: (res) => {
+        console.log(res);
+        if (scheduleData) {
+          if (scheduleData[index].participation) {
+            let target = scheduleData[index].members?.findIndex((member) => member.id === me?.id);
+            console.log(target);
+            if (target !== undefined && target > -1) scheduleData[index].members?.splice(target, 1);
+          } else {
+            scheduleData[index].members?.push(me);
+          }
+          scheduleData[index].participation = !scheduleData[index].participation;
+        }
+      },
+    });
   };
 
   return (
@@ -207,7 +244,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
             keyExtractor={(item: RefinedSchedule, index: number) => String(index)}
             initialScrollIndex={selectIndex}
             renderItem={({ item, index }: { item: RefinedSchedule; index: number }) => (
-              <Container pageWidth={pageWidth} gap={gap}>
+              <Container key={index} pageWidth={pageWidth} gap={gap}>
                 <Header index={index}>
                   {children}
                   <ScheduleText>{item.year}</ScheduleText>
@@ -217,7 +254,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                 </Header>
                 <Content>
                   <ContentItemView>
-                    <Feather name="clock" size={16} color="black" />
+                    <Feather name="clock" size={13} color="black" />
                     <ContentText>
                       {`${item.ampm} ${item.hour}시`}
                       {item.minute !== "0" ? ` ${item.minute}분` : ""}
@@ -225,16 +262,24 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                   </ContentItemView>
                   <Break sep={0} />
                   <ContentItemView>
-                    <Feather name="map-pin" size={16} color="black" />
+                    <Feather name="map-pin" size={13} color="black" />
                     <ContentText>{item.location}</ContentText>
                   </ContentItemView>
                   <Break sep={0} />
                   <ContentItemView>
-                    <Feather name="users" size={16} color="black" />
+                    <Feather name="users" size={13} color="black" />
+                    {item.participation || item.members?.length ? (
+                      <ContentCollapsibleView>
+                        {item.participation ? <CircleIcon size={18} uri={me.thumbnail} kerning={5} /> : <></>}
+                        <CircleIconBundle size={18} kerning={-8} uris={item.members?.filter((member) => member.id != me.id).map((member) => member.thumbnail)} />
+                      </ContentCollapsibleView>
+                    ) : (
+                      <ContentText>{`참여 멤버가 없습니다.`}</ContentText>
+                    )}
                   </ContentItemView>
                   <Break sep={0} />
                   <ContentItemView>
-                    <Ionicons name="checkmark-sharp" size={16} color="black" />
+                    <Ionicons name="checkmark-sharp" size={13} color="black" />
                     <ContentText>{`메모`}</ContentText>
                   </ContentItemView>
                   <MemoScrollView>
@@ -242,8 +287,8 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                   </MemoScrollView>
                 </Content>
                 <Footer>
-                  <ApplyButton onPress={() => joinOrCancel(item.id)}>
-                    <ButtonText>참석</ButtonText>
+                  <ApplyButton participation={item.participation} onPress={() => joinOrCancel(index, item.id)}>
+                    {item.participation ? <ButtonText participation={item.participation}>참석 취소</ButtonText> : <ButtonText participation={item.participation}>참석</ButtonText>}
                   </ApplyButton>
                 </Footer>
               </Container>

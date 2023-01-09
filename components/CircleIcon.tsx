@@ -3,12 +3,12 @@ import { MaterialIcons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import CustomText from "./CustomText";
 
-const Container = styled.View<{ kerning: number; opacity: number }>`
+const Container = styled.View<{ size: number; kerning: number; opacity: number }>`
   position: relative;
   justify-content: center;
   align-items: center;
-  margin-right: ${(props) => props.kerning}px;
-  opacity: ${(props) => props.opacity};
+  margin-right: ${(props: any) => props.kerning}px;
+  opacity: ${(props: any) => props.opacity};
 `;
 
 const BadgeIcon = styled.View`
@@ -22,22 +22,22 @@ const BadgeIcon = styled.View`
 `;
 
 const Backplate = styled.View<{ size: number }>`
-  width: ${(props) => props.size}px;
-  height: ${(props) => props.size}px;
-  border-radius: ${(props) => Math.ceil(props.size / 2)}px;
+  width: ${(props: any) => props.size}px;
+  height: ${(props: any) => props.size}px;
+  border-radius: ${(props: any) => Math.ceil(props.size / 2)}px;
   justify-content: center;
   align-items: center;
   border: 1px;
-  border-color: rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0);
   background-color: white;
   box-shadow: 1px 1px 1px gray;
-  elevation: 2;
+  elevation: 10;
 `;
 
 const IconImage = styled.Image<{ size: number }>`
-  width: ${(props) => props.size - 5}px;
-  height: ${(props) => props.size - 5}px;
-  border-radius: ${(props) => Math.ceil(props.size / 2)}px;
+  width: ${(props: any) => props.size - 2}px;
+  height: ${(props: any) => props.size - 2}px;
+  border-radius: ${(props: any) => Math.ceil(props.size / 2)}px;
 `;
 
 const CircleName = styled(CustomText)`
@@ -58,7 +58,7 @@ interface CircleIconProps {
 
 const CircleIcon: React.FC<CircleIconProps> = ({ size, uri, name, badge, kerning, opacity }) => {
   return (
-    <Container kerning={kerning ?? 0} opacity={opacity ?? 1}>
+    <Container size={size} kerning={kerning ?? 0} opacity={opacity ?? 1}>
       {badge ? (
         <BadgeIcon>
           <MaterialIcons name={badge} size={18} color="#ff714b" />
