@@ -194,7 +194,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     showMy: 0,
   });
   const [memberRange, setMemberRange] = useState<number | number[]>([0, 100]);
-  let sliderTimeoutId: NodeJS.Timeout;
+  let sliderTimeoutId: number;
   const [showRecruiting, setShowRecruiting] = useState<number>(0);
   const [showMy, setShowMy] = useState<number>(0);
   const [refreshing, setRefreshing] = useState<boolean>(false);

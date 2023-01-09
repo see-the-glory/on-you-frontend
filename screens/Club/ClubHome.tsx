@@ -20,8 +20,8 @@ const Loader = styled.View`
 
 const Break = styled.View<{ sep: number }>`
   width: 100%;
-  margin-bottom: ${(props) => props.sep}px;
-  margin-top: ${(props) => props.sep}px;
+  margin-bottom: ${(props: any) => props.sep}px;
+  margin-top: ${(props: any) => props.sep}px;
   border-bottom-width: 1px;
   border-bottom-color: rgba(0, 0, 0, 0.2);
   opacity: 0.5;
@@ -49,8 +49,8 @@ const SectionTitle = styled(CustomText)`
 `;
 
 const ContentView = styled.View<{ paddingSize?: number }>`
-  padding-left: ${(props) => (props.paddingSize ? props.paddingSize + 5 : 5)}px;
-  padding-right: ${(props) => (props.paddingSize ? props.paddingSize + 5 : 5)}px;
+  padding-left: ${(props: any) => (props.paddingSize ? props.paddingSize + 5 : 5)}px;
+  padding-right: ${(props: any) => (props.paddingSize ? props.paddingSize + 5 : 5)}px;
   margin-bottom: 15px;
 `;
 
@@ -102,7 +102,7 @@ const ScheduleBadgeText = styled(CustomText)`
 `;
 
 const ScheduleDateView = styled.View<{ index: number }>`
-  background-color: ${(props) => (props.index === 0 ? "#eaff87" : "#CCCCCC")};
+  background-color: ${(props: any) => (props.index === 0 ? "#eaff87" : "#CCCCCC")};
   justify-content: center;
   align-items: center;
   padding: 7px 15px;
@@ -242,7 +242,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   };
 
   const loading = memberLoading;
-
   return loading ? (
     <Loader>
       <ActivityIndicator />
@@ -250,6 +249,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   ) : (
     <Animated.ScrollView
       onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
+      contentOffset={{ x: 0, y: 0 }}
       style={{
         flex: 1,
         paddingTop: 15,

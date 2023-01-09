@@ -10,6 +10,7 @@ import { ClubApi, ClubScheduleJoinOrCancelRequest } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import { useSelector } from "react-redux";
 import CircleIcon from "../../components/CircleIcon";
+import CircleIconBundle from "../../components/CircleIconBundle";
 
 const ModalContainer = styled.View`
   height: 480px;
@@ -61,7 +62,6 @@ const ContentItemView = styled.View`
 const ContentCollapsibleView = styled.View`
   flex-direction: row;
   justify-content: center;
-  align-items: center;
   padding-left: 10px;
 `;
 
@@ -244,7 +244,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
             keyExtractor={(item: RefinedSchedule, index: number) => String(index)}
             initialScrollIndex={selectIndex}
             renderItem={({ item, index }: { item: RefinedSchedule; index: number }) => (
-              <Container pageWidth={pageWidth} gap={gap}>
+              <Container key={index} pageWidth={pageWidth} gap={gap}>
                 <Header index={index}>
                   {children}
                   <ScheduleText>{item.year}</ScheduleText>
@@ -268,14 +268,14 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                   <Break sep={0} />
                   <ContentItemView>
                     <Feather name="users" size={13} color="black" />
-                    <ContentCollapsibleView>
-                      {item.members?.map((member, index) => (
-                        <ContentMemberView key={index}>
-                          <CircleIcon size={18} uri={member.thumbnail} kerning={3} />
-                          <ContentSubText>{member.name}</ContentSubText>
-                        </ContentMemberView>
-                      ))}
-                    </ContentCollapsibleView>
+                    {item.participation || item.members?.length ? (
+                      <ContentCollapsibleView>
+                        {item.participation ? <CircleIcon size={18} uri={me.thumbnail} kerning={5} /> : <></>}
+                        <CircleIconBundle size={18} kerning={-8} uris={item.members?.filter((member) => member.id != me.id).map((member) => member.thumbnail)} />
+                      </ContentCollapsibleView>
+                    ) : (
+                      <ContentText>{`참여 멤버가 없습니다.`}</ContentText>
+                    )}
                   </ContentItemView>
                   <Break sep={0} />
                   <ContentItemView>

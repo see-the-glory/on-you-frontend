@@ -3,7 +3,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import CustomText from "./CustomText";
 
-const Container = styled.View<{ kerning: number; opacity: number }>`
+const Container = styled.View<{ size: number; kerning: number; opacity: number }>`
   position: relative;
   justify-content: center;
   align-items: center;
@@ -31,7 +31,7 @@ const Backplate = styled.View<{ size: number }>`
   border-color: rgba(0, 0, 0, 0);
   background-color: white;
   box-shadow: 1px 1px 1px gray;
-  elevation: 2;
+  elevation: 10;
 `;
 
 const IconImage = styled.Image<{ size: number }>`
@@ -58,7 +58,7 @@ interface CircleIconProps {
 
 const CircleIcon: React.FC<CircleIconProps> = ({ size, uri, name, badge, kerning, opacity }) => {
   return (
-    <Container kerning={kerning ?? 0} opacity={opacity ?? 1}>
+    <Container size={size} kerning={kerning ?? 0} opacity={opacity ?? 1}>
       {badge ? (
         <BadgeIcon>
           <MaterialIcons name={badge} size={18} color="#ff714b" />
