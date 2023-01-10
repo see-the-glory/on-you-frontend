@@ -1,23 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
-import { logout } from "../store/Actions";
+import { logout, updateUser } from "../store/Actions";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
 import { UserApi, UserInfoResponse, ClubApi, CategoryResponse } from "../api";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { DeviceEventEmitter } from "react-native";
+import { useToast } from "react-native-toast-notifications";
+import CustomText from "../components/CustomText";
+import CircleIcon from "../components/CircleIcon";
 
 const Container = styled.SafeAreaView`
   flex: 1;
 `;
 const UserInfoSection = styled.View`
   background-color: #fff;
-  box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.25);
-  padding-horizontal: 20px;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+  border-bottom-width: 1px;
+  border-bottom-color: #dbdbdb;
+  padding: 0px 20px;
   height: 100px;
   flex-direction: row;
   align-items: center;
+  elevation: 10;
 `;
 
 const LogoBox = styled.View`
@@ -65,20 +72,23 @@ const MenuWrapper = styled.View`
 const MenuItem = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  padding-horizontal: 20px;
+  padding: 10px 20px;
+  justify-content: center;
+  align-items: center;
 `;
 
-const MenuItemText = styled.Text`
+const MenuItemText = styled(CustomText)`
   color: #2e2e2e;
+  font-family: "NotoSansKR-Medium";
   font-size: 16px;
+  line-height: 22px;
 `;
 
 const TouchMenu = styled.View`
   height: 50px;
   border-bottom-width: 1px;
   border-bottom-color: #dbdbdb;
+  justify-content: center;
 `;
 
 const LogoutButton = styled.TouchableOpacity`
@@ -111,13 +121,42 @@ const EditBox = styled.View`
 
 const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation: { navigate } }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
+  const dispatch = useDispatch();
+  const toast = useToast();
 
   const {
     isLoading: userInfoLoading, // true or false
+    refetch: userInfoRefetch,
     data: userInfo,
-  } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo);
+  } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.resultCode === "OK") {
+        dispatch(updateUser(res.data));
+      } else {
+        console.log(`getUserInfo success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res);
+        toast.show(`유저 정보를 불러오지 못했습니다. (Error Code: ${res.status})`, {
+          type: "warning",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error getUserInfo ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "warning",
+      });
+    },
+  });
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    let subscription = DeviceEventEmitter.addListener("ProfileRefresh", () => {
+      console.log("Profile - Refresh Event");
+      userInfoRefetch();
+    });
+    return () => subscription.remove();
+  }, []);
 
   const goLogout = () => {
     dispatch(logout());
@@ -161,13 +200,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   return (
     <Container>
       <UserInfoSection>
-        <LogoBox>
-          <LogoImage
-            source={{
-              uri: userInfo?.data?.thumbnail,
-            }}
-          />
-        </LogoBox>
+        <CircleIcon size={65} uri={userInfo?.data?.thumbnail} />
         <InfoBox>
           <Email>{userInfo?.data?.email}</Email>
           <Title>{userInfo?.data?.name}</Title>

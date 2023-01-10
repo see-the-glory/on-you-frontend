@@ -25,7 +25,6 @@ export const updateUser = (user) => {
   return async (dispatch) => {
     await AsyncStorage.setItem("user", JSON.stringify(user));
     console.log(`User data stored`);
-    console.log(user);
     dispatch({
       type: "UPDATE_USER",
       payload: user,

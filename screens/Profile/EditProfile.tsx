@@ -1,15 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { TouchableOpacity, Text, NativeModules, Alert, Platform } from "react-native";
+import { TouchableOpacity, Text, Platform, KeyboardAvoidingView, DeviceEventEmitter } from "react-native";
 import { Keyboard, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import * as ImagePicker from "expo-image-picker";
-import { useMutation, useQuery } from "react-query";
-import { useSelector, useDispatch } from "react-redux";
-import { UserApi, UserUpdateRequest, UserInfoRequest } from "../../api";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { EditProfileScreenProps } from "../../Types/User";
-import { NavigationRouteContext } from "@react-navigation/native";
+import { useMutation } from "react-query";
+import { useSelector } from "react-redux";
+import { UserApi, UserInfoRequest } from "../../api";
 import Collapsible from "react-native-collapsible";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import DatePicker from "react-native-date-picker";
@@ -17,8 +14,7 @@ import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import CustomTextInput from "../../components/CustomTextInput";
 
-const Container = styled.View`
-  flex: 1;
+const Container = styled.ScrollView`
   padding-left: 15px;
   padding-right: 15px;
 `;
@@ -43,7 +39,7 @@ const ImagePickerWrap = styled.View`
   margin-top: 15px;
 `;
 
-const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
+const ImagePickerButton = styled.TouchableOpacity`
   width: 80px;
   height: 80px;
   border-radius: 50px;
@@ -51,13 +47,13 @@ const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
   align-items: center;
 `;
 
-const PickedImage = styled.Image<{ height: number }>`
+const PickedImage = styled.Image`
   width: 100%;
   height: 100%;
   border-radius: 50px;
 `;
 
-const ProfileText = styled.Text`
+const ProfileText = styled(CustomText)`
   margin-top: 10px;
   font-size: 12px;
   font-weight: normal;
@@ -82,58 +78,10 @@ const Input = styled(CustomTextInput)`
   border-bottom-width: 1px;
   border-bottom-color: #cecece;
   padding-bottom: 5px;
+  color: black;
 `;
 
 const TextBtn = styled.TouchableOpacity``;
-
-const FieldContentView = styled.View`
-  border-bottom-width: 1px;
-  border-bottom-color: #cecece;
-  padding-bottom: 5px;
-  flex-direction: row;
-`;
-const FieldContentLine = styled.View`
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
-const FieldContentText = styled.Text`
-  font-size: 14px;
-  margin-right: 10px;
-`;
-
-const Button = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
-const CategoryView = styled.View`
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  flex-wrap: wrap;
-`;
-
-const CategoryItem = styled.TouchableOpacity<{ selected: boolean }>`
-  min-width: 60px;
-  height: 25px;
-  align-items: center;
-  justify-content: center;
-  background-color: ${(props) => (props.selected ? "#295AF5" : "white")};
-  border-radius: 30px;
-  border: 0.5px solid #bbbbbb;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  padding: 0px 8px;
-`;
-
-const CategoryText = styled.Text<{ selected: boolean }>`
-  font-size: 14px;
-  font-weight: 300;
-  ${(props) => (props.selected ? "white" : "black")}
-`;
 
 const ItemView = styled.View`
   margin: 5px 0px;
@@ -147,11 +95,9 @@ const ItemText = styled(CustomText)`
   padding-bottom: 5px;
 `;
 
-const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ route: { params: userData }, navigation: { navigate, setOptions, goBack } }) => {
+const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ route: { params: userData }, navigation: { navigate, setOptions } }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
-
   const [imageURI, setImageURI] = useState<string | null>(userData?.thumbnail);
-  /* const [email, setEmail] = useState<string>(userData?.email); */
   const [name, setName] = useState<string>(userData?.name);
   const [sex, setSex] = useState<string>(userData?.sex === "M" ? "남자" : "여자");
   const [birthday, setBirthday] = useState<string>(userData?.birthday);
@@ -166,17 +112,18 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
   const mutation = useMutation(UserApi.updateUserInfo, {
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
-        navigate("Tabs", {
-          screen: "Profile",
-        });
+        console.log(res);
         toast.show("저장에 성공하였습니다.", {
           type: "success",
+        });
+        navigate("Tabs", {
+          screen: "Profile",
         });
       } else {
         console.log(`mutation success but please check status code`);
         console.log(`status: ${res.status}`);
-        toast.show("저장에 실패하였습니다.", {
-          type: "error",
+        toast.show(`저장에 실패하였습니다. (Error Code: ${res.status})`, {
+          type: "warning",
         });
       }
     },
@@ -184,7 +131,6 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
       console.log("--- Error ---");
       console.log(`error: ${error}`);
     },
-    onSettled: (res, error) => {},
   });
 
   const onSubmit = () => {
@@ -194,9 +140,6 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
       organizationName,
       phoneNumber,
     };
-
-    console.log("data : ", data);
-    console.log("imageURI : ", imageURI);
 
     const splitedURI = new String(imageURI).split("/");
 
@@ -239,7 +182,11 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
         </TouchableOpacity>
       ),
     });
-  }, []);
+
+    return () => {
+      DeviceEventEmitter.emit("ProfileRefresh");
+    };
+  }, [name, birthday, phoneNumber, organizationName, imageURI]);
 
   useEffect(() => {
     if (phoneNumber.length === 10) {
@@ -253,8 +200,6 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
     }
   }, [phoneNumber]);
 
-  const [approvalMethod, setApprovalMethod] = useState<number>(0);
-
   const [categoryItem, setCategoryItem] = useState(false);
 
   const onClick = () => {
@@ -262,63 +207,53 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
   };
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
-      <Container>
-        <ImagePickerView>
-          <ImagePickerWrap>
-            <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={0.8}>
-              <PickedImage height={imageHeight} source={{ uri: imageURI }} />
-            </ImagePickerButton>
-          </ImagePickerWrap>
-          <ProfileText onPress={pickImage}>프로필 사진 설정</ProfileText>
-        </ImagePickerView>
-        <Form>
-          <Title>이름</Title>
-          <Input autoCorrect={false} placeholder="홍길동" defaultValue={name} onChangeText={(text) => setName(text)} />
-        </Form>
-        <Form>
-          <Title>성별</Title>
-          <Input autoCorrect={false} placeholder="남자 or 여자" defaultValue={sex} onChangeText={(text) => setSex(text === "남자" ? "M" : "F")} />
-        </Form>
-        <Form>
-          <Title>생년월일</Title>
-          <TextBtn onPress={() => setShowDatePicker((prev) => !prev)} style={{ borderBottomWidth: 1, borderBottomColor: "#cecece" }}>
-            <ItemText>{birthday}</ItemText>
-          </TextBtn>
-          {Platform.OS === "android" ? (
-            <Collapsible collapsed={!showDatePicker}>
-              <ItemView style={{ width: "100%", alignItems: "center" }}>
-                <DatePicker textColor={"#000000"} date={new Date(birthday)} mode="date" onDateChange={(value) => setBirthday(value.toISOString().split("T")[0])} />
-              </ItemView>
-            </Collapsible>
-          ) : (
-            <Collapsible collapsed={!showDatePicker}>
-              <ItemView>
-                <RNDateTimePicker
-                  style={{ color: "#fff" }}
-                  textColor={"#000000"}
-                  mode="date"
-                  value={new Date(birthday)}
-                  display="spinner"
-                  onChange={(_, value: Date) => setBirthday(value.toISOString().split("T")[0])}
-                />
-              </ItemView>
-            </Collapsible>
-          )}
-        </Form>
-        <Form>
-          <Title>연락처</Title>
-          <Input keyboardType="numeric" placeholder="010-xxxx-xxxx" autoCorrect={false} defaultValue={phoneNumber} onChangeText={(phone) => setPhoneNumber(phone)} maxLength={13} />
-        </Form>
-        <Form>
-          <Title>교회</Title>
-          <Input autoCorrect={false} placeholder="시광교회" defaultValue={organizationName} onChangeText={(text) => setOrganizationName(text)} />
-        </Form>
-        {/* <Form>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={100} style={{ flex: 1 }}>
+        <Container>
+          <ImagePickerView>
+            <ImagePickerWrap>
+              <ImagePickerButton onPress={pickImage} activeOpacity={0.8}>
+                <PickedImage height={imageHeight} source={{ uri: imageURI }} />
+              </ImagePickerButton>
+            </ImagePickerWrap>
+            <ProfileText onPress={pickImage}>프로필 사진 설정</ProfileText>
+          </ImagePickerView>
+          <Form>
+            <Title>이름</Title>
+            <Input autoCorrect={false} placeholder="홍길동" defaultValue={name} onChangeText={(text) => setName(text)} />
+          </Form>
+          <Form>
+            <Title>성별</Title>
+            <Input autoCorrect={false} placeholder="남자 or 여자" defaultValue={sex} onChangeText={(text) => setSex(text === "남자" ? "M" : "F")} editable={false} />
+          </Form>
+          <Form>
+            <Title>생년월일</Title>
+            <TextBtn onPress={() => setShowDatePicker((prev) => !prev)} style={{ borderBottomWidth: 1, borderBottomColor: "#cecece" }}>
+              <ItemText>{birthday}</ItemText>
+            </TextBtn>
+            {Platform.OS === "android" ? (
+              <Collapsible collapsed={!showDatePicker}>
+                <ItemView style={{ width: "100%", alignItems: "center" }}>
+                  <DatePicker textColor={"#000000"} date={new Date(birthday)} mode="date" onDateChange={(value) => setBirthday(value.toISOString().split("T")[0])} />
+                </ItemView>
+              </Collapsible>
+            ) : (
+              <Collapsible collapsed={!showDatePicker}>
+                <ItemView>
+                  <RNDateTimePicker textColor={"#000000"} mode="date" value={new Date(birthday)} display="spinner" onChange={(_, value: Date) => setBirthday(value.toISOString().split("T")[0])} />
+                </ItemView>
+              </Collapsible>
+            )}
+          </Form>
+          <Form>
+            <Title>연락처</Title>
+            <Input keyboardType="numeric" placeholder="010-xxxx-xxxx" autoCorrect={false} defaultValue={phoneNumber} onChangeText={(phone: string) => setPhoneNumber(phone)} maxLength={13} />
+          </Form>
+          <Form>
+            <Title>교회</Title>
+            <Input autoCorrect={false} placeholder="시광교회" defaultValue={organizationName} onChangeText={(text: string) => setOrganizationName(text)} />
+          </Form>
+          {/* <Form>
           <Title>관심사(3개 이상 택)</Title>
           <CategoryView>
             {interestsKor.map((category, index) => (
@@ -335,7 +270,8 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
             ))}
           </CategoryView>
         </Form> */}
-      </Container>
+        </Container>
+      </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 };

@@ -6,8 +6,8 @@ import NotificationSettings from "../screens/Profile/NotificationSettings";
 import Notice from "../screens/Profile/Notice";
 import Help from "../screens/Profile/Help";
 import Terms from "../screens/Profile/Terms";
-import { TouchableOpacity, Text } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native";
+import { Entypo } from "@expo/vector-icons";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -22,6 +22,8 @@ const ProfileStack = ({
       screenOptions={{
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
+        headerTitleAlign: "center",
+        headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
       }}
     >
       <NativeStack.Screen
@@ -32,7 +34,7 @@ const ProfileStack = ({
           title: "프로필 수정",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -44,7 +46,7 @@ const ProfileStack = ({
           title: "나의 모임",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -56,7 +58,7 @@ const ProfileStack = ({
           title: "알림설정",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -68,7 +70,7 @@ const ProfileStack = ({
           title: "공지사항",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -80,7 +82,7 @@ const ProfileStack = ({
           title: "고객센터/도움말",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -92,7 +94,7 @@ const ProfileStack = ({
           title: "약관",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}

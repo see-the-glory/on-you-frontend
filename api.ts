@@ -760,8 +760,7 @@ const FindUserPw = (req: FindPwRequest) => {
 };
 
 const selectMyClubs = ({ queryKey }: any) => {
-  const [_key, token, clubId]: [string, string, number] = queryKey;
-  console.log(_key, token, clubId);
+  const [_key, token]: [string, string] = queryKey;
   return fetch(`${BASE_URL}/api/clubs/my`, {
     headers: {
       authorization: `${token}`,
