@@ -14,7 +14,7 @@ import JoinConfirm from "../screens/Login/JoinConfirm";
 import JoinStepSuccess from "../screens/Login/JoinStepSuccess";
 import FindLoginInfo from "../screens/Login/FindLoginInfo";
 import { TouchableOpacity, Text } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import FindId from "../screens/Login/FindId";
 import FindPw from "../screens/Login/FindPw";
 import FindIdResult from "../screens/Login/FindIdResult";
@@ -29,7 +29,14 @@ const LoginStack = ({
   },
 }) => {
   return (
-    <NativeStack.Navigator screenOptions={{ presentation: "card", contentStyle: { backgroundColor: "white" } }}>
+    <NativeStack.Navigator
+      screenOptions={{
+        presentation: "card",
+        contentStyle: { backgroundColor: "white" },
+        headerTitleAlign: "center",
+        headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
+      }}
+    >
       <NativeStack.Screen
         name="Login"
         component={Login}
@@ -37,7 +44,7 @@ const LoginStack = ({
           title: "로그인",
           headerLeft: () => (
             <TouchableOpacity onPress={() => goBack()}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -49,7 +56,7 @@ const LoginStack = ({
           title: "로그인 정보 찾기",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "Login" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -62,7 +69,7 @@ const LoginStack = ({
           title: "아이디 찾기",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "FindLoginInfo" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -75,7 +82,7 @@ const LoginStack = ({
           title: "아이디 찾기",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "FindId" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -87,7 +94,7 @@ const LoginStack = ({
           title: "비밀번호 찾기",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "FindLoginInfo" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -99,7 +106,7 @@ const LoginStack = ({
           title: "비밀번호 찾기",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "FindPw" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -111,7 +118,7 @@ const LoginStack = ({
           title: "약관 동의",
           headerLeft: () => (
             <TouchableOpacity onPress={() => goBack()}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -123,7 +130,7 @@ const LoginStack = ({
           title: "회원가입",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepOne" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -136,7 +143,7 @@ const LoginStack = ({
           title: "회원가입",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepTwo" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -149,7 +156,7 @@ const LoginStack = ({
           title: "회원가입",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepThree" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -162,7 +169,7 @@ const LoginStack = ({
           title: "회원가입",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepFour" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -175,7 +182,7 @@ const LoginStack = ({
           title: "회원가입",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepFive" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -188,7 +195,7 @@ const LoginStack = ({
           title: "회원가입",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepSix" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -201,7 +208,7 @@ const LoginStack = ({
           title: "회원가입",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepSeven" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -214,7 +221,7 @@ const LoginStack = ({
           title: "회원가입",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepEight" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -227,7 +234,7 @@ const LoginStack = ({
           title: "회원가입",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepEight" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
@@ -240,7 +247,7 @@ const LoginStack = ({
           title: "회원가입",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinConfirm" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
+              <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}

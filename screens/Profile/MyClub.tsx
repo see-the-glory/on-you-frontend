@@ -6,10 +6,12 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
 import { UserApi, Club } from "../../api";
+import CircleIcon from "../../components/CircleIcon";
+import CustomText from "../../components/CustomText";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
-const Container = styled.SafeAreaView``;
+const Container = styled.ScrollView``;
 
 const Title = styled.Text`
   font-size: 10px;
@@ -27,7 +29,6 @@ const MyClubWrap = styled.View`
 const MyClubBox = styled.View`
   flex-direction: row;
   height: 53px;
-  padding: 16px;
   align-items: center;
   background-color: #fff;
   padding-left: 20px;
@@ -41,7 +42,7 @@ const MyClubImgBox = styled.View`
   align-items: center;
   border: 1px;
   border-color: rgb(255, 255, 255);
-  background-color: white;
+  background-color: orange;
   box-shadow: 1px 2px 1px gray;
   margin-right: 10px;
 `;
@@ -52,10 +53,13 @@ const MyClubImg = styled.Image`
   border-radius: 50px;
 `;
 
-const MyClubTextBox = styled.View``;
+const MyClubTextBox = styled.View`
+  padding: 0px 10px;
+`;
 
-const MyClubText = styled.Text`
-  font-weight: 600;
+const MyClubText = styled(CustomText)`
+  font-size: 14px;
+  font-family: "NotoSansKR-Medium";
 `;
 
 const DeleteBox = styled.View`
@@ -68,9 +72,6 @@ const DeleteBox = styled.View`
 
 const MyClub: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigation: { navigate } }, props) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
-
-  const [clubData, setClubData] = useState<Club[]>();
-
   const {
     isLoading: myClubInfoLoading, // true or false
     data: myClub,
@@ -103,13 +104,11 @@ const MyClub: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigat
   return (
     <Container>
       <Title>가입한 모임 List</Title>
-      {myClub?.data.map((club, index) => (
+      {myClub?.data.map((club: Club, index: number) => (
         <MyClubWrap key={index}>
           <Swipeable renderRightActions={rightSwipe}>
             <MyClubBox style={{ width: SCREEN_WIDTH }}>
-              <MyClubImgBox>
-                <MyClubImg />
-              </MyClubImgBox>
+              <CircleIcon size={37} uri={club.thumbnail} />
               <MyClubTextBox>
                 <MyClubText>{club?.name}</MyClubText>
               </MyClubTextBox>
