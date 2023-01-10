@@ -316,7 +316,7 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = onyoufrontend/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = onyou;
+				INFOPLIST_KEY_CFBundleDisplayName = 온유;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -352,7 +352,7 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = P83ZS7XR97;
 				INFOPLIST_FILE = onyoufrontend/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = onyou;
+				INFOPLIST_KEY_CFBundleDisplayName = 온유;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
