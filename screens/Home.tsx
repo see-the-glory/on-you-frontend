@@ -35,7 +35,7 @@ import {
   FeedLikeRequest,
   FeedReverseLikeRequest,
   Club,
-  ClubsParams,
+  ClubsParams, ClubResponse
 } from "../api";
 import CustomText from "../components/CustomText";
 import { FeedData, HomeScreenProps } from "../types/feed";
@@ -149,7 +149,7 @@ const ModalText = styled(CustomText)`
   font-weight: bold;
   text-align: center;
   font-size: 18px;
-  padding: 30px 0 0 0;
+  padding: 30px 0 20px 0;
   width: 100%;
   color: black;
   height: auto;
@@ -242,7 +242,84 @@ const ImageSource = styled.Image<{ size: number }>`
   width: ${(props:any) => props.size}px;
   height: ${(props:any) => props.size}px;
 `;
+//모달
+const ClubArea = styled.TouchableOpacity`
+  flex-direction: row;
+  width: 100%;
+  height: auto;
+  padding: 5px 15px 0 15px;
+  border-style: solid;
+  border-bottom-color: #e9e9e9;
+  border-bottom-width: 1px;
+  align-self: flex-start;
+`;
 
+const ClubImg = styled.Image`
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  margin: 5px;
+`;
+
+const ClubMy = styled.View`
+  justify-content: center;
+  padding-top: 3%;
+`;
+const ClubId = styled(CustomText)`
+  padding-left: 2%;
+  color: black;
+  font-size: 12px;
+  font-weight: bold;
+`;
+
+const Comment = styled(CustomText)`
+  color: black;
+  margin-left: 10px;
+  width: 200px;
+  font-size: 12px;
+  font-weight: 300;
+`;
+
+const CommentMent = styled.View`
+  flex-direction: row;
+  padding-bottom: 4px;
+`;
+
+const CommentRemainder = styled.View`
+  flex-direction: row;
+`;
+
+const CtrgArea = styled.View`
+  width: auto;
+  height: auto;
+  margin: 0.1px 6px 13.9px 8px;
+  border-radius: 3px;
+  background-color: #c4c4c4;
+`;
+
+const CtgrText = styled.View`
+  display: flex;
+  flex-direction: row;
+  margin: 3px 5px 3px 5px;
+`;
+
+const OrganizationName = styled(CustomText)`
+  width: auto;
+  height: auto;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  color: #fff;
+`;
+const CreatorName = styled(CustomText)`
+  width: auto;
+  height: auto;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  color: #fff;
+  padding-left: 6px;
+`;
 interface HeartType {
   feedId: number;
   heart: boolean;
@@ -262,7 +339,6 @@ const Home: React.FC<HomeScreenProps> = ({
   const token = useSelector((state: any) => state.AuthReducers.authToken);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
   const [modalFeedData, setModalFeedData] =  useState<any>('');
-  const [imageURI, setImageURI] = useState<any>([]);
   //모달
   const modalizeRef = useRef<Modalize>(null);
   const onOpen = (feedData: Feed) => {
@@ -304,7 +380,6 @@ const Home: React.FC<HomeScreenProps> = ({
         array.push(feeds?.pages[0]?.responses?.content[i]?.imageUrls)
         // }
       }
-      setImageURI(array)
     },
     onError: (err) => {
       console.log(err);
@@ -494,6 +569,11 @@ const Home: React.FC<HomeScreenProps> = ({
     // 모든 단위가 맞지 않을 시
     return "방금 전";
   };
+  const {
+    isLoading: myClubInfoLoading, // true or false
+    data: myClub,
+  } = useQuery<ClubResponse>(["selectMyClubs", token], UserApi.selectMyClubs);
+
 
   const loading = feedsLoading && userInfoLoading;
   return loading ? (
@@ -535,7 +615,7 @@ const Home: React.FC<HomeScreenProps> = ({
                     <UserInfo>
                       <UserId>{item.userName}</UserId>
                       <ClubBox>
-                        <ClubName onPress={() => goToClubStack(item)} >{item.clubName}</ClubName>
+                        <ClubName onPress={() => goToClubStack(item)}>{item.clubName}</ClubName>
                       </ClubBox>
                     </UserInfo>
                   </FeedUser>
@@ -546,7 +626,7 @@ const Home: React.FC<HomeScreenProps> = ({
                         <Ionicons name="ellipsis-vertical" size={20} color={"black"} />
                       </ModalIcon>
                       <Portal>
-                        { modalFeedData.userId === myId ? (
+                         { modalFeedData.userId === myId ? (
                           <Modalize
                             ref={modalizeRef}
                             modalHeight={150}
@@ -586,7 +666,7 @@ const Home: React.FC<HomeScreenProps> = ({
                             data={item.imageUrls?.map((url)=>{return {img: url}})}
                             preview={false}
                             caroselImageContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
-                            caroselImageStyle={{resizeMode: 'center',height: 380, left: -20}}
+                            caroselImageStyle={{resizeMode: 'cover',height: 380, left: -20}}
                             activeIndicatorStyle={{backgroundColor: 'orange'}}
                             indicatorContainerStyle={{ bottom: 0 }}
                             />
