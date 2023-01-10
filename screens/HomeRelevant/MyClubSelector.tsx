@@ -165,7 +165,7 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
                         <ClubImg source={{ uri: item.thumbnail }} />
                         <ClubMy>
                           <CommentMent>
-                            <ClubId>{item.clubShortDesc}</ClubId>
+                            <ClubId>{item.name}</ClubId>
                           </CommentMent>
                           <CommentRemainder>
                             <CtrgArea>
@@ -174,9 +174,6 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
                                   (
                                     <View style={{display:'flex',flexDirection:'row'}}>
                                       <OrganizationName>{item.categories?.map((name)=>{return name.name})}</OrganizationName>
-                                      {/*<OrganizationName>{item.categories[0].name}</OrganizationName>
-                                      <OrganizationName>,</OrganizationName>
-                                      <OrganizationName>{item.categories[1].name}</OrganizationName>*/}
                                     </View>
                                   ):(
                                     <OrganizationName>{item.categories[0].name}</OrganizationName>
