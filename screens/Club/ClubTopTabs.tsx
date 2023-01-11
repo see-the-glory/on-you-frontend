@@ -11,11 +11,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
 import { useQuery } from "react-query";
 import { Club, ClubApi, ClubResponse, ClubRoleResponse, ClubSchedulesResponse } from "../../api";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
-import { useFocusEffect } from "@react-navigation/native";
 import { RefinedSchedule } from "../../Types/Club";
 import moment from "moment-timezone";
+import { deleteClub } from "../../store/Actions";
 
 const Container = styled.View`
   flex: 1;
@@ -58,6 +58,7 @@ const ClubTopTabs = ({
   const token = useSelector((state) => state.AuthReducers.authToken);
   const me = useSelector((state) => state.UserReducers.user);
   const toast = useToast();
+  const dispatch = useDispatch();
   const [data, setData] = useState<Club>(clubData);
   const [scheduleData, setScheduleData] = useState<RefinedSchedule[]>();
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
@@ -76,6 +77,8 @@ const ClubTopTabs = ({
 
   // Animated Variables
   const scrollY = useRef(new Animated.Value(0)).current;
+  const homeOffsetY = useSelector((state) => state.ClubReducers.homeScrollY);
+  const scheduleOffsetX = useSelector((state) => state.ClubReducers.scheduleScrollX);
   const translateY = scrollY.interpolate({
     inputRange: [0, headerDiff],
     outputRange: [0, -headerDiff],
@@ -108,6 +111,7 @@ const ClubTopTabs = ({
     navigate("ClubNotification", { clubData: data, clubRole: clubRole?.data });
   };
 
+  // API Calling
   const { isLoading: clubLoading, refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
@@ -191,28 +195,29 @@ const ClubTopTabs = ({
     },
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      console.log(`${data.id} ClubTopTabs useFocusEffect!`);
-      clubDataRefetch();
-      clubRoleRefetch();
-      schedulesRefetch();
-    }, [])
-  );
-
   useEffect(() => {
     console.log("ClubTopTabs - add listner");
-    let subscription = DeviceEventEmitter.addListener("SchedulesRefetch", () => {
+    let scheduleSubscription = DeviceEventEmitter.addListener("SchedulesRefetch", () => {
       console.log("ClubTopTabs - Schedule Refetch Event");
       schedulesRefetch();
     });
-    return () => subscription.remove();
+    let clubSubscription = DeviceEventEmitter.addListener("ClubRefetch", () => {
+      console.log("ClubTopTabs - ClubData, ClubRole Refetch Event");
+      clubDataRefetch();
+      clubRoleRefetch();
+    });
+
+    return () => {
+      scheduleSubscription.remove();
+      clubSubscription.remove();
+      dispatch(deleteClub());
+    };
   }, []);
 
   const renderClubHome = useCallback(
     (props) => {
       props.route.params.clubData = data;
-      return <ClubHome {...props} scrollY={scrollY} headerDiff={headerDiff} clubRole={clubRole?.data} schedules={scheduleData} />;
+      return <ClubHome {...props} scrollY={scrollY} homeOffsetY={homeOffsetY} scheduleOffsetX={scheduleOffsetX} headerDiff={headerDiff} clubRole={clubRole?.data} schedules={scheduleData} />;
     },
     [headerDiff, data, clubRole, scheduleData]
   );

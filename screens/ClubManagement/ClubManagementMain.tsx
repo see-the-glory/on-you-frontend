@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Animated, StatusBar, TouchableOpacity } from "react-native";
+import { Animated, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Feather, AntDesign, FontAwesome5, Entypo, Ionicons } from "@expo/vector-icons";
 import { ClubManagementMainProps, RootStackParamList } from "../../types/Club";
@@ -151,8 +151,31 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   const token = useSelector((state) => state.AuthReducers.authToken);
   const toast = useToast();
   const [data, setData] = useState<Club>(clubData);
-  const [items, setItems] = useState<ClubEditItem[]>();
   const [isToggle, setIsToggle] = useState(false);
+  const iconSize = 14;
+  const items: ClubEditItem[] = [
+    {
+      icon: <Feather name="tool" size={iconSize} color="black" />,
+      title: "모임 기본 사항 수정",
+      screen: "ClubEditBasics",
+    },
+    {
+      icon: <Feather name="edit-3" size={iconSize} color="black" />,
+      title: "소개글 수정",
+      screen: "ClubEditIntroduction",
+    },
+    {
+      icon: <Feather name="users" size={iconSize} color="black" />,
+      title: "관리자 / 멤버 관리",
+      screen: "ClubEditMembers",
+    },
+    {
+      icon: <Feather name="trash-2" size={iconSize} color="red" />,
+      title: "모임 삭제",
+      screen: "ClubDelete",
+    },
+  ];
+
   const X = useRef(new Animated.Value(0)).current;
   const { refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
     onSuccess: (res) => {
@@ -221,33 +244,6 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
       }
     }, [refresh])
   );
-
-  useLayoutEffect(() => {
-    const iconSize = 14;
-    setItems([
-      {
-        icon: <Feather name="tool" size={iconSize} color="black" />,
-        title: "모임 기본 사항 수정",
-        screen: "ClubEditBasics",
-      },
-      {
-        icon: <Feather name="edit-3" size={iconSize} color="black" />,
-        title: "소개글 수정",
-        screen: "ClubEditIntroduction",
-      },
-      {
-        icon: <Feather name="users" size={iconSize} color="black" />,
-        title: "관리자 / 멤버 관리",
-        screen: "ClubEditMembers",
-      },
-      {
-        icon: <Feather name="trash-2" size={iconSize} color="red" />,
-        title: "모임 삭제",
-        screen: "ClubDelete",
-      },
-    ]);
-  }, []);
-
   useLayoutEffect(() => {
     if (isToggle) {
       // CLOSE -> OPEN
@@ -265,6 +261,13 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
       }).start();
     }
   }, [isToggle]);
+
+  useEffect(() => {
+    return () => {
+      DeviceEventEmitter.emit("ClubRefetch");
+      DeviceEventEmitter.emit("SchedulesRefetch");
+    };
+  }, []);
 
   const goToScreen = (screen: keyof RootStackParamList) => {
     return navigate(screen, { clubData: data });

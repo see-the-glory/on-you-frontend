@@ -7,6 +7,8 @@ import { Member } from "../../api";
 import ScheduleModal from "./ClubScheduleModal";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
+import { useDispatch } from "react-redux";
+import { updateClubHomeScheduleScrollX, updateClubHomeScrollY } from "../../store/Actions";
 
 const MEMBER_ICON_KERNING = 25;
 const MEMBER_ICON_SIZE = 50;
@@ -184,6 +186,8 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     params: { clubData },
   },
   scrollY,
+  homeOffsetY,
+  scheduleOffsetX,
   headerDiff,
   clubRole,
   schedules,
@@ -196,6 +200,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const [managerData, setManagerData] = useState<Member[][]>();
   const [masterData, setMasterData] = useState<Member>();
   const memberCountPerLine = Math.floor((SCREEN_WIDTH - SCREEN_PADDING_SIZE) / (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING));
+  const dispatch = useDispatch();
 
   useLayoutEffect(() => {
     console.log(`${clubData.id} clubHome useLayoutEffect`);
@@ -249,7 +254,8 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   ) : (
     <Animated.ScrollView
       onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
-      contentOffset={{ x: 0, y: 0 }}
+      onMomentumScrollEnd={(event) => dispatch(updateClubHomeScrollY(event.nativeEvent.contentOffset.y))}
+      contentOffset={{ x: 0, y: homeOffsetY }}
       style={{
         flex: 1,
         paddingTop: 15,
@@ -288,6 +294,8 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={(event) => dispatch(updateClubHomeScheduleScrollX(event.nativeEvent.contentOffset.x))}
+            contentOffset={{ x: scheduleOffsetX, y: 0 }}
             contentContainerStyle={{
               paddingVertical: 15,
               paddingHorizontal: SCREEN_PADDING_SIZE,

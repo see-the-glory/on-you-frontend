@@ -1,5 +1,5 @@
-import React, { useLayoutEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { DeviceEventEmitter, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
 import CustomText from "../../components/CustomText";
 import styled from "styled-components/native";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -96,6 +96,12 @@ const ClubJoin = ({
       ),
     });
   }, [memo]);
+
+  useEffect(() => {
+    return () => {
+      DeviceEventEmitter.emit("ClubRefetch");
+    };
+  }, []);
 
   return (
     <Container>

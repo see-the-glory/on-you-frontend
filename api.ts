@@ -26,7 +26,7 @@ export interface Club {
   maxNumber?: number;
   recruitNumber?: number;
   thumbnail?: string | null;
-  recruitStatus?: string | null;
+  recruitStatus?: "OPEN" | "CLOSE" | null;
   creatorName?: string;
   created?: string;
   categories?: Category[];

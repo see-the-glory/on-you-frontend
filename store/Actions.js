@@ -21,26 +21,6 @@ export const init = () => {
   };
 };
 
-export const updateUser = (user) => {
-  return async (dispatch) => {
-    await AsyncStorage.setItem("user", JSON.stringify(user));
-    console.log(`User data stored`);
-    dispatch({
-      type: "UPDATE_USER",
-      payload: user,
-    });
-  };
-};
-
-export const deleteUser = (user) => {
-  return (dispatch) => {
-    dispatch({
-      type: "DELETE_USER",
-      payload: user,
-    });
-  };
-};
-
 export const login = (token) => {
   return async (dispatch) => {
     await AsyncStorage.setItem("token", token);
@@ -61,6 +41,41 @@ export const logout = () => {
     });
     dispatch({
       type: "LOGOUT",
+    });
+  };
+};
+
+export const deleteUser = (user) => {
+  return (dispatch) => {
+    dispatch({
+      type: "DELETE_USER",
+      payload: user,
+    });
+  };
+};
+
+export const updateClubHomeScrollY = (y) => {
+  return (dispatch) => {
+    dispatch({
+      type: "UPDATE_CLUBHOME_SCROLL_Y",
+      payload: y,
+    });
+  };
+};
+
+export const updateClubHomeScheduleScrollX = (x) => {
+  return (dispatch) => {
+    dispatch({
+      type: "UPDATE_CLUBHOME_SCHEDULE_SCROLL_X",
+      payload: x,
+    });
+  };
+};
+
+export const deleteClub = () => {
+  return (dispatch) => {
+    dispatch({
+      type: "DELETE_CLUB",
     });
   };
 };
