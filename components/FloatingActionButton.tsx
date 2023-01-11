@@ -3,6 +3,7 @@ import styled from "styled-components/native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Animated } from "react-native";
 import { ClubHomeFloatingButtonProps } from "../Types/Club";
+import { Item } from "react-native-paper/lib/typescript/components/List/List";
 
 const FloatingActionView = styled.View`
   position: absolute;
@@ -38,7 +39,6 @@ const FloatingButton = styled.TouchableOpacity`
 `;
 
 const AnimatedFloatingMainButton = Animated.createAnimatedComponent(FloatingMainButton);
-const AnimatedFloatingButton = Animated.createAnimatedComponent(FloatingButton);
 
 const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, recruitStatus, onPressEdit, onPressJoin }) => {
   const [open, setOpen] = useState(0);
@@ -47,18 +47,29 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, rec
     inputRange: [0, 1],
     outputRange: ["0deg", "45deg"],
   });
-  const firstY = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [50, -15],
-  });
-  const secondY = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [80, -25],
-  });
   const fade = animation.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 1],
   });
+  const onPressImagePlus = () => {
+    console.log("onPress Feed Creation");
+  };
+  const onPressPencilOutline = () => {
+    toggleMenu();
+    onPressEdit();
+  };
+  const toggleItem = [
+    {
+      iconName: "image-plus",
+      accessRole: ["MASTER", "MANAGER", "MEMBER"],
+      onPress: onPressImagePlus,
+    },
+    {
+      iconName: "pencil-outline",
+      accessRole: ["MASTER", "MANAGER"],
+      onPress: onPressPencilOutline,
+    },
+  ];
 
   const toggleMenu = () => {
     Animated.spring(animation, {
@@ -71,18 +82,28 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, rec
 
   return role && role !== "PENDING" ? (
     <FloatingActionView>
-      <AnimatedFloatingButton style={{ opacity: fade, transform: [{ translateY: secondY }] }}>
-        <MaterialCommunityIcons name="image-plus" size={18} color="#ff714b" />
-      </AnimatedFloatingButton>
-      <AnimatedFloatingButton
-        onPress={() => {
-          toggleMenu();
-          onPressEdit();
-        }}
-        style={{ opacity: fade, transform: [{ translateY: firstY }] }}
-      >
-        <MaterialCommunityIcons name="pencil-outline" size={18} color="#ff714b" />
-      </AnimatedFloatingButton>
+      {toggleItem
+        .filter((item) => item.accessRole.includes(role))
+        .map((item, index, items) => (
+          <Animated.View
+            key={index}
+            style={{
+              opacity: fade,
+              transform: [
+                {
+                  translateY: animation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [50, -(items.length * 10 + 5) + index * 10],
+                  }),
+                },
+              ],
+            }}
+          >
+            <FloatingButton onPress={item.onPress}>
+              <MaterialCommunityIcons name={item.iconName} size={18} color="#ff714b" />
+            </FloatingButton>
+          </Animated.View>
+        ))}
       <AnimatedFloatingMainButton onPress={toggleMenu} activeOpacity={1} style={{ transform: [{ rotate: rotation }] }}>
         <MaterialCommunityIcons name="plus" size={28} color="white" />
       </AnimatedFloatingMainButton>
