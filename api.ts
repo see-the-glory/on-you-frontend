@@ -272,6 +272,8 @@ export interface ClubUpdateRequest {
     clubLongDesc?: string | null;
     contactPhone?: string | null;
     recruitStatus?: string | null;
+    category1Id?: number;
+    category2Id?: number;
   };
   token: string;
   clubId: number;

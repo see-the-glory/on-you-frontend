@@ -272,10 +272,14 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
 
   const onPressToggle = () => {
     let updateData: ClubUpdateRequest = {
-      data: { recruitStatus: isToggle ? "CLOSE" : "OPEN" },
+      data: { recruitStatus: isToggle ? "CLOSE" : "OPEN", category1Id: data.categories.length > 0 ? data.categories[0].id : -1, category2Id: data.categories.length > 1 ? data.categories[1].id : -1 },
       token,
       clubId: clubData.id,
     };
+
+    if (data?.categories?.length === 1) {
+      delete updateData.data?.category2Id;
+    }
 
     mutation.mutate(updateData);
   };
