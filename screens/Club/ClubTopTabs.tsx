@@ -44,9 +44,6 @@ const ModalHeaderRight = styled.View`
   position: absolute;
   right: 15px;
 `;
-
-const ModalCloseButton = styled.TouchableOpacity``;
-
 const TopTab = createMaterialTopTabNavigator();
 
 const HEADER_HEIGHT_EXPANDED = 270;
@@ -137,10 +134,7 @@ const ClubTopTabs = ({
   } = useQuery<ClubRoleResponse>(["getClubRole", token, data.id], ClubApi.getClubRole, {
     onSuccess: (res) => {
       if (res.status !== 200 || res.resultCode !== "OK") {
-        console.log(`query fail`);
-        console.log(`getClubRole status: ${res.status}`);
-        console.log(res);
-        toast.show("멤버 등급 정보를 불러오지 못했습니다.", {
+        toast.show(`멤버 등급 정보를 불러오지 못했습니다. (Error Code: ${res.status})`, {
           type: "warning",
         });
       }
@@ -155,7 +149,7 @@ const ClubTopTabs = ({
   const { isLoading: schedulesLoading, refetch: schedulesRefetch } = useQuery<ClubSchedulesResponse>(["getClubSchedules", data.id], ClubApi.getClubSchedules, {
     onSuccess: (res) => {
       if (res.status !== 200) {
-        return toast.show(`Schedule Request Error Code: ${res.status}`, {
+        return toast.show(`스케줄 정보를 불러오지 못했습니다.(Error Code: ${res.status})`, {
           type: "warning",
         });
       }
@@ -241,9 +235,10 @@ const ClubTopTabs = ({
           ) : (
             <></>
           )}
-          <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)} style={{ marginRight: 10 }}>
+          {/* 하트는 이후 공개 */}
+          {/* <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)} style={{ marginRight: 10 }}>
             {heartSelected ? <Ionicons name="md-heart" size={24} color="white" /> : <Ionicons name="md-heart-outline" size={24} color="white" />}
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </RightNavigationView>
       </NavigationView>
 
@@ -284,7 +279,7 @@ const ClubTopTabs = ({
         </TopTab.Navigator>
       </Animated.View>
 
-      {clubRoleLoading ? <></> : <FloatingActionButton role={clubRole?.data?.role} applyStatus={clubRole?.data?.applyStatus} onPressEdit={goClubEdit} onPressJoin={goClubJoin} />}
+      {clubRoleLoading ? <></> : <FloatingActionButton role={clubRole?.data?.role} recruitStatus={data?.recruitStatus} onPressEdit={goClubEdit} onPressJoin={goClubJoin} />}
     </Container>
   );
 };

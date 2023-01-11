@@ -96,8 +96,8 @@ export type TopTabParamList = {
 export type ClubTopTabProps = MaterialTopTabScreenProps<TopTabParamList, "ClubTopTabs">;
 
 export interface ClubHomeFloatingButtonProps {
-  role: "MASTER" | "MANAGER" | "MEMBER" | "PENDING" | undefined;
-  applyStatus: "APPLIED" | "APPROVED" | undefined;
+  role?: "MASTER" | "MANAGER" | "MEMBER" | "PENDING" | null;
+  recruitStatus?: "OPEN" | "CLOSE" | null;
   onPressEdit: Function;
   onPressJoin: Function;
 }

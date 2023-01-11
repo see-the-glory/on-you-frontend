@@ -40,7 +40,7 @@ const FloatingButton = styled.TouchableOpacity`
 const AnimatedFloatingMainButton = Animated.createAnimatedComponent(FloatingMainButton);
 const AnimatedFloatingButton = Animated.createAnimatedComponent(FloatingButton);
 
-const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, applyStatus, onPressEdit, onPressJoin }) => {
+const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, recruitStatus, onPressEdit, onPressJoin }) => {
   const [open, setOpen] = useState(0);
   const animation = useRef(new Animated.Value(0)).current;
   const rotation = animation.interpolate({
@@ -87,7 +87,7 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, app
         <MaterialCommunityIcons name="plus" size={28} color="white" />
       </AnimatedFloatingMainButton>
     </FloatingActionView>
-  ) : (
+  ) : recruitStatus?.toUpperCase() === "OPEN" ? (
     <FloatingActionView>
       <FloatingMainButton
         onPress={() => {
@@ -98,6 +98,8 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, app
         <MaterialIcons name="group-add" size={28} color="whitesmoke" />
       </FloatingMainButton>
     </FloatingActionView>
+  ) : (
+    <></>
   );
 };
 
