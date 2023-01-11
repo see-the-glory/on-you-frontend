@@ -89,14 +89,6 @@ const DetailInfoContent = styled.View`
   margin-right: 5px;
 `;
 
-const ApplyButton = styled.TouchableOpacity`
-  background-color: #295af5;
-  padding: 5px;
-  border-radius: 5px;
-  align-items: center;
-  margin-bottom: 25px;
-`;
-
 const CollapsedView = styled.SafeAreaView<{ height: number }>`
   justify-content: center;
   align-items: center;

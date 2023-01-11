@@ -11,11 +11,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
 import { useQuery } from "react-query";
 import { Club, ClubApi, ClubResponse, ClubRoleResponse, ClubSchedulesResponse } from "../../api";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
-import { useFocusEffect } from "@react-navigation/native";
 import { RefinedSchedule } from "../../Types/Club";
 import moment from "moment-timezone";
+import { deleteClub } from "../../store/Actions";
 
 const Container = styled.View`
   flex: 1;
@@ -44,9 +44,6 @@ const ModalHeaderRight = styled.View`
   position: absolute;
   right: 15px;
 `;
-
-const ModalCloseButton = styled.TouchableOpacity``;
-
 const TopTab = createMaterialTopTabNavigator();
 
 const HEADER_HEIGHT_EXPANDED = 270;
@@ -61,6 +58,7 @@ const ClubTopTabs = ({
   const token = useSelector((state) => state.AuthReducers.authToken);
   const me = useSelector((state) => state.UserReducers.user);
   const toast = useToast();
+  const dispatch = useDispatch();
   const [data, setData] = useState<Club>(clubData);
   const [scheduleData, setScheduleData] = useState<RefinedSchedule[]>();
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
@@ -79,6 +77,8 @@ const ClubTopTabs = ({
 
   // Animated Variables
   const scrollY = useRef(new Animated.Value(0)).current;
+  const homeOffsetY = useSelector((state) => state.ClubReducers.homeScrollY);
+  const scheduleOffsetX = useSelector((state) => state.ClubReducers.scheduleScrollX);
   const translateY = scrollY.interpolate({
     inputRange: [0, headerDiff],
     outputRange: [0, -headerDiff],
@@ -111,6 +111,7 @@ const ClubTopTabs = ({
     navigate("ClubNotification", { clubData: data, clubRole: clubRole?.data });
   };
 
+  // API Calling
   const { isLoading: clubLoading, refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
@@ -137,10 +138,7 @@ const ClubTopTabs = ({
   } = useQuery<ClubRoleResponse>(["getClubRole", token, data.id], ClubApi.getClubRole, {
     onSuccess: (res) => {
       if (res.status !== 200 || res.resultCode !== "OK") {
-        console.log(`query fail`);
-        console.log(`getClubRole status: ${res.status}`);
-        console.log(res);
-        toast.show("멤버 등급 정보를 불러오지 못했습니다.", {
+        toast.show(`멤버 등급 정보를 불러오지 못했습니다. (Error Code: ${res.status})`, {
           type: "warning",
         });
       }
@@ -155,7 +153,7 @@ const ClubTopTabs = ({
   const { isLoading: schedulesLoading, refetch: schedulesRefetch } = useQuery<ClubSchedulesResponse>(["getClubSchedules", data.id], ClubApi.getClubSchedules, {
     onSuccess: (res) => {
       if (res.status !== 200) {
-        return toast.show(`Schedule Request Error Code: ${res.status}`, {
+        return toast.show(`스케줄 정보를 불러오지 못했습니다.(Error Code: ${res.status})`, {
           type: "warning",
         });
       }
@@ -197,28 +195,29 @@ const ClubTopTabs = ({
     },
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      console.log(`${data.id} ClubTopTabs useFocusEffect!`);
-      clubDataRefetch();
-      clubRoleRefetch();
-      schedulesRefetch();
-    }, [])
-  );
-
   useEffect(() => {
     console.log("ClubTopTabs - add listner");
-    let subscription = DeviceEventEmitter.addListener("SchedulesRefetch", () => {
+    let scheduleSubscription = DeviceEventEmitter.addListener("SchedulesRefetch", () => {
       console.log("ClubTopTabs - Schedule Refetch Event");
       schedulesRefetch();
     });
-    return () => subscription.remove();
+    let clubSubscription = DeviceEventEmitter.addListener("ClubRefetch", () => {
+      console.log("ClubTopTabs - ClubData, ClubRole Refetch Event");
+      clubDataRefetch();
+      clubRoleRefetch();
+    });
+
+    return () => {
+      scheduleSubscription.remove();
+      clubSubscription.remove();
+      dispatch(deleteClub());
+    };
   }, []);
 
   const renderClubHome = useCallback(
     (props) => {
       props.route.params.clubData = data;
-      return <ClubHome {...props} scrollY={scrollY} headerDiff={headerDiff} clubRole={clubRole?.data} schedules={scheduleData} />;
+      return <ClubHome {...props} scrollY={scrollY} homeOffsetY={homeOffsetY} scheduleOffsetX={scheduleOffsetX} headerDiff={headerDiff} clubRole={clubRole?.data} schedules={scheduleData} />;
     },
     [headerDiff, data, clubRole, scheduleData]
   );
@@ -241,9 +240,10 @@ const ClubTopTabs = ({
           ) : (
             <></>
           )}
-          <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)} style={{ marginRight: 10 }}>
+          {/* 하트는 이후 공개 */}
+          {/* <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)} style={{ marginRight: 10 }}>
             {heartSelected ? <Ionicons name="md-heart" size={24} color="white" /> : <Ionicons name="md-heart-outline" size={24} color="white" />}
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </RightNavigationView>
       </NavigationView>
 
@@ -284,7 +284,7 @@ const ClubTopTabs = ({
         </TopTab.Navigator>
       </Animated.View>
 
-      {clubRoleLoading ? <></> : <FloatingActionButton role={clubRole?.data?.role} applyStatus={clubRole?.data?.applyStatus} onPressEdit={goClubEdit} onPressJoin={goClubJoin} />}
+      {clubRoleLoading ? <></> : <FloatingActionButton role={clubRole?.data?.role} recruitStatus={data?.recruitStatus} onPressEdit={goClubEdit} onPressJoin={goClubJoin} />}
     </Container>
   );
 };

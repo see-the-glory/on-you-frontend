@@ -218,7 +218,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
     }
 
     const contactPhone = phoneNumber.replace(/-/g, "");
-    const data = {
+    let data = {
       category1Id: category1,
       clubName,
       clubMaxMember: maxNumberInfinity ? 0 : Number(maxNumber.split(" ")[0]),

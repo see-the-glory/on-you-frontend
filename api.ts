@@ -26,7 +26,7 @@ export interface Club {
   maxNumber?: number;
   recruitNumber?: number;
   thumbnail?: string | null;
-  recruitStatus?: string | null;
+  recruitStatus?: "OPEN" | "CLOSE" | null;
   creatorName?: string;
   created?: string;
   categories?: Category[];
@@ -272,6 +272,8 @@ export interface ClubUpdateRequest {
     clubLongDesc?: string | null;
     contactPhone?: string | null;
     recruitStatus?: string | null;
+    category1Id?: number;
+    category2Id?: number;
   };
   token: string;
   clubId: number;
