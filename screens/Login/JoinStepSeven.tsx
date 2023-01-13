@@ -1,7 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, createRef, useEffect } from "react";
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import React, { useState, useEffect, createRef, useLayoutEffect } from "react";
+import { Keyboard, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
+import { Entypo } from "@expo/vector-icons";
+import CustomText from "../../components/CustomText";
+import CustomTextInput from "../../components/CustomTextInput";
 
 const Container = styled.View`
   width: 100%;
@@ -72,7 +75,7 @@ const Error = styled.Text`
 `;
 
 const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
-  navigation: { navigate },
+  navigation: { navigate, setOptions },
   route: {
     params: { name, email, password, sex, birth },
   },
@@ -112,6 +115,16 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
       });
     }
   };
+
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepSix", name, email, password, sex, birth })}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [name, email, password, sex, birth]);
 
   return (
     <TouchableWithoutFeedback

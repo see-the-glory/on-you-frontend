@@ -1,8 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef } from "react";
-import { Keyboard, TouchableWithoutFeedback, Modal } from "react-native";
+import { Keyboard, TouchableWithoutFeedback, Modal, ScrollView } from "react-native";
 import styled from "styled-components/native";
+import CustomText from "../../components/CustomText";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import Terms from "../Profile/Terms";
 
 const Container = styled.View`
   width: 100%;
@@ -54,7 +56,7 @@ const Text = styled.Text`
 `;
 
 const RedText = styled.Text`
-  margin-right: 2px;
+  margin-right: 5px;
   color: #ff714b;
   font-size: 16px;
 `;
@@ -101,16 +103,11 @@ const ButtonTitle = styled.Text`
   font-weight: 700;
 `;
 
-const Error = styled.Text`
-  color: #ff714b;
-  font-size: 12px;
-  margin-top: 7px;
-`;
-
 const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
   const [check, setCheck] = useState(false);
+  const [check2, setCheck2] = useState(false);
   const [click, setClick] = useState(false);
-  const [errortext, setErrortext] = useState(false);
+  const [click2, setClick2] = useState(false);
 
   const goToNext = () => {
     navigate("LoginStack", {
@@ -138,6 +135,23 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
               </HeaderButton>
               <HeaderTitle>서비스 이용 약관</HeaderTitle>
             </Header>
+            <Terms />
+          </ModalWrap>
+        </Modal>
+        <Modal animationType={"fade"} transparent={false} visible={click2}>
+          <ModalWrap>
+            <Header>
+              <HeaderButton
+                onPress={() => {
+                  setClick2(false);
+                  setCheck2(true);
+                }}
+              >
+                <MaterialCommunityIcons name="chevron-left" color="#6F6F6F" size={24} style={{}} />
+              </HeaderButton>
+              <HeaderTitle>개인정보 수집 및 이용 동의서</HeaderTitle>
+            </Header>
+            <Terms />
           </ModalWrap>
         </Modal>
         <Wrap>
@@ -155,10 +169,21 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
               <MaterialCommunityIcons name="chevron-right" color="#6F6F6F" size={24} style={{}} />
             </RightBox>
           </TermsWrap>
-          {errortext === true ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          <TermsWrap onPress={() => setClick2(true)}>
+            <LeftBox>
+              <CheckBox check={check2}>
+                {!check2 ? <Ionicons name="checkmark-circle-outline" size={20} color={"#FF714B"} /> : <Ionicons name="checkmark-circle" size={20} color={"#FF714B"} />}
+              </CheckBox>
+              <RedText>(필수)</RedText>
+              <Text>개인정보 수집 및 이용 동의서</Text>
+            </LeftBox>
+            <RightBox>
+              <MaterialCommunityIcons name="chevron-right" color="#6F6F6F" size={24} style={{}} />
+            </RightBox>
+          </TermsWrap>
         </Wrap>
         <Wrap>
-          <Button onPress={goToNext} disabled={!check}>
+          <Button onPress={goToNext} disabled={!check && !check2}>
             <ButtonTitle>다음</ButtonTitle>
           </Button>
         </Wrap>

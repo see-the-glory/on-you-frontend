@@ -141,11 +141,6 @@ const LoginStack = ({
         initialParams={{ name }}
         options={{
           title: "회원가입",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepTwo" })}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
         }}
       />
       <NativeStack.Screen
@@ -154,11 +149,6 @@ const LoginStack = ({
         initialParams={{ name, email }}
         options={{
           title: "회원가입",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepThree" })}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
         }}
       />
       <NativeStack.Screen
@@ -167,11 +157,6 @@ const LoginStack = ({
         initialParams={{ name, email, password }}
         options={{
           title: "회원가입",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepFour" })}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
         }}
       />
       <NativeStack.Screen
@@ -180,11 +165,6 @@ const LoginStack = ({
         initialParams={{ name, email, password, sex }}
         options={{
           title: "회원가입",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepFive" })}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
         }}
       />
       <NativeStack.Screen
@@ -193,11 +173,6 @@ const LoginStack = ({
         initialParams={{ name, email, password, sex, birth }}
         options={{
           title: "회원가입",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepSix" })}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
         }}
       />
       <NativeStack.Screen
@@ -206,11 +181,6 @@ const LoginStack = ({
         initialParams={{ name, email, password, sex, birth, phone }}
         options={{
           title: "회원가입",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepSeven" })}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
         }}
       />
       <NativeStack.Screen
@@ -232,11 +202,6 @@ const LoginStack = ({
         initialParams={{ name, email, password, sex, birth, phone, church, userData, category, token }}
         options={{
           title: "회원가입",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepEight" })}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
         }}
       />
       <NativeStack.Screen
