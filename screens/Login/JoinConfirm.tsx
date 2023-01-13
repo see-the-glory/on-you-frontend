@@ -1,8 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useLayoutEffect } from "react";
+import { TouchableOpacity } from "react-native";
+import styled from "styled-components/native";
+import { Entypo } from "@expo/vector-icons";
 import { useMutation } from "react-query";
 import { UserApi, SignUp } from "../../api";
-import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.View`
@@ -90,7 +92,7 @@ const ButtonTitle = styled.Text`
 `;
 
 const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
-  navigation: { navigate },
+  navigation: { navigate, setOptions },
   route: {
     params: { name, email, password, sex, birth, phone, church },
   },
@@ -112,7 +114,7 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
           type: "warning",
         });
         navigate("LoginStack", {
-          screen: "JoinStepOne",
+          screen: "Login",
         });
       } else {
         console.log(`user register mutation success but please check status code`);
@@ -145,6 +147,16 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
 
     mutation.mutate(requestData);
   };
+
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepEight", name, email, password, sex, birth, phone, church })}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [name, email, password, sex, birth, phone, church]);
 
   return (
     <Container>

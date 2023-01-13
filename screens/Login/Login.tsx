@@ -41,15 +41,18 @@ const Input = styled.TextInput`
 `;
 
 const View = styled.TouchableOpacity`
-  width: 147px;
+  width: 100%;
   margin-top: 10px;
-  border-bottom-width: 1px;
-  border-bottom-color: #6f6f6f;
+  padding: 0;
+  /* border-bottom-width: 1px;
+  border-bottom-color: #6f6f6f; */
 `;
 
 const ForgetText = styled.Text`
+  width: 100%;
   color: #6f6f6f;
   font-size: 12px;
+  text-decoration: underline;
 `;
 
 const LoginButton = styled.TouchableOpacity`
