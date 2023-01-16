@@ -1,24 +1,19 @@
-import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
-import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
+import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as ImagePicker from "expo-image-picker";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
-  Image,
+  Animated,
   Keyboard,
-  KeyboardAvoidingView,
+  KeyboardAvoidingView, PanResponder,
   Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
   useWindowDimensions,
-  View,
-  ActivityIndicator,
-  Pressable
+  View
 } from "react-native";
 import styled from "styled-components/native";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -26,11 +21,7 @@ import { useSelector } from "react-redux";
 import { FeedApi, FeedCreationRequest, FeedsResponse } from "../../api";
 import { FeedCreateScreenProps } from "../../types/feed";
 import { useNavigation } from "@react-navigation/native";
-import { ImageSlider } from "react-native-image-slider-banner";
 import CustomText from "../../components/CustomText";
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import ImageCropPicker from 'react-native-image-crop-picker';
-
 
 interface ValueInfo {
   str: string;
@@ -40,13 +31,12 @@ interface ValueInfo {
 
 const Container = styled.SafeAreaView`
   flex: 1;
-  padding: 0 20px 0 20px;
 `;
 const ImagePickerView = styled.View`
   width: 100%;
-  height: ${Platform.OS === "android" ? 62 : 65}%;
+  height: ${Platform.OS === "android" ? 70 : 65}%;
   align-items: center;
-  top: ${Platform.OS === "android" ? 3 : 0}%;
+  position: relative;
 `;
 
 const PickBackground = styled.ImageBackground`
@@ -61,11 +51,6 @@ const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
   justify-content: center;
   align-items: center;
   background-color: #c4c4c4;
-`;
-
-const PickedImage = styled.Image<{ height: number }>`
-  width: 100%;
-  height: 100%;
 `;
 
 const ImageCrop = styled.View`
@@ -98,7 +83,7 @@ const SelectImageView = styled.View`
   width: 100%;
   flex-direction: row;
   justify-content: space-around;
-  padding: 0;
+  top: ${Platform.OS === "android"? -50 : 0}px;
 `;
 
 const SelectImageArea = styled.TouchableOpacity``;
@@ -129,8 +114,8 @@ const FeedCreateText = styled(CustomText)`
 `;
 
 const ImageSource = styled.Image<{ size: number }>`
-  width: ${(props:any) => props.size}px;
-  height: ${(props:any) => props.size}px;
+  width: 100%;
+  height: 90%;
 `;
 
 const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
@@ -178,6 +163,9 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
   const queryClient = useQueryClient();
   const [imageLength, setImageLength] = useState(0);
   const [feedImageLength, setFeedImageLength] = useState<any>(0);
+
+  const [images, setImages] = useState<any>([]);
+
   const pickImage = async () => {
     //사진허용
     /*    if(!status?.granted){
@@ -264,7 +252,7 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
       }
       mutation.mutate(requestData);
     }
-      };
+  };
 
   useEffect(() => {
     navigation.setOptions({
@@ -281,7 +269,6 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
       ),
     });
   }, [imageURI, content, isSubmitShow]);
-  console.log(isSubmitShow)
 
   useEffect(() => {
     let timer = setTimeout(() => {
@@ -294,17 +281,13 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
    */
   const ImageFIx = (i: any) => {
     setChoiceImage(imageURI[i])
-    /*return (
-      <View key={i}>
-        <ImageSlider data={[{ img: imageURI[i] }]} preview={false} caroselImageStyle={{ resizeMode: "stretch", height: 420 }} indicatorContainerStyle={{ bottom: 0 }} />
-      </View>
-    );*/
   };
 
   /** X선택시 사진 없어지는 태그 */
   const ImageCancle = (q:any) => {
     console.log('imageCancle')
   };
+
 
   /*이미지 선택영역**/
   const imagePreview = [];
@@ -329,41 +312,43 @@ const ImageSelecter: React.FC<FeedCreateScreenProps> = ({
   for (let i = 0; i < imageURI.length; i++) {
     imageList.push({ img: imageURI[i] }); //슬라이더용
   }
-/*  imageChoice.push(
-    <ImageSource source={{uri: choiceImage}} size={400}/> //기본사진용
-      <ImageSlider data={imageList} preview={false} caroselImageStyle={{ resizeMode: "stretch", height: 420 }}
-               indicatorContainerStyle={{ bottom: 0 }}
-  />
-  );*/
+  /*  imageChoice.push(
+      <ImageSource source={{uri: choiceImage}} size={400}/> //기본사진용
+        <ImageSlider data={imageList} preview={false} caroselImageStyle={{ resizeMode: "stretch", height: 420 }}
+                 indicatorContainerStyle={{ bottom: 0 }}
+    />
+    );*/
 // console.log(choiceImage)
 // console.log(imageList)
+
   return (
     <Container>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView behavior={Platform.OS === "ios"? "position": "padding" } style={{ flex: 1 }}>
           <>
-            <ImagePickerView>
-              {Object.keys(imageURI).length !== 0 ? (
-                <ImageSlider data={imageList} preview={false} caroselImageStyle={{ resizeMode: "stretch", height: 420 }}
-                             indicatorContainerStyle={{ bottom: 0 }}
-                />
-              ) : (
-                <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={1}>
-                  <PickBackground>
-                    {alert ? (
-                      <ImageCrop>
-                        <MaterialCommunityIcons name="arrow-top-right-bottom-left" size={30} color="red" style={{ textAlign: "center", top: 40 }} />
-                        <ImagePickerText>
-                          손가락을 좌우로{"\n"} 동시에 벌려{"\n"} 이미지 크롭을 해보세요
-                        </ImagePickerText>
-                      </ImageCrop>
-                    ) : null}
-                  </PickBackground>
-                </ImagePickerButton>
-              )}
-            </ImagePickerView>
+              <ImagePickerView>
+                {Object.keys(imageURI).length !== 0 ? (
+                  /*<ImageSlider data={imageList} preview={false} caroselImageStyle={{ resizeMode: "stretch", height: 420 }}
+                               indicatorContainerStyle={{ bottom: 0 }}
+                  />*/
+                  <ImageSource source={{uri: choiceImage}} size={350}/>
+                ) : (
+                  <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={1}>
+                    <PickBackground>
+                      {alert ? (
+                        <ImageCrop>
+                          <MaterialCommunityIcons name="arrow-top-right-bottom-left" size={30} color="red" style={{ textAlign: "center", top: 40 }} />
+                          <ImagePickerText>
+                            손가락을 좌우로{"\n"} 동시에 벌려{"\n"} 이미지 크롭을 해보세요
+                          </ImagePickerText>
+                        </ImageCrop>
+                      ) : null}
+                    </PickBackground>
+                  </ImagePickerButton>
+                )}
+              </ImagePickerView>
             <SelectImageView>
-              <View style={{ display: "flex", flexDirection: "row" }}>
+              <View style={{ display: "flex", flexDirection: "row"}}>
                 {imagePreview}
               </View>
             </SelectImageView>

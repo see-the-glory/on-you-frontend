@@ -1,7 +1,7 @@
 import React, { useEffect, useState,useRef } from "react";
 import styled from "styled-components/native";
 import {
-  ActivityIndicator,
+  ActivityIndicator, Alert,
   FlatList,
   Keyboard,
   KeyboardAvoidingView,
@@ -87,43 +87,30 @@ const ClubName = styled(CustomText)`
   color: white;
 `;
 
-const FeedHeader = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin: 20px 40px 10px 0;
-`;
-
 const FeedImage = styled.View`
-  padding: 10px 15px;
+  padding: 10px 0 0 0;
   justify-content: center;
   align-items: center;
-  height: 70%;
   width: 100%;
 `;
 
-const Content = styled.View`
-  padding: 0 12px 0 12px;
-`;
 
 const ContentArea = styled.View`
-  padding: 0 20px ;
+  padding: 0 20px;
   flex:1;
-`;
-const ImageArea = styled.View`
-  // padding-bottom: 1px;
 `;
 
 const Ment = styled(CustomTextInput)`
   width: 100%;
-  height: 150px;
+  height: 100px;
   color: black;
   font-size: 14px;
+  padding-top: 5%;
 `;
 
 const ImageSource = styled.Image<{ size: number }>`
-  width: ${(props:any) => props.size}px;
-  height: ${(props:any) => props.size}px;
+  width: 100%;
+  height: 400px;
 `;
 
 const ModalArea = styled.View`
@@ -222,7 +209,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
   const SCREEN_PADDING_SIZE = 20;
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(feedData.content);
   const [data, setData] = useState<Feed>(feedData);
   const navigation = useNavigation();
   const modalizeRef = useRef<Modalize>(null);
@@ -281,20 +268,25 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
 
   //피드업데이트
   const FixComplete = async () => {
-    setSummitShow(false);
-    const data = {
-      id: feedData.id,
-      access: "PUBLIC",
-      content: content,
-    };
-    console.log("fixed Data:", data);
+    if(content.length == 0){
+      Alert.alert('글을 수정하세요');
+    }else{
+      setSummitShow(false);
+      const data = {
+        id: feedData.id,
+        access: "PUBLIC",
+        content: content,
+        clubId: feedData.clubId
+      };
+      console.log("fixed Data:", data);
 
-    const requestData: FeedUpdateRequest = {
-      data,
-      token,
-    };
+      const requestData: FeedUpdateRequest = {
+        data,
+        token,
+      };
 
-    mutation.mutate(requestData);
+      mutation.mutate(requestData);
+    }
   };
   useEffect(() => {
     navigation.setOptions({
@@ -318,8 +310,9 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
     data: myClub,
   } = useQuery<ClubResponse>(["selectMyClubs", token], UserApi.selectMyClubs);
 
-  const ChangeClub = (id:any) =>{
-    data.clubName = id;
+  const ChangeClub = (id:any, name:any) =>{
+    data.clubName = name;
+    feedData.clubId = id;
     onRefresh();
     modalizeRef.current?.close();
   }
@@ -350,7 +343,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
               <Ionicons name="pencil" size={18} style={{left: 3, top: 2}} color="gray" />
             </TouchableOpacity>*/}
           <Modalize ref={modalizeRef} modalHeight={250}
-                    handlePosition="inside" modalStyle={{top: 180}}
+                    handlePosition="inside" modalStyle={{top: 250}}
                     disableScrollIfPossible={false}
           >
             <ModalContainer>
@@ -364,7 +357,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
                     data={myClub?.data}
                     renderItem={({ item, index }: { item: Club; index: number }) => (
                       <>
-                        <ClubArea onPress={()=>ChangeClub(item.name)}>
+                        <ClubArea onPress={()=>ChangeClub(item.id, item.name)}>
                           <ClubImg source={{ uri: item.thumbnail }} />
                           <ClubMy>
                             <CommentMent>
@@ -392,13 +385,12 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
                 <ImageSlider
                   data={imageList}
                   preview={false}
-                  caroselImageContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
-                  caroselImageStyle={{resizeMode: 'cover',height: 380, left: -20}}
+                  caroselImageStyle={{resizeMode: 'cover',height: 400}}
                   activeIndicatorStyle={{backgroundColor: 'orange'}}
                   indicatorContainerStyle={{ bottom: 0 }}
                 />
               ):(
-                <ImageSource source={{uri: data.imageUrls[0]}} size={380}/>
+                <ImageSource source={{uri: data.imageUrls[0]}} size={400}/>
               )}
           </FeedImage>
           <ContentArea>
