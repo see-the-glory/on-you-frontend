@@ -90,7 +90,7 @@ const CtgrText = styled.View`
   margin: 3px 5px 3px 5px;
 `;
 
-const OrganizationName = styled(CustomText)`
+const ClubCtrgList = styled(CustomText)`
   width: auto;
   height: auto;
   font-size: 12px;
@@ -128,7 +128,6 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
   const [clubName, setClubName] = useState<string>("");
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
 
   const {
     isLoading: myClubInfoLoading, // true or false
@@ -161,22 +160,25 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
             keyExtractor={(item: Club, index: number) => String(index)}
             data={myClub?.data}
             renderItem={({ item, index }: { item: Club; index: number }) => (
-                      <ClubArea onPress={() => goToImageSelect(item)}>
-                        <ClubImg source={{ uri: item.thumbnail }} />
-                        <ClubMy>
-                          <CommentMent>
-                            <ClubId>{item.name}</ClubId>
-                          </CommentMent>
-                          <CommentRemainder>
-                            <CtrgArea>
-                              <CtgrText>
-                                <OrganizationName>{item.categories?.map((name)=>{return name.name})}</OrganizationName>
-                              </CtgrText>
-                            </CtrgArea>
-                          </CommentRemainder>
-                        </ClubMy>
-                      </ClubArea>
-                    )}/>
+              <ClubArea key={index} onPress={() => goToImageSelect(item)}>
+                <ClubImg source={{ uri: item.thumbnail }} />
+                <ClubMy>
+                  <CommentMent>
+                    <ClubId>{item.name}</ClubId>
+                  </CommentMent>
+                  <CommentRemainder>
+                    <CtrgArea>
+                      <CtgrText>
+                        {item.categories?.map((name)=>{
+                          return <ClubCtrgList>{name.name}</ClubCtrgList>
+                        })
+                        }
+                      </CtgrText>
+                    </CtrgArea>
+                  </CommentRemainder>
+                </ClubMy>
+              </ClubArea>
+            )}/>
         )}
       </ReplyContainer>
     </Container>
