@@ -45,7 +45,7 @@ export const logout = () => {
   };
 };
 
-export const deleteUser = (user) => {
+export const updateUser = (user) => {
   return (dispatch) => {
     dispatch({
       type: "DELETE_USER",
