@@ -137,7 +137,7 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
     const data = {
       birthday,
       name,
-      organizationName,
+      organization: organizationName,
       phoneNumber,
     };
 

@@ -10,7 +10,7 @@ export type RootStackParamList = {
   ClubStack: {};
   ClubTopTabs: { clubData: Club };
   ClubHome: { clubData: Club };
-  ClubFeed: {};
+  ClubFeed: { clubData: Club };
 
   ClubCreationStack: {};
   ClubCreationStepOne: { category: CategoryResponse };
@@ -53,6 +53,7 @@ export type ClubListScreenProps = NativeStackScreenProps<RootStackParamList, "Cl
 export type ClubStackScreenProps = NativeStackScreenProps<RootStackParamList, "ClubStack">;
 
 export type ClubHomeScreenProps = NativeStackScreenProps<RootStackParamList, "ClubHome">;
+export type ClubFeedScreenProps = NativeStackScreenProps<RootStackParamList, "ClubFeed">;
 
 export type ClubCreationStackProps = NativeStackScreenProps<RootStackParamList, "ClubCreationStack">;
 export type ClubCreationStepOneScreenProps = NativeStackScreenProps<RootStackParamList, "ClubCreationStepOne">;
@@ -72,10 +73,16 @@ export type ClubDeleteProps = NativeStackScreenProps<RootStackParamList, "ClubDe
 export interface ClubHomeParamList {
   scrollY: Animated.Value;
   headerDiff: number;
-  homeOffsetY?: number;
+  offsetY?: number;
   scheduleOffsetX?: number;
   clubRole?: ClubRole;
   schedules?: RefinedSchedule[];
+}
+
+export interface ClubFeedParamList {
+  scrollY: Animated.Value;
+  offsetY?: number;
+  headerDiff: number;
 }
 
 // ClubHome Header

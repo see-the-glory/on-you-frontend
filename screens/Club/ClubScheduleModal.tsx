@@ -28,22 +28,24 @@ const Header = styled.View<{ index: number }>`
   align-items: center;
   justify-content: center;
   width: 100%;
-  background-color: ${(props: any) => (props.index === 0 ? "#eaff87" : "#CCCCCC")};
+  background-color: ${(props: any) => (props.index === 0 ? "#FF6C45" : "#CCCCCC")};
   padding-top: 10px;
   padding-bottom: 10px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 `;
 
-const ScheduleText = styled(CustomText)`
+const ScheduleText = styled(CustomText)<{ index: number }>`
   font-size: 16px;
   line-height: 21px;
+  color: ${(props: any) => (props.index === 0 ? "white" : "black")};
 `;
 
-const ScheduleTitle = styled(CustomText)`
+const ScheduleTitle = styled(CustomText)<{ index: number }>`
   font-size: 26px;
   font-family: "NotoSansKR-Bold";
   line-height: 32px;
+  color: ${(props: any) => (props.index === 0 ? "white" : "black")};
 `;
 
 const Content = styled.View`
@@ -247,8 +249,8 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
               <Container key={index} pageWidth={pageWidth} gap={gap}>
                 <Header index={index}>
                   {children}
-                  <ScheduleText>{item.year}</ScheduleText>
-                  <ScheduleTitle>
+                  <ScheduleText index={index}>{item.year}</ScheduleText>
+                  <ScheduleTitle index={index}>
                     {item.month}/{item.day} {item.dayOfWeek}
                   </ScheduleTitle>
                 </Header>

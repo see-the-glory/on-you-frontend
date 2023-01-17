@@ -14,14 +14,14 @@ const ThumbnailView = styled.View``;
 
 const ThumbnailImage = styled.Image<{ size: number }>`
   position: absolute;
-  width: ${(props) => props.size}px;
-  height: ${(props) => props.size}px;
+  width: ${(props: any) => props.size}px;
+  height: ${(props: any) => props.size}px;
 `;
 
 const Gradient = styled(LinearGradient)<{ size: number }>`
   padding: 0px 10px 0px 10px;
-  width: ${(props) => props.size}px;
-  height: ${(props) => props.size}px;
+  width: ${(props: any) => props.size}px;
+  height: ${(props: any) => props.size}px;
   justify-content: flex-end;
   align-items: flex-start;
 `;
@@ -82,11 +82,11 @@ const TagView = styled.View`
 const Tag = styled.View<{ color: string }>`
   flex-direction: row;
   align-items: center;
-  background-color: ${(props) => props.color};
+  background-color: ${(props: any) => props.color};
   padding: 0px 3px;
   border-radius: 5px;
   margin-right: 5px;
-  border: 1px solid ${(props) => (props.color === "white" ? "#A5A5A5" : "#B4B4B4")};
+  border: 1px solid ${(props: any) => (props.color === "white" ? "#A5A5A5" : "#B4B4B4")};
 `;
 
 const TagText = styled(CustomText)`
