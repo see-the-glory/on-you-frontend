@@ -104,7 +104,7 @@ const ScheduleBadgeText = styled(CustomText)`
 `;
 
 const ScheduleDateView = styled.View<{ index: number }>`
-  background-color: ${(props: any) => (props.index === 0 ? "#eaff87" : "#CCCCCC")};
+  background-color: ${(props: any) => (props.index === 0 ? "#FF6C45" : "#EBEBEB")};
   justify-content: center;
   align-items: center;
   padding: 7px 15px;
@@ -124,9 +124,10 @@ const ScheduleDetailItemView = styled.View`
   margin: 1px 5px;
 `;
 
-const ScheduleText = styled(CustomText)`
+const ScheduleText = styled(CustomText)<{ index: number }>`
   font-size: 11px;
   line-height: 15px;
+  color: ${(props: any) => (props.index === 0 ? "white" : "black")};
 `;
 
 const ScheduleSubText = styled(CustomText)`
@@ -136,10 +137,11 @@ const ScheduleSubText = styled(CustomText)`
   line-height: 13px;
 `;
 
-const ScheduleTitle = styled(CustomText)`
+const ScheduleTitle = styled(CustomText)<{ index: number }>`
   font-size: 18px;
   font-family: "NotoSansKR-Bold";
   line-height: 25px;
+  color: ${(props: any) => (props.index === 0 ? "white" : "black")};
 `;
 
 const MemberView = styled.View`
@@ -186,7 +188,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     params: { clubData },
   },
   scrollY,
-  homeOffsetY,
+  offsetY,
   scheduleOffsetX,
   headerDiff,
   clubRole,
@@ -255,7 +257,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     <Animated.ScrollView
       onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
       onMomentumScrollEnd={(event) => dispatch(updateClubHomeScrollY(event.nativeEvent.contentOffset.y))}
-      contentOffset={{ x: 0, y: homeOffsetY }}
+      contentOffset={{ x: 0, y: offsetY ?? 0 }}
       style={{
         flex: 1,
         paddingTop: 15,
@@ -319,8 +321,8 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
                     <></>
                   )}
                   <ScheduleDateView index={index}>
-                    <ScheduleText>{item.year}</ScheduleText>
-                    <ScheduleTitle>
+                    <ScheduleText index={index}>{item.year}</ScheduleText>
+                    <ScheduleTitle index={index}>
                       {item.month}/{item.day} {item.dayOfWeek}
                     </ScheduleTitle>
                   </ScheduleDateView>

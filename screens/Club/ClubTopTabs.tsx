@@ -77,7 +77,7 @@ const ClubTopTabs = ({
 
   // Animated Variables
   const scrollY = useRef(new Animated.Value(0)).current;
-  const homeOffsetY = useSelector((state) => state.ClubReducers.homeScrollY);
+  const offsetY = useSelector((state) => state.ClubReducers.homeScrollY);
   const scheduleOffsetX = useSelector((state) => state.ClubReducers.scheduleScrollX);
   const translateY = scrollY.interpolate({
     inputRange: [0, headerDiff],
@@ -215,13 +215,13 @@ const ClubTopTabs = ({
   }, []);
 
   const renderClubHome = useCallback(
-    (props) => {
+    (props: any) => {
       props.route.params.clubData = data;
-      return <ClubHome {...props} scrollY={scrollY} homeOffsetY={homeOffsetY} scheduleOffsetX={scheduleOffsetX} headerDiff={headerDiff} clubRole={clubRole?.data} schedules={scheduleData} />;
+      return <ClubHome {...props} scrollY={scrollY} offsetY={offsetY} scheduleOffsetX={scheduleOffsetX} headerDiff={headerDiff} clubRole={clubRole?.data} schedules={scheduleData} />;
     },
     [headerDiff, data, clubRole, scheduleData]
   );
-  const renderClubFeed = useCallback((props) => <ClubFeed {...props} scrollY={scrollY} headerDiff={headerDiff} />, [headerDiff]);
+  const renderClubFeed = useCallback((props: any) => <ClubFeed {...props} offsetY={offsetY} scrollY={scrollY} headerDiff={headerDiff} />, [headerDiff]);
 
   return (
     <Container>
@@ -280,7 +280,7 @@ const ClubTopTabs = ({
           sceneContainerStyle={{ position: "absolute", zIndex: 1 }}
         >
           <TopTab.Screen options={{ tabBarLabel: "모임 정보" }} name="ClubHome" component={renderClubHome} initialParams={{ clubData: data }} />
-          <TopTab.Screen options={{ tabBarLabel: "게시물" }} name="ClubFeed" component={renderClubFeed} />
+          <TopTab.Screen options={{ tabBarLabel: "게시물" }} name="ClubFeed" component={renderClubFeed} initialParams={{ clubData: data }} />
         </TopTab.Navigator>
       </Animated.View>
 

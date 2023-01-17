@@ -1,9 +1,13 @@
-import React from "react";
-import { ActivityIndicator, FlatList, useWindowDimensions, Animated } from "react-native";
-import { useQuery } from "react-query";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useRef, useState } from "react";
+import { useEffect } from "react";
+import { ActivityIndicator, FlatList, useWindowDimensions, Animated, View, Text, TouchableOpacity } from "react-native";
+import { QueryClient, useInfiniteQuery, useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { Feed, FeedApi, FeedsResponse } from "../../api";
+import CustomText from "../../components/CustomText";
+import { ClubFeedParamList, ClubFeedScreenProps } from "../../Types/Club";
 
 const Loader = styled.View`
   flex: 1;
@@ -11,21 +15,70 @@ const Loader = styled.View`
   align-items: center;
 `;
 
-const FeedBox = styled.TouchableOpacity`
-  flex: 1;
-`;
-
 const FeedImage = styled.Image<{ size: number }>`
-  width: ${(props) => props.size}px;
-  height: ${(props) => props.size}px;
+  width: ${(props: any) => props.size}px;
+  height: ${(props: any) => props.size}px;
 `;
 
-const ClubFeed = ({ navigation: { navigate }, scrollY, headerDiff }) => {
+const EmptyView = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const EmptyText = styled(CustomText)`
+  font-size: 14px;
+  color: #bdbdbd;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
+  navigation: { navigate },
+  route: {
+    params: { clubData },
+  },
+  scrollY,
+  offsetY,
+  headerDiff,
+}) => {
   const token = useSelector((state: any) => state.AuthReducers.authToken);
-  const { isLoading: feedsLoading, data: feeds } = useQuery<FeedsResponse>(["getFeeds", token], FeedApi.getFeeds);
+  const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const numColumn = 3;
   const feedSize = Math.round(SCREEN_WIDTH / 3) - 1;
+
+  const {
+    isLoading: feedsLoading,
+    data: feeds,
+    isRefetching: isRefetchingFeeds,
+    hasNextPage,
+    refetch: feedsRefetch,
+    fetchNextPage,
+  } = useInfiniteQuery<FeedsResponse>(["getClubFeeds", { token, clubId: clubData.id }], FeedApi.getClubFeeds, {
+    getNextPageParam: (currentPage) => {
+      if (currentPage) {
+        return currentPage.hasNext === false ? null : currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor;
+      }
+    },
+    onSuccess: (res) => {},
+    onError: (err) => {},
+  });
+
+  const loadMore = () => {
+    if (hasNextPage) fetchNextPage();
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await queryClient.refetchQueries(["getClubFeeds"]);
+    setRefreshing(false);
+  };
+
+  useFocusEffect(() => {
+    console.log("ClubFeed - useFocuseEffect");
+  });
 
   return feedsLoading ? (
     <Loader>
@@ -34,8 +87,10 @@ const ClubFeed = ({ navigation: { navigate }, scrollY, headerDiff }) => {
   ) : (
     <Animated.FlatList
       onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
+      contentOffset={{ x: 0, y: offsetY ?? 0 }}
       style={{
         flex: 1,
+        paddingTop: headerDiff,
         backgroundColor: "white",
         transform: [
           {
@@ -47,18 +102,24 @@ const ClubFeed = ({ navigation: { navigate }, scrollY, headerDiff }) => {
           },
         ],
       }}
+      onEndReached={loadMore}
       contentContainerStyle={{
-        paddingTop: headerDiff,
         backgroundColor: "white",
+        flexGrow: 1,
       }}
-      data={feeds?.data}
+      data={feeds?.pages?.map((page) => page?.responses?.content).flat()}
+      keyExtractor={(item: Feed, index: number) => String(index)}
       numColumns={numColumn}
       columnWrapperStyle={{ paddingBottom: 1 }}
-      keyExtractor={(item: Feed, index: number) => String(index)}
+      ListEmptyComponent={() => (
+        <EmptyView>
+          <EmptyText>{`작성된 게시글이 없습니다.`}</EmptyText>
+        </EmptyView>
+      )}
       renderItem={({ item, index }: { item: Feed; index: number }) => (
-        <FeedBox>
-          <FeedImage size={feedSize} source={item.imageUrls[0] === undefined ? require("../../assets/basic.jpg") : { uri: item.imageUrls[0] }} />
-        </FeedBox>
+        <TouchableOpacity style={index % 3 === 1 ? { marginHorizontal: 1 } : {}}>
+          <FeedImage size={feedSize} source={item?.imageUrls[0] ? { uri: item.imageUrls[0] } : require("../../assets/basic.jpg")} />
+        </TouchableOpacity>
       )}
     />
   );

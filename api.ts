@@ -147,7 +147,6 @@ export interface ClubNotificationsResponse extends BaseResponse {
 
 export interface FeedsResponse extends BaseResponse {
   hasNext: boolean;
-  data: Feed[];
   responses: {
     content: Feed[];
   };
@@ -169,7 +168,7 @@ export interface ReportResponse extends BaseResponse {
   data: Report[];
 }
 export interface FeedsParams {
-  id: number | undefined;
+  clubId?: number;
   token: string;
 }
 
@@ -435,6 +434,19 @@ const getFeeds = ({ queryKey, pageParam }: any) => {
   let parameters = feedsParams ? `cursor=${pageParam}` : "";
   console.log("feed parameter: ", parameters);
   return fetch(`${BASE_URL}/api/feeds?${parameters}`, {
+    headers: {
+      authorization: `${feedsParams.token}`,
+    },
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
+};
+
+const getClubFeeds = ({ queryKey, pageParam }: any) => {
+  const [_key, feedsParams]: [string, FeedsParams] = queryKey;
+  let parameters = pageParam ? `cursor=${pageParam}` : "";
+  console.log("feed parameter: ", parameters);
+  return fetch(`${BASE_URL}/api/clubs/${feedsParams.clubId}/feeds?${parameters}`, {
     headers: {
       authorization: `${feedsParams.token}`,
     },
@@ -908,6 +920,7 @@ export const UserApi = {
 
 export const FeedApi = {
   getFeeds,
+  getClubFeeds,
   createFeed,
   reportFeed,
   updateFeed,
