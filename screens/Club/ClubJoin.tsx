@@ -105,7 +105,7 @@ const ClubJoin = ({
 
   return (
     <Container>
-      <StatusBar barStyle={"default"} />
+      <StatusBar barStyle={"dark-content"} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
         <MainView>
           <Header>

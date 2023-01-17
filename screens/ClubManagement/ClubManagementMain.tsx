@@ -289,7 +289,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
 
   return (
     <Container>
-      <StatusBar barStyle={"default"} />
+      <StatusBar barStyle={"dark-content"} />
       <MainView>
         <Shadow distance={3} sides={{ top: false }} style={{ width: "100%" }}>
           <Header>

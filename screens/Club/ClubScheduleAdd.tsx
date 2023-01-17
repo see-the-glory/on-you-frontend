@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity, View } from "react-native";
+import { DeviceEventEmitter, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import { Calendar, CalendarProvider } from "react-native-calendars";
@@ -97,11 +97,11 @@ const ClubScheduleAdd = ({
 
   const scheduleMutation = useMutation(ClubApi.createClubSchedule, {
     onSuccess: (res) => {
-      console.log(res);
       if (res.status === 200 && res.resultCode === "OK") {
         toast.show("일정 등록이 완료되었습니다.", {
           type: "success",
         });
+        DeviceEventEmitter.emit("SchedulesRefetch");
         goBack();
       } else {
         toast.show("일정 등록에 실패했습니다.", {
@@ -172,7 +172,7 @@ const ClubScheduleAdd = ({
 
   return (
     <Container>
-      <StatusBar barStyle={"default"} />
+      <StatusBar barStyle={"dark-content"} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
         <MainView>
           <Calendar
@@ -210,13 +210,13 @@ const ClubScheduleAdd = ({
             {Platform.OS === "android" ? (
               <Collapsible collapsed={!showDatePicker}>
                 <ItemView style={{ width: "100%", alignItems: "center" }}>
-                  <DatePicker date={dateTime} mode="time" onDateChange={setDateTime} />
+                  <DatePicker date={dateTime} mode="time" onDateChange={setDateTime} textColor="black" />
                 </ItemView>
               </Collapsible>
             ) : (
               <Collapsible collapsed={!showDatePicker}>
                 <ItemView>
-                  <RNDateTimePicker mode="time" value={dateTime} display="spinner" onChange={(_, value: Date) => setDateTime(value)} />
+                  <RNDateTimePicker mode="time" value={dateTime} display="spinner" onChange={(_, value: Date) => setDateTime(value)} textColor="black" />
                 </ItemView>
               </Collapsible>
             )}

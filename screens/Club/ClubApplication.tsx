@@ -175,7 +175,7 @@ const ClubApplication = ({
 
   return (
     <Container>
-      <StatusBar barStyle={"default"} />
+      <StatusBar barStyle={"dark-content"} />
       <Header style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
         <HeaderBoldText>{actionerName}</HeaderBoldText>
         <HeaderText>{`님이 `}</HeaderText>
