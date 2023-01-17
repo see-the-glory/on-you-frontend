@@ -2,7 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import EditProfile from "../screens/Profile/EditProfile";
 import MyClub from "../screens/Profile/MyClub";
-import NotificationSettings from "../screens/Profile/NotificationSettings";
+import ChangePw from "../screens/Profile/ChangePw";
 import Notice from "../screens/Profile/Notice";
 import Help from "../screens/Profile/Help";
 import Terms from "../screens/Profile/Terms";
@@ -52,10 +52,10 @@ const ProfileStack = ({
         }}
       />
       <NativeStack.Screen
-        name="NotificationSettings"
-        component={NotificationSettings}
+        name="ChangePw"
+        component={ChangePw}
         options={{
-          title: "알림설정",
+          title: "비밀번호 재설정",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
               <Entypo name="chevron-thin-left" size={20} color="black" />

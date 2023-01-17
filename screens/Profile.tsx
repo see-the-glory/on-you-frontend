@@ -5,7 +5,7 @@ import { logout, updateUser } from "../store/Actions";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
-import { UserApi, UserInfoResponse, ClubApi, CategoryResponse } from "../api";
+import { UserApi, UserInfoResponse } from "../api";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { DeviceEventEmitter } from "react-native";
 import { useToast } from "react-native-toast-notifications";
@@ -175,22 +175,12 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     });
   };
 
-  const goToNotificationSettings = () => {
+  const goToChangePw = () => {
     navigate("ProfileStack", {
-      screen: "NotificationSettings",
+      screen: "ChangePw",
     });
   };
 
-  const goToNotice = () => {
-    navigate("ProfileStack", {
-      screen: "Notice",
-    });
-  };
-  const goToHelp = () => {
-    navigate("ProfileStack", {
-      screen: "Help",
-    });
-  };
   const goToTerms = () => {
     navigate("ProfileStack", {
       screen: "Terms",
@@ -219,24 +209,16 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
             </ChevronBox>
           </MenuItem>
         </TouchMenu>
-        {/* <TouchMenu>
-          <MenuItem onPress={goToNotificationSettings}>
+        <TouchMenu>
+          <MenuItem onPress={goToChangePw}>
             <MaterialCommunityIcons name="bell-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
-            <MenuItemText>알림설정</MenuItemText>
-            <ChevronBox>
-              <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
-            </ChevronBox>
-          </MenuItem>
-        </TouchMenu> */}
-        {/* <TouchMenu>
-          <MenuItem onPress={goToNotice}>
-            <MaterialCommunityIcons name="gate-not" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
-            <MenuItemText>공지사항</MenuItemText>
+            <MenuItemText>비밀번호 재설정</MenuItemText>
             <ChevronBox>
               <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
             </ChevronBox>
           </MenuItem>
         </TouchMenu>
+        {/* 
         <TouchMenu>
           <MenuItem onPress={goToHelp}>
             <MaterialCommunityIcons name="comment-question-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />

@@ -384,6 +384,13 @@ export interface SignUp {
   phoneNumber?: string;
 }
 
+export interface PostChangePw {
+  data: {
+    password?: string;
+  };
+  token: string;
+}
+
 export interface getFeedLike {
   data: {
     id?: number;
@@ -773,6 +780,19 @@ const FindUserPw = (req: FindPwRequest) => {
   });
 };
 
+const ChangePassword = (req: PostChangePw) => {
+  return fetch(`${BASE_URL}/api/user/changePw`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(req),
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
+};
+
 const selectMyClubs = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
   return fetch(`${BASE_URL}/api/clubs/my`, {
@@ -916,6 +936,7 @@ export const UserApi = {
   selectMyClubs,
   FindUserId,
   FindUserPw,
+  ChangePassword,
 };
 
 export const FeedApi = {
