@@ -785,8 +785,9 @@ const ChangePassword = (req: PostChangePw) => {
     method: "POST",
     headers: {
       "content-type": "application/json",
+      Authorization: `${req.token}`,
     },
-    body: JSON.stringify(req),
+    body: JSON.stringify(req.data),
   }).then(async (res) => {
     if (res.status === 200) return { status: res.status, ...(await res.json()) };
     else return { status: res.status };
