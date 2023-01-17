@@ -1,5 +1,4 @@
-import { useFocusEffect } from "@react-navigation/native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, DeviceEventEmitter, FlatList, StatusBar, TouchableOpacity, View } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useQuery } from "react-query";
@@ -100,7 +99,7 @@ const ClubNotification = ({
     </Loader>
   ) : (
     <Container>
-      <StatusBar barStyle={"default"} />
+      <StatusBar barStyle={"dark-content"} />
       <FlatList
         contentContainerStyle={{ flexGrow: 1, marginVertical: 10, paddingHorizontal: SCREEN_PADDING_SIZE }}
         refreshing={refreshing}
@@ -109,7 +108,7 @@ const ClubNotification = ({
         ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
         keyExtractor={(item: Notification, index: number) => String(index)}
         renderItem={({ item, index }: { item: Notification; index: number }) => (
-          <TouchableOpacity onPress={() => onPressItem(item)} disabled={item.processDone}>
+          <TouchableOpacity onPress={() => onPressItem(item)} disabled={item.processDone ?? false}>
             <NotificationItem notificationData={item} clubData={clubData} />
           </TouchableOpacity>
         )}
