@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Tabs from "./Tabs";
 import Profile from "../screens/Profile";
-import CreateHomeFeed from "../screens/HomeRelevant/CreateHomeFeed";
-import Accusation from "../screens/HomeRelevant/Accusation";
 import ModifiyFeed from "../screens/HomeRelevant/ModifiyFeed";
 import ImageSelecter from "../screens/HomeRelevant/ImageSelecter";
-import ReportComplete from "../screens/HomeRelevant/ReportComplete";
 import ReplyPage from "../screens/HomeRelevant/ReplyPage";
 import MyClubSelector from "../screens/HomeRelevant/MyClubSelector";
 import { Text, TouchableOpacity, Alert } from "react-native";
@@ -102,20 +99,6 @@ const HomeStack = ({
         }}
       />
       <NativeStack.Screen
-        name="CreateHomeFeed"
-        component={CreateHomeFeed}
-        initialParams={{ feedData }}
-        options={{
-          title: "새 게시물",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "ImageSelecter" })}>
-              <Ionicons name="chevron-back" size={20} color="black" title="이미지선택" />
-            </TouchableOpacity>
-          ),
-          headerShown: true,
-        }}
-      />
-      <NativeStack.Screen
         name="ReplyPage"
         component={ReplyPage}
         initialParams={{ feedData }}
@@ -145,34 +128,6 @@ const HomeStack = ({
               <Text>완료</Text>
             </TouchableOpacity>
           ),
-        }}
-      />
-
-      <NativeStack.Screen
-        name="Accusation"
-        component={Accusation}
-        initialParams={{ feedData }}
-        options={{
-          title: "신고",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Home" })}>
-              <Ionicons name="chevron-back" size={20} color="black" />
-            </TouchableOpacity>
-          ),
-          headerShown: true,
-        }}
-      />
-      <NativeStack.Screen
-        name="ReportComplete"
-        component={ReportComplete}
-        options={{
-          title: "신고완료",
-          headerRight: () => (
-            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Home" })}>
-              <Text>완료</Text>
-            </TouchableOpacity>
-          ),
-          headerShown: true,
         }}
       />
     </NativeStack.Navigator>
