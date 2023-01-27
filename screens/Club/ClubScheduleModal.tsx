@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Modal, useWindowDimensions } from "react-native";
+import { Animated, Modal, TouchableOpacity, useWindowDimensions } from "react-native";
 import { RefinedSchedule } from "../../Types/Club";
-import { Feather, Ionicons, Entypo } from "@expo/vector-icons";
+import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import Carousel from "../../components/Carousel";
 import { useMutation } from "react-query";
-import { ClubApi, ClubScheduleJoinOrCancelRequest } from "../../api";
+import { ClubApi, ClubScheduleDeleteRequest, ClubScheduleJoinOrCancelRequest } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import { useSelector } from "react-redux";
 import CircleIcon from "../../components/CircleIcon";
 import CircleIconBundle from "../../components/CircleIconBundle";
+import { Menu, MenuDivider, MenuItem } from "react-native-material-menu";
 
 const ModalContainer = styled.View`
   height: 480px;
@@ -120,20 +121,18 @@ const ButtonText = styled(CustomText)<{ participation: boolean }>`
   color: ${(props: any) => (props.participation ? "white" : "#ff714b")};
 `;
 
-const NextButton = styled(Entypo)`
+const ModalHeaderLeft = styled.View`
   position: absolute;
-  box-shadow: 1px 3px 2px black;
-  right: 0px;
-  bottom: 48%;
-  margin-right: -40px;
+  padding: 2px;
+  left: 8px;
+  top: 8px;
 `;
 
-const PrevButton = styled(Entypo)`
+const ModalHeaderRight = styled.View`
   position: absolute;
-  box-shadow: 1px 3px 2px black;
-  left: 0px;
-  bottom: 48%;
-  margin-left: -40px;
+  padding: 2px;
+  right: 8px;
+  top: 8px;
 `;
 
 const Break = styled.View<{ sep: number }>`
@@ -143,6 +142,11 @@ const Break = styled.View<{ sep: number }>`
   border-bottom-width: 1px;
   border-bottom-color: rgba(0, 0, 0, 0.3);
   opacity: 0.5;
+`;
+
+const MenuText = styled(CustomText)<{ color: string }>`
+  font-size: 12px;
+  color: ${(props: any) => (props.color ? props.color : "#1b1717")};
 `;
 
 interface ScheduleModalProps {
@@ -159,11 +163,13 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
   const token = useSelector((state) => state.AuthReducers.authToken);
   const me = useSelector((state) => state.UserReducers.user);
   const [showModal, setShowModal] = useState(visible);
+  const [menuVisibleMap, setMenuVisibleMap] = useState(new Map(scheduleData?.slice(0, -1).map((schedule) => [schedule.id, false])));
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const gap = 32;
   const offset = 12;
   const pageWidth = SCREEN_WIDTH - (gap + offset) * 2;
   const opacity = useRef(new Animated.Value(0)).current;
+  console.log(menuVisibleMap);
   useEffect(() => {
     toggleModal();
   }, [visible]);
@@ -186,7 +192,20 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
     }
   };
 
-  const mutation = useMutation(ClubApi.joinOrCancelClubSchedule, {
+  const hideMenu = (scheduleId: number) => setMenuVisibleMap((prev) => new Map(prev).set(scheduleId, false));
+  const showMenu = (scheduleId: number) => setMenuVisibleMap((prev) => new Map(prev).set(scheduleId, true));
+
+  const joinOrCancelMutation = useMutation(ClubApi.joinOrCancelClubSchedule, {
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "warning",
+      });
+    },
+  });
+
+  const deleteScheduleMutation = useMutation(ClubApi.deleteClubSchedule, {
     onError: (error) => {
       console.log("--- Error ---");
       console.log(`error: ${error}`);
@@ -208,19 +227,58 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
       scheduleId,
     };
 
-    mutation.mutate(requestData, {
+    joinOrCancelMutation.mutate(requestData, {
+      onSuccess: (res) => {
+        if (res.status === 200) {
+          if (scheduleData) {
+            if (scheduleData[index].participation) {
+              let target = scheduleData[index].members?.findIndex((member) => member.id === me?.id);
+              if (target !== undefined && target > -1) scheduleData[index].members?.splice(target, 1);
+            } else {
+              scheduleData[index].members?.push(me);
+            }
+            scheduleData[index].participation = !scheduleData[index].participation;
+          }
+        } else {
+          toast.show(`Error Code: ${res.status}`, {
+            type: "warning",
+          });
+        }
+      },
+    });
+  };
+
+  const deleteSchedule = (scheduleId?: number) => {
+    hideMenu(scheduleId ?? -1);
+    if (scheduleId === undefined) {
+      return toast.show(`Schedule ID Error`, {
+        type: "warning",
+      });
+    }
+    let requestData: ClubScheduleDeleteRequest = {
+      token,
+      clubId,
+      scheduleId,
+    };
+
+    deleteScheduleMutation.mutate(requestData, {
       onSuccess: (res) => {
         console.log(res);
-        if (scheduleData) {
-          if (scheduleData[index].participation) {
-            let target = scheduleData[index].members?.findIndex((member) => member.id === me?.id);
-            console.log(target);
-            if (target !== undefined && target > -1) scheduleData[index].members?.splice(target, 1);
-          } else {
-            scheduleData[index].members?.push(me);
-          }
-          scheduleData[index].participation = !scheduleData[index].participation;
+        if (res.status !== 200) {
+          console.log(res);
+          toast.show(`Error Code: ${res.status}`, {
+            type: "warning",
+          });
         }
+      },
+      onError: (error) => {
+        console.log(error);
+        toast.show(`Error Code: ${error}`, {
+          type: "warning",
+        });
+      },
+      onSettled: () => {
+        closeModal();
       },
     });
   };
@@ -248,7 +306,34 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
             renderItem={({ item, index }: { item: RefinedSchedule; index: number }) => (
               <Container key={index} pageWidth={pageWidth} gap={gap}>
                 <Header index={index}>
-                  {children}
+                  <ModalHeaderLeft>
+                    <TouchableOpacity onPress={closeModal}>
+                      <Ionicons name="close" size={14} color="black" />
+                    </TouchableOpacity>
+                  </ModalHeaderLeft>
+                  <ModalHeaderRight>
+                    <Menu
+                      visible={menuVisibleMap.get(item.id ?? -1)}
+                      style={{ marginTop: 20, borderRadius: 0, width: 60, marginLeft: -50 }}
+                      anchor={
+                        <TouchableOpacity onPress={() => showMenu(item.id ?? -1)}>
+                          <Ionicons name="ellipsis-vertical" size={14} color="black" />
+                        </TouchableOpacity>
+                      }
+                      onRequestClose={() => hideMenu(item.id ?? -1)}
+                      animationDuration={100}
+                    >
+                      <MenuItem onPress={() => hideMenu(item.id ?? -1)} style={{ margin: -5 }}>
+                        <MaterialCommunityIcons name={"pencil-outline"} size={12} color="black" />
+                        <MenuText>{` 수정`}</MenuText>
+                      </MenuItem>
+                      <MenuDivider />
+                      <MenuItem onPress={() => deleteSchedule(item.id)} style={{ margin: -5 }}>
+                        <Feather name="trash-2" size={12} color="#FF714B" />
+                        <MenuText color={"#FF714B"}>{` 삭제`}</MenuText>
+                      </MenuItem>
+                    </Menu>
+                  </ModalHeaderRight>
                   <ScheduleText index={index}>{item.year}</ScheduleText>
                   <ScheduleTitle index={index}>
                     {item.month}/{item.day} {item.dayOfWeek}

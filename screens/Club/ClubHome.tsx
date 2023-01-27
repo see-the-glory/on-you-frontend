@@ -175,13 +175,6 @@ const MemberText = styled(CustomText)`
   color: #b0b0b0;
 `;
 
-const ModalHeaderRight = styled.View`
-  position: absolute;
-  right: 15px;
-`;
-
-const ModalCloseButton = styled.TouchableOpacity``;
-
 const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   navigation: { navigate },
   route: {
@@ -431,17 +424,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         closeModal={() => {
           closeScheduleModal();
         }}
-      >
-        <ModalHeaderRight>
-          <ModalCloseButton
-            onPress={() => {
-              closeScheduleModal();
-            }}
-          >
-            <Ionicons name="close" size={24} color="black" />
-          </ModalCloseButton>
-        </ModalHeaderRight>
-      </ScheduleModal>
+      />
     </Animated.ScrollView>
   );
 };

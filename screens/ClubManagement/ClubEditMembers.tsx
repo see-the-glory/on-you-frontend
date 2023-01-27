@@ -139,7 +139,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
     let masterCount = 0;
 
     const data: ChangeRole[] = [];
-    clubData.members.map((member) => {
+    clubData?.members?.map((member) => {
       const modifiedMember = memberMap.get(member.id);
       const isKicked = kickOutMap.get(member.id);
       if (isKicked === true) {

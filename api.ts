@@ -290,6 +290,12 @@ export interface ClubScheduleCreationRequest {
   };
 }
 
+export interface ClubScheduleDeleteRequest {
+  token: string;
+  clubId: number;
+  scheduleId: number;
+}
+
 export interface ClubScheduleJoinOrCancelRequest {
   token: string;
   clubId: number;
@@ -663,7 +669,7 @@ const getClubSchedules = ({ queryKey }: any) => {
   });
 };
 
-const createClubSchedule = async (req: ClubScheduleCreationRequest) => {
+const createClubSchedule = (req: ClubScheduleCreationRequest) => {
   return fetch(`${BASE_URL}/api/clubs/schedules`, {
     method: "POST",
     headers: {
@@ -677,7 +683,21 @@ const createClubSchedule = async (req: ClubScheduleCreationRequest) => {
   });
 };
 
-const joinOrCancelClubSchedule = async (req: ClubScheduleJoinOrCancelRequest) => {
+const deleteClubSchedule = (req: ClubScheduleDeleteRequest) => {
+  console.log(req);
+  return fetch(`${BASE_URL}/api/clubs/${req.clubId}/schedules/${req.scheduleId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `${req.token}`,
+      Accept: "*/*",
+    },
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
+};
+
+const joinOrCancelClubSchedule = (req: ClubScheduleJoinOrCancelRequest) => {
   return fetch(`${BASE_URL}/api/clubs/${req.clubId}/schedules/${req.scheduleId}/joinOrCancel`, {
     method: "POST",
     headers: {
@@ -920,6 +940,7 @@ export const ClubApi = {
   changeRole,
   getClubSchedules,
   createClubSchedule,
+  deleteClubSchedule,
   joinOrCancelClubSchedule,
   getClubRole,
   applyClub,
