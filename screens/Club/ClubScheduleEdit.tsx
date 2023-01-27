@@ -79,7 +79,7 @@ const MemoInput = styled(CustomTextInput)`
 `;
 
 const ClubScheduleEdit = ({
-  navigation: { navigate, goBack, setOptions },
+  navigation: { goBack, setOptions },
   route: {
     params: { clubData, scheduleData },
   },

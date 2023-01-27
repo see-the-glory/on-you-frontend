@@ -33,8 +33,6 @@ const Header = styled.View<{ index: number }>`
   background-color: ${(props: any) => (props.index === 0 ? "#FF6C45" : "#CCCCCC")};
   padding-top: 10px;
   padding-bottom: 10px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
 `;
 
 const ScheduleText = styled(CustomText)<{ index: number }>`
@@ -110,7 +108,7 @@ const ApplyButton = styled.TouchableOpacity<{ participation: boolean }>`
   width: 130px;
   justify-content: center;
   align-items: center;
-  background-color: ${(props: any) => (props.participation ? "#ff714b" : "white")};
+  background-color: ${(props: any) => (props.participation ? "white" : "#ff714b")};
   padding: 5px 0px;
   border: 1px solid #ff714b;
 `;
@@ -119,21 +117,21 @@ const ButtonText = styled(CustomText)<{ participation: boolean }>`
   font-size: 12px;
   line-height: 16px;
   font-family: "NotoSansKR-Medium";
-  color: ${(props: any) => (props.participation ? "white" : "#ff714b")};
+  color: ${(props: any) => (props.participation ? "#ff714b" : "white")};
 `;
 
 const ModalHeaderLeft = styled.View`
   position: absolute;
   padding: 2px;
-  left: 8px;
-  top: 8px;
+  left: 5px;
+  top: 5px;
 `;
 
 const ModalHeaderRight = styled.View`
   position: absolute;
   padding: 2px;
-  right: 8px;
-  top: 8px;
+  right: 5px;
+  top: 5px;
 `;
 
 const Break = styled.View<{ sep: number }>`
@@ -155,7 +153,7 @@ interface ScheduleModalProps {
   clubId: number;
   scheduleData?: RefinedSchedule[];
   selectIndex: number;
-  closeModal: any;
+  closeModal: (refresh: boolean) => void;
   children: object;
 }
 
@@ -196,25 +194,8 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
   const hideMenu = (scheduleId: number) => setMenuVisibleMap((prev) => new Map(prev).set(scheduleId, false));
   const showMenu = (scheduleId: number) => setMenuVisibleMap((prev) => new Map(prev).set(scheduleId, true));
 
-  const joinOrCancelMutation = useMutation(ClubApi.joinOrCancelClubSchedule, {
-    onError: (error) => {
-      console.log("--- Error ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
-    },
-  });
-
-  const deleteScheduleMutation = useMutation(ClubApi.deleteClubSchedule, {
-    onError: (error) => {
-      console.log("--- Error ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
-    },
-  });
+  const joinOrCancelMutation = useMutation(ClubApi.joinOrCancelClubSchedule);
+  const deleteScheduleMutation = useMutation(ClubApi.deleteClubSchedule);
 
   const joinOrCancel = (index: number, scheduleId?: number) => {
     if (scheduleId === undefined) {
@@ -241,10 +222,19 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
             scheduleData[index].participation = !scheduleData[index].participation;
           }
         } else {
+          console.log("--- joinOrCancelMutation Error ---");
+          console.log(res);
           toast.show(`Error Code: ${res.status}`, {
             type: "warning",
           });
         }
+      },
+      onError: (error) => {
+        console.log("--- joinOrCancelClubSchedule Error ---");
+        console.log(`error: ${error}`);
+        toast.show(`Error Code: ${error}`, {
+          type: "warning",
+        });
       },
     });
   };
@@ -265,7 +255,12 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
     deleteScheduleMutation.mutate(requestData, {
       onSuccess: (res) => {
         console.log(res);
-        if (res.status !== 200) {
+        if (res.status === 200) {
+          toast.show(`일정을 삭제했습니다.`, {
+            type: "success",
+          });
+        } else {
+          console.log("--- deleteScheduleMutation Error ---");
           console.log(res);
           toast.show(`Error Code: ${res.status}`, {
             type: "warning",
@@ -273,6 +268,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
         }
       },
       onError: (error) => {
+        console.log("--- deleteScheduleMutation Error ---");
         console.log(error);
         toast.show(`Error Code: ${error}`, {
           type: "warning",
@@ -321,7 +317,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                   <ModalHeaderRight>
                     <Menu
                       visible={menuVisibleMap.get(item.id ?? -1)}
-                      style={{ marginTop: 20, borderRadius: 0, width: 60, marginLeft: -50 }}
+                      style={{ marginTop: 20, borderRadius: 0, width: 55, marginLeft: -45 }}
                       anchor={
                         <TouchableOpacity onPress={() => showMenu(item.id ?? -1)}>
                           <Ionicons name="ellipsis-vertical" size={14} color="black" />
@@ -330,12 +326,12 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                       onRequestClose={() => hideMenu(item.id ?? -1)}
                       animationDuration={100}
                     >
-                      <MenuItem onPress={() => goToScheduleEdit(item)} style={{ margin: -5 }}>
+                      <MenuItem onPress={() => goToScheduleEdit(item)} style={{ margin: -8 }}>
                         <MaterialCommunityIcons name={"pencil-outline"} size={12} color="black" />
                         <MenuText>{` 수정`}</MenuText>
                       </MenuItem>
                       <MenuDivider />
-                      <MenuItem onPress={() => deleteSchedule(item.id)} style={{ margin: -5 }}>
+                      <MenuItem onPress={() => deleteSchedule(item.id)} style={{ margin: -8 }}>
                         <Feather name="trash-2" size={12} color="#FF714B" />
                         <MenuText color={"#FF714B"}>{` 삭제`}</MenuText>
                       </MenuItem>
