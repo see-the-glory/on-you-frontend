@@ -6,12 +6,13 @@ import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import Carousel from "../../components/Carousel";
 import { useMutation } from "react-query";
-import { ClubApi, ClubScheduleDeleteRequest, ClubScheduleJoinOrCancelRequest } from "../../api";
+import { ClubApi, ClubScheduleDeleteRequest, ClubScheduleJoinOrCancelRequest, Schedule } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import { useSelector } from "react-redux";
 import CircleIcon from "../../components/CircleIcon";
 import CircleIconBundle from "../../components/CircleIconBundle";
 import { Menu, MenuDivider, MenuItem } from "react-native-material-menu";
+import { useNavigation } from "@react-navigation/native";
 
 const ModalContainer = styled.View`
   height: 480px;
@@ -161,6 +162,7 @@ interface ScheduleModalProps {
 const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, scheduleData, selectIndex, closeModal, children }) => {
   const toast = useToast();
   const token = useSelector((state) => state.AuthReducers.authToken);
+  const navigation = useNavigation();
   const me = useSelector((state) => state.UserReducers.user);
   const [showModal, setShowModal] = useState(visible);
   const [menuVisibleMap, setMenuVisibleMap] = useState(new Map(scheduleData?.slice(0, -1).map((schedule) => [schedule.id, false])));
@@ -277,13 +279,19 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
         });
       },
       onSettled: () => {
-        closeModal();
+        closeModal(true);
       },
     });
   };
 
+  const goToScheduleEdit = (item: Schedule) => {
+    hideMenu(item.id ?? -1);
+    closeModal(false);
+    return navigation.navigate("ClubStack", { screen: "ClubScheduleEdit", clubData: { id: clubId }, scheduleData: item });
+  };
+
   return (
-    <Modal transparent visible={showModal} onRequestClose={closeModal} supportedOrientations={["landscape", "portrait"]}>
+    <Modal transparent visible={showModal} onRequestClose={() => closeModal(true)} supportedOrientations={["landscape", "portrait"]}>
       <Animated.View
         style={{
           flex: 1,
@@ -306,7 +314,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
               <Container key={index} pageWidth={pageWidth} gap={gap}>
                 <Header index={index}>
                   <ModalHeaderLeft>
-                    <TouchableOpacity onPress={closeModal}>
+                    <TouchableOpacity onPress={() => closeModal(true)}>
                       <Ionicons name="close" size={14} color="black" />
                     </TouchableOpacity>
                   </ModalHeaderLeft>
@@ -322,7 +330,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                       onRequestClose={() => hideMenu(item.id ?? -1)}
                       animationDuration={100}
                     >
-                      <MenuItem onPress={() => hideMenu(item.id ?? -1)} style={{ margin: -5 }}>
+                      <MenuItem onPress={() => goToScheduleEdit(item)} style={{ margin: -5 }}>
                         <MaterialCommunityIcons name={"pencil-outline"} size={12} color="black" />
                         <MenuText>{` 수정`}</MenuText>
                       </MenuItem>

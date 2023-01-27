@@ -290,6 +290,19 @@ export interface ClubScheduleCreationRequest {
   };
 }
 
+export interface ClubScheduleUpdateRequest {
+  token: string;
+  clubId: number;
+  scheduleId: number;
+  body: {
+    content: string;
+    location: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+  };
+}
+
 export interface ClubScheduleDeleteRequest {
   token: string;
   clubId: number;
@@ -683,6 +696,20 @@ const createClubSchedule = (req: ClubScheduleCreationRequest) => {
   });
 };
 
+const updateClubSchedule = (req: ClubScheduleUpdateRequest) => {
+  return fetch(`${BASE_URL}/api/clubs/${req.clubId}/schedules/${req.scheduleId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `${req.token}`,
+      Accept: "*/*",
+    },
+    body: JSON.stringify(req.body),
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
+};
+
 const deleteClubSchedule = (req: ClubScheduleDeleteRequest) => {
   console.log(req);
   return fetch(`${BASE_URL}/api/clubs/${req.clubId}/schedules/${req.scheduleId}`, {
@@ -940,6 +967,7 @@ export const ClubApi = {
   changeRole,
   getClubSchedules,
   createClubSchedule,
+  updateClubSchedule,
   deleteClubSchedule,
   joinOrCancelClubSchedule,
   getClubRole,
