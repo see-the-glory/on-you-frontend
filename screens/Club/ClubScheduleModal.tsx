@@ -169,7 +169,6 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
   const offset = 12;
   const pageWidth = SCREEN_WIDTH - (gap + offset) * 2;
   const opacity = useRef(new Animated.Value(0)).current;
-  console.log(menuVisibleMap);
   useEffect(() => {
     toggleModal();
   }, [visible]);
