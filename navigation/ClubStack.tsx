@@ -7,12 +7,13 @@ import { TouchableOpacity } from "react-native";
 import ClubJoin from "../screens/Club/ClubJoin";
 import ClubNotification from "../screens/Club/ClubNotification";
 import ClubApplication from "../screens/Club/ClubApplication";
+import ClubScheduleEdit from "../screens/Club/ClubScheduleEdit";
 
 const NativeStack = createNativeStackNavigator();
 
 const ClubStack = ({
   route: {
-    params: { clubData },
+    params: { clubData, scheduleData },
   },
   navigation: { navigate },
 }) => {
@@ -40,6 +41,19 @@ const ClubStack = ({
         initialParams={{ clubData }}
         options={{
           title: "스케줄 등록",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
+              <Entypo name="chevron-thin-left" size={20} color="black" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <NativeStack.Screen
+        name="ClubScheduleEdit"
+        component={ClubScheduleEdit}
+        initialParams={{ clubData, scheduleData }}
+        options={{
+          title: "스케줄 수정",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
               <Entypo name="chevron-thin-left" size={20} color="black" />

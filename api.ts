@@ -290,6 +290,25 @@ export interface ClubScheduleCreationRequest {
   };
 }
 
+export interface ClubScheduleUpdateRequest {
+  token: string;
+  clubId: number;
+  scheduleId: number;
+  body: {
+    content: string;
+    location: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+  };
+}
+
+export interface ClubScheduleDeleteRequest {
+  token: string;
+  clubId: number;
+  scheduleId: number;
+}
+
 export interface ClubScheduleJoinOrCancelRequest {
   token: string;
   clubId: number;
@@ -663,7 +682,7 @@ const getClubSchedules = ({ queryKey }: any) => {
   });
 };
 
-const createClubSchedule = async (req: ClubScheduleCreationRequest) => {
+const createClubSchedule = (req: ClubScheduleCreationRequest) => {
   return fetch(`${BASE_URL}/api/clubs/schedules`, {
     method: "POST",
     headers: {
@@ -677,7 +696,35 @@ const createClubSchedule = async (req: ClubScheduleCreationRequest) => {
   });
 };
 
-const joinOrCancelClubSchedule = async (req: ClubScheduleJoinOrCancelRequest) => {
+const updateClubSchedule = (req: ClubScheduleUpdateRequest) => {
+  return fetch(`${BASE_URL}/api/clubs/${req.clubId}/schedules/${req.scheduleId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `${req.token}`,
+      Accept: "*/*",
+    },
+    body: JSON.stringify(req.body),
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
+};
+
+const deleteClubSchedule = (req: ClubScheduleDeleteRequest) => {
+  console.log(req);
+  return fetch(`${BASE_URL}/api/clubs/${req.clubId}/schedules/${req.scheduleId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `${req.token}`,
+      Accept: "*/*",
+    },
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
+};
+
+const joinOrCancelClubSchedule = (req: ClubScheduleJoinOrCancelRequest) => {
   return fetch(`${BASE_URL}/api/clubs/${req.clubId}/schedules/${req.scheduleId}/joinOrCancel`, {
     method: "POST",
     headers: {
@@ -920,6 +967,8 @@ export const ClubApi = {
   changeRole,
   getClubSchedules,
   createClubSchedule,
+  updateClubSchedule,
+  deleteClubSchedule,
   joinOrCancelClubSchedule,
   getClubRole,
   applyClub,

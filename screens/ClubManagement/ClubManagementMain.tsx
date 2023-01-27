@@ -316,20 +316,11 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
                   <FontAwesome5 name="cross" size={6} color="#A5A5A5" />
                   <TagText style={{ color: "#A5A5A5", marginLeft: 3 }}>{data.organizationName}</TagText>
                 </Tag>
-                {data.categories[0] ? (
-                  <Tag color={"#B4B4B4"}>
-                    <TagText style={{ color: "white" }}>{data.categories[0].name}</TagText>
+                {data?.categories?.map((category, index) => (
+                  <Tag key={index} color={"#B4B4B4"}>
+                    <TagText style={{ color: "white" }}>{category.name}</TagText>
                   </Tag>
-                ) : (
-                  <></>
-                )}
-                {data.categories[1] ? (
-                  <Tag color={"#B4B4B4"}>
-                    <TagText style={{ color: "white" }}>{data.categories[1].name}</TagText>
-                  </Tag>
-                ) : (
-                  <></>
-                )}
+                ))}
               </TagView>
               <Title>{data.name}</Title>
             </InformationView>

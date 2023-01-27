@@ -175,13 +175,6 @@ const MemberText = styled(CustomText)`
   color: #b0b0b0;
 `;
 
-const ModalHeaderRight = styled.View`
-  position: absolute;
-  right: 15px;
-`;
-
-const ModalCloseButton = styled.TouchableOpacity``;
-
 const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   navigation: { navigate },
   route: {
@@ -243,9 +236,13 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     setMemberLoading(false);
   };
 
-  const closeScheduleModal = () => {
+  const closeScheduleModal = (refresh: boolean) => {
     setScheduleVisible(false);
-    DeviceEventEmitter.emit("SchedulesRefetch");
+    if (refresh) DeviceEventEmitter.emit("SchedulesRefetch");
+  };
+
+  const goToScheduleAdd = () => {
+    return navigate("ClubStack", { screen: "ClubScheduleAdd", clubData });
   };
 
   const loading = memberLoading;
@@ -350,7 +347,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
                   </ScheduleDetailView>
                 </ScheduleView>
               ) : (
-                <ScheduleAddView onPress={() => navigate("ClubStack", { screen: "ClubScheduleAdd", clubData })}>
+                <ScheduleAddView onPress={goToScheduleAdd}>
                   <Feather name="plus" size={28} color="#6E6E6E" />
                   <ScheduleText style={{ textAlign: "center", color: "#6E6E6E" }}>{`스케줄을 등록해\n멤버들과 공유해보세요.`}</ScheduleText>
                 </ScheduleAddView>
@@ -428,20 +425,10 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         clubId={clubData.id}
         scheduleData={schedules}
         selectIndex={selectedSchedule}
-        closeModal={() => {
-          closeScheduleModal();
+        closeModal={(refresh: boolean) => {
+          closeScheduleModal(refresh);
         }}
-      >
-        <ModalHeaderRight>
-          <ModalCloseButton
-            onPress={() => {
-              closeScheduleModal();
-            }}
-          >
-            <Ionicons name="close" size={24} color="black" />
-          </ModalCloseButton>
-        </ModalHeaderRight>
-      </ScheduleModal>
+      />
     </Animated.ScrollView>
   );
 };
