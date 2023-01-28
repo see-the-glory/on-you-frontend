@@ -78,8 +78,7 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
   useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
-        dispatch(updateUser(res.data));
-        dispatch(login(token));
+        dispatch(login(token, res.data));
       } else {
         console.log(res);
         toast.show(`유저 정보를 불러올 수 없습니다.`, {

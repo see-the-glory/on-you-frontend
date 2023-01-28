@@ -213,11 +213,13 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
       onSuccess: (res) => {
         if (res.status === 200) {
           if (scheduleData) {
+            // 이 스케줄에 참여한 상태라면, 멤버 중 '나'를 찾고 삭제한다.
             if (scheduleData[index].participation) {
               let target = scheduleData[index].members?.findIndex((member) => member.id === me?.id);
               if (target !== undefined && target > -1) scheduleData[index].members?.splice(target, 1);
             } else {
-              scheduleData[index].members?.push(me);
+              // 이 스케줄에 내가 참여되어 있지 않다면, '나'를 추가한다.
+              if (me) scheduleData[index].members?.push(me);
             }
             scheduleData[index].participation = !scheduleData[index].participation;
           }
@@ -360,8 +362,8 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                     <Feather name="users" size={13} color="black" />
                     {item.participation || item.members?.length ? (
                       <ContentCollapsibleView>
-                        {item.participation ? <CircleIcon size={18} uri={me.thumbnail} kerning={5} /> : <></>}
-                        <CircleIconBundle size={18} kerning={-8} uris={item.members?.filter((member) => member.id != me.id).map((member) => member.thumbnail)} />
+                        {item.participation ? <CircleIcon size={18} uri={me?.thumbnail} kerning={5} /> : <></>}
+                        <CircleIconBundle size={18} kerning={-8} uris={item.members?.filter((member) => member.id != me?.id).map((member) => member.thumbnail)} />
                       </ContentCollapsibleView>
                     ) : (
                       <ContentText>{`참여 멤버가 없습니다.`}</ContentText>
