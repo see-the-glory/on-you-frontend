@@ -40,21 +40,24 @@ const ClubNotification = ({
 }) => {
   const toast = useToast();
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [notifications, setNotifications] = useState<Notification[]>();
-  const { isLoading: notiLoading, refetch: notiRefetch } = useQuery(["getClubNotifications", clubData.id], ClubApi.getClubNotifications, {
+  const {
+    data: notifications,
+    isLoading: notiLoading,
+    refetch: notiRefetch,
+  } = useQuery(["getClubNotifications", clubData.id], ClubApi.getClubNotifications, {
     onSuccess: (res) => {
       if (res.status !== 200 || res.resultCode !== "OK") {
-        console.log(`query fail`);
+        console.log(`--- getClubNotifications Error ---`);
         console.log(`getClubNotifications status: ${res.status}`);
         console.log(res);
         toast.show("모임 소식정보를 불러오지 못했습니다.", {
           type: "warning",
         });
-      } else {
-        setNotifications(res.data.reverse());
       }
     },
     onError: (error) => {
+      console.log(`--- getClubNotifications Error ---`);
+      console.log(error);
       toast.show(`모임 소식 정보를 불러오지 못했습니다. ${error}`, {
         type: "warning",
       });
@@ -104,11 +107,11 @@ const ClubNotification = ({
         contentContainerStyle={{ flexGrow: 1, marginVertical: 10, paddingHorizontal: SCREEN_PADDING_SIZE }}
         refreshing={refreshing}
         onRefresh={onRefresh}
-        data={notifications}
+        data={[...notifications?.data].reverse()}
         ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
         keyExtractor={(item: Notification, index: number) => String(index)}
         renderItem={({ item, index }: { item: Notification; index: number }) => (
-          <TouchableOpacity onPress={() => onPressItem(item)} disabled={item.processDone ?? false}>
+          <TouchableOpacity onPress={() => onPressItem(item)} disabled={item?.processDone ?? false}>
             <NotificationItem notificationData={item} clubData={clubData} />
           </TouchableOpacity>
         )}

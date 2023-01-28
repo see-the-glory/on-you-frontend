@@ -21,13 +21,18 @@ export const init = () => {
   };
 };
 
-export const login = (token) => {
+export const login = (token, user) => {
   return async (dispatch) => {
-    await AsyncStorage.setItem("token", token);
     console.log(`Token stored : ${token}`);
+    await AsyncStorage.setItem("token", token);
+    await AsyncStorage.setItem("user", JSON.stringify(user));
     dispatch({
       type: "LOGIN",
       payload: token,
+    });
+    dispatch({
+      type: "UPDATE_USER",
+      payload: user,
     });
   };
 };
@@ -46,7 +51,9 @@ export const logout = () => {
 };
 
 export const updateUser = (user) => {
-  return (dispatch) => {
+  return async (dispatch) => {
+    await AsyncStorage.removeItem("user");
+    await AsyncStorage.setItem("user", JSON.stringify(user));
     dispatch({
       type: "UPDATE_USER",
       payload: user,
