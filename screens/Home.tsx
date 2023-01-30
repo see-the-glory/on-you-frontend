@@ -23,19 +23,14 @@ import styled from "styled-components/native";
 import {
   Feed,
   FeedApi,
-  FeedsParams,
   FeedsResponse,
   UserApi,
   UserInfoResponse,
   likeCount,
   likeCountReverse,
-  FeedsLikeReponse,
-  ClubApi,
-  ClubCreationRequest,
   FeedLikeRequest,
-  FeedReverseLikeRequest,
   Club,
-  ClubsParams, ClubResponse, getFeedLike, FeedLikeResponse, FeedReportRequest
+  ClubsParams, ClubResponse, getFeedLike, FeedReportRequest
 } from "../api";
 import CustomText from "../components/CustomText";
 import { FeedData, HomeScreenProps } from "../types/feed";
@@ -196,7 +191,9 @@ const UserInfo = styled.View`
   padding-left: 10px;
   padding-bottom: 2px;
 `;
-const FeedMain = styled.View``;
+const FeedMain = styled.View`
+  padding-bottom: 10px;
+`;
 const FeedImage = styled.View``;
 const ImageSliderView = styled.View``
 const FeedInfo = styled.View`
@@ -477,12 +474,6 @@ const Home: React.FC<HomeScreenProps> = ({
   let myName = userInfo?.data?.name;
   let myId = userInfo?.data?.id;
 
-  /*  const {
-      isLoading: feedLikeLoading, // true or false
-      data: feedLike,
-    } = useQuery<FeedLikeResponse>(["getFeedLike", token], FeedApi.getFeedLike);
-    console.log(feedLike)*/
-
   //Like
   const LikeMutation = useMutation(FeedApi.likeCount, {
     onSuccess: (res) => {
@@ -569,10 +560,10 @@ const Home: React.FC<HomeScreenProps> = ({
     modalizeRef.current?.close();
   };
 
-  const goToClubStack = (clubData: Club) => {
+  const goToClubStack = (feedData: Feed) => {
 
-    let clubNagivateData: Club = {
-      id: clubData.clubId
+    let clubNagivateData: Feed = {
+      id: feedData.clubId
     }
 
     console.log("clubNagivateData", clubNagivateData);
@@ -694,7 +685,7 @@ const Home: React.FC<HomeScreenProps> = ({
 
 
   const modalClose = () =>{
-    AccFinModalRef?.current?.close();
+    modalizeRef?.current?.close();
   }
 
   useEffect(() => {
@@ -704,11 +695,12 @@ const Home: React.FC<HomeScreenProps> = ({
   });
   const handleClick = (feedData:Feed) => {
     const now:any = Date.now();
-    if (lastClick && now - lastClick < 1000) {
+    if (lastClick && now - lastClick < 500) {
       // double click
-
       LikeFeed(feedData);
       console.log('Double click!');
+    }else{
+      console.log('one click')
     }
     setLastClick(now);
   };
@@ -789,7 +781,6 @@ const Home: React.FC<HomeScreenProps> = ({
                             <ModalContainer key={index}>
                               <ModalView>
                                 <ModalText onPress={()=> onAccOpen()}>신고</ModalText>
-                                {/*<ModalText onPress={()=> onAccOpen()}>신고</ModalText>*/}
                               </ModalView>
                               <Portal>
                                 <Modalize
@@ -862,13 +853,13 @@ const Home: React.FC<HomeScreenProps> = ({
                             <ImageSlider
                               data={item.imageUrls?.map((url)=>{return {img: url}})}
                               preview={false}
-                              caroselImageStyle={{resizeMode: 'cover', height: 400}}
+                              caroselImageStyle={{resizeMode: 'cover'}}
                               activeIndicatorStyle={{backgroundColor: 'orange'}}
                               indicatorContainerStyle={{ bottom: 0 }}
                             />
                           </ImageSliderView>
                         ):(
-                          <ImageSource source={{uri: item.imageUrls[0]}}  size={'auto'}/>
+                          <ImageSource source={{uri: item.imageUrls[0]}}  size={0} resizeMode="contain" />
                         )}
                     </FeedImage>
                   </TouchableWithoutFeedback>

@@ -18,7 +18,17 @@ import {
   useQuery,
   useQueryClient
 } from "react-query";
-import { Feed, FeedApi, FeedUpdateRequest, ModifiedReponse, UserApi, UserInfoResponse,Club,ClubResponse } from "../../api";
+import {
+  Feed,
+  FeedApi,
+  FeedUpdateRequest,
+  ModifiedReponse,
+  UserApi,
+  UserInfoResponse,
+  Club,
+  ClubResponse,
+  ClubApi
+} from "../../api";
 import { ModifiyFeedScreenProps } from "../../types/feed";
 import { RootStackParamList } from "../../types/Club";
 import { useNavigation } from "@react-navigation/native";
@@ -28,23 +38,16 @@ import {
   ImageSlider
 } from "react-native-image-slider-banner";
 import { Modalize,useModalize } from "react-native-modalize";
-// import { Portal } from "react-native-portalize";
 import { Portal } from 'react-native-paper';
 import { MaterialIcons,Ionicons } from "@expo/vector-icons";
 
-const Loader = styled.SafeAreaView`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
-`;
 const Container = styled.SafeAreaView`
   flex: 1;
   margin-bottom: ${Platform.OS === "ios" ? 20 : 30}px;
 `;
 const FeedUser = styled.View`
   flex-direction: row;
-  padding: 20px 0 0 20px;
+  padding: 20px;
 `;
 
 const UserInfo = styled.View`
@@ -70,7 +73,7 @@ const ClubModIcon=styled.View`
   display: flex;
   flex-direction: row;
 `
-const ClubBox = styled.TouchableOpacity`
+const ClubBox = styled.View`
   padding: 3px 6px 3px 6px;
   background-color: #c4c4c4;
   justify-content: center;
@@ -88,15 +91,14 @@ const ClubName = styled(CustomText)`
 `;
 
 const FeedImage = styled.View`
-  padding: 10px 0 0 0;
   justify-content: center;
   align-items: center;
   width: 100%;
+  height: 70%;
 `;
 
-
 const ContentArea = styled.View`
-  padding: 0 20px;
+  padding: 10px 20px;
   flex:1;
 `;
 
@@ -105,7 +107,6 @@ const Ment = styled(CustomTextInput)`
   height: 100px;
   color: black;
   font-size: 14px;
-  padding-top: 5%;
 `;
 
 const ImageSource = styled.Image<{ size: number }>`
@@ -158,8 +159,10 @@ const CommentRemainder = styled.View`
 const CtrgArea = styled.View`
   width: auto;
   height: auto;
-  margin: 0.1px 6px 13.9px 8px;
+  margin: 0 3px 5px 5px;
   border-radius: 3px;
+  display: flex;
+  flex-direction: row;
   background-color: #c4c4c4;
 `;
 
@@ -169,7 +172,7 @@ const CtgrText = styled.View`
   margin: 3px 5px 3px 5px;
 `;
 
-const OrganizationName = styled(CustomText)`
+const ClubCtrgList = styled(CustomText)`
   width: auto;
   height: auto;
   font-size: 12px;
@@ -181,6 +184,7 @@ const OrganizationName = styled(CustomText)`
 //
 const ModalContainer = styled.View`
   flex: 1;
+  top: 2%;
 `;
 
 const ModalView = styled.View`
@@ -188,6 +192,7 @@ const ModalView = styled.View`
   opacity: 1;
   width: 100%;
   padding: 10px 20px 0 20px;
+  height: auto;
 `;
 
 interface FeedEditItem {
@@ -219,9 +224,6 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
     console.log("Before Modal Passed FeedId");
     modalizeRef.current?.open();
   };
-  const onClose=()=>{
-    modalizeRef.current?.close();
-  }
   //피드호출
   const {
     isLoading: feedsLoading,
@@ -308,7 +310,8 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
   const {
     isLoading: myClubInfoLoading, // true or false
     data: myClub,
-  } = useQuery<ClubResponse>(["selectMyClubs", token], UserApi.selectMyClubs);
+  } = useQuery<ClubResponse>(["selectMyClubs", token], ClubApi.selectMyClubs);
+  console.log(myClub?.data?.isApprovedRequired)
 
   const ChangeClub = (id:any, name:any) =>{
     data.clubName = name;
@@ -333,49 +336,54 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
             <UserImage source={{ uri: userInfo?.data.thumbnail }} />
             <UserInfo>
               <UserId>{data.userName}</UserId>
-              <ClubBox onPress={onOpen}>
-                <ClubName>{data.clubName}</ClubName>
-                <Ionicons name="pencil" size={18} style={{left: 3, top: 2}} color="gray" />
-              </ClubBox>
+              <View style={{display: 'flex', flexDirection: 'row'}}>
+                <ClubBox>
+                  <ClubName>{data.clubName}</ClubName>
+                </ClubBox>
+                <TouchableOpacity onPress={onOpen}>
+                  <Ionicons name="pencil" size={18} style={{left: 3, top: 2}} color="gray" />
+                </TouchableOpacity>
+              </View>
             </UserInfo>
           </FeedUser>
           {/* <TouchableOpacity>
               <Ionicons name="pencil" size={18} style={{left: 3, top: 2}} color="gray" />
             </TouchableOpacity>*/}
-          <Modalize ref={modalizeRef} modalHeight={250}
-                    handlePosition="inside" modalStyle={{top: 250}}
+          <Modalize ref={modalizeRef} modalHeight={400}
+                    handlePosition="inside" modalStyle={{top: 280}}
                     disableScrollIfPossible={false}
           >
             <ModalContainer>
-              <ModalView >
-                {loading ? (
-                  <ActivityIndicator />
-                ) : (
-                  <FlatList
-                    refreshing={refreshing} onRefresh={onRefresh}
-                    keyExtractor={(item: Club, index: number) => String(index)}
-                    data={myClub?.data}
-                    renderItem={({ item, index }: { item: Club; index: number }) => (
-                      <>
-                        <ClubArea onPress={()=>ChangeClub(item.id, item.name)}>
-                          <ClubImg source={{ uri: item.thumbnail }} />
-                          <ClubMy>
-                            <CommentMent>
-                              <ClubId>{item.name}</ClubId>
-                            </CommentMent>
-                            <CommentRemainder>
-                              <CtrgArea>
-                                <CtgrText>
-                                  <OrganizationName>{item.categories?.map((name)=>{return name.name})}</OrganizationName>
-                                </CtgrText>
-                              </CtrgArea>
-                            </CommentRemainder>
-                          </ClubMy>
-                        </ClubArea>
-                      </>
-                    )}
-                  />
-                )}
+              <ModalView>
+                <FlatList
+                  refreshing={refreshing} onRefresh={onRefresh}
+                  keyExtractor={(item: Club, index: number) => String(index)}
+                  data={myClub?.data}
+                  renderItem={({ item, index }: { item: Club; index: number }) => (
+                    <>
+                      <ClubArea onPress={()=>ChangeClub(item.id, item.name)}>
+                        <ClubImg source={{ uri: item.thumbnail }} />
+                        <ClubMy>
+                          <CommentMent>
+                            <ClubId>{item.name}</ClubId>
+                          </CommentMent>
+                          <CommentRemainder>
+                            {item.categories?.map((name)=>{
+                              return (
+                                <CtrgArea>
+                                  <CtgrText>
+                                    <ClubCtrgList>{name.name}</ClubCtrgList>
+                                  </CtgrText>
+                                </CtrgArea>
+                              )
+                            })
+                            }
+                          </CommentRemainder>
+                        </ClubMy>
+                      </ClubArea>
+                    </>
+                  )}
+                />
               </ModalView>
             </ModalContainer>
           </Modalize>
@@ -385,12 +393,12 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
                 <ImageSlider
                   data={imageList}
                   preview={false}
-                  caroselImageStyle={{resizeMode: 'cover',height: 400}}
+                  caroselImageStyle={{resizeMode: 'cover',height: 350}}
                   activeIndicatorStyle={{backgroundColor: 'orange'}}
                   indicatorContainerStyle={{ bottom: 0 }}
                 />
               ):(
-                <ImageSource source={{uri: data.imageUrls[0]}} size={400}/>
+                <ImageSource source={{uri: data.imageUrls[0]}} size={0} resizeMode="contain"/>
               )}
           </FeedImage>
           <ContentArea>
