@@ -1,3 +1,5 @@
+import myClub from "./screens/Profile/MyClub";
+
 const BASE_URL = "http://3.39.190.23:8080";
 
 interface BaseResponse {
@@ -110,6 +112,19 @@ export interface Reply {
   thumbnail: string;
 }
 
+export interface MyClub{
+  id: number;
+  name: string;
+  clubShotDesc: string;
+  clubLongDesc: string;
+  organizationName: string;
+  categories?: Category[];
+  thumbnail?: string | null;
+  applyStatus?: "APPLIED" | "APPROVED";
+  createrName: string;
+  created?: string;
+}
+
 export interface Report {
   userId: number;
   reason: string;
@@ -127,6 +142,10 @@ export interface CategoryResponse extends BaseResponse {
 
 export interface ClubResponse extends BaseResponse {
   data: Club;
+}
+
+export interface MyClubResponse extends BaseResponse{
+  data: MyClub;
 }
 
 export interface ClubUpdateResponse extends BaseResponse {
