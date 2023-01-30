@@ -58,13 +58,6 @@ const ClubImg = styled.Image`
 
 const ClubMy = styled.View`
   justify-content: center;
-  padding-top: 3%;
-`;
-const ClubId = styled(CustomText)`
-  padding-left: 2%;
-  color: black;
-  font-size: 12px;
-  font-weight: bold;
 `;
 
 const Comment = styled(CustomText)`
@@ -78,6 +71,13 @@ const Comment = styled(CustomText)`
 const CommentMent = styled.View`
   flex-direction: row;
   padding-bottom: 4px;
+`;
+
+const ClubId = styled.Text`
+  padding-left: 1%;
+  color: black;
+  font-size: 12px;
+  font-weight: bold;
 `;
 
 const CommentRemainder = styled.View`
