@@ -170,8 +170,8 @@ const SortingItemButton = styled.TouchableOpacity`
 const SortingItemText = styled(CustomText)<{ selected: boolean }>`
   font-size: 15px;
   line-height: 20px;
-  color: ${(props) => (props.selected ? "#FF714B" : "#b0b0b0")};
-  font-family: ${(props) => (props.selected ? "NotoSansKR-Medium" : "NotoSansKR-Regular")};
+  color: ${(props: any) => (props.selected ? "#FF714B" : "#b0b0b0")};
+  font-family: ${(props: any) => (props.selected ? "NotoSansKR-Medium" : "NotoSansKR-Regular")};
 `;
 
 interface ClubSortItem {
@@ -181,7 +181,7 @@ interface ClubSortItem {
 }
 
 const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: any) => state.AuthReducers.authToken);
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
     token,
@@ -424,7 +424,8 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               data={clubs?.pages?.map((page) => page?.responses?.content).flat()}
               columnWrapperStyle={{ justifyContent: "space-between" }}
               ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
-              ListFooterComponent={() => <View style={{ height: 60 }} />}
+              ListFooterComponent={() => <View />}
+              ListFooterComponentStyle={{ marginBottom: 60 }}
               numColumns={2}
               keyExtractor={(item: Club, index: number) => String(index)}
               renderItem={({ item, index }: { item: Club; index: number }) => (

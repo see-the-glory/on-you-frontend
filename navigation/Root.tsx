@@ -6,6 +6,7 @@ import ClubStack from "./ClubStack";
 import HomeStack from "./HomeStack";
 import ProfileStack from "./ProfileStack";
 import ClubManagementStack from "./ClubManagementStack";
+import FeedStack from "./FeedStack";
 
 const Nav = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ const Root = () => (
     <Nav.Screen name="ClubStack" component={ClubStack} />
     <Nav.Screen name="HomeStack" component={HomeStack} />
     <Nav.Screen name="ProfileStack" component={ProfileStack} />
+    <Nav.Screen name="FeedStack" component={FeedStack} />
   </Nav.Navigator>
 );
 export default Root;

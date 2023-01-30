@@ -6,6 +6,7 @@ import CustomText from "./CustomText";
 import CircleIcon from "./CircleIcon";
 import { Feed } from "../api";
 import { TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number }>`
@@ -63,11 +64,15 @@ interface FeedDetailProps {
 }
 
 const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedSize }) => {
+  const navigation = useNavigation();
+  const goToFeedComments = () => {
+    return navigation.navigate("FeedStack", { screen: "FeedComments", feedId: feedData.id });
+  };
   return (
     <Container>
       <HeaderView padding={20}>
         <HeaderLeftView>
-          <CircleIcon size={36} kerning={5} />
+          <CircleIcon uri={feedData.thumbnail} size={36} kerning={10} />
           <HeaderText2>{feedData.userName}</HeaderText2>
         </HeaderLeftView>
         <HeaderRightView>
@@ -84,7 +89,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedSize }) => {
               <Ionicons name="heart-outline" size={20} color="black" />
               <CountingNumber>{feedData.likesCount}</CountingNumber>
             </InformationButton>
-            <InformationButton>
+            <InformationButton onPress={goToFeedComments}>
               <Ionicons name="ios-chatbox-ellipses-sharp" size={20} color="black" />
               <CountingNumber>{feedData.commentCount}</CountingNumber>
             </InformationButton>

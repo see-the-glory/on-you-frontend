@@ -43,8 +43,6 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     });
   }, []);
 
-  console.log(feedData[targetIndex]);
-
   return (
     <FlatList
       // refreshing={refreshing}
