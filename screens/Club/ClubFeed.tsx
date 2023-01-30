@@ -1,8 +1,8 @@
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useRef, useState } from "react";
-import { useEffect } from "react";
-import { ActivityIndicator, FlatList, useWindowDimensions, Animated, View, Text, TouchableOpacity } from "react-native";
-import { QueryClient, useInfiniteQuery, useQuery, useQueryClient } from "react-query";
+import React, { useState } from "react";
+import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity } from "react-native";
+import FastImage from "react-native-fast-image";
+import { useInfiniteQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { Feed, FeedApi, FeedsResponse } from "../../api";
@@ -15,7 +15,7 @@ const Loader = styled.View`
   align-items: center;
 `;
 
-const FeedImage = styled.Image<{ size: number }>`
+const FeedImage = styled(FastImage)<{ size: number }>`
   width: ${(props: any) => props.size}px;
   height: ${(props: any) => props.size}px;
 `;
@@ -80,6 +80,11 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     console.log("ClubFeed - useFocuseEffect");
   });
 
+  const goToClubFeedDetail = (index: number) => {
+    let feedData = feeds?.pages?.map((page) => page?.responses?.content).flat();
+    return navigate("ClubStack", { screen: "ClubFeedDetail", clubData, feedData, targetIndex: index });
+  };
+
   return feedsLoading ? (
     <Loader>
       <ActivityIndicator />
@@ -117,7 +122,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
         </EmptyView>
       )}
       renderItem={({ item, index }: { item: Feed; index: number }) => (
-        <TouchableOpacity style={index % 3 === 1 ? { marginHorizontal: 1 } : {}}>
+        <TouchableOpacity onPress={() => goToClubFeedDetail(index)} style={index % 3 === 1 ? { marginHorizontal: 1 } : {}}>
           <FeedImage size={feedSize} source={item?.imageUrls[0] ? { uri: item.imageUrls[0] } : require("../../assets/basic.jpg")} />
         </TouchableOpacity>
       )}

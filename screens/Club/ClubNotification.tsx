@@ -33,7 +33,7 @@ const EmptyText = styled(CustomText)`
 `;
 
 const ClubNotification = ({
-  navigation: { navigate, addListener },
+  navigation: { navigate },
   route: {
     params: { clubData, clubRole },
   },

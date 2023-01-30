@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
-import { ActivityIndicator, FlatList, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Platform, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
 import { Feather, MaterialCommunityIcons, Ionicons, createIconSetFromFontello } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
@@ -205,6 +205,9 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const { ref: sortingSheetRef, open: openSortingSheet, close: closeSortingSheet } = useModalize();
   const [sortItem, setSortItem] = useState<ClubSortItem[]>();
   const [selectedSortIndex, setSelectedSortIndex] = useState<number>(0);
+  const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const colSize = Math.round(SCREEN_WIDTH / 2);
+
   const {
     isLoading: clubsLoading,
     data: clubs,
@@ -439,6 +442,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                     clubShortDesc={item.clubShortDesc}
                     categories={item.categories}
                     recruitStatus={item.recruitStatus}
+                    colSize={colSize}
                   />
                 </TouchableOpacity>
               )}

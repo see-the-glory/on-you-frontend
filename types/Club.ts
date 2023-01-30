@@ -1,7 +1,7 @@
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Animated, GestureResponderEvent } from "react-native";
-import { Club, CategoryResponse, Schedule, Category, ClubRole, Member } from "../api";
+import { Club, CategoryResponse, Schedule, Category, ClubRole, Member, Feed } from "../api";
 
 // For Stack Navigation
 export type RootStackParamList = {
@@ -11,6 +11,7 @@ export type RootStackParamList = {
   ClubTopTabs: { clubData: Club };
   ClubHome: { clubData: Club };
   ClubFeed: { clubData: Club };
+  ClubFeedDetail: { clubData: Club; feedData: Feed[]; targetIndex: number };
 
   ClubCreationStack: {};
   ClubCreationStepOne: { category: CategoryResponse };
@@ -54,6 +55,7 @@ export type ClubStackScreenProps = NativeStackScreenProps<RootStackParamList, "C
 
 export type ClubHomeScreenProps = NativeStackScreenProps<RootStackParamList, "ClubHome">;
 export type ClubFeedScreenProps = NativeStackScreenProps<RootStackParamList, "ClubFeed">;
+export type ClubFeedDetailScreenProps = NativeStackScreenProps<RootStackParamList, "ClubFeedDetail">;
 
 export type ClubCreationStackProps = NativeStackScreenProps<RootStackParamList, "ClubCreationStack">;
 export type ClubCreationStepOneScreenProps = NativeStackScreenProps<RootStackParamList, "ClubCreationStepOne">;

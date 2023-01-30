@@ -8,14 +8,15 @@ import ClubJoin from "../screens/Club/ClubJoin";
 import ClubNotification from "../screens/Club/ClubNotification";
 import ClubApplication from "../screens/Club/ClubApplication";
 import ClubScheduleEdit from "../screens/Club/ClubScheduleEdit";
+import ClubFeedDetail from "../screens/Club/ClubFeedDetail";
 
 const NativeStack = createNativeStackNavigator();
 
 const ClubStack = ({
   route: {
-    params: { clubData, scheduleData },
+    params: { clubData, scheduleData, clubRole, feedData, targetIndex },
   },
-  navigation: { navigate },
+  navigation: { navigate, goBack },
 }) => {
   return (
     <NativeStack.Navigator
@@ -79,7 +80,7 @@ const ClubStack = ({
       <NativeStack.Screen
         name="ClubNotification"
         component={ClubNotification}
-        initialParams={{ clubData }}
+        initialParams={{ clubData, clubRole }}
         options={{
           title: "소식",
           headerLeft: () => (
@@ -95,6 +96,20 @@ const ClubStack = ({
         component={ClubApplication}
         options={{
           title: "가입요청",
+        }}
+      />
+
+      <NativeStack.Screen
+        name="ClubFeedDetail"
+        component={ClubFeedDetail}
+        initialParams={{ clubData, feedData, targetIndex }}
+        options={{
+          headerBackVisible: false,
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
+              <Entypo name="chevron-thin-left" size={20} color="black"></Entypo>
+            </TouchableOpacity>
+          ),
         }}
       />
     </NativeStack.Navigator>

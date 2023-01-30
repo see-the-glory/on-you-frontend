@@ -84,7 +84,7 @@ const FooterView = styled.View`
 const NextButton = styled.TouchableOpacity`
   width: 100%;
   height: 50px;
-  background-color: ${(props) => (props.disabled ? "#c4c4c4" : "#295AF5")};
+  background-color: ${(props: any) => (props.disabled ? "#c4c4c4" : "#295AF5")};
   justify-content: center;
   align-items: center;
 `;
@@ -102,7 +102,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   },
   navigation: { navigate },
 }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: any) => state.AuthReducers.authToken);
   const toast = useToast();
   const [clubShortDesc, setClubShortDesc] = useState<string>("");
   const [clubLongDesc, setClubLongDesc] = useState<string>("");
@@ -196,12 +196,11 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
             <ContentItem>
               <ItemTitle>간단 소개</ItemTitle>
               <ShortDescInput
-                placeholder="36자 이내로 간단 소개글을 적어주세요."
+                placeholder="20자 이내로 간단 소개글을 적어주세요."
                 placeholderTextColor="#B0B0B0"
                 value={clubShortDesc}
                 textAlign="center"
-                multiline={true}
-                maxLength={36}
+                maxLength={20}
                 textAlignVertical="center"
                 onChangeText={(value: string) => setClubShortDesc(value)}
                 includeFontPadding={false}
@@ -216,7 +215,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
                 value={clubLongDesc}
                 textAlign="left"
                 multiline={true}
-                maxLength={1000}
+                maxLength={100}
                 textAlignVertical="top"
                 onChangeText={(value: string) => setClubLongDesc(value)}
                 includeFontPadding={false}
