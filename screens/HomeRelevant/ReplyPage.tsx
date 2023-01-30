@@ -73,7 +73,7 @@ const CommentArea = styled.View`
   flex: 1;
   flex-direction: row;
   width: 100%;
-  padding: 10px 20px 0 20px;
+  padding: 0 20px 0 20px;
   position: relative;
   background-color: #ffffff;
 `;
@@ -131,26 +131,28 @@ const Time = styled(CustomText)`
 
 const ReplyArea = styled.View`
   display: flex;
-  flex-direction: row;
-  padding: 10px 0 0 20px;
+  align-items: center;
+  flex-direction: row;;
+  padding: 5px 0 0 20px;
   border-style: solid;
   border-top-color: #e9e9e9;
-  border-top-width: 2px;
+  border-top-width: 1px;
+  top: ${Platform.OS === "ios" ? 0 : 4}%;
+  width: 100%;
 `;
 
 const ReplyInputArea = styled.View`
+  display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   width: 85%;
 `
 
-const ReplyInput = styled(CustomTextInput)`
+const ReplyInput = styled.TextInput`
   font-size: 14px;
   color: #b0b0b0;
   left: 15px;
-  margin-top: 5px;
-  width: 80%;
 `;
 
 const ReplyImg = styled.Image`
@@ -160,16 +162,12 @@ const ReplyImg = styled.Image`
 `;
 
 const ReplyButton = styled.TouchableOpacity``;
-const ReplyDone = styled(CustomText)`
+const ReplyDone = styled.Text`
   color: #63abff;
   font-size: 14px;
   font-weight: bold;
   width: 30px;
-  height: 24px;
 `;
-
-const ModalIcon = styled.TouchableOpacity``;
-const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
                                                       navigation:{navigate},
@@ -330,11 +328,11 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
     <Loader>
       <ActivityIndicator/>
     </Loader>
-  ):(
+  ):( //안드로이드 높이 확인, ios 확인필요
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}
-                          keyboardVerticalOffset={Platform.OS === "ios" ? 110 : 100} style={{ flex: 1 }}>
+                          keyboardVerticalOffset={Platform.OS === "ios" ? 125 : 180} style={{ flex: 1, top: Platform.OS==='ios'? 20: 0}}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <>
+        <Container>
           <CommentList>
             {replys?.data.length !== 0 ?
               <SafeAreaView style={{flex: 1}}>
@@ -435,7 +433,7 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
               </ReplyButton>
             </ReplyInputArea>
           </ReplyArea>
-        </>
+        </Container>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
