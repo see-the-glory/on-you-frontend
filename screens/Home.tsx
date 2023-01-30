@@ -80,8 +80,8 @@ const LogoText = styled(CustomText)`
 `;
 
 const UserImage = styled.Image`
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 100px;
   border-style: solid;
   border-color: #dddddd;
@@ -89,7 +89,7 @@ const UserImage = styled.Image`
   background-color: #c4c4c4;
 `;
 
-const UserId = styled(CustomText)`
+const UserId = styled.Text`
   color: black;
   font-weight: bold;
   font-size: 14px;
@@ -97,7 +97,7 @@ const UserId = styled(CustomText)`
 `;
 
 const ClubBox = styled.TouchableOpacity`
-  padding: 3px 6px 3px 6px;
+  padding: 1px 6px 1px 6px;
   background-color: #c4c4c4;
   justify-content: center;
   align-items: center;
@@ -189,7 +189,6 @@ const FeedUser = styled.View`
 
 const UserInfo = styled.View`
   padding-left: 10px;
-  padding-bottom: 2px;
 `;
 const FeedMain = styled.View`
   padding-bottom: 10px;
@@ -218,7 +217,9 @@ const NumberText = styled(CustomText)`
   font-weight: 300;
   padding-left: 5px;
 `;
-const RightInfo = styled.View``;
+const RightInfo = styled.View`
+  right: 5px;  
+`;
 const Timestamp = styled(CustomText)`
   color: #9a9a9a;
   font-size: 12px;
@@ -237,6 +238,7 @@ const Ment = styled(CustomText)`
 const ImageSource = styled.Image<{ size: number }>`
   width: 100%;
   height: 400px;
+  background-color: lightgray;
 `;
 //모달
 const ClubArea = styled.TouchableOpacity`
@@ -367,7 +369,7 @@ const AccText = styled(CustomText)`
 const ReportView = styled.View`
   flex: 1;
   align-items: center;
-  padding-top: 20%;
+  padding-top: 10%;
   height: 100%;
   position: relative;
 `;
@@ -381,6 +383,12 @@ const AccLogoImg = styled.Image`
 const ReportFin = styled.Text`
   font-size: 25px;
 `;
+const ReportBack = styled.Text`
+  padding-top: 35px;
+  font-size: 20px;
+  font-weight: bold;
+`
+
 interface HeartType {
   feedId: number;
   heart: boolean;
@@ -685,7 +693,7 @@ const Home: React.FC<HomeScreenProps> = ({
 
 
   const modalClose = () =>{
-    modalizeRef?.current?.close();
+    AccFinModalRef?.current?.close();
   }
 
   useEffect(() => {
@@ -775,7 +783,7 @@ const Home: React.FC<HomeScreenProps> = ({
                         ):(
                           <Modalize
                             ref={modalizeRef}
-                            modalHeight={75}
+                            modalHeight={100}
                             handlePosition="inside"
                           >
                             <ModalContainer key={index}>
@@ -835,9 +843,9 @@ const Home: React.FC<HomeScreenProps> = ({
                           handlePosition="inside"
                         >
                           <ReportView>
-                            <AccLogoImg source={{ uri: "https://cdn1.iconfinder.com/data/icons/3d-front-color/256/tick-front-color.png" }} />
+                            <AccLogoImg source={{ uri: "https://cdn1.iconfinder.com/data/icons/3d-front-color/256/tick-front-color.png" }}/>
                             <ReportFin>신고가 완료되었습니다. 감사합니다.</ReportFin>
-                            <TouchableOpacity onPress={modalClose}><Text>확인</Text></TouchableOpacity>
+                            <TouchableOpacity onPress={modalClose}><ReportBack>확인</ReportBack></TouchableOpacity>
                           </ReportView>
                         </Modalize>
                       </Portal>
