@@ -1,5 +1,5 @@
 import React from "react";
-import { ImageBackground, Platform, SafeAreaView, StatusBar, Text, View } from "react-native";
+import { View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
@@ -7,6 +7,7 @@ import { BlurView } from "expo-blur";
 import { ClubHomeHaederProps } from "../Types/Club";
 import CustomText from "./CustomText";
 import moment from "moment-timezone";
+import FastImage from "react-native-fast-image";
 
 const Header = styled.View`
   width: 100%;
@@ -116,7 +117,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
   });
   return (
     <Header>
-      <ImageBackground style={{ width: "100%", height: heightExpanded }} source={imageURI ? { uri: imageURI } : require("../assets/basic.jpg")}>
+      <FastImage style={{ width: "100%", height: heightExpanded }} source={imageURI ? { uri: imageURI } : require("../assets/basic.jpg")}>
         <AnimatedBlurView
           intensity={70}
           tint="dark"
@@ -178,7 +179,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
             </InformationView>
           </AnimatedFadeOutBox>
         </FilterView>
-      </ImageBackground>
+      </FastImage>
     </Header>
   );
 };

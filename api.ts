@@ -92,6 +92,7 @@ export interface Feed {
   clubName: string;
   userId: number;
   userName: string;
+  thumbnail: string;
   content: string;
   imageUrls: string[] | null;
   hashtags: string | null;
@@ -100,6 +101,15 @@ export interface Feed {
   commentCount: number;
   created: string;
   customCursor?: string;
+}
+
+export interface FeedComment {
+  commentId: number;
+  userId: number;
+  userName: string;
+  content: string;
+  created: string;
+  thumbnail: string;
 }
 
 export interface Reply {
@@ -171,6 +181,11 @@ export interface FeedsResponse extends BaseResponse {
   };
   size: number;
 }
+
+export interface FeedCommentsResponse extends BaseResponse {
+  data: FeedComment[];
+}
+
 export interface ModifiedReponse extends BaseResponse {
   data: Feed;
 }
@@ -434,6 +449,19 @@ export interface getFeedLike {
     id?: number;
   };
   token: string;
+}
+
+export interface FeedCommentsRequest {
+  token: string;
+  feedId: number;
+}
+
+export interface FeedCommentCreationRequest {
+  token: string;
+  data: {
+    id: number;
+    content: string;
+  };
 }
 
 export interface FeedReplyRequest {
@@ -917,6 +945,19 @@ const likeCountReverse = (req: getFeedLike) => {
 };
 
 /**댓글호출*/
+const getFeedComments = ({ queryKey }: any) => {
+  const [_key, token, feedId]: [string, string, number] = queryKey;
+  return fetch(`${BASE_URL}/api/feeds/${feedId}/comments`, {
+    method: "GET",
+    headers: {
+      Authorization: `${token}`,
+    },
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
+};
+
 const getReply = ({ queryKey }: any) => {
   const [_key, token, id]: [string, string, number] = queryKey;
   return fetch(`${BASE_URL}/api/feeds/${id}/comments`, {
@@ -937,6 +978,20 @@ const getReply = ({ queryKey }: any) => {
 };
 
 /**댓글달기*/
+const createFeedComment = (req: FeedCommentCreationRequest) => {
+  return fetch(`${BASE_URL}/api/feeds/${req.data.id}/comment`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${req.token}`,
+    },
+    body: JSON.stringify(req.data),
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
+};
+
 const ReplyFeed = (req: FeedReplyRequest) => {
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}/comment`, {
     method: "POST",
@@ -1011,6 +1066,8 @@ export const UserApi = {
 export const FeedApi = {
   getFeeds,
   getClubFeeds,
+  getFeedComments,
+  createFeedComment,
   createFeed,
   reportFeed,
   updateFeed,

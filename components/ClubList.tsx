@@ -1,10 +1,10 @@
 import React from "react";
-import { useWindowDimensions, Platform, PixelRatio } from "react-native";
 import styled from "styled-components/native";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Category } from "../api";
 import CustomText from "./CustomText";
+import FastImage from "react-native-fast-image";
 
 const Club = styled.View`
   align-items: flex-start;
@@ -12,7 +12,7 @@ const Club = styled.View`
 
 const ThumbnailView = styled.View``;
 
-const ThumbnailImage = styled.Image<{ size: number }>`
+const ThumbnailImage = styled(FastImage)<{ size: number }>`
   position: absolute;
   width: ${(props: any) => props.size}px;
   height: ${(props: any) => props.size}px;
@@ -113,15 +113,14 @@ interface ClubListProps {
   clubShortDesc?: string | null;
   categories?: Category[];
   recruitStatus?: string | null;
+  colSize: number;
 }
 
-const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, clubName, memberNum, clubShortDesc, categories, recruitStatus }) => {
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
-  const colSize = Math.round(SCREEN_WIDTH / 2);
+const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, clubName, memberNum, clubShortDesc, categories, recruitStatus, colSize }) => {
   return (
     <Club>
       <ThumbnailView>
-        <ThumbnailImage source={thumbnailPath ? { uri: thumbnailPath } : require("../assets/basic.jpg")} size={colSize}></ThumbnailImage>
+        <ThumbnailImage source={thumbnailPath ? { uri: thumbnailPath } : require("../assets/basic.jpg")} size={colSize} />
         <Gradient size={colSize} colors={["transparent", "rgba(0, 0, 0, 0.8)"]} start={{ x: 0.5, y: 0.65 }}>
           {recruitStatus === "OPEN" ? (
             <RecruitView>
@@ -143,7 +142,7 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
       <ClubInfo>
         {clubShortDesc && clubShortDesc.length > 0 ? (
           <DescView>
-            <ShortDescText>{clubShortDesc}</ShortDescText>
+            <ShortDescText>{clubShortDesc.length <= 15 ? clubShortDesc : `${clubShortDesc.slice(0, 15)}\n${clubShortDesc.slice(15)}`}</ShortDescText>
           </DescView>
         ) : (
           <></>
