@@ -1,3 +1,4 @@
+import moment from "moment";
 import React from "react";
 import { useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
@@ -55,7 +56,7 @@ const Comment: React.FC<CommentProps> = ({ commentData }) => {
           <ContentText>{commentData.content.trim()}</ContentText>
         </ContentTextBundle>
         <InformationView>
-          <CreatedTime>{commentData.created}</CreatedTime>
+          <CreatedTime>{moment(commentData.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
         </InformationView>
       </RightView>
     </Container>

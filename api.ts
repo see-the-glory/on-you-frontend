@@ -122,7 +122,7 @@ export interface Reply {
   thumbnail: string;
 }
 
-export interface MyClub{
+export interface MyClub {
   id: number;
   name: string;
   clubShotDesc: string;
@@ -154,7 +154,7 @@ export interface ClubResponse extends BaseResponse {
   data: Club;
 }
 
-export interface MyClubResponse extends BaseResponse{
+export interface MyClubResponse extends BaseResponse {
   data: MyClub;
 }
 
@@ -288,8 +288,7 @@ export interface FeedReverseLikeRequest {
 
 export interface FeedReportRequest {
   data: {
-    id: number | undefined;
-    userId: number;
+    id: number;
     reason: string;
   };
   token: string;
@@ -901,8 +900,6 @@ const selectMyClubs = ({ queryKey }: any) => {
 
 /**피드신고*/
 const reportFeed = (req: FeedReportRequest) => {
-  console.log(req.data.id);
-  console.log(req.data.reason);
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}/report?reason=${req.data.reason}`, {
     method: "PUT",
     headers: {
