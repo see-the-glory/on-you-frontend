@@ -48,7 +48,7 @@ const RootNavigation = () => {
           };
         });
 
-        moment().tz("Asia/Seoul");
+        moment.tz.setDefault("Asia/Seoul");
         moment.updateLocale("ko", {
           relativeTime: {
             future: "%s 후",
