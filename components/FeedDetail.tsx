@@ -9,11 +9,12 @@ import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 const Container = styled.View``;
-const HeaderView = styled.View<{ padding: number }>`
+const HeaderView = styled.View<{ padding: number; height: number }>`
+  height: ${(props: any) => props.height}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px ${(props: any) => (props.padding ? props.padding : "0")}px;
+  padding: 0px ${(props: any) => (props.padding ? props.padding : "0")}px;
 `;
 const HeaderLeftView = styled.View`
   flex-direction: row;
@@ -29,11 +30,11 @@ const HeaderText2 = styled(CustomText)`
 const ContentView = styled.View<{ padding: number }>`
   padding: 0px ${(props: any) => (props.padding ? props.padding : "0")}px;
 `;
-const InformationView = styled.View`
+const InformationView = styled.View<{ height: number }>`
+  height: ${(props: any) => props.height}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 0px;
 `;
 const InformationLeftView = styled.View`
   flex-direction: row;
@@ -52,7 +53,9 @@ const InformationRightView = styled.View``;
 const CreatedTime = styled(CustomText)`
   color: #9a9a9a;
 `;
-const ContentTextView = styled.View``;
+const ContentTextView = styled.View<{ height: number }>`
+  height: ${(props: any) => props.height}px;
+`;
 const ContentText = styled(CustomText)`
   font-size: 14px;
   color: #2b2b2b;
@@ -61,16 +64,19 @@ const ContentText = styled(CustomText)`
 interface FeedDetailProps {
   feedData: Feed;
   feedSize: number;
+  headerHeight: number;
+  infoHeight: number;
+  contentHeight: number;
 }
 
-const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedSize }) => {
+const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedSize, headerHeight, infoHeight, contentHeight }) => {
   const navigation = useNavigation();
   const goToFeedComments = () => {
     return navigation.navigate("FeedStack", { screen: "FeedComments", feedId: feedData.id });
   };
   return (
     <Container>
-      <HeaderView padding={20}>
+      <HeaderView padding={20} height={headerHeight}>
         <HeaderLeftView>
           <CircleIcon uri={feedData.thumbnail} size={36} kerning={10} />
           <HeaderText2>{feedData.userName}</HeaderText2>
@@ -83,7 +89,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedSize }) => {
       </HeaderView>
       <FastImage source={feedData.imageUrls[0] ? { uri: feedData.imageUrls[0] } : require("../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} />
       <ContentView padding={20}>
-        <InformationView>
+        <InformationView height={infoHeight}>
           <InformationLeftView>
             <InformationButton>
               <Ionicons name="heart-outline" size={20} color="black" />
@@ -98,7 +104,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedSize }) => {
             <CreatedTime>{feedData.created}</CreatedTime>
           </InformationRightView>
         </InformationView>
-        <ContentTextView>
+        <ContentTextView height={contentHeight}>
           <ContentText>{feedData.content}</ContentText>
         </ContentTextView>
       </ContentView>

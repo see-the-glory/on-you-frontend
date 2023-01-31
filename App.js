@@ -11,6 +11,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { LogBox, Platform, Text, TextInput, View } from "react-native";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import moment from "moment";
+import "moment/locale/ko";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -43,6 +45,25 @@ const RootNavigation = () => {
               lineHeight: Platform.OS === "ios" ? 19 : 21,
             },
           };
+        });
+
+        moment().tz("Asia/Seoul");
+        moment.updateLocale("ko", {
+          relativeTime: {
+            future: "%s 후",
+            past: "%s 전",
+            s: "1초",
+            m: "1분",
+            mm: "%d분",
+            h: "1시간",
+            hh: "%d시간",
+            d: "1일",
+            dd: "%d일",
+            M: "1달",
+            MM: "%d달",
+            y: "1년",
+            yy: "%d년",
+          },
         });
       } catch (e) {
         console.warn(e);
