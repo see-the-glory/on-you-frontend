@@ -1,4 +1,4 @@
-import { Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 import React, { useLayoutEffect, useState } from "react";
 import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
@@ -10,6 +10,7 @@ import CustomText from "../../components/CustomText";
 import Comment from "../../components/Comment";
 import CustomTextInput from "../../components/CustomTextInput";
 import CircleIcon from "../../components/CircleIcon";
+import { SwipeListView, SwipeRow } from "react-native-swipe-list-view";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -61,6 +62,20 @@ const EmptyText = styled(CustomText)`
   text-align: center;
 `;
 
+const HiddenItemContainer = styled.View`
+  height: 100%;
+  align-items: center;
+  flex-direction: row;
+  justify-content: flex-end;
+`;
+const HiddenItemButton = styled.TouchableOpacity<{ width: number }>`
+  width: ${(props: any) => props.width}px;
+  height: 100%;
+  background-color: #8e8e8e;
+  justify-content: center;
+  align-items: center;
+`;
+
 const FeedComments = ({
   navigation: { setOptions, navigate, goBack },
   route: {
@@ -72,6 +87,7 @@ const FeedComments = ({
   const toast = useToast();
   const [comment, setComment] = useState<string>("");
   const [validation, setValidation] = useState<boolean>(false);
+  const hiddenItemWidth = 60;
   const {
     data: comments,
     isLoading: commentsLoading,
@@ -96,6 +112,7 @@ const FeedComments = ({
   });
 
   const createFeedCommentMutation = useMutation(FeedApi.createFeedComment);
+  const deleteFeedCommentMutation = useMutation(FeedApi.deleteFeedComment);
 
   useLayoutEffect(() => {
     setOptions({
@@ -138,7 +155,45 @@ const FeedComments = ({
       onError: (error) => {
         console.log("--- Error createFeedComment ---");
         console.log(error);
-        toast.show(`Error Code: ${res.status}`, {
+        toast.show(`Error Code: ${error}`, {
+          type: "warning",
+        });
+      },
+    });
+  };
+
+  const deleteComment = (commentId: number) => {
+    if (commentId === -1) {
+      return toast.show(`댓글 정보가 잘못되었습니다.`, {
+        type: "warning",
+      });
+    }
+    let requestData = {
+      token,
+      data: {
+        id: commentId,
+      },
+    };
+
+    deleteFeedCommentMutation.mutate(requestData, {
+      onSuccess: (res) => {
+        if (res.status === 200) {
+          commentsRefetch();
+          toast.show(`댓글을 삭제했습니다.`, {
+            type: "success",
+          });
+        } else {
+          console.log("--- Error deleteFeedComment ---");
+          console.log(res);
+          toast.show(`Error Code: ${res.status}`, {
+            type: "warning",
+          });
+        }
+      },
+      onError: (error) => {
+        console.log("--- Error deleteFeedComment ---");
+        console.log(error);
+        toast.show(`Error Code: ${error}`, {
           type: "warning",
         });
       },
@@ -152,13 +207,24 @@ const FeedComments = ({
   ) : (
     <Container>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={100} style={{ flex: 1 }}>
-        <FlatList
+        <SwipeListView
           contentContainerStyle={{ flexGrow: 1 }}
           data={[...(comments?.data ?? [])].reverse()}
           keyExtractor={(item: FeedComment, index: number) => String(index)}
           ListFooterComponent={<View />}
           ListFooterComponentStyle={{ marginBottom: 100 }}
-          renderItem={({ item, index }: { item: FeedComment; index: number }) => <Comment commentData={item} />}
+          renderItem={({ item, index }: { item: FeedComment; index: number }) => (
+            // 현재 타 유저의 댓글도 삭제 가능해서 테스트용으로 열어놓음.
+            // <SwipeRow disableRightSwipe={true} disableLeftSwipe={item.userId !== me?.id} rightOpenValue={-hiddenItemWidth}>
+            <SwipeRow disableRightSwipe={true} rightOpenValue={-hiddenItemWidth}>
+              <HiddenItemContainer>
+                <HiddenItemButton width={hiddenItemWidth} onPress={() => deleteComment(item.commentId ?? -1)}>
+                  <AntDesign name="delete" size={20} color="white" />
+                </HiddenItemButton>
+              </HiddenItemContainer>
+              <Comment commentData={item} />
+            </SwipeRow>
+          )}
           ListEmptyComponent={() => (
             <EmptyView>
               <EmptyText>{`아직 등록된 댓글이 없습니다.\n첫 댓글을 남겨보세요.`}</EmptyText>
