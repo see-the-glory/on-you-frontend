@@ -95,7 +95,7 @@ const CtrgArea = styled.View`
 `;
 
 const CtgrText = styled.View`
-  margin: 1px 3px 1px 3px;
+  margin: 1px 4px 1px 4px;
 `;
 
 const ClubCtrgList = styled(CustomText)`
