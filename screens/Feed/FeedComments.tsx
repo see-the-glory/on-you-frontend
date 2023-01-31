@@ -37,6 +37,7 @@ const CommentInput = styled(CustomTextInput)`
 `;
 const SubmitButton = styled.TouchableOpacity`
   align-items: center;
+  padding-left: 5px;
 `;
 const SubmitButtonText = styled(CustomText)<{ disabled: boolean }>`
   font-size: 14px;
@@ -117,7 +118,7 @@ const FeedComments = ({
       token,
       data: {
         id: feedId,
-        content: comment,
+        content: comment.trim(),
       },
     };
 

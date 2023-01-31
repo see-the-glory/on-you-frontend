@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components/native";
 import CustomText from "./CustomText";
 import { Club, Notification } from "../api";
-import moment from "moment-timezone";
+import moment from "moment";
 
 const Item = styled.View``;
 const Header = styled.View`

@@ -7,6 +7,8 @@ import CircleIcon from "./CircleIcon";
 import { Feed } from "../api";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import moment from "moment";
+import Carousel from "./Carousel";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -20,7 +22,10 @@ const HeaderLeftView = styled.View`
   flex-direction: row;
   align-items: center;
 `;
-const HeaderRightView = styled.View``;
+const HeaderRightView = styled.View`
+  height: 100%;
+  justify-content: center;
+`;
 const HeaderText2 = styled(CustomText)`
   font-size: 18px;
   font-family: "NotoSansKR-Medium";
@@ -87,7 +92,19 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedSize, headerHeigh
           </TouchableOpacity>
         </HeaderRightView>
       </HeaderView>
-      <FastImage source={feedData.imageUrls[0] ? { uri: feedData.imageUrls[0] } : require("../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} />
+      <Carousel
+        pages={feedData.imageUrls}
+        pageWidth={feedSize}
+        gap={0}
+        offset={0}
+        initialScrollIndex={0}
+        keyExtractor={(item: string, index: number) => String(index)}
+        showIndicator={true}
+        renderItem={({ item, index }: { item: string; index: number }) => (
+          <FastImage source={item ? { uri: item } : require("../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} resizeMode={FastImage.resizeMode.contain} />
+        )}
+        ListEmptyComponent={<FastImage source={require("../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} />}
+      />
       <ContentView padding={20}>
         <InformationView height={infoHeight}>
           <InformationLeftView>
@@ -96,12 +113,12 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedSize, headerHeigh
               <CountingNumber>{feedData.likesCount}</CountingNumber>
             </InformationButton>
             <InformationButton onPress={goToFeedComments}>
-              <Ionicons name="ios-chatbox-ellipses-sharp" size={20} color="black" />
+              <Ionicons name="md-chatbox-ellipses" size={20} color="black" />
               <CountingNumber>{feedData.commentCount}</CountingNumber>
             </InformationButton>
           </InformationLeftView>
           <InformationRightView>
-            <CreatedTime>{feedData.created}</CreatedTime>
+            <CreatedTime>{moment(feedData.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
           </InformationRightView>
         </InformationView>
         <ContentTextView height={contentHeight}>
