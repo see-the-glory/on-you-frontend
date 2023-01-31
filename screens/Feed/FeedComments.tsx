@@ -23,8 +23,6 @@ const Container = styled.SafeAreaView`
 `;
 
 const FooterView = styled.View<{ padding: number }>`
-  position: absolute;
-  bottom: 0;
   flex-direction: row;
   border-top-width: 1px;
   border-top-color: #c4c4c4;
@@ -152,39 +150,42 @@ const FeedComments = ({
     </Loader>
   ) : (
     <Container>
-      <FlatList
-        contentContainerStyle={{ flexGrow: 1 }}
-        data={comments?.data}
-        keyExtractor={(item: FeedComment, index: number) => String(index)}
-        ListFooterComponent={<View />}
-        ListFooterComponentStyle={{ marginBottom: 100 }}
-        renderItem={({ item, index }: { item: FeedComment; index: number }) => <Comment commentData={item} />}
-        ListEmptyComponent={() => (
-          <EmptyView>
-            <EmptyText>{`아직 등록된 댓글이 없습니다.\n첫 댓글을 남겨보세요.`}</EmptyText>
-          </EmptyView>
-        )}
-      />
-      <FooterView padding={20}>
-        <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
-        <CommentInput
-          placeholder="댓글을 입력해보세요"
-          placeholderTextColor="#B0B0B0"
-          value={comment}
-          textAlign="left"
-          multiline={true}
-          maxLength={255}
-          onChangeText={(value: string) => {
-            setComment(value);
-            if (!validation && value !== "") setValidation(true);
-            if (validation && value === "") setValidation(false);
-          }}
-          includeFontPadding={false}
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={100} style={{ flex: 1 }}>
+        <FlatList
+          contentContainerStyle={{ flexGrow: 1 }}
+          data={[...(comments?.data ?? [])].reverse()}
+          keyExtractor={(item: FeedComment, index: number) => String(index)}
+          ListFooterComponent={<View />}
+          ListFooterComponentStyle={{ marginBottom: 100 }}
+          renderItem={({ item, index }: { item: FeedComment; index: number }) => <Comment commentData={item} />}
+          ListEmptyComponent={() => (
+            <EmptyView>
+              <EmptyText>{`아직 등록된 댓글이 없습니다.\n첫 댓글을 남겨보세요.`}</EmptyText>
+            </EmptyView>
+          )}
         />
-        <SubmitButton disabled={!validation} onPress={submit}>
-          <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
-        </SubmitButton>
-      </FooterView>
+        <FooterView padding={20}>
+          <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
+          <CommentInput
+            placeholder="댓글을 입력해보세요"
+            placeholderTextColor="#B0B0B0"
+            value={comment}
+            textAlign="left"
+            multiline={true}
+            maxLength={255}
+            onChangeText={(value: string) => {
+              setComment(value);
+              if (!validation && value !== "") setValidation(true);
+              if (validation && value === "") setValidation(false);
+            }}
+            includeFontPadding={false}
+          />
+
+          <SubmitButton disabled={!validation} onPress={submit}>
+            <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
+          </SubmitButton>
+        </FooterView>
+      </KeyboardAvoidingView>
     </Container>
   );
 };
