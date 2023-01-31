@@ -1,6 +1,6 @@
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity, DeviceEventEmitter } from "react-native";
 import FastImage from "react-native-fast-image";
 import { useInfiniteQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
@@ -76,9 +76,17 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     setRefreshing(false);
   };
 
-  useFocusEffect(() => {
-    console.log("ClubFeed - useFocuseEffect");
-  });
+  useEffect(() => {
+    console.log("ClubFeed - add listner");
+    let clubFeedSubscription = DeviceEventEmitter.addListener("ClubFeedRefetch", () => {
+      console.log("ClubFeed - Club Feed Refetch Event");
+      feedsRefetch();
+    });
+
+    return () => {
+      clubFeedSubscription.remove();
+    };
+  }, []);
 
   const goToClubFeedDetail = (index: number) => {
     let feedData = feeds?.pages?.map((page) => page?.responses?.content).flat();

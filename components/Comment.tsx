@@ -9,6 +9,7 @@ import CustomText from "./CustomText";
 const Container = styled.View<{ padding: number }>`
   flex-direction: row;
   padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
+  background-color: white;
 `;
 
 const LeftView = styled.View``;

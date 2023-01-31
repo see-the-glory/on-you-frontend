@@ -463,6 +463,13 @@ export interface FeedCommentCreationRequest {
   };
 }
 
+export interface FeedCommentDeleteRequest {
+  token: string;
+  data: {
+    id: number;
+  };
+}
+
 export interface FeedReplyRequest {
   data: {
     id?: number;
@@ -473,7 +480,7 @@ export interface FeedReplyRequest {
 
 export interface FeedDeleteRequest {
   data: {
-    id?: number;
+    id: number;
   };
   token: string;
 }
@@ -1004,6 +1011,18 @@ const ReplyFeed = (req: FeedReplyRequest) => {
 };
 
 /**피드삭제*/
+const deleteFeedComment = (req: FeedCommentDeleteRequest) => {
+  return fetch(`${BASE_URL}/api/comments/${req.data.id}`, {
+    method: "DELETE",
+    headers: {
+      authorization: `${req.token}`,
+    },
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
+};
+
 const feedDelete = (req: FeedDeleteRequest) => {
   console.log("feedDelete");
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}`, {
@@ -1065,6 +1084,7 @@ export const FeedApi = {
   getClubFeeds,
   getFeedComments,
   createFeedComment,
+  deleteFeedComment,
   createFeed,
   reportFeed,
   updateFeed,

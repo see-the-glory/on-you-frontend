@@ -77,8 +77,8 @@ const ClubTopTabs = ({
 
   // Animated Variables
   const scrollY = useRef(new Animated.Value(0)).current;
-  const offsetY = useSelector((state) => state.ClubReducers.homeScrollY);
-  const scheduleOffsetX = useSelector((state) => state.ClubReducers.scheduleScrollX);
+  const offsetY = useSelector((state: any) => state.ClubReducers.homeScrollY);
+  const scheduleOffsetX = useSelector((state: any) => state.ClubReducers.scheduleScrollX);
   const translateY = scrollY.interpolate({
     inputRange: [0, headerDiff],
     outputRange: [0, -headerDiff],
