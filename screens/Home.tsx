@@ -37,6 +37,7 @@ import { FeedData, HomeScreenProps } from "../types/feed";
 import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { ImageSlider } from "react-native-image-slider-banner";
+import { useToast } from "react-native-toast-notifications";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -47,7 +48,7 @@ const Loader = styled.SafeAreaView`
 
 const Container = styled.SafeAreaView`
   flex: 1;
-  top: ${Platform.OS === "android" ? 5 : 0}%;
+  top: ${Platform.OS === "android" ? 2: 0}%;
 `;
 
 const HeaderView = styled.View<{ size: number }>`
@@ -56,7 +57,6 @@ const HeaderView = styled.View<{ size: number }>`
   align-items: center;
   justify-content: space-between;
   padding: 0 25px 0 25px;
-  margin-bottom: 20px;
 `;
 
 const SubView = styled.View`
@@ -67,11 +67,11 @@ const SubView = styled.View`
 `;
 
 const LogoImage = styled.Image`
-  width: 28px;
-  height: 28px;
-  margin-right: 10px;
-  border-radius: 14px;
+  width: 65%;
+  height: ${Platform.OS === "ios" ? 40 : 45}px;
+  left: 110%;  
 `;
+
 const LogoText = styled(CustomText)`
   font-size: 26px;
   font-weight: bold;
@@ -102,6 +102,7 @@ const ClubBox = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   border-radius: 5px;
+  top: 1%;
 `;
 
 const ClubName = styled(CustomText)`
@@ -179,6 +180,7 @@ const FeedHeader = styled.View`
   justify-content: space-between;
   align-items: flex-end;
   margin: 20px 15px 10px 15px;
+
 `;
 
 const FeedUser = styled.View`
@@ -331,17 +333,21 @@ const ModalAccArea = styled.View`
 const AccTop = styled.View`
   top: 20px;
   position: relative;
-  left: 10px;
+  padding-left: 20px;
 `;
 
 const AccInfo = styled.View`
   top: 20px;
-  margin-top: 5%;
+  padding-top: 10px;
 `;
-
+const AccText = styled(CustomText)`
+  font-size: 17px;
+  padding: 15px;
+  color: black;
+`;
 const AccHeader = styled.Text`
   font-size: 22px;
-  padding-bottom: 15px;
+  padding-bottom: 5px;
   position: relative;
 `;
 
@@ -358,12 +364,12 @@ const AccTitle = styled(CustomText)`
   color: red;
 `;
 
-const AccText = styled(CustomText)`
-  font-size: 17px;
-  //border: 0.5px solid lightgray;
-  padding: 15px;
-  color: black;
-`;
+const AccTextArea = styled.TouchableOpacity`
+  border-style: solid;
+  border-bottom-color: #e9e9e9;
+  border-bottom-width: 1px;
+  padding-left: 10px;
+`
 
 //신고완료
 const ReportView = styled.View`
@@ -414,6 +420,7 @@ const Home: React.FC<HomeScreenProps> = ({
   const modalizeRef = useRef<Modalize>(null);
   const AccModalRef = useRef<Modalize>(null);
   const AccFinModalRef = useRef<Modalize> (null);
+  const toast = useToast();
   const onOpen = (feedData: Feed) => {
     console.log("Before Modal Passed FeedId:", feedData.id);
     setModalFeedData(feedData);
@@ -422,10 +429,6 @@ const Home: React.FC<HomeScreenProps> = ({
   const onAccOpen = () =>{
     console.log('onAccOpen')
     AccModalRef.current?.open();
-  }
-
-  const onAccFinOpen = () =>{
-    AccFinModalRef.current?.open();
   }
 
   //heart선택
@@ -652,7 +655,9 @@ const Home: React.FC<HomeScreenProps> = ({
     ReportFeed(reason);
     modalizeRef.current?.close();
     AccModalRef?.current?.close();
-
+    toast.show(`신고가 완료되었습니다.`, {
+      type: "success",
+    });
   };
   const unsubscribe = navigation.addListener("focus", () => {
     onRefresh();
@@ -725,11 +730,10 @@ const Home: React.FC<HomeScreenProps> = ({
         <FeedContainer>
           <HeaderView size={SCREEN_PADDING_SIZE}>
             <SubView>
-              <LogoImage source={{ uri: "https://i.pinimg.com/564x/cd/c9/a5/cdc9a5ffec176461e7a1503d3b2553d4.jpg" }} />
-              <LogoText>OnYou</LogoText>
+              <LogoImage source={{ uri: "https://velog.velcdn.com/images/protine/post/9140765c-24ad-4916-80c2-e63a08683443/image.png" }} />
             </SubView>
             <SubView>
-              <MaterialIcons name="add-photo-alternate" onPress={goToClub} style={{ left: 9 }} size={22} color="black" />
+              <MaterialIcons name="add-photo-alternate" onPress={goToClub} style={{ left: 10 }} size={22} color="black" />
             </SubView>
           </HeaderView>
           <FlatList
@@ -803,30 +807,26 @@ const Home: React.FC<HomeScreenProps> = ({
                                         <AccSubHeader>신고유형을 선택해 주세요. 관리자에게 신고 접수가 진행됩니다.</AccSubHeader>
                                       </AccTop>
                                       <AccInfo>
-                                        <TouchableOpacity>
+                                        <AccTextArea>
                                           <AccText onPress={()=>{
                                             ReportComplete('SPAM');
-                                            onAccFinOpen();
                                           }}>스팸</AccText>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity>
+                                        </AccTextArea>
+                                        <AccTextArea>
                                           <AccText onPress={()=>{
                                             ReportComplete('FRAUD');
-                                            onAccFinOpen();
                                           }}>사기 또는 거짓</AccText>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity>
+                                        </AccTextArea>
+                                        <AccTextArea>
                                           <AccText onPress={()=>{
                                             ReportComplete('HATE')
-                                            onAccFinOpen();
                                           }}>혐오 발언 또는 상징</AccText>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity>
+                                        </AccTextArea>
+                                        <AccTextArea>
                                           <AccText onPress={()=>{
                                             ReportComplete('PORNO');
-                                            onAccFinOpen();
                                           }}>성인물</AccText>
-                                        </TouchableOpacity>
+                                        </AccTextArea>
                                       </AccInfo>
                                     </ModalAccArea>
                                   </ModalContainer>
@@ -836,7 +836,7 @@ const Home: React.FC<HomeScreenProps> = ({
                           </Modalize>
                         )}
                       </Portal>
-                      <Portal>
+                      {/*<Portal>
                         <Modalize
                           ref={AccFinModalRef}
                           modalHeight={300}
@@ -848,7 +848,7 @@ const Home: React.FC<HomeScreenProps> = ({
                             <TouchableOpacity onPress={modalClose}><ReportBack>확인</ReportBack></TouchableOpacity>
                           </ReportView>
                         </Modalize>
-                      </Portal>
+                      </Portal>*/}
                     </ModalArea>
                   </TouchableOpacity>
                 </FeedHeader>

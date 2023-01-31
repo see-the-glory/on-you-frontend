@@ -330,7 +330,7 @@ const ReplyPage:React.FC<ModifiyFeedScreenProps> = ({
     </Loader>
   ):( //안드로이드 높이 확인, ios 확인필요
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}
-                          keyboardVerticalOffset={Platform.OS === "ios" ? 125 : 180} style={{ flex: 1, top: Platform.OS==='ios'? 20: 0}}>
+                          keyboardVerticalOffset={Platform.OS === "ios" ? 105 : 180} style={{ flex: 1, top: Platform.OS==='ios'? 20: 0}}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Container>
           <CommentList>

@@ -43,11 +43,10 @@ import { MaterialIcons,Ionicons } from "@expo/vector-icons";
 
 const Container = styled.SafeAreaView`
   flex: 1;
-  margin-bottom: ${Platform.OS === "ios" ? 20 : 30}px;
 `;
 const FeedUser = styled.View`
   flex-direction: row;
-  padding: 20px;
+  padding: 15px;
 `;
 
 const UserInfo = styled.View`
@@ -64,30 +63,30 @@ const UserImage = styled.Image`
   background-color: #c4c4c4;
 `;
 
-const UserId = styled(CustomText)`
+const UserId = styled.Text`
   color: black;
   font-size: 16px;
   font-weight: bold;
+  padding-bottom: 5px;
 `;
 const ClubModIcon=styled.View`
   display: flex;
   flex-direction: row;
 `
 const ClubBox = styled.View`
-  padding: 3px 6px 3px 6px;
+  padding: 1px 6px 1px 6px;
   background-color: #c4c4c4;
   justify-content: center;
   align-items: center;
   border-radius: 5px;
-  display: flex;
-  flex-direction: row;
+  top: 1%;
 `;
 
 const ClubName = styled(CustomText)`
   font-size: 10px;
   line-height: 15px;
   font-weight: 500;
-  color: white;
+  color: black;
 `;
 
 const FeedImage = styled.View`
@@ -104,7 +103,7 @@ const ContentArea = styled.View`
 
 const Ment = styled(CustomTextInput)`
   width: 100%;
-  height: 100px;
+  height: 50px;
   color: black;
   font-size: 14px;
 `;
@@ -112,6 +111,7 @@ const Ment = styled(CustomTextInput)`
 const ImageSource = styled.Image<{ size: number }>`
   width: 100%;
   height: 400px;
+  background-color: lightgray;
 `;
 
 const ModalArea = styled.View`
@@ -185,6 +185,20 @@ const ClubCtrgList = styled(CustomText)`
 const ModalContainer = styled.View`
   flex: 1;
   top: 2%;
+`;
+
+const IntroTextLeft = styled(CustomText)`
+  text-align: left;
+  padding-left: 20px;
+  font-size: 10px;
+  color: #b0b0b0;
+`;
+
+const IntroTextRight = styled(CustomText)`
+  text-align: right;
+  font-size: 10px;
+  padding-right: 20px;
+  color: #b0b0b0;
 `;
 
 const ModalView = styled.View`
@@ -311,7 +325,6 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
     isLoading: myClubInfoLoading, // true or false
     data: myClub,
   } = useQuery<ClubResponse>(["selectMyClubs", token], ClubApi.selectMyClubs);
-  console.log(myClub?.data?.isApprovedRequired)
 
   const ChangeClub = (id:any, name:any) =>{
     data.clubName = name;
@@ -354,6 +367,10 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
                     disableScrollIfPossible={false}
           >
             <ModalContainer>
+              <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                <IntroTextLeft>모임 변경</IntroTextLeft>
+                <IntroTextRight>가입한 모임 List</IntroTextRight>
+              </View>
               <ModalView>
                 <FlatList
                   refreshing={refreshing} onRefresh={onRefresh}
