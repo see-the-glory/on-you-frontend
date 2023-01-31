@@ -1,5 +1,6 @@
 import React, { useCallback, useLayoutEffect } from "react";
 import { FlatList, useWindowDimensions, View } from "react-native";
+import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { Feed } from "../../api";
 import CustomText from "../../components/CustomText";
@@ -29,6 +30,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     params: { clubData, feedData, targetIndex },
   },
 }) => {
+  const me = useSelector((state: any) => state.UserReducers.user);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const feedDetailHeaderHeight = 50;
   const feedDetailInfoHeight = 36;
@@ -50,7 +52,14 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   const keyExtractor = useCallback((item: Feed, index: number) => String(index), []);
   const renderItem = useCallback(
     ({ item, index }: { item: Feed; index: number }) => (
-      <FeedDetail feedData={item} feedSize={SCREEN_WIDTH} headerHeight={feedDetailHeaderHeight} infoHeight={feedDetailInfoHeight} contentHeight={feedDetailContentHeight} />
+      <FeedDetail
+        feedData={item}
+        feedSize={SCREEN_WIDTH}
+        headerHeight={feedDetailHeaderHeight}
+        infoHeight={feedDetailInfoHeight}
+        contentHeight={feedDetailContentHeight}
+        isMine={item.userId === me?.id}
+      />
     ),
     []
   );

@@ -13,6 +13,7 @@ import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import moment from "moment";
 import "moment/locale/ko";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -95,24 +96,26 @@ const RootNavigation = () => {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
-        <ToastProvider
-          offset={50}
-          successColor="#295AF5"
-          warningColor="#8E8E8E"
-          dangerColor="#FF714B"
-          duration={3000}
-          animationType="zoom-in"
-          style={{ borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8, fontFamily: "NotoSansKR-Regular" }}
-          successIcon={<Ionicons name="checkmark-circle" size={18} color="white" />}
-          warningIcon={<Ionicons name="checkmark-circle" size={18} color="white" />}
-          dangerIcon={<Ionicons name="close-circle" size={18} color="white" />}
-        >
-          <NavigationContainer>
-            <RootNavigation />
-          </NavigationContainer>
-        </ToastProvider>
-      </Provider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Provider store={store}>
+          <ToastProvider
+            offset={50}
+            successColor="#295AF5"
+            warningColor="#8E8E8E"
+            dangerColor="#FF714B"
+            duration={3000}
+            animationType="zoom-in"
+            style={{ borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8, fontFamily: "NotoSansKR-Regular" }}
+            successIcon={<Ionicons name="checkmark-circle" size={18} color="white" />}
+            warningIcon={<Ionicons name="checkmark-circle" size={18} color="white" />}
+            dangerIcon={<Ionicons name="close-circle" size={18} color="white" />}
+          >
+            <NavigationContainer>
+              <RootNavigation />
+            </NavigationContainer>
+          </ToastProvider>
+        </Provider>
+      </GestureHandlerRootView>
     </QueryClientProvider>
   );
 }
