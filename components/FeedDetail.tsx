@@ -8,6 +8,8 @@ import { Feed } from "../api";
 import { TouchableOpacity } from "react-native";
 import moment from "moment";
 import Carousel from "./Carousel";
+import Tag from "./Tag";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -21,11 +23,16 @@ const HeaderLeftView = styled.View`
   flex-direction: row;
   align-items: center;
 `;
+const HeaderNameView = styled.View`
+  justify-content: center;
+  align-items: flex-start;
+`;
 const HeaderRightView = styled.View`
   height: 100%;
-  justify-content: center;
+  justify-content: flex-end;
+  padding-bottom: 10px;
 `;
-const HeaderText2 = styled(CustomText)`
+const HeaderText = styled(CustomText)`
   font-size: 18px;
   font-family: "NotoSansKR-Medium";
   color: #2b2b2b;
@@ -71,9 +78,10 @@ interface FeedDetailProps {
   headerHeight: number;
   infoHeight: number;
   contentHeight: number;
-  isMine: boolean;
+  showClubName?: boolean;
   openFeedOption: (userId: number, feedId: number) => void;
   goToFeedComments: (feedId: number) => void;
+  goToClub?: (clubId: number) => void;
 }
 
 class FeedDetail extends PureComponent<FeedDetailProps> {
@@ -86,7 +94,16 @@ class FeedDetail extends PureComponent<FeedDetailProps> {
         <HeaderView padding={20} height={this.props.headerHeight}>
           <HeaderLeftView>
             <CircleIcon uri={this.props.feedData.thumbnail} size={36} kerning={10} />
-            <HeaderText2>{this.props.feedData.userName}</HeaderText2>
+            <HeaderNameView>
+              <HeaderText>{this.props.feedData.userName}</HeaderText>
+              {this.props.showClubName ? (
+                <TouchableWithoutFeedback onPress={() => (this.props.goToClub ? this.props.goToClub(this.props.feedData.clubId) : {})}>
+                  <Tag name={this.props.feedData.clubName} textColor="white" backgroundColor="#C4C4C4" />
+                </TouchableWithoutFeedback>
+              ) : (
+                <></>
+              )}
+            </HeaderNameView>
           </HeaderLeftView>
           <HeaderRightView>
             <TouchableOpacity onPress={() => this.props.openFeedOption(this.props.feedData.userId, this.props.feedData.id)} style={{ paddingLeft: 10, paddingVertical: 5 }}>
