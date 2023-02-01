@@ -30,7 +30,7 @@ import {
   ClubApi
 } from "../../api";
 import { ModifiyFeedScreenProps } from "../../types/feed";
-import { RootStackParamList } from "../../types/Club";
+import { ClubStackParamList } from "../../types/Club";
 import { useNavigation } from "@react-navigation/native";
 import CustomTextInput from "../../components/CustomTextInput";
 import CustomText from "../../components/CustomText";
@@ -212,7 +212,7 @@ const ModalView = styled.View`
 interface FeedEditItem {
   id: number;
   content: string;
-  screen: keyof RootStackParamList;
+  screen: keyof ClubStackParamList;
 }
 
 const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
