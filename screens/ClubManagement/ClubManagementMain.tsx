@@ -218,6 +218,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
             type: "success",
           });
         }
+        DeviceEventEmitter.emit("ClubRefetch");
       } else {
         console.log(`mutation success but please check status code`);
         console.log(`status: ${res.status}`);
@@ -261,13 +262,6 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
       }).start();
     }
   }, [isToggle]);
-
-  useEffect(() => {
-    return () => {
-      DeviceEventEmitter.emit("ClubRefetch");
-      DeviceEventEmitter.emit("SchedulesRefetch");
-    };
-  }, []);
 
   const goToScreen = (screen: keyof RootStackParamList) => {
     return navigate(screen, { clubData: data });

@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, TouchableOpacity, useWindowDimensions } from "react-native";
+import { DeviceEventEmitter, KeyboardAvoidingView, Platform, TouchableOpacity, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { ClubEditBasicsProps } from "../../Types/Club";
 import * as ImagePicker from "expo-image-picker";

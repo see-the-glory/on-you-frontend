@@ -78,54 +78,52 @@ interface FeedDetailProps {
 
 const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedSize, headerHeight, infoHeight, contentHeight, openFeedOption, goToFeedComments }) => {
   return (
-    <>
-      <Container>
-        <HeaderView padding={20} height={headerHeight}>
-          <HeaderLeftView>
-            <CircleIcon uri={feedData.thumbnail} size={36} kerning={10} />
-            <HeaderText2>{feedData.userName}</HeaderText2>
-          </HeaderLeftView>
-          <HeaderRightView>
-            <TouchableOpacity onPress={() => openFeedOption(feedData.userId, feedData.id)} style={{ paddingLeft: 10, paddingVertical: 5 }}>
-              <Ionicons name="ellipsis-vertical" size={14} color="black" />
-            </TouchableOpacity>
-          </HeaderRightView>
-        </HeaderView>
-        <Carousel
-          pages={feedData.imageUrls}
-          pageWidth={feedSize}
-          gap={0}
-          offset={0}
-          initialScrollIndex={0}
-          keyExtractor={(item: string, index: number) => String(index)}
-          showIndicator={true}
-          renderItem={({ item, index }: { item: string; index: number }) => (
-            <FastImage source={item ? { uri: item } : require("../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} resizeMode={FastImage.resizeMode.contain} />
-          )}
-          ListEmptyComponent={<FastImage source={require("../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} />}
-        />
-        <ContentView padding={20}>
-          <InformationView height={infoHeight}>
-            <InformationLeftView>
-              <InformationButton>
-                <Ionicons name="heart-outline" size={20} color="black" />
-                <CountingNumber>{feedData.likesCount}</CountingNumber>
-              </InformationButton>
-              <InformationButton onPress={() => goToFeedComments(feedData.id)}>
-                <Ionicons name="md-chatbox-ellipses" size={20} color="black" />
-                <CountingNumber>{feedData.commentCount}</CountingNumber>
-              </InformationButton>
-            </InformationLeftView>
-            <InformationRightView>
-              <CreatedTime>{moment(feedData.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
-            </InformationRightView>
-          </InformationView>
-          <ContentTextView height={contentHeight}>
-            <ContentText>{feedData.content}</ContentText>
-          </ContentTextView>
-        </ContentView>
-      </Container>
-    </>
+    <Container>
+      <HeaderView padding={20} height={headerHeight}>
+        <HeaderLeftView>
+          <CircleIcon uri={feedData.thumbnail} size={36} kerning={10} />
+          <HeaderText2>{feedData.userName}</HeaderText2>
+        </HeaderLeftView>
+        <HeaderRightView>
+          <TouchableOpacity onPress={() => openFeedOption(feedData.userId, feedData.id)} style={{ paddingLeft: 10, paddingVertical: 5 }}>
+            <Ionicons name="ellipsis-vertical" size={14} color="black" />
+          </TouchableOpacity>
+        </HeaderRightView>
+      </HeaderView>
+      <Carousel
+        pages={feedData.imageUrls}
+        pageWidth={feedSize}
+        gap={0}
+        offset={0}
+        initialScrollIndex={0}
+        keyExtractor={(item: string, index: number) => String(index)}
+        showIndicator={true}
+        renderItem={({ item, index }: { item: string; index: number }) => (
+          <FastImage key={String(index)} source={item ? { uri: item } : require("../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} resizeMode={FastImage.resizeMode.contain} />
+        )}
+        ListEmptyComponent={<FastImage source={require("../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} />}
+      />
+      <ContentView padding={20}>
+        <InformationView height={infoHeight}>
+          <InformationLeftView>
+            <InformationButton>
+              <Ionicons name="heart-outline" size={20} color="black" />
+              <CountingNumber>{feedData.likesCount}</CountingNumber>
+            </InformationButton>
+            <InformationButton onPress={() => goToFeedComments(feedData.id)}>
+              <Ionicons name="md-chatbox-ellipses" size={20} color="black" />
+              <CountingNumber>{feedData.commentCount}</CountingNumber>
+            </InformationButton>
+          </InformationLeftView>
+          <InformationRightView>
+            <CreatedTime>{moment(feedData.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
+          </InformationRightView>
+        </InformationView>
+        <ContentTextView height={contentHeight}>
+          <ContentText>{feedData.content}</ContentText>
+        </ContentTextView>
+      </ContentView>
+    </Container>
   );
 };
 

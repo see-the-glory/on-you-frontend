@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useState } from "react";
-import { FlatList, SectionList, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { DeviceEventEmitter, FlatList, SectionList, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
-import { ChangeRole, ChangeRoleRequest, Member } from "../../api";
+import { ChangeRole, Member } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { AntDesign } from "@expo/vector-icons";

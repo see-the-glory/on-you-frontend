@@ -185,7 +185,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     { name: "수정", warning: false, onPress: goToUpdateFeed },
     { name: "삭제", warning: true, onPress: deleteFeed },
   ];
-  const otherFeedOptionList = [{ name: "신고", onPress: goToComplain }];
+  const otherFeedOptionList = [{ name: "신고", warning: false, onPress: goToComplain }];
   const complainOptionList = [
     { name: "스팸" },
     { name: "나체 이미지 또는 성적 이미지" },
@@ -232,7 +232,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   const renderItem = useCallback(
     ({ item, index }: { item: Feed; index: number }) => (
       <FeedDetail
-        key={String(index)}
+        key={String(item.id)}
         feedData={item}
         feedSize={SCREEN_WIDTH}
         headerHeight={feedDetailHeaderHeight}
@@ -256,23 +256,21 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     []
   );
   return (
-    <>
-      <Container>
-        <StatusBar barStyle={"dark-content"} />
-        <FlatList
-          // refreshing={refreshing}
-          // onRefresh={onRefresh}
-          // onEndReached={loadMore}
-          data={feedData}
-          ItemSeparatorComponent={ItemSeparatorComponent}
-          ListFooterComponent={ListFooterComponent}
-          keyExtractor={keyExtractor}
-          renderItem={renderItem}
-          getItemLayout={getItemLayout}
-          initialScrollIndex={targetIndex}
-          removeClippedSubviews={true}
-        />
-      </Container>
+    <Container>
+      <StatusBar barStyle={"dark-content"} />
+      <FlatList
+        // refreshing={refreshing}
+        // onRefresh={onRefresh}
+        // onEndReached={loadMore}
+        data={feedData}
+        ItemSeparatorComponent={ItemSeparatorComponent}
+        ListFooterComponent={ListFooterComponent}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        getItemLayout={getItemLayout}
+        initialScrollIndex={targetIndex}
+        removeClippedSubviews={true}
+      />
 
       <Portal>
         <Modalize
@@ -284,12 +282,12 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         >
           <ModalContainer style={{ flex: 1 }}>
             {myFeedOptionList.map((option, index) => (
-              <>
+              <View key={`myFeedOption_${index}`}>
                 {index > 0 ? <Break sep={1} /> : <></>}
                 <OptionButton onPress={option.onPress} height={optionButtonHeight}>
                   <OptionName warning={option.warning}>{option.name}</OptionName>
                 </OptionButton>
-              </>
+              </View>
             ))}
           </ModalContainer>
         </Modalize>
@@ -305,12 +303,12 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         >
           <ModalContainer style={{ flex: 1 }}>
             {otherFeedOptionList.map((option, index) => (
-              <>
+              <View key={`otherFeedOption_${index}`}>
                 {index > 0 ? <Break sep={1} /> : <></>}
                 <OptionButton onPress={option.onPress} height={optionButtonHeight}>
                   <OptionName warning={option.warning}>{option.name}</OptionName>
                 </OptionButton>
-              </>
+              </View>
             ))}
           </ModalContainer>
         </Modalize>
@@ -330,17 +328,17 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
               <ModalHeaderText>신고유형을 선택해주세요. 관리자에게 신고 접수가 진행됩니다.</ModalHeaderText>
             </ModalHeader>
             {complainOptionList.map((option, index) => (
-              <>
+              <View key={`complainOption_${index}`}>
                 {index > 0 ? <Break sep={1} /> : <></>}
                 <OptionButton onPress={complainSubmit} height={optionButtonHeight} padding={20} alignItems={"flex-start"}>
                   <OptionName>{option.name}</OptionName>
                 </OptionButton>
-              </>
+              </View>
             ))}
           </ModalContainer>
         </Modalize>
       </Portal>
-    </>
+    </Container>
   );
 };
 
