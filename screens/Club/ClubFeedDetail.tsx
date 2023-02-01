@@ -185,7 +185,6 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         headerHeight={feedDetailHeaderHeight}
         infoHeight={feedDetailInfoHeight}
         contentHeight={feedDetailContentHeight}
-        isMine={item.userId === me?.id}
         openFeedOption={openFeedOption}
         goToFeedComments={goToFeedComments}
       />
