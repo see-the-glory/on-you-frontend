@@ -1,5 +1,3 @@
-import myClub from "./screens/Profile/MyClub";
-
 const BASE_URL = "http://3.39.190.23:8080";
 
 interface BaseResponse {
@@ -450,11 +448,6 @@ export interface getFeedLike {
   token: string;
 }
 
-export interface FeedCommentsRequest {
-  token: string;
-  feedId: number;
-}
-
 export interface FeedCommentCreationRequest {
   token: string;
   data: {
@@ -470,27 +463,12 @@ export interface FeedCommentDeleteRequest {
   };
 }
 
-export interface FeedReplyRequest {
-  data: {
-    id?: number;
-    content?: string;
-  };
-  token: string;
-}
-
 export interface FeedDeleteRequest {
   data: {
     id: number;
   };
   token: string;
-}
-export interface ReplyDeleteRequest {
-  data: {
-    id?: number;
-  };
-  token: string;
-}
-// Categories
+} // Categories
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
 /**피드 선택*/
@@ -948,7 +926,6 @@ const likeCountReverse = (req: getFeedLike) => {
   });
 };
 
-/**댓글호출*/
 const getFeedComments = ({ queryKey }: any) => {
   const [_key, token, feedId]: [string, string, number] = queryKey;
   return fetch(`${BASE_URL}/api/feeds/${feedId}/comments`, {
@@ -962,26 +939,6 @@ const getFeedComments = ({ queryKey }: any) => {
   });
 };
 
-const getReply = ({ queryKey }: any) => {
-  const [_key, token, id]: [string, string, number] = queryKey;
-  return fetch(`${BASE_URL}/api/feeds/${id}/comments`, {
-    method: "GET",
-    headers: {
-      Authorization: `${token}`,
-    },
-  })
-    .then((res) => res.json())
-    .then((res) => {
-      if (res.resultCode !== "OK") new Error("API Response Error.");
-      else {
-        res.data.applyStatus = res.data.applyStatus ?? undefined;
-        res.data.role = res.data.role ?? undefined;
-      }
-      return res;
-    });
-};
-
-/**댓글달기*/
 const createFeedComment = (req: FeedCommentCreationRequest) => {
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}/comment`, {
     method: "POST",
@@ -996,21 +953,6 @@ const createFeedComment = (req: FeedCommentCreationRequest) => {
   });
 };
 
-const ReplyFeed = (req: FeedReplyRequest) => {
-  return fetch(`${BASE_URL}/api/feeds/${req.data.id}/comment`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `${req.token}`,
-    },
-    body: JSON.stringify(req.data),
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
-  });
-};
-
-/**피드삭제*/
 const deleteFeedComment = (req: FeedCommentDeleteRequest) => {
   return fetch(`${BASE_URL}/api/comments/${req.data.id}`, {
     method: "DELETE",
@@ -1023,8 +965,7 @@ const deleteFeedComment = (req: FeedCommentDeleteRequest) => {
   });
 };
 
-const feedDelete = (req: FeedDeleteRequest) => {
-  console.log("feedDelete");
+const deleteFeed = (req: FeedDeleteRequest) => {
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}`, {
     method: "DELETE",
     headers: {
@@ -1035,19 +976,6 @@ const feedDelete = (req: FeedDeleteRequest) => {
     else return { status: res.status };
   });
 };
-const ReplyDelete = (req: ReplyDeleteRequest) => {
-  console.log("replyDelete");
-  return fetch(`${BASE_URL}/api/comments/${req.data.id}`, {
-    method: "DELETE",
-    headers: {
-      authorization: `${req.token}`,
-    },
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
-  });
-};
-
 export const ClubApi = {
   getCategories,
   getClub,
@@ -1086,15 +1014,12 @@ export const FeedApi = {
   createFeedComment,
   deleteFeedComment,
   createFeed,
+  deleteFeed,
   reportFeed,
   updateFeed,
   likeCount,
   likeCountReverse,
-  getReply,
-  ReplyFeed,
   getSelectFeeds,
-  feedDelete,
-  ReplyDelete,
 };
 
 export const CommonApi = { getJWT };

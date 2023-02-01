@@ -1,20 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Tabs from "./Tabs";
 import Profile from "../screens/Profile";
 import ModifiyFeed from "../screens/HomeRelevant/ModifiyFeed";
 import ImageSelecter from "../screens/HomeRelevant/ImageSelecter";
-import ReplyPage from "../screens/HomeRelevant/ReplyPage";
 import MyClubSelector from "../screens/HomeRelevant/MyClubSelector";
 import { Text, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-
-const ImageSelectSave = styled.Text`
-  color: #2995fa;
-  margin-right: 5%;
-`;
 
 const NativeStack = createNativeStackNavigator();
 
@@ -24,8 +17,6 @@ const HomeStack = ({
     params: { feedData, userId, clubId },
   },
 }) => {
-  const token = useSelector((state:any) => state.AuthReducers.authToken);
-
   const cancleCreate = () => {
     Alert.alert(
       "게시글을 생성을 취소하시겠어요?",
@@ -92,20 +83,6 @@ const HomeStack = ({
           title: "나의 모임",
           headerLeft: () => (
             <TouchableOpacity onPress={cancleCreate}>
-              <Ionicons name="chevron-back" size={20} color="black" />
-            </TouchableOpacity>
-          ),
-          headerShown: true,
-        }}
-      />
-      <NativeStack.Screen
-        name="ReplyPage"
-        component={ReplyPage}
-        initialParams={{ feedData }}
-        options={{
-          title: "댓글",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Home" })}>
               <Ionicons name="chevron-back" size={20} color="black" />
             </TouchableOpacity>
           ),
