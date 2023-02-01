@@ -57,7 +57,7 @@ const Home: React.FC<HomeScreenProps> = () => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const homeHeaderHeight = 50;
   const modalOptionButtonHeight = 45;
-  const feedDetailHeaderHeight = 50;
+  const feedDetailHeaderHeight = 62;
   const feedDetailInfoHeight = 36;
   const feedDetailContentHeight = 40;
   const itemSeparatorGap = 30;
@@ -154,15 +154,20 @@ const Home: React.FC<HomeScreenProps> = () => {
       });
     },
   });
-  const goToFeedComments = (feedId: number) => {
+  const goToClub = useCallback((clubId: number) => {
+    navigation.navigate("ClubStack", { screen: "ClubTopTabs", clubData: { id: clubId } });
+  }, []);
+
+  const goToFeedComments = useCallback((feedId: number) => {
     navigation.navigate("FeedStack", { screen: "FeedComments", feedId });
-  };
-  const goToFeedCreation = () => {
+  }, []);
+
+  const goToFeedCreation = useCallback(() => {
     navigation.navigate("HomeStack", {
       screen: "MyClubSelector",
       userId: me.id,
     });
-  };
+  }, []);
 
   const openFeedOption = (userId: number, feedId: number) => {
     setSelectFeedId(feedId);
@@ -238,7 +243,8 @@ const Home: React.FC<HomeScreenProps> = () => {
         headerHeight={feedDetailHeaderHeight}
         infoHeight={feedDetailInfoHeight}
         contentHeight={feedDetailContentHeight}
-        isMine={item.userId === me?.id}
+        showClubName={true}
+        goToClub={goToClub}
         openFeedOption={openFeedOption}
         goToFeedComments={goToFeedComments}
       />
