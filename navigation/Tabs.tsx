@@ -34,17 +34,17 @@ const ShadowBox = styled.View`
 
 const SlidingTabContainer = styled.View<{ tabWidth: number }>`
   position: absolute;
-  width: ${(props) => props.tabWidth}px;
+  width: ${(props: any) => props.tabWidth}px;
   left: 0;
   align-items: center;
   box-shadow: 1px 1px 3px gray;
 `;
 
 const Circle = styled.View<{ tabWidth: number }>`
-  width: ${(props) => props.tabWidth * 1.8}px;
-  height: ${(props) => props.tabWidth * 1.9}px;
+  width: ${(props: any) => props.tabWidth * 1.8}px;
+  height: ${(props: any) => props.tabWidth * 1.9}px;
   bottom: 18px;
-  border-radius: ${(props) => props.tabWidth}px;
+  border-radius: ${(props: any) => props.tabWidth}px;
   background-color: white;
 `;
 
@@ -119,7 +119,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
 
 const Tabs = () => (
   <Tab.Navigator
-    initialRouteName="Clubs"
+    initialRouteName="Home"
     sceneContainerStyle={{ backgroundColor: "white" }}
     screenOptions={{ tabBarShowLabel: false, headerShown: false }}
     tabBar={(props) => <CustomTabBar {...props} />}
