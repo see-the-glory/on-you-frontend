@@ -81,34 +81,38 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
         dispatch(login(token, res.data));
       } else {
         console.log(res);
-        toast.show(`유저 정보를 불러올 수 없습니다.`, {
+        console.log(`getUserInfo query success but please check status code`);
+        toast.show(`유저 정보를 불러올 수 없습니다. (Error Code: ${res.status})`, {
           type: "warning",
         });
       }
     },
     onError: (error) => {
+      console.log("--- getUserInfo Error ---");
       console.log(error);
+      toast.show(`유저 정보를 불러올 수 없습니다. (Error Code: ${error})`, {
+        type: "warning",
+      });
     },
     enabled: token ? true : false,
   });
 
-  const mutation = useMutation(CommonApi.getJWT, {
+  const mutation = useMutation(CommonApi.getUserToken, {
     onSuccess: (res) => {
       if (res.status === 200) {
         setToken(res.token);
       } else {
-        console.log(`mutation success but please check status code`);
+        console.log(`getUserToken mutation success but please check status code`);
         console.log(res);
-        toast.show(`${res.message}`, {
+        toast.show(`로그인에 실패했습니다. (Error Code: ${res.status})`, {
           type: "warning",
         });
       }
     },
     onError: (error) => {
-      console.log("--- Error ---");
+      console.log("--- getUserToken Error ---");
       console.log(error);
-      // Toast Message 출력.
-      toast.show("인터넷 연결을 확인해주세요.", {
+      toast.show(`로그인에 실패했습니다. (Error Code: ${error})`, {
         type: "warning",
       });
     },

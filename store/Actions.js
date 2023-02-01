@@ -24,6 +24,8 @@ export const init = () => {
 export const login = (token, user) => {
   return async (dispatch) => {
     console.log(`Token stored : ${token}`);
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("user");
     await AsyncStorage.setItem("token", token);
     await AsyncStorage.setItem("user", JSON.stringify(user));
     dispatch({

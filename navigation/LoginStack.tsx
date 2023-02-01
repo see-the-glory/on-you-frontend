@@ -23,7 +23,7 @@ import FindPwResult from "../screens/Login/FindPwResult";
 const NativeStack = createNativeStackNavigator();
 
 const LoginStack = ({
-  navigation: { navigate, goBack },
+  navigation: { navigate, goBack, popToTop },
   route: {
     params: { userData, category, name, email, password, sex, birth, phone, church, token },
   },
@@ -43,7 +43,7 @@ const LoginStack = ({
         options={{
           title: "로그인",
           headerLeft: () => (
-            <TouchableOpacity onPress={() => goBack()}>
+            <TouchableOpacity onPress={() => popToTop()}>
               <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
@@ -186,7 +186,7 @@ const LoginStack = ({
       <NativeStack.Screen
         name="JoinStepNine"
         component={JoinStepNine}
-        initialParams={{ name, email, password, sex, birth, phone, church, userData, category }}
+        initialParams={{ name, email, password, sex, birth, phone, church }}
         options={{
           title: "회원가입",
           headerLeft: () => (
@@ -199,7 +199,7 @@ const LoginStack = ({
       <NativeStack.Screen
         name="JoinConfirm"
         component={JoinConfirm}
-        initialParams={{ name, email, password, sex, birth, phone, church, userData, category, token }}
+        initialParams={{ name, email, password, sex, birth, phone, church }}
         options={{
           title: "회원가입",
         }}

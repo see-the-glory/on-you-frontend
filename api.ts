@@ -768,7 +768,7 @@ const joinOrCancelClubSchedule = (req: ClubScheduleJoinOrCancelRequest) => {
   });
 };
 
-const getJWT = (req: LoginRequest) => {
+const getUserToken = (req: LoginRequest) => {
   return fetch(`${BASE_URL}/api/user/login`, {
     method: "POST",
     headers: {
@@ -828,7 +828,8 @@ const registerUserInfo = (req: SignUp) => {
     },
     body: JSON.stringify(req),
   }).then(async (res) => {
-    return { ...(await res.json()), status: res.status };
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
   });
 };
 
@@ -1022,4 +1023,4 @@ export const FeedApi = {
   getSelectFeeds,
 };
 
-export const CommonApi = { getJWT };
+export const CommonApi = { getUserToken };

@@ -140,7 +140,7 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
           <SubText>정확한 생년월일을 입력해주세요.</SubText>
           <Input
             keyboardType="numeric"
-            placeholder="yyyy-MM-dd"
+            placeholder="yyyy-mm-dd"
             placeholderTextColor={"#B0B0B0"}
             maxLength={10}
             onChangeText={(birth: string) => setBirthNumber(birth)}
