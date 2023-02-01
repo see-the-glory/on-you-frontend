@@ -165,9 +165,9 @@ const Home: React.FC<HomeScreenProps> = () => {
   const goToFeedCreation = useCallback(() => {
     navigation.navigate("HomeStack", {
       screen: "MyClubSelector",
-      userId: me.id,
+      userId: me?.id,
     });
-  }, []);
+  }, [me]);
 
   const openFeedOption = (userId: number, feedId: number) => {
     setSelectFeedId(feedId);
