@@ -130,7 +130,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
         </EmptyView>
       )}
       renderItem={({ item, index }: { item: Feed; index: number }) => (
-        <TouchableOpacity onPress={() => goToClubFeedDetail(index)} style={index % 3 === 1 ? { marginHorizontal: 1 } : {}}>
+        <TouchableOpacity key={String(index)} onPress={() => goToClubFeedDetail(index)} style={index % 3 === 1 ? { marginHorizontal: 1 } : {}}>
           <FeedImage size={feedSize} source={item?.imageUrls[0] ? { uri: item.imageUrls[0] } : require("../../assets/basic.jpg")} />
         </TouchableOpacity>
       )}
