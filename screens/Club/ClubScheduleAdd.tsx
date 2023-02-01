@@ -182,6 +182,7 @@ const ClubScheduleAdd = ({
               selectedDayBackgroundColor: "#FF714B",
               todayTextColor: "#FF714B",
             }}
+            minDate={dateTime.toString()}
             context={{ date: "" }}
             markedDates={markedDate}
             onDayPress={(day) => {
