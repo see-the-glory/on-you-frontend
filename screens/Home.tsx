@@ -1,14 +1,14 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import React, { useCallback, useState } from "react";
-import { ActivityIndicator, FlatList, Platform, StatusBar, Text, useWindowDimensions, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, Alert, DeviceEventEmitter, FlatList, Platform, StatusBar, Text, useWindowDimensions, View } from "react-native";
 import FastImage from "react-native-fast-image";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Feed, FeedApi, FeedsResponse } from "../api";
+import { Feed, FeedApi, FeedDeleteRequest, FeedReportRequest, FeedsResponse } from "../api";
 import FeedDetail from "../components/FeedDetail";
 import { HomeScreenProps } from "../types/feed";
 import FeedOptionModal from "./Feed/FeedOptionModal";
@@ -21,7 +21,9 @@ const Loader = styled.SafeAreaView`
   padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
 `;
 
-const HeaderView = styled.SafeAreaView<{ height: number }>`
+const Container = styled.SafeAreaView``;
+
+const HeaderView = styled.View<{ height: number }>`
   height: ${(props: any) => props.height}px;
   justify-content: center;
   align-items: center;
@@ -42,8 +44,6 @@ const HeaderButton = styled.TouchableOpacity`
   justify-content: center;
   padding: 0px 5px;
 `;
-
-const Container = styled.View``;
 
 const Home: React.FC<HomeScreenProps> = () => {
   const queryClient = useQueryClient();
@@ -82,6 +82,19 @@ const Home: React.FC<HomeScreenProps> = () => {
       console.log(err);
     },
   });
+
+  useEffect(() => {
+    console.log("Home - add listner");
+    let homeFeedSubscription = DeviceEventEmitter.addListener("HomeFeedRefetch", () => {
+      feedsRefetch();
+    });
+
+    return () => {
+      console.log("Home - remove listner");
+      homeFeedSubscription.remove();
+    };
+  }, []);
+
   const onRefresh = async () => {
     setRefreshing(true);
     await queryClient.refetchQueries(["feeds"]);
@@ -98,6 +111,7 @@ const Home: React.FC<HomeScreenProps> = () => {
         toast.show(`신고 요청이 완료 되었습니다.`, {
           type: "success",
         });
+        onRefresh();
         closeComplainOption();
       } else {
         console.log("--- feedReport Error ---");
@@ -122,7 +136,7 @@ const Home: React.FC<HomeScreenProps> = () => {
         toast.show(`게시글이 삭제되었습니다.`, {
           type: "success",
         });
-        DeviceEventEmitter.emit("ClubFeedRefetch");
+        onRefresh();
         closeMyFeedOption();
       } else {
         console.log("--- deleteFeed Error ---");
@@ -213,23 +227,6 @@ const Home: React.FC<HomeScreenProps> = () => {
   };
 
   const keyExtractor = useCallback((item: Feed, index: number) => String(index), []);
-
-  const ListHeaderComponent = useCallback(
-    () => (
-      <HeaderView height={homeHeaderHeight}>
-        <FastImage source={require("../assets/home_logo.png")} style={{ width: 100, height: 30 }} />
-        <HeaderRightView>
-          <HeaderButton>
-            <MaterialIcons name="notifications" size={20} color="black" />
-          </HeaderButton>
-          <HeaderButton onPress={goToFeedCreation}>
-            <MaterialIcons name="add-photo-alternate" size={20} color="black" />
-          </HeaderButton>
-        </HeaderRightView>
-      </HeaderView>
-    ),
-    []
-  );
   const ItemSeparatorComponent = useCallback(() => <View style={{ height: itemSeparatorGap }} />, []);
   const ListFooterComponent = useCallback(() => <View style={{ height: 100 }} />, []);
   const renderItem = useCallback(
@@ -256,6 +253,17 @@ const Home: React.FC<HomeScreenProps> = () => {
   ) : (
     <Container>
       <StatusBar barStyle={"dark-content"} />
+      <HeaderView height={homeHeaderHeight}>
+        <FastImage source={require("../assets/home_logo.png")} style={{ width: 100, height: 30 }} />
+        <HeaderRightView>
+          <HeaderButton>
+            <MaterialIcons name="notifications" size={20} color="black" />
+          </HeaderButton>
+          <HeaderButton onPress={goToFeedCreation}>
+            <MaterialIcons name="add-photo-alternate" size={20} color="black" />
+          </HeaderButton>
+        </HeaderRightView>
+      </HeaderView>
       <FlatList
         refreshing={refreshing}
         onRefresh={onRefresh}
@@ -266,8 +274,6 @@ const Home: React.FC<HomeScreenProps> = () => {
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         removeClippedSubviews={true}
-        ListHeaderComponent={ListHeaderComponent}
-        stickyHeaderIndices={[0]}
       />
 
       <FeedOptionModal modalRef={myFeedOptionRef} buttonHeight={modalOptionButtonHeight} isMyFeed={true} goToUpdateFeed={goToUpdateFeed} deleteFeed={deleteFeed} goToComplain={goToComplain} />
