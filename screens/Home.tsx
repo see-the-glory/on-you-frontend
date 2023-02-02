@@ -34,7 +34,7 @@ const HeaderRightView = styled.View`
   position: absolute;
   flex-direction: row;
   right: 0%;
-  padding: 0px 15px;
+  padding: 0px 10px;
   height: 50px;
 `;
 
@@ -42,7 +42,7 @@ const HeaderButton = styled.TouchableOpacity`
   height: 100%;
   align-items: center;
   justify-content: center;
-  padding: 0px 5px;
+  padding: 0px 10px;
 `;
 
 const Home: React.FC<HomeScreenProps> = () => {

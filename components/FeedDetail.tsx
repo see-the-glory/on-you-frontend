@@ -34,7 +34,7 @@ const HeaderRightView = styled.View`
   padding-bottom: 10px;
 `;
 const HeaderText = styled(CustomText)`
-  font-size: 18px;
+  font-size: 16px;
   font-family: "NotoSansKR-Medium";
   color: #2b2b2b;
   line-height: 25px;
@@ -126,7 +126,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
       <Container>
         <HeaderView padding={20} height={this.props.headerHeight}>
           <HeaderLeftView>
-            <CircleIcon uri={this.props.feedData.thumbnail} size={36} kerning={10} />
+            <CircleIcon uri={this.props.feedData.thumbnail} size={40} kerning={10} />
             <HeaderNameView>
               <HeaderText>{this.props.feedData.userName}</HeaderText>
               {this.props.showClubName ? (
