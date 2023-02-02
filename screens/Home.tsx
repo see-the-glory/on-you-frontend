@@ -72,9 +72,9 @@ const Home: React.FC<HomeScreenProps> = () => {
     refetch: feedsRefetch,
     fetchNextPage,
   } = useInfiniteQuery<FeedsResponse>(["feeds", { token }], FeedApi.getFeeds, {
-    getNextPageParam: (currentPage) => {
-      if (currentPage) {
-        return currentPage.hasNext === false ? null : currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor;
+    getNextPageParam: (lastPage) => {
+      if (lastPage) {
+        return lastPage.hasNext === false ? null : lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor;
       }
     },
     onSuccess: (res) => {},

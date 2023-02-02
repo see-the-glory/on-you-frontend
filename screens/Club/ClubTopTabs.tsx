@@ -55,8 +55,8 @@ const ClubTopTabs = ({
   },
   navigation: { navigate, popToTop },
 }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
-  const me = useSelector((state) => state.UserReducers.user);
+  const token = useSelector((state: any) => state.AuthReducers.authToken);
+  const me = useSelector((state: any) => state.UserReducers.user);
   const toast = useToast();
   const dispatch = useDispatch();
   const [data, setData] = useState<Club>(clubData);
@@ -161,8 +161,8 @@ const ClubTopTabs = ({
       const week = ["일", "월", "화", "수", "목", "금", "토"];
       const result: RefinedSchedule[] = [];
       for (let i = 0; i < res?.data?.length; ++i) {
-        const date = new Date(res?.data[i].startDate);
-        const dayOfWeek = week[date.getDay()];
+        const date = moment(res.data[i].startDate).tz("Asia/Seoul");
+        const dayOfWeek = week[date.day()];
         let refined: RefinedSchedule = {
           id: res.data[i].id,
           location: res.data[i].location,
@@ -171,21 +171,19 @@ const ClubTopTabs = ({
           startDate: res.data[i].startDate,
           endDate: res.data[i].endDate,
           content: res.data[i].content,
-          year: moment(res.data[i].startDate).format("YYYY"),
-          month: moment(res.data[i].startDate).format("MM"),
-          day: moment(res.data[i].startDate).format("DD"),
-          hour: moment(res.data[i].startDate).format("h"),
-          minute: moment(res.data[i].startDate).format("m"),
-          ampm: moment(res.data[i].startDate).format("A") === "AM" ? "오전" : "오후",
+          year: date.format("YYYY"),
+          month: date.format("MM"),
+          day: date.format("DD"),
+          hour: date.format("h"),
+          minute: date.format("m"),
+          ampm: date.format("A"),
           dayOfWeek: dayOfWeek,
           participation: res.data[i].members?.map((member) => member.id).includes(me?.id),
           isEnd: false,
         };
         result.push(refined);
       }
-
       result.push({ isEnd: true });
-
       setScheduleData(result);
     },
     onError: (error) => {
