@@ -120,6 +120,7 @@ const ClubJoin = ({
             maxLength={100}
             textAlignVertical="top"
             onChangeText={(text: string) => setMemo(text)}
+            onEndEditing={() => setMemo((prev) => prev.trim())}
             includeFontPadding={false}
           />
         </MainView>

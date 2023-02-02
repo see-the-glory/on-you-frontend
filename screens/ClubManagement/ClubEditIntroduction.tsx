@@ -143,6 +143,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
                 maxLength={20}
                 textAlignVertical="center"
                 onChangeText={(value: string) => setClubShortDesc(value)}
+                onEndEditing={() => setClubShortDesc((prev) => prev.trim())}
                 includeFontPadding={false}
               />
               <ItemText>ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!</ItemText>
@@ -159,6 +160,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
                 maxLength={100}
                 textAlignVertical="top"
                 onChangeText={(value: string) => setClubLongDesc(value)}
+                onEndEditing={() => setClubLongDesc((prev) => prev.trim())}
                 includeFontPadding={false}
               />
             </ContentItem>

@@ -119,6 +119,8 @@ const EditBox = styled.View`
   justify-content: center;
 `;
 
+const EditButton = styled.TouchableWithoutFeedback``;
+
 const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation: { navigate } }) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
   const dispatch = useDispatch();
@@ -196,7 +198,9 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
           <Title>{userInfo?.data?.name}</Title>
         </InfoBox>
         <EditBox>
-          <MaterialCommunityIcons name="pencil-outline" color="#295AF5" size={20} onPress={goToEditProfile} />
+          <EditButton onPress={goToEditProfile}>
+            <MaterialCommunityIcons name="pencil-outline" color="#295AF5" size={20} />
+          </EditButton>
         </EditBox>
       </UserInfoSection>
       <MenuWrapper>

@@ -232,6 +232,7 @@ const ClubScheduleEdit = ({
                   placeholderTextColor="#B0B0B0"
                   maxLength={16}
                   onChangeText={(text: string) => setPlace(text)}
+                  onEndEditing={() => setPlace((prev) => prev.trim())}
                   returnKeyType="done"
                   returnKeyLabel="done"
                   textAlign="right"
@@ -250,6 +251,7 @@ const ClubScheduleEdit = ({
                 maxLength={1000}
                 textAlignVertical="top"
                 onChangeText={(value: string) => setMemo(value)}
+                onEndEditing={() => setMemo((prev) => prev.trim())}
                 includeFontPadding={false}
               />
             </MemoView>

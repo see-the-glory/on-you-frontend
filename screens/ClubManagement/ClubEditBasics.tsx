@@ -305,8 +305,8 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                     toast.show("모임 이름을 공백으로 설정할 수 없습니다.", {
                       type: "warning",
                     });
-                    setClubName(clubData.name);
-                  }
+                    setClubName(clubData.name ?? "");
+                  } else setClubName((prev) => prev.trim());
                 }}
                 onChangeText={(name: string) => setClubName(name)}
                 returnKeyType="done"
@@ -326,7 +326,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                   }}
                   onEndEditing={() =>
                     setMaxNumber((prev) => {
-                      if (prev === "" || prev === "0") return `${clubData.maxNumber} 명`;
+                      if (prev.trim() === "" || prev.trim() === "0") return `${clubData.maxNumber} 명`;
                       else return `${prev} 명`;
                     })
                   }
@@ -382,6 +382,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                 placeholderTextColor="#B0B0B0"
                 maxLength={16}
                 onChangeText={(name: string) => setOrganizationName(name)}
+                onEndEditing={() => setOrganizationName((prev) => prev.trim())}
                 returnKeyType="done"
                 returnKeyLabel="done"
                 includeFontPadding={false}

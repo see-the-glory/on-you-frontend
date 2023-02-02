@@ -859,7 +859,7 @@ const FindUserPw = (req: FindPwRequest) => {
   });
 };
 
-const ChangePassword = (req: PostChangePw) => {
+const changePassword = (req: PostChangePw) => {
   return fetch(`${BASE_URL}/api/user/changePw`, {
     method: "POST",
     headers: {
@@ -1005,7 +1005,7 @@ export const UserApi = {
   selectMyClubs,
   FindUserId,
   FindUserPw,
-  ChangePassword,
+  changePassword,
 };
 
 export const FeedApi = {

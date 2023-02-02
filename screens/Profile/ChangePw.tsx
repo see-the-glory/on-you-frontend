@@ -37,7 +37,7 @@ const Input = styled(CustomTextInput)`
 `;
 
 const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigation: { navigate, setOptions } }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: any) => state.AuthReducers.authToken);
   const [pw, setPw] = useState<string>("");
   const toast = useToast();
 
@@ -51,9 +51,9 @@ const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigatio
     });
   }, [pw]);
 
-  const mutation = useMutation(UserApi.ChangePassword, {
+  const mutation = useMutation(UserApi.changePassword, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
+      if (res.status === 200) {
         toast.show(`비밀번호가 재설정되었습니다.`, {
           type: "success",
         });
@@ -61,7 +61,7 @@ const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigatio
           screen: "Profile",
         });
       } else {
-        console.log(`user register mutation success but please check status code`);
+        console.log(`changePassword mutation success but please check status code`);
         console.log(res);
         toast.show(`${res.error} (Error Code: ${res.status})`, {
           type: "warning",

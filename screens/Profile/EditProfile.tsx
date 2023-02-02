@@ -220,11 +220,11 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
           </ImagePickerView>
           <Form>
             <Title>이름</Title>
-            <Input autoCorrect={false} placeholder="홍길동" defaultValue={name} onChangeText={(text) => setName(text)} />
+            <Input autoCorrect={false} placeholder="홍길동" defaultValue={name} onChangeText={(text: string) => setName(text)} onEndEditing={() => setName((prev) => prev.trim())} />
           </Form>
           <Form>
             <Title>성별</Title>
-            <Input autoCorrect={false} placeholder="남자 or 여자" defaultValue={sex} onChangeText={(text) => setSex(text === "남자" ? "M" : "F")} editable={false} />
+            <Input autoCorrect={false} placeholder="남자 or 여자" defaultValue={sex} onChangeText={(text: string) => setSex(text === "남자" ? "M" : "F")} editable={false} />
           </Form>
           <Form>
             <Title>생년월일</Title>
@@ -251,7 +251,13 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
           </Form>
           <Form>
             <Title>교회</Title>
-            <Input autoCorrect={false} placeholder="시광교회" defaultValue={organizationName} onChangeText={(text: string) => setOrganizationName(text)} />
+            <Input
+              autoCorrect={false}
+              placeholder="시광교회"
+              defaultValue={organizationName}
+              onChangeText={(text: string) => setOrganizationName(text)}
+              onEndEditing={() => setOrganizationName((prev) => prev.trim())}
+            />
           </Form>
           {/* <Form>
           <Title>관심사(3개 이상 택)</Title>
