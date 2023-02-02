@@ -7,6 +7,7 @@ import styled from "styled-components/native";
 import { ClubApi, ClubCreationData, ClubCreationRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
+import { RootState } from "../../redux/store/reducers";
 import { ClubCreationStepThreeScreenProps } from "../../Types/Club";
 
 const Container = styled.ScrollView`
@@ -102,7 +103,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   },
   navigation: { navigate },
 }) => {
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [clubShortDesc, setClubShortDesc] = useState<string>("");
   const [clubLongDesc, setClubLongDesc] = useState<string>("");

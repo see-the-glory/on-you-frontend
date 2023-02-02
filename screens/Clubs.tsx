@@ -11,6 +11,7 @@ import CustomText from "../components/CustomText";
 import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { Slider } from "@miblanchard/react-native-slider";
+import { RootState } from "../redux/store/reducers";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -181,7 +182,7 @@ interface ClubSortItem {
 }
 
 const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
     token,

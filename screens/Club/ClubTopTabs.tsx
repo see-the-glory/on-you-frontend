@@ -11,11 +11,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
 import { useQuery } from "react-query";
 import { Club, ClubApi, ClubResponse, ClubRoleResponse, ClubSchedulesResponse } from "../../api";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 import { RefinedSchedule } from "../../Types/Club";
 import moment from "moment-timezone";
-import { deleteClub } from "../../store/Actions";
+import { RootState } from "../../redux/store/reducers";
+import { useAppDispatch } from "../../redux/store";
+import clubSlice from "../../redux/slices/club";
 
 const Container = styled.View`
   flex: 1;
@@ -55,10 +57,10 @@ const ClubTopTabs = ({
   },
   navigation: { navigate, popToTop },
 }) => {
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
-  const me = useSelector((state: any) => state.UserReducers.user);
+  const token = useSelector((state: RootState) => state.auth.token);
+  const me = useSelector((state: RootState) => state.auth.user);
   const toast = useToast();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [data, setData] = useState<Club>(clubData);
   const [scheduleData, setScheduleData] = useState<RefinedSchedule[]>();
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
@@ -77,8 +79,8 @@ const ClubTopTabs = ({
 
   // Animated Variables
   const scrollY = useRef(new Animated.Value(0)).current;
-  const offsetY = useSelector((state: any) => state.ClubReducers.homeScrollY);
-  const scheduleOffsetX = useSelector((state: any) => state.ClubReducers.scheduleScrollX);
+  const offsetY = useSelector((state: RootState) => state.club.homeScrollY);
+  const scheduleOffsetX = useSelector((state: RootState) => state.club.scheduleScrollX);
   const translateY = scrollY.interpolate({
     inputRange: [0, headerDiff],
     outputRange: [0, -headerDiff],
@@ -208,7 +210,7 @@ const ClubTopTabs = ({
     return () => {
       scheduleSubscription.remove();
       clubSubscription.remove();
-      dispatch(deleteClub());
+      dispatch(clubSlice.actions.deleteClub());
     };
   }, []);
 

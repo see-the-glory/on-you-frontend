@@ -2,10 +2,10 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { CommonApi, LoginRequest, UserApi, UserInfoResponse } from "../../api";
-import { useDispatch } from "react-redux";
-import { login, updateUser } from "../../store/Actions";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
+import { useAppDispatch } from "../../redux/store";
+import { login } from "../../redux/slices/auth";
 
 const Container = styled.View`
   width: 100%;
@@ -81,14 +81,14 @@ const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
     params: { email, password, token },
   },
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const toast = useToast();
   const [userToken, setUserToken] = useState<string>(token ?? "");
   const [go, setGo] = useState<boolean>(false);
   useQuery<UserInfoResponse>(["getUserInfo", userToken], UserApi.getUserInfo, {
     onSuccess: (res) => {
       if (res.status === 200) {
-        dispatch(login(userToken, res.data));
+        dispatch(login({ user: res.data, token }));
       } else {
         console.log(`get user info query success but please check status code`);
         console.log(res);

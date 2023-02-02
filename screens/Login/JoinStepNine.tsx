@@ -1,12 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useQuery, useMutation } from "react-query";
-import { Category, UserApi, CategoryResponse } from "../../api";
-import { useToast } from "react-native-toast-notifications";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
 import CustomText from "../../components/CustomText";
-import CustomTextInput from "../../components/CustomTextInput";
 import styled from "styled-components/native";
 
 const Container = styled.View`

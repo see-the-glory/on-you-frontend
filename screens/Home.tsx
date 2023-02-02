@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { Feed, FeedApi, FeedDeleteRequest, FeedReportRequest, FeedsResponse } from "../api";
 import FeedDetail from "../components/FeedDetail";
+import { RootState } from "../redux/store/reducers";
 import { HomeScreenProps } from "../types/feed";
 import FeedOptionModal from "./Feed/FeedOptionModal";
 import FeedReportModal from "./Feed/FeedReportModal";
@@ -47,8 +48,8 @@ const HeaderButton = styled.TouchableOpacity`
 
 const Home: React.FC<HomeScreenProps> = () => {
   const queryClient = useQueryClient();
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
-  const me = useSelector((state: any) => state.UserReducers.user);
+  const token = useSelector((state: RootState) => state.auth.token);
+  const me = useSelector((state: RootState) => state.auth.user);
   const toast = useToast();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { ref: myFeedOptionRef, open: openMyFeedOption, close: closeMyFeedOption } = useModalize();
@@ -77,7 +78,9 @@ const Home: React.FC<HomeScreenProps> = () => {
         return lastPage.hasNext === false ? null : lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor;
       }
     },
-    onSuccess: (res) => {},
+    onSuccess: (res) => {
+      console.log(res.pages.length);
+    },
     onError: (err) => {
       console.log(err);
     },

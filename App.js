@@ -4,8 +4,6 @@ import Root from "./navigation/Root";
 import AuthStack from "./navigation/AuthStack";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider, useSelector, useDispatch } from "react-redux";
-import { store } from "./store/Index";
-import { init } from "./store/Actions";
 import { ToastProvider } from "react-native-toast-notifications";
 import { Ionicons } from "@expo/vector-icons";
 import { LogBox, Platform, Text, TextInput, View } from "react-native";
@@ -14,6 +12,8 @@ import * as SplashScreen from "expo-splash-screen";
 import moment from "moment";
 import "moment/locale/ko";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import store, { useAppDispatch } from "./redux/store";
+import { init } from "./redux/slices/auth";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -22,14 +22,14 @@ SplashScreen.preventAutoHideAsync();
 
 const RootNavigation = () => {
   const [appIsReady, setAppIsReady] = useState(false);
-  const token = useSelector((state) => state.AuthReducers.authToken);
-  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     async function prepare() {
       try {
         console.log(`App Prepare!`);
-        dispatch(init());
+        await dispatch(init());
         await Font.loadAsync({
           "NotoSansKR-Bold": require("./assets/fonts/NotoSansKR-Bold.otf"),
           "NotoSansKR-Regular": require("./assets/fonts/NotoSansKR-Regular.otf"),

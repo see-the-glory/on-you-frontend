@@ -7,6 +7,7 @@ import styled from "styled-components/native";
 import { ClubApi, ClubUpdateRequest, ClubUpdateResponse } from "../../api";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
+import { RootState } from "../../redux/store/reducers";
 import { ClubEditIntroductionProps } from "../../Types/Club";
 
 const Container = styled.SafeAreaView`
@@ -71,7 +72,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
     params: { clubData },
   },
 }) => {
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [clubShortDesc, setClubShortDesc] = useState(clubData.clubShortDesc ?? "");
   const [clubLongDesc, setClubLongDesc] = useState(clubData.clubLongDesc ?? "");

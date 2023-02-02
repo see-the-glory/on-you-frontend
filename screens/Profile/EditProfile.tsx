@@ -13,6 +13,7 @@ import DatePicker from "react-native-date-picker";
 import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import CustomTextInput from "../../components/CustomTextInput";
+import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.ScrollView`
   padding-left: 15px;
@@ -96,7 +97,7 @@ const ItemText = styled(CustomText)`
 `;
 
 const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ route: { params: userData }, navigation: { navigate, setOptions } }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const [imageURI, setImageURI] = useState<string | null>(userData?.thumbnail);
   const [name, setName] = useState<string>(userData?.name);
   const [sex, setSex] = useState<string>(userData?.sex === "M" ? "남자" : "여자");

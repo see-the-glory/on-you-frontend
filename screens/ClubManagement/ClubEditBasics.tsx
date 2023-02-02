@@ -10,6 +10,7 @@ import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -133,7 +134,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
     params: { clubData },
   },
 }) => {
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [clubName, setClubName] = useState<string>(clubData.name ?? "");
   const [maxNumber, setMaxNumber] = useState<string>(clubData.maxNumber === 0 ? "무제한 정원" : `${String(clubData.maxNumber)} 명`);

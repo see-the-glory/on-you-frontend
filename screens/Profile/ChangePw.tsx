@@ -9,6 +9,7 @@ import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import CustomTextInput from "../../components/CustomTextInput";
 import { UserApi, PostChangePw } from "../../api";
+import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.ScrollView`
   padding-left: 15px;
@@ -37,7 +38,7 @@ const Input = styled(CustomTextInput)`
 `;
 
 const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigation: { navigate, setOptions } }) => {
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const [pw, setPw] = useState<string>("");
   const toast = useToast();
 
