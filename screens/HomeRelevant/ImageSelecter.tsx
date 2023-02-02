@@ -25,6 +25,7 @@ import { FeedCreateScreenProps } from "../../types/feed";
 import { useNavigation } from "@react-navigation/native";
 import CustomText from "../../components/CustomText";
 import { PinchGestureHandler, State } from "react-native-gesture-handler";
+import { RootState } from "../../redux/store/reducers";
 
 interface ValueInfo {
   str: string;
@@ -157,7 +158,7 @@ function ImageSelecter(props: FeedCreateScreenProps) {
 
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 16) * 9);
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const [content, setContent] = useState("");
   const navigation = useNavigation();
   const queryClient = useQueryClient();

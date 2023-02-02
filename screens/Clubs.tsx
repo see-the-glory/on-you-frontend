@@ -11,6 +11,7 @@ import CustomText from "../components/CustomText";
 import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { Slider } from "@miblanchard/react-native-slider";
+import { RootState } from "../redux/store/reducers";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -181,7 +182,7 @@ interface ClubSortItem {
 }
 
 const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
     token,
@@ -216,9 +217,9 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     refetch: clubsRefetch,
     fetchNextPage,
   } = useInfiniteQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
-    getNextPageParam: (currentPage) => {
-      if (currentPage) {
-        return currentPage.hasNext === false ? null : currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor;
+    getNextPageParam: (lastPage) => {
+      if (lastPage) {
+        return lastPage.hasNext === false ? null : lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor;
       }
     },
     onSuccess: (res) => {

@@ -1,23 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, View, Text } from "react-native";
-import {
-  useInfiniteQuery,
-  useQuery,
-  useQueryClient
-} from "react-query";
+import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import {
-  Club,
-  ClubApi,
-  ClubResponse,
-  ClubsParams,
-  ClubsResponse,
-  Feed, MyClub,
-  MyClubResponse,
-  UserApi
-} from "../../api";
+import { Club, ClubApi, ClubResponse, ClubsParams, ClubsResponse, Feed, MyClub, MyClubResponse, UserApi } from "../../api";
 import { MyClubSelectorScreenProps } from "../../types/feed";
 import CustomText from "../../components/CustomText";
 const Container = styled.SafeAreaView`
@@ -117,9 +104,13 @@ const CreatorName = styled(CustomText)`
 
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { navigate},
-                                                               route:{params:{userId}} }) => {
-  const token = useSelector((state:any) => state.AuthReducers.authToken);
+const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
+  navigation: { navigate },
+  route: {
+    params: { userId },
+  },
+}) => {
+  const token = useSelector((state: any) => state.auth.token);
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
     token,
@@ -131,7 +122,7 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
     showRecruiting: 0,
     showMy: 0,
   });
-  const [clubId,setClubId] = useState("")
+  const [clubId, setClubId] = useState("");
   const [clubName, setClubName] = useState<string>("");
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -141,13 +132,13 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
     data: myClub,
   } = useQuery<MyClubResponse>(["selectMyClubs", token], UserApi.selectMyClubs);
 
-  const goToImageSelect = (clubData:Club) =>{
+  const goToImageSelect = (clubData: Club) => {
     return navigate("HomeStack", {
-      screen:'ImageSelecter',
+      screen: "ImageSelecter",
       userId: userId,
-      clubId:clubData.id
+      clubId: clubData.id,
     });
-  }
+  };
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -163,35 +154,33 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({ navigation: { nav
           <ActivityIndicator />
         ) : (
           <FlatList
-            refreshing={refreshing} onRefresh={onRefresh}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
             keyExtractor={(item: MyClub, index: number) => String(index)}
             data={myClub?.data}
             renderItem={({ item, index }: { item: MyClub; index: number }) => (
               <>
-                {item.applyStatus === 'APPROVED' ? (
+                {item.applyStatus === "APPROVED" ? (
                   <ClubArea key={index} onPress={() => goToImageSelect(item)}>
-                      <ClubImg source={{ uri: item.thumbnail }} />
-                      <ClubMy>
-                        <CommentMent>
-                          <ClubId>{item.name}</ClubId>
-                        </CommentMent>
-                        <CommentRemainder>
-                          {item.categories?.map((name)=>{
-                            return (
-                              <CtrgArea>
-                                <CtgrText>
-                                  <ClubCtrgList>{name.name}</ClubCtrgList>
-                                </CtgrText>
-                              </CtrgArea>
-                            )
-                          })
-                          }
-                        </CommentRemainder>
-                      </ClubMy>
+                    <ClubImg source={{ uri: item.thumbnail }} />
+                    <ClubMy>
+                      <CommentMent>
+                        <ClubId>{item.name}</ClubId>
+                      </CommentMent>
+                      <CommentRemainder>
+                        {item.categories?.map((name) => {
+                          return (
+                            <CtrgArea>
+                              <CtgrText>
+                                <ClubCtrgList>{name.name}</ClubCtrgList>
+                              </CtgrText>
+                            </CtrgArea>
+                          );
+                        })}
+                      </CommentRemainder>
+                    </ClubMy>
                   </ClubArea>
-                ):(
-                  null
-                )}
+                ) : null}
               </>
             )}
           />

@@ -8,6 +8,7 @@ import { useQuery } from "react-query";
 import { UserApi, Club } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
+import { RootState } from "../../redux/store/reducers";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -71,7 +72,7 @@ const DeleteBox = styled.View`
 `;
 
 const MyClub: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigation: { navigate } }, props) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const {
     isLoading: myClubInfoLoading, // true or false
     data: myClub,

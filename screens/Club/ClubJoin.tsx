@@ -7,6 +7,7 @@ import { useMutation } from "react-query";
 import { ClubApi, ClubApplyRequest } from "../../api";
 import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
+import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -48,7 +49,7 @@ const ClubJoin = ({
   },
 }) => {
   const [memo, setMemo] = useState<string>("");
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
 
   const clubApplyMutation = useMutation(ClubApi.applyClub, {
@@ -120,6 +121,7 @@ const ClubJoin = ({
             maxLength={100}
             textAlignVertical="top"
             onChangeText={(text: string) => setMemo(text)}
+            onEndEditing={() => setMemo((prev) => prev.trim())}
             includeFontPadding={false}
           />
         </MainView>

@@ -7,6 +7,7 @@ import styled from "styled-components/native";
 import { ClubApi, ClubCreationData, ClubCreationRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
+import { RootState } from "../../redux/store/reducers";
 import { ClubCreationStepThreeScreenProps } from "../../Types/Club";
 
 const Container = styled.ScrollView`
@@ -102,7 +103,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   },
   navigation: { navigate },
 }) => {
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [clubShortDesc, setClubShortDesc] = useState<string>("");
   const [clubLongDesc, setClubLongDesc] = useState<string>("");
@@ -203,6 +204,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
                 maxLength={20}
                 textAlignVertical="center"
                 onChangeText={(value: string) => setClubShortDesc(value)}
+                onEndEditing={() => setClubShortDesc((prev) => prev.trim())}
                 includeFontPadding={false}
               />
               <ItemText>ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!</ItemText>
@@ -218,6 +220,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
                 maxLength={100}
                 textAlignVertical="top"
                 onChangeText={(value: string) => setClubLongDesc(value)}
+                onEndEditing={() => setClubLongDesc((prev) => prev.trim())}
                 includeFontPadding={false}
               />
             </ContentItem>

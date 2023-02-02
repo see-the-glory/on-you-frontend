@@ -18,6 +18,7 @@
     "@react-navigation/material-top-tabs": "^6.3.0",
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.1",
+    "@reduxjs/toolkit": "^1.9.2",
     "expo": "~47.0.6",
     "expo-asset": "^8.6.2",
     "expo-blur": "^12.0.1",
@@ -35,6 +36,7 @@
     "react-native-collapsible": "^1.6.0",
     "react-native-date-picker": "^4.2.6",
     "react-native-fast-image": "^8.6.3",
+    "react-native-flipper": "^0.177.0",
     "react-native-gesture-handler": "^2.8.0",
     "react-native-image-picker": "^4.10.1",
     "react-native-image-slider-banner": "^1.0.3",
@@ -55,6 +57,7 @@
     "react-query": "^3.39.2",
     "react-redux": "^8.0.5",
     "redux": "^4.2.0",
+    "redux-flipper": "^2.0.2",
     "redux-thunk": "^2.4.2",
     "styled-components": "^5.3.6"
   },

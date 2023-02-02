@@ -11,6 +11,7 @@ import FeedDetail from "../../components/FeedDetail";
 import { ClubFeedDetailScreenProps } from "../../Types/Club";
 import FeedReportModal from "../Feed/FeedReportModal";
 import FeedOptionModal from "../Feed/FeedOptionModal";
+import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.View``;
 const HeaderTitleView = styled.View`
@@ -36,8 +37,8 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     params: { clubData, feedData, targetIndex },
   },
 }) => {
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
-  const me = useSelector((state: any) => state.UserReducers.user);
+  const token = useSelector((state: RootState) => state.auth.token);
+  const me = useSelector((state: RootState) => state.auth.user);
   const toast = useToast();
   const { ref: myFeedOptionRef, open: openMyFeedOption, close: closeMyFeedOption } = useModalize();
   const { ref: otherFeedOptionRef, open: openOtherFeedOption, close: closeOtherFeedOption } = useModalize();

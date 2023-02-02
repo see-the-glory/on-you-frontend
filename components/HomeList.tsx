@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  View,
-  Text,
-  TouchableOpacity,
-  Button,
-  Modal,
-  Dimensions,
-  useWindowDimensions, Alert
-} from "react-native";
+import { ActivityIndicator, FlatList, View, Text, TouchableOpacity, Button, Modal, Dimensions, useWindowDimensions, Alert } from "react-native";
 import { StatusBar } from "react-native";
 import styled from "styled-components/native";
 //img
@@ -19,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import CustomText from "./CustomText";
 import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
+import { RootState } from "../redux/store/reducers";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -253,7 +244,6 @@ const FeedHeader = styled.View`
   justify-content: space-between;
   align-items: flex-end;
   margin: 20px 0 10px 0;
-  
 `;
 
 const FeedUser = styled.TouchableOpacity`
@@ -324,27 +314,14 @@ interface FeedListProps {
   customCursor?: string;
 }
 
-const HomeList: React.FC<FeedListProps>=({
-                       feedId,
-                       clubId,
-                       clubName,
-                       userId,
-                       userName,
-                       content,
-                       imageUrls,
-                       hashtags,
-                        likesCount,
-                        commentCount,
-                        created,
-                        customCursor,
-                        navigation:{navigate}})=> {
+const HomeList: React.FC<FeedListProps> = ({ feedId, clubId, clubName, userId, userName, content, imageUrls, hashtags, likesCount, commentCount, created, customCursor, navigation: { navigate } }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const queryClient = useQueryClient();
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const SCREEN_PADDING_SIZE = 20;
   const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
   const [heartSelected, setHeartSelected] = useState(false);
   const [likeYn, setLikeYn] = useState<boolean>(false);
@@ -416,69 +393,71 @@ const HomeList: React.FC<FeedListProps>=({
     setModalVisible(!isModalVisible);
   };
   return (
-      <>
-        <FeedHeader>
-          <FeedUser onPress={goToProfile}>
-            <UserImage  source={{
+    <>
+      <FeedHeader>
+        <FeedUser onPress={goToProfile}>
+          <UserImage
+            source={{
               uri: userInfo?.data.thumbnail === null ? "https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg" : userInfo?.data.thumbnail,
-            }} />
-            <UserInfo>
-              <UserId>{userName}</UserId>
-              <ClubBox>
-                <ClubName>{clubName}</ClubName>
-              </ClubBox>
-            </UserInfo>
-          </FeedUser>
-          <ModalArea>
-            <ModalIcon onPress={toggleModal}>
-              <Ionicons name="ellipsis-vertical" size={20} color={"black"} />
-            </ModalIcon>
-            <View>
-              <Modal animationType="slide" transparent={true} visible={isModalVisible}>
-                <CenteredView onTouchEnd={closeModal}>
-                  <ModalView>
-                    <ModalText onPress={goToModifiy}>수정</ModalText>
-                    <ModalText style={{ color: "red" }} onPress={deleteCheck}>
-                      삭제
-                    </ModalText>
-                    <ModalText onPress={goToAccusation}>신고</ModalText>
-                  </ModalView>
-                </CenteredView>
-              </Modal>
-            </View>
-          </ModalArea>
-        </FeedHeader>
-        <FeedMain>
-          <FeedImage>
-            {/*<Swiper horizontal dotColor="#E0E0E0" activeDotColor="#FF714B" containerStyle={{ backgroundColor: "black", height: FEED_IMAGE_SIZE }}>
+            }}
+          />
+          <UserInfo>
+            <UserId>{userName}</UserId>
+            <ClubBox>
+              <ClubName>{clubName}</ClubName>
+            </ClubBox>
+          </UserInfo>
+        </FeedUser>
+        <ModalArea>
+          <ModalIcon onPress={toggleModal}>
+            <Ionicons name="ellipsis-vertical" size={20} color={"black"} />
+          </ModalIcon>
+          <View>
+            <Modal animationType="slide" transparent={true} visible={isModalVisible}>
+              <CenteredView onTouchEnd={closeModal}>
+                <ModalView>
+                  <ModalText onPress={goToModifiy}>수정</ModalText>
+                  <ModalText style={{ color: "red" }} onPress={deleteCheck}>
+                    삭제
+                  </ModalText>
+                  <ModalText onPress={goToAccusation}>신고</ModalText>
+                </ModalView>
+              </CenteredView>
+            </Modal>
+          </View>
+        </ModalArea>
+      </FeedHeader>
+      <FeedMain>
+        <FeedImage>
+          {/*<Swiper horizontal dotColor="#E0E0E0" activeDotColor="#FF714B" containerStyle={{ backgroundColor: "black", height: FEED_IMAGE_SIZE }}>
                   <SliderBox images={item.imageUrls} sliderBoxHeight={FEED_IMAGE_SIZE} />
                 </Swiper>*/}
-            <ImageSource source={imageUrls[0] === undefined ? require("../assets/basic.jpg") : { uri: imageUrls[0] }}  size={FEED_IMAGE_SIZE}/>
-          </FeedImage>
-          <FeedInfo>
-            <LeftInfo>
-              <InfoArea>
-                <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)}>
-                  {heartSelected ? <Ionicons name="md-heart" size={20} color="red" likeYn={true} /> : <Ionicons name="md-heart-outline" size={20} color="black" ikeYn={false} />}
-                </TouchableOpacity>
-                {heartSelected ? <NumberText>{likesCount + 1} </NumberText> : <NumberText> {likesCount} </NumberText>}
-              </InfoArea>
-              <InfoArea>
-                <TouchableOpacity onPress={() => goToReply()}>
-                  <Ionicons name="md-chatbox-ellipses-outline" size={20} color="black" />
-                </TouchableOpacity>
-                <NumberText>{commentCount}</NumberText>
-              </InfoArea>
-            </LeftInfo>
-            <RightInfo>
-              <Timestamp>{created}</Timestamp>
-            </RightInfo>
-          </FeedInfo>
-          <Content>
-            <Ment>{content}</Ment>
-          </Content>
-        </FeedMain>
-      </>
+          <ImageSource source={imageUrls[0] === undefined ? require("../assets/basic.jpg") : { uri: imageUrls[0] }} size={FEED_IMAGE_SIZE} />
+        </FeedImage>
+        <FeedInfo>
+          <LeftInfo>
+            <InfoArea>
+              <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)}>
+                {heartSelected ? <Ionicons name="md-heart" size={20} color="red" likeYn={true} /> : <Ionicons name="md-heart-outline" size={20} color="black" ikeYn={false} />}
+              </TouchableOpacity>
+              {heartSelected ? <NumberText>{likesCount + 1} </NumberText> : <NumberText> {likesCount} </NumberText>}
+            </InfoArea>
+            <InfoArea>
+              <TouchableOpacity onPress={() => goToReply()}>
+                <Ionicons name="md-chatbox-ellipses-outline" size={20} color="black" />
+              </TouchableOpacity>
+              <NumberText>{commentCount}</NumberText>
+            </InfoArea>
+          </LeftInfo>
+          <RightInfo>
+            <Timestamp>{created}</Timestamp>
+          </RightInfo>
+        </FeedInfo>
+        <Content>
+          <Ment>{content}</Ment>
+        </Content>
+      </FeedMain>
+    </>
   );
-}
-export default  HomeList
+};
+export default HomeList;

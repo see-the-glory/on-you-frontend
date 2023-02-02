@@ -13,6 +13,7 @@ import DatePicker from "react-native-date-picker";
 import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import CustomTextInput from "../../components/CustomTextInput";
+import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.ScrollView`
   padding-left: 15px;
@@ -96,7 +97,7 @@ const ItemText = styled(CustomText)`
 `;
 
 const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ route: { params: userData }, navigation: { navigate, setOptions } }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const [imageURI, setImageURI] = useState<string | null>(userData?.thumbnail);
   const [name, setName] = useState<string>(userData?.name);
   const [sex, setSex] = useState<string>(userData?.sex === "M" ? "남자" : "여자");
@@ -220,11 +221,11 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
           </ImagePickerView>
           <Form>
             <Title>이름</Title>
-            <Input autoCorrect={false} placeholder="홍길동" defaultValue={name} onChangeText={(text) => setName(text)} />
+            <Input autoCorrect={false} placeholder="홍길동" defaultValue={name} onChangeText={(text: string) => setName(text)} onEndEditing={() => setName((prev) => prev.trim())} />
           </Form>
           <Form>
             <Title>성별</Title>
-            <Input autoCorrect={false} placeholder="남자 or 여자" defaultValue={sex} onChangeText={(text) => setSex(text === "남자" ? "M" : "F")} editable={false} />
+            <Input autoCorrect={false} placeholder="남자 or 여자" defaultValue={sex} onChangeText={(text: string) => setSex(text === "남자" ? "M" : "F")} editable={false} />
           </Form>
           <Form>
             <Title>생년월일</Title>
@@ -251,7 +252,13 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
           </Form>
           <Form>
             <Title>교회</Title>
-            <Input autoCorrect={false} placeholder="시광교회" defaultValue={organizationName} onChangeText={(text: string) => setOrganizationName(text)} />
+            <Input
+              autoCorrect={false}
+              placeholder="시광교회"
+              defaultValue={organizationName}
+              onChangeText={(text: string) => setOrganizationName(text)}
+              onEndEditing={() => setOrganizationName((prev) => prev.trim())}
+            />
           </Form>
           {/* <Form>
           <Title>관심사(3개 이상 택)</Title>

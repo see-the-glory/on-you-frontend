@@ -159,9 +159,9 @@ interface ScheduleModalProps {
 
 const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, scheduleData, selectIndex, closeModal, children }) => {
   const toast = useToast();
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
+  const token = useSelector((state: any) => state.auth.token);
   const navigation = useNavigation();
-  const me = useSelector((state: any) => state.UserReducers.user);
+  const me = useSelector((state: any) => state.auth.user);
   const [showModal, setShowModal] = useState(visible);
   const [menuVisibleMap, setMenuVisibleMap] = useState(new Map(scheduleData?.slice(0, -1).map((schedule) => [schedule.id, false])));
   const { width: SCREEN_WIDTH } = useWindowDimensions();

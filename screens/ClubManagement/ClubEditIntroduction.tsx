@@ -7,6 +7,7 @@ import styled from "styled-components/native";
 import { ClubApi, ClubUpdateRequest, ClubUpdateResponse } from "../../api";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
+import { RootState } from "../../redux/store/reducers";
 import { ClubEditIntroductionProps } from "../../Types/Club";
 
 const Container = styled.SafeAreaView`
@@ -71,7 +72,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
     params: { clubData },
   },
 }) => {
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [clubShortDesc, setClubShortDesc] = useState(clubData.clubShortDesc ?? "");
   const [clubLongDesc, setClubLongDesc] = useState(clubData.clubLongDesc ?? "");
@@ -143,6 +144,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
                 maxLength={20}
                 textAlignVertical="center"
                 onChangeText={(value: string) => setClubShortDesc(value)}
+                onEndEditing={() => setClubShortDesc((prev) => prev.trim())}
                 includeFontPadding={false}
               />
               <ItemText>ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!</ItemText>
@@ -159,6 +161,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
                 maxLength={100}
                 textAlignVertical="top"
                 onChangeText={(value: string) => setClubLongDesc(value)}
+                onEndEditing={() => setClubLongDesc((prev) => prev.trim())}
                 includeFontPadding={false}
               />
             </ContentItem>

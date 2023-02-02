@@ -3,9 +3,8 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { useMutation } from "react-query";
 import { CommonApi } from "../../api";
-import { useDispatch } from "react-redux";
-import { Login } from "../../store/Actions";
 import styled from "styled-components/native";
+import { useAppDispatch } from "../../redux/store";
 
 const Container = styled.View`
   width: 100%;
@@ -45,12 +44,12 @@ const Title = styled.Text`
 
 const KakaoAuth = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const mutation = useMutation(CommonApi.getJWT, {
+  const mutation = useMutation(CommonApi.getUserToken, {
     onSuccess: (res) => {
       // redux 저장
-      dispatch(login(res.token));
+      // dispatch(login(res.token));
     },
     onError: (error) => {
       console.log("--- Error ---");

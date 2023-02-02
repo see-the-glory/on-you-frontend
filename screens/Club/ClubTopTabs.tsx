@@ -11,11 +11,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
 import { useQuery } from "react-query";
 import { Club, ClubApi, ClubResponse, ClubRoleResponse, ClubSchedulesResponse } from "../../api";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 import { RefinedSchedule } from "../../Types/Club";
 import moment from "moment-timezone";
-import { deleteClub } from "../../store/Actions";
+import { RootState } from "../../redux/store/reducers";
+import { useAppDispatch } from "../../redux/store";
+import clubSlice from "../../redux/slices/club";
 
 const Container = styled.View`
   flex: 1;
@@ -55,10 +57,10 @@ const ClubTopTabs = ({
   },
   navigation: { navigate, popToTop },
 }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
-  const me = useSelector((state) => state.UserReducers.user);
+  const token = useSelector((state: RootState) => state.auth.token);
+  const me = useSelector((state: RootState) => state.auth.user);
   const toast = useToast();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [data, setData] = useState<Club>(clubData);
   const [scheduleData, setScheduleData] = useState<RefinedSchedule[]>();
   const [heartSelected, setHeartSelected] = useState<boolean>(false);
@@ -77,8 +79,8 @@ const ClubTopTabs = ({
 
   // Animated Variables
   const scrollY = useRef(new Animated.Value(0)).current;
-  const offsetY = useSelector((state: any) => state.ClubReducers.homeScrollY);
-  const scheduleOffsetX = useSelector((state: any) => state.ClubReducers.scheduleScrollX);
+  const offsetY = useSelector((state: RootState) => state.club.homeScrollY);
+  const scheduleOffsetX = useSelector((state: RootState) => state.club.scheduleScrollX);
   const translateY = scrollY.interpolate({
     inputRange: [0, headerDiff],
     outputRange: [0, -headerDiff],
@@ -161,8 +163,8 @@ const ClubTopTabs = ({
       const week = ["일", "월", "화", "수", "목", "금", "토"];
       const result: RefinedSchedule[] = [];
       for (let i = 0; i < res?.data?.length; ++i) {
-        const date = new Date(res?.data[i].startDate);
-        const dayOfWeek = week[date.getDay()];
+        const date = moment(res.data[i].startDate).tz("Asia/Seoul");
+        const dayOfWeek = week[date.day()];
         let refined: RefinedSchedule = {
           id: res.data[i].id,
           location: res.data[i].location,
@@ -171,21 +173,19 @@ const ClubTopTabs = ({
           startDate: res.data[i].startDate,
           endDate: res.data[i].endDate,
           content: res.data[i].content,
-          year: moment(res.data[i].startDate).format("YYYY"),
-          month: moment(res.data[i].startDate).format("MM"),
-          day: moment(res.data[i].startDate).format("DD"),
-          hour: moment(res.data[i].startDate).format("h"),
-          minute: moment(res.data[i].startDate).format("m"),
-          ampm: moment(res.data[i].startDate).format("A") === "AM" ? "오전" : "오후",
+          year: date.format("YYYY"),
+          month: date.format("MM"),
+          day: date.format("DD"),
+          hour: date.format("h"),
+          minute: date.format("m"),
+          ampm: date.format("A"),
           dayOfWeek: dayOfWeek,
           participation: res.data[i].members?.map((member) => member.id).includes(me?.id),
           isEnd: false,
         };
         result.push(refined);
       }
-
       result.push({ isEnd: true });
-
       setScheduleData(result);
     },
     onError: (error) => {
@@ -210,7 +210,7 @@ const ClubTopTabs = ({
     return () => {
       scheduleSubscription.remove();
       clubSubscription.remove();
-      dispatch(deleteClub());
+      dispatch(clubSlice.actions.deleteClub());
     };
   }, []);
 

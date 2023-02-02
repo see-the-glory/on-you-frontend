@@ -1,12 +1,12 @@
 import { useMutation, useQuery } from "react-query";
 import { CommonApi, LoginRequest, UserApi, UserInfoResponse } from "../../api";
-import { useDispatch } from "react-redux";
-import { login, updateUser } from "../../store/Actions";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
+import { useAppDispatch } from "../../redux/store";
+import { login } from "../../redux/slices/auth";
 
 const Container = styled.View`
   width: 100%;
@@ -71,14 +71,14 @@ const LoginTitle = styled.Text`
 `;
 
 const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const toast = useToast();
   const [token, setToken] = useState<string>("");
 
   useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
-        dispatch(login(token, res.data));
+        dispatch(login({ user: res.data, token }));
       } else {
         console.log(res);
         console.log(`getUserInfo query success but please check status code`);

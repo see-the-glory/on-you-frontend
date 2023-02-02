@@ -11,6 +11,7 @@ import { Club, ClubApi, ClubResponse, ClubUpdateRequest } from "../../api";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useToast } from "react-native-toast-notifications";
+import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -148,7 +149,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
     params: { clubData, refresh },
   },
 }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [data, setData] = useState<Club>(clubData);
   const [isToggle, setIsToggle] = useState(false);

@@ -204,19 +204,19 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
               placeholderTextColor="#B0B0B0"
               maxLength={8}
               onEndEditing={() => {
-                if (clubName === "") {
-                  return toast.show("모임 이름을 공백으로 설정할 수 없습니다.", {
+                if (clubName.trim() === "") {
+                  toast.show("모임 이름을 공백으로 설정할 수 없습니다.", {
                     type: "warning",
                   });
                 }
                 if (specialChar.test(clubName)) {
-                  return toast.show("모임 이름에 특수문자가 있습니다.", {
+                  toast.show("모임 이름에 특수문자가 있습니다.", {
                     type: "warning",
                   });
                 }
                 setClubName((prev) => prev.trim());
               }}
-              onChangeText={(name) => setClubName(name)}
+              onChangeText={(name: string) => setClubName(name)}
               returnKeyType="done"
               returnKeyLabel="done"
               includeFontPadding={false}
@@ -234,13 +234,14 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
                 }}
                 onEndEditing={() =>
                   setMaxNumber((prev) => {
+                    prev = prev.trim();
                     if (prev === "" || prev === "0") return "";
                     else return `${prev} 명`;
                   })
                 }
                 value={maxNumber}
                 maxLength={6}
-                onChangeText={(num) => {
+                onChangeText={(num: string) => {
                   if (num.length < 3) setMaxNumber(num);
                   else
                     toast.show("최대 99명까지 가능합니다.", {
@@ -288,7 +289,8 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
               placeholder="모임이 소속된 교회 또는 담당자가 섬기는 교회명"
               placeholderTextColor="#B0B0B0"
               maxLength={16}
-              onChangeText={(name) => setOrganizationName(name)}
+              onChangeText={(name: string) => setOrganizationName(name)}
+              onEndEditing={() => setOrganizationName((prev) => prev.trim())}
               returnKeyType="done"
               returnKeyLabel="done"
               includeFontPadding={false}

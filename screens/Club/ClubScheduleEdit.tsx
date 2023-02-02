@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 import { ClubApi, ClubScheduleUpdateRequest } from "../../api";
 import { useMutation } from "react-query";
+import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -84,7 +85,7 @@ const ClubScheduleEdit = ({
     params: { clubData, scheduleData },
   },
 }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [place, setPlace] = useState<string>(scheduleData?.location);
   const [memo, setMemo] = useState<string>(scheduleData?.content);
@@ -232,6 +233,7 @@ const ClubScheduleEdit = ({
                   placeholderTextColor="#B0B0B0"
                   maxLength={16}
                   onChangeText={(text: string) => setPlace(text)}
+                  onEndEditing={() => setPlace((prev) => prev.trim())}
                   returnKeyType="done"
                   returnKeyLabel="done"
                   textAlign="right"
@@ -250,6 +252,7 @@ const ClubScheduleEdit = ({
                 maxLength={1000}
                 textAlignVertical="top"
                 onChangeText={(value: string) => setMemo(value)}
+                onEndEditing={() => setMemo((prev) => prev.trim())}
                 includeFontPadding={false}
               />
             </MemoView>

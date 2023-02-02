@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { Feed, FeedApi, FeedsResponse } from "../../api";
 import CustomText from "../../components/CustomText";
+import { RootState } from "../../redux/store/reducers";
 import { ClubFeedParamList, ClubFeedScreenProps } from "../../Types/Club";
 
 const Loader = styled.View`
@@ -42,7 +43,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   offsetY,
   headerDiff,
 }) => {
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
