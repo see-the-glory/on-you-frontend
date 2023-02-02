@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState } from "react";
 import { DeviceEventEmitter, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
-import { Calendar, CalendarProvider } from "react-native-calendars";
+import { Calendar } from "react-native-calendars";
 import CustomTextInput from "../../components/CustomTextInput";
 import Collapsible from "react-native-collapsible";
 import DatePicker from "react-native-date-picker";
@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 import { ClubApi, ClubScheduleCreationRequest } from "../../api";
 import { useMutation } from "react-query";
+import moment from "moment";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -89,7 +90,7 @@ const ClubScheduleAdd = ({
   const [place, setPlace] = useState<string>("");
   const [memo, setMemo] = useState<string>("");
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-  const [dateTime, setDateTime] = useState(new Date());
+  const [dateTime, setDateTime] = useState(new Date(moment.tz("Asia/Seoul").format("YYYY-MM-DDTHH:mm:ss")));
   const [selectedDate, setSelectedDate] = useState<string>("");
   const markedDate = {
     [selectedDate]: { selected: true },
@@ -143,7 +144,7 @@ const ClubScheduleAdd = ({
       return;
     }
 
-    const startDate = `${selectedDate}T${dateTime.toISOString().split("T")[1]}`.split(".")[0];
+    const startDate = `${selectedDate}T${dateTime.toTimeString().split(" ")[0]}`;
     const endDate = `${startDate.split("T")[0]}T23:59:59`;
 
     const requestData: ClubScheduleCreationRequest = {
@@ -157,6 +158,8 @@ const ClubScheduleAdd = ({
         endDate,
       },
     };
+
+    console.log(requestData);
     scheduleMutation.mutate(requestData);
   };
 

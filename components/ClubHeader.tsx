@@ -169,7 +169,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
               <DetailInfoView>
                 <DetailInfoContent>
                   <Ionicons name="calendar" size={15} color="yellow" style={{ marginRight: 5 }} />
-                  {schedules && schedules.length > 1 ? <ContentText>{moment(schedules[0].startDate).format("MMM D  |  hh:mm A")}</ContentText> : <ContentText>일정 없음</ContentText>}
+                  {schedules && schedules.length > 1 ? <ContentText>{moment(schedules[0].startDate).format("MMM Do  |  A hh:mm")}</ContentText> : <ContentText>일정 없음</ContentText>}
                 </DetailInfoContent>
                 <DetailInfoContent>
                   <Ionicons name="md-person-circle-outline" size={15} color="yellow" style={{ marginRight: 5 }} />

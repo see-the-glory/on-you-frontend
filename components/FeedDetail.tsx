@@ -5,11 +5,12 @@ import styled from "styled-components/native";
 import CustomText from "./CustomText";
 import CircleIcon from "./CircleIcon";
 import { Feed } from "../api";
-import { TouchableOpacity } from "react-native";
+import { NativeSyntheticEvent, ScrollView, TextLayoutEventData, TouchableOpacity } from "react-native";
 import moment from "moment";
 import Carousel from "./Carousel";
 import Tag from "./Tag";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import Collapsible from "react-native-collapsible";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -33,7 +34,7 @@ const HeaderRightView = styled.View`
   padding-bottom: 10px;
 `;
 const HeaderText = styled(CustomText)`
-  font-size: 18px;
+  font-size: 16px;
   font-family: "NotoSansKR-Medium";
   color: #2b2b2b;
   line-height: 25px;
@@ -64,12 +65,16 @@ const InformationRightView = styled.View``;
 const CreatedTime = styled(CustomText)`
   color: #9a9a9a;
 `;
-const ContentTextView = styled.View<{ height: number }>`
-  height: ${(props: any) => props.height}px;
+const ContentTextView = styled.Text<{ height: number }>`
+  ${(props: any) => (props.height ? `height: ${props.height}px` : "")};
 `;
 const ContentText = styled(CustomText)`
   font-size: 14px;
   color: #2b2b2b;
+`;
+
+const ContentSubText = styled(CustomText)`
+  color: #9a9a9a;
 `;
 
 interface FeedDetailProps {
@@ -84,16 +89,44 @@ interface FeedDetailProps {
   goToClub?: (clubId: number) => void;
 }
 
-class FeedDetail extends PureComponent<FeedDetailProps> {
+interface FeedDetailState {
+  isCollapsed: boolean;
+  moreContent: boolean;
+  textHeight: number;
+  collapsedText: string;
+  remainedText: string;
+}
+
+class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
   constructor(props: any) {
     super(props);
+    this.state = {
+      isCollapsed: true,
+      moreContent: false,
+      textHeight: 0,
+      collapsedText: "",
+      remainedText: "",
+    };
   }
   render() {
+    // prettier-ignore
+    const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
+      const moreContent = event.nativeEvent.lines.length > 2 ? true : false;
+      const collapsedText = event.nativeEvent.lines.slice(0, 2).map((line) => line.text).join("").trim();
+      const remainedText = moreContent ? event.nativeEvent.lines.slice(2).map((line) => line.text).join("").trim() : "";
+      const textHeight = moreContent ? event.nativeEvent.lines.slice(2).length * this.props.contentHeight : 0;
+      this.setState({ ...this.state, textHeight, moreContent, collapsedText, remainedText });
+    };
+
+    const contentTextTouch = () => {
+      if (this.state.moreContent && this.state.isCollapsed) this.setState({ ...this.state, isCollapsed: !this.state.isCollapsed });
+      else this.props.goToFeedComments(this.props.feedData.id);
+    };
     return (
       <Container>
         <HeaderView padding={20} height={this.props.headerHeight}>
           <HeaderLeftView>
-            <CircleIcon uri={this.props.feedData.thumbnail} size={36} kerning={10} />
+            <CircleIcon uri={this.props.feedData.thumbnail} size={40} kerning={10} />
             <HeaderNameView>
               <HeaderText>{this.props.feedData.userName}</HeaderText>
               {this.props.showClubName ? (
@@ -145,9 +178,28 @@ class FeedDetail extends PureComponent<FeedDetailProps> {
               <CreatedTime>{moment(this.props.feedData.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
             </InformationRightView>
           </InformationView>
-          <ContentTextView height={this.props.contentHeight}>
-            <ContentText>{this.props.feedData.content}</ContentText>
-          </ContentTextView>
+          <ScrollView style={{ height: 0 }}>
+            <ContentText onTextLayout={onTextLayout}>{this.props.feedData.content}</ContentText>
+          </ScrollView>
+          <TouchableWithoutFeedback onPress={contentTextTouch}>
+            <ContentTextView height={this.props.contentHeight}>
+              <ContentText>{this.state.collapsedText}</ContentText>
+              {this.state.moreContent && this.state.isCollapsed ? (
+                <>
+                  {" "}
+                  <ContentText>{`...`}</ContentText>
+                  <ContentSubText>{` 더 보기`}</ContentSubText>
+                </>
+              ) : (
+                <></>
+              )}
+            </ContentTextView>
+          </TouchableWithoutFeedback>
+          <Collapsible collapsed={this.state.isCollapsed} style={{ height: this.state.textHeight }}>
+            <ContentTextView>
+              <ContentText>{this.state.remainedText}</ContentText>
+            </ContentTextView>
+          </Collapsible>
         </ContentView>
       </Container>
     );
