@@ -144,7 +144,7 @@ const ClubScheduleAdd = ({
       return;
     }
 
-    const startDate = `${selectedDate}T${dateTime.toISOString().split("T")[1]}`.split(".")[0];
+    const startDate = `${selectedDate}T${dateTime.toTimeString().split(" ")[0]}`;
     const endDate = `${startDate.split("T")[0]}T23:59:59`;
 
     const requestData: ClubScheduleCreationRequest = {
@@ -158,6 +158,8 @@ const ClubScheduleAdd = ({
         endDate,
       },
     };
+
+    console.log(requestData);
     scheduleMutation.mutate(requestData);
   };
 
