@@ -67,6 +67,7 @@ const Home: React.FC<HomeScreenProps> = () => {
   const feedDetailContentHeight = 40;
   const itemSeparatorGap = 30;
   const [selectFeedId, setSelectFeedId] = useState<number>(-1);
+  const [selectFeedData, setSelectFeedData] = useState<Feed>();
   const navigation = useNavigation();
   //getFeeds ( 무한 스크롤 )
   const {
@@ -197,6 +198,11 @@ const Home: React.FC<HomeScreenProps> = () => {
     navigation.navigate("FeedStack", { screen: "FeedComments", feedIndex, feedId });
   }, []);
 
+  const goToUpdateFeed = () => {
+    closeMyFeedOption();
+    navigation.navigate("HomeStack", { screen: "ModifiyFeed", feedData: selectFeedData });
+  };
+
   const goToFeedCreation = useCallback(() => {
     navigation.navigate("HomeStack", {
       screen: "MyClubSelector",
@@ -204,8 +210,9 @@ const Home: React.FC<HomeScreenProps> = () => {
     });
   }, [me]);
 
-  const openFeedOption = (userId: number, feedId: number) => {
+  const openFeedOption = (userId: number, feedId: number, feedData: Feed) => {
     setSelectFeedId(feedId);
+    setSelectFeedData(feedData);
     if (userId === me?.id) openMyFeedOption();
     else openOtherFeedOption();
   };
@@ -246,8 +253,6 @@ const Home: React.FC<HomeScreenProps> = () => {
       { cancelable: false }
     );
   };
-
-  const goToUpdateFeed = () => {};
 
   const complainSubmit = () => {
     if (selectFeedId === -1) {
