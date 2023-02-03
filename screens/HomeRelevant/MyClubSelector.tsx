@@ -89,16 +89,7 @@ const ClubCtrgList = styled(CustomText)`
   text-align: center;
   color: #fff;
 `;
-const CreatorName = styled(CustomText)`
-  width: auto;
-  height: auto;
-  font-size: 12px;
-  font-weight: 500;
-  text-align: center;
-  color: #fff;
-`;
 
-//Fix
 const HeaderNameView = styled.View`
   justify-content: center;
   align-items: flex-start;

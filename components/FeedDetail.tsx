@@ -19,8 +19,7 @@ const HeaderView = styled.View<{ padding: number; height: number }>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px; 
-  //padding 주석 Todo
+  padding: 10px 20px;
 `;
 const HeaderLeftView = styled.View`
   flex-direction: row;
@@ -224,6 +223,4 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
     );
   }
 }
-
-// Todo 흰여백 없애기 10px 줄이기
 export default FeedDetail;
