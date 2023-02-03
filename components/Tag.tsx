@@ -6,14 +6,15 @@ const TagView = styled.View<{ backgroundColor: string; borderColor: string }>`
   flex-direction: row;
   align-items: center;
   background-color: ${(props: any) => (props.backgroundColor ? props.backgroundColor : "white")};
-  padding: 2px 6px;
+  padding: 0px 3px;
   border-radius: 5px;
   margin-right: 5px;
   ${(props: any) => (props.borderColor ? `border: 1px solid ${props.borderColor};` : "")}
 `;
 
-const TagText = styled.Text<{ color: string }>`
-  font-size: 11px;
+const TagText = styled(CustomText)<{ color: string }>`
+  font-family: "NotoSansKR-Medium";
+  font-size: 10px;
   line-height: 14px;
   color: ${(props: any) => (props.color ? props.color : "white")};
 `;

@@ -26,6 +26,7 @@ import CustomTextInput from "../../components/CustomTextInput";
 import CustomText from "../../components/CustomText";
 import { ImageSlider } from "react-native-image-slider-banner";
 import { Modalize, useModalize } from "react-native-modalize";
+import { Portal } from "react-native-paper";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 
 const Container = styled.SafeAreaView`
@@ -213,6 +214,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
   const token = useSelector((state: any) => state.auth.token);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const SCREEN_PADDING_SIZE = 20;
+  const FEED_IMAGE_SIZE = SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2;
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
   const [content, setContent] = useState(feedData.content);
   const [data, setData] = useState<Feed>(feedData);
