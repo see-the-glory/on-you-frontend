@@ -36,7 +36,7 @@ const FooterView = styled.View<{ padding: number }>`
   background-color: white;
   top: ${Platform.OS === "ios" ? 20 : 0}px;
 `;
-const CommentInput = styled.TextInput`
+const CommentInput = styled(CustomTextInput)`
   flex: 1;
   margin-bottom: 5px;
 `;
@@ -214,7 +214,7 @@ const FeedComments = ({
   ) : (
     <Container>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}
-                            keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 180} style={{ flex: 1}}><SwipeListView
+                            keyboardVerticalOffset={Platform.OS === "ios" ? 50 : 180} style={{ flex: 1}}><SwipeListView
           contentContainerStyle={{ flexGrow: 1 }}
           data={[...(comments?.data ?? [])].reverse()}
           keyExtractor={(item: FeedComment, index: number) => String(index)}
@@ -247,11 +247,6 @@ const FeedComments = ({
             textAlign="left"
             multiline={true}
             maxLength={255}
-            autoCapitalize="none"
-            autoCorrect={false}
-            autoComplete="off"
-            returnKeyType="done"
-            returnKeyLabel="done"
             onChangeText={(value: string) => {
               setComment(value);
               if (!validation && value !== "") setValidation(true);

@@ -9,32 +9,28 @@ import CustomText from "./CustomText";
 const Container = styled.View<{ padding: number }>`
   flex-direction: row;
   padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
-  background-color: #ffffff;
+  background-color: white;
 `;
 
 const LeftView = styled.View``;
-const RightView = styled.View`
-  justify-content: center;
-  align-items: flex-start;
-`;
+const RightView = styled.View``;
 
 const ContentTextBundle = styled(CustomText)<{ width: number }>`
   ${(props: any) => (props.width ? `width: ${props.width}px` : "")};
-  justify-content: center;
-  align-items: flex-start;
 `;
 
 const ContentUserName = styled(CustomText)`
-  font-size: 16px;
-  font-family: "NotoSansKR-Medium";
-  color: #2b2b2b;
-  line-height: 25px;
+  font-size: 14px;
+  line-height: 21px;
+  font-family: "NotoSansKR-Bold";
 `;
 const ContentText = styled(CustomText)`
   font-size: 14px;
   line-height: 21px;
 `;
-const InformationView = styled.View``;
+const InformationView = styled.View`
+  margin: 3px 0px;
+`;
 const CreatedTime = styled(CustomText)`
   font-size: 11px;
   color: #8e8e8e;

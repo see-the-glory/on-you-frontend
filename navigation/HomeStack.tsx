@@ -78,7 +78,19 @@ const HomeStack = ({
         name="ModifiyFeed"
         component={ModifiyFeed}
         initialParams={{ feedData }}
-        options={{title: "수정"}}
+        options={{
+          title: "수정",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Home" })}>
+              <Ionicons name="chevron-back" size={20} color="black" />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Home" })}>
+              <Text>완료</Text>
+            </TouchableOpacity>
+          ),
+        }}
       />
     </NativeStack.Navigator>
   );

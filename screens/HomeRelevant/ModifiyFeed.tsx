@@ -26,11 +26,7 @@ import CustomTextInput from "../../components/CustomTextInput";
 import CustomText from "../../components/CustomText";
 import { ImageSlider } from "react-native-image-slider-banner";
 import { Modalize, useModalize } from "react-native-modalize";
-import {
-  MaterialIcons,
-  Ionicons,
-  Entypo
-} from "@expo/vector-icons";
+import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -45,8 +41,8 @@ const UserInfo = styled.View`
 `;
 
 const UserImage = styled.Image`
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
   border-radius: 100px;
   border-style: solid;
   border-color: #dddddd;
@@ -54,50 +50,42 @@ const UserImage = styled.Image`
   background-color: #c4c4c4;
 `;
 
-const UserId = styled(CustomText)`
+const UserId = styled.Text`
+  color: black;
   font-size: 16px;
-  font-family: "NotoSansKR-Medium";
-  color: #2b2b2b;
-  line-height: 25px;
-  bottom: 1px;
+  font-weight: bold;
+  padding-bottom: 5px;
 `;
 const ClubModIcon = styled.View`
   display: flex;
   flex-direction: row;
 `;
 const ClubBox = styled.View`
-/*  padding: 1px 6px 1px 6px;
+  padding: 1px 6px 1px 6px;
   background-color: #c4c4c4;
   justify-content: center;
   align-items: center;
   border-radius: 5px;
-  top: 1%;*/
-  flex-direction: row;
-  align-items: center;
-  background-color: #c4c4c4;
-  padding: 2px 6px;
-  border-radius: 5px;
-  margin-right: 5px;
-  ${(props: any) => (props.borderColor ? `border: 1px solid ${props.borderColor};` : "")}
+  top: 1%;
 `;
 
-const ClubName = styled.Text`
-  font-size: 11px;
-  line-height: 14px;
-  color: ${(props: any) => (props.color ? props.color : "white")};
+const ClubName = styled(CustomText)`
+  font-size: 10px;
+  line-height: 15px;
+  font-weight: 500;
+  color: black;
 `;
 
 const FeedImage = styled.View`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 67%;
+  height: 70%;
 `;
 
 const ContentArea = styled.View`
-  padding: 0 20px 0 20px;
-  top: ${Platform.OS === "ios" ? 2 : 0}%;
-  font-size: 15px;
+  padding: 10px 20px;
+  flex: 1;
 `;
 
 const Ment = styled(CustomTextInput)`
@@ -107,9 +95,9 @@ const Ment = styled(CustomTextInput)`
   font-size: 14px;
 `;
 
-const ImageSource = styled.Image`
+const ImageSource = styled.Image<{ size: number }>`
   width: 100%;
-  height: 105%;
+  height: 400px;
   background-color: lightgray;
 `;
 
@@ -122,38 +110,35 @@ const ClubArea = styled.TouchableOpacity`
   flex-direction: row;
   width: 100%;
   height: auto;
-  padding: 5px 15px 0 0px;
+  padding: 5px 0 0 0;
   border-style: solid;
   border-bottom-color: #e9e9e9;
   border-bottom-width: 1px;
-  align-self: flex-start;
 `;
 
 const ClubImg = styled.Image`
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   border-radius: 25px;
   margin: 5px;
 `;
 
-const HeaderNameView = styled.View`
+const ClubMy = styled.View`
   justify-content: center;
-  align-items: flex-start;
-  padding-left: 4px;
-  bottom: 1px;
+  padding-top: 3%;
 `;
-const ModalClubName = styled.Text`
-  padding-left: 1%;
+const ClubId = styled(CustomText)`
+  padding-left: 2%;
   color: black;
-  font-size: 17px;
-  font-weight: 500;
-  padding-top: 2%;
+  font-size: 12px;
+  font-weight: bold;
 `;
 
-const ModalClubNameArea = styled.View`
+const CommentMent = styled.View`
   flex-direction: row;
   padding-bottom: 4px;
 `;
+
 const CommentRemainder = styled.View`
   flex-direction: row;
 `;
@@ -161,16 +146,17 @@ const CommentRemainder = styled.View`
 const CtrgArea = styled.View`
   width: auto;
   height: auto;
-  margin: 5px 2px;
-  bottom: 6px;
-  border-radius: 7px;
+  margin: 0 3px 5px 5px;
+  border-radius: 3px;
   display: flex;
   flex-direction: row;
   background-color: #c4c4c4;
 `;
 
 const CtgrText = styled.View`
-  margin: 0 4px 1px 4px;
+  display: flex;
+  flex-direction: row;
+  margin: 3px 5px 3px 5px;
 `;
 
 const ClubCtrgList = styled(CustomText)`
@@ -209,13 +195,6 @@ const ModalView = styled.View`
   padding: 10px 20px 0 20px;
   height: auto;
 `;
-
-const FeedModifyFin = styled.Text`
-  font-size: 14px;
-  color: #63abff;
-  line-height: 20px;
-  padding-top: 5px;
-`
 
 interface FeedEditItem {
   id: number;
@@ -291,7 +270,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
 
   //피드업데이트
   const FixComplete = async () => {
-    if (content?.length == 0) {
+    if (content.length == 0) {
       Alert.alert("글을 수정하세요");
     } else {
       setSummitShow(false);
@@ -313,14 +292,8 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
   };
   useEffect(() => {
     navigation.setOptions({
-      headerLeft: () => (
-          <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Home" })}>
-            <Entypo name="chevron-thin-left" size={20} color="black" />
-          </TouchableOpacity>
-      ),
       headerRight: () => (
-        <TouchableOpacity onPress={FixComplete}>{isSummitShow ?
-            <FeedModifyFin>저장</FeedModifyFin> : <ActivityIndicator />}</TouchableOpacity>
+        <TouchableOpacity onPress={FixComplete}>{isSummitShow ? <CustomText style={{ color: "#2995FA", fontSize: 18, lineHeight: 20 }}>저장</CustomText> : <ActivityIndicator />}</TouchableOpacity>
       ),
     });
   }, [navigation, FixComplete, isSummitShow]);
@@ -363,7 +336,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
                   <ClubName>{data.clubName}</ClubName>
                 </ClubBox>
                 <TouchableOpacity onPress={onOpen}>
-                  <Ionicons name="pencil" size={18} style={{top: 1 }} color="gray" />
+                  <Ionicons name="pencil" size={18} style={{ left: 3, top: 2 }} color="gray" />
                 </TouchableOpacity>
               </View>
             </UserInfo>
@@ -387,10 +360,10 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
                     <>
                       <ClubArea onPress={() => ChangeClub(item.id, item.name)}>
                         <ClubImg source={{ uri: item.thumbnail }} />
-                        <HeaderNameView>
-                          <ModalClubNameArea>
-                            <ModalClubName>{item.name}</ModalClubName>
-                          </ModalClubNameArea>
+                        <ClubMy>
+                          <CommentMent>
+                            <ClubId>{item.name}</ClubId>
+                          </CommentMent>
                           <CommentRemainder>
                             {item.categories?.map((name) => {
                               return (
@@ -402,7 +375,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
                               );
                             })}
                           </CommentRemainder>
-                        </HeaderNameView>
+                        </ClubMy>
                       </ClubArea>
                     </>
                   )}
@@ -415,7 +388,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
               <ImageSlider
                 data={imageList}
                 preview={false}
-                caroselImageStyle={{ resizeMode: "cover" }}
+                caroselImageStyle={{ resizeMode: "cover", height: 350 }}
                 activeIndicatorStyle={{ backgroundColor: "orange" }}
                 indicatorContainerStyle={{ bottom: 0 }}
               />
