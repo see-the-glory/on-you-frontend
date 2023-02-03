@@ -243,7 +243,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
   return (
     <Container>
       <Header>
-        <HeaderText>모임 리더와 매니저는 회원 관리와 모임 관리의 권한이 있습니다.</HeaderText>
+        <HeaderText>모임 리더는 회원 관리와 모임 관리의 권한이 있습니다.</HeaderText>
       </Header>
       {loading ? (
         <Text>Loading...</Text>

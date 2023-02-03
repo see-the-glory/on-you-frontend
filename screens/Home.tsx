@@ -8,8 +8,10 @@ import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Feed, FeedApi, FeedDeleteRequest, FeedReportRequest, FeedsResponse } from "../api";
+import { Feed, FeedApi, FeedDeleteRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse } from "../api";
 import FeedDetail from "../components/FeedDetail";
+import feedSlice from "../redux/slices/feed";
+import { useAppDispatch } from "../redux/store";
 import { RootState } from "../redux/store/reducers";
 import { HomeScreenProps } from "../types/feed";
 import FeedOptionModal from "./Feed/FeedOptionModal";
@@ -50,6 +52,8 @@ const Home: React.FC<HomeScreenProps> = () => {
   const queryClient = useQueryClient();
   const token = useSelector((state: RootState) => state.auth.token);
   const me = useSelector((state: RootState) => state.auth.user);
+  const feeds = useSelector((state: RootState) => state.feed.data);
+  const dispatch = useAppDispatch();
   const toast = useToast();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { ref: myFeedOptionRef, open: openMyFeedOption, close: closeMyFeedOption } = useModalize();
@@ -67,8 +71,8 @@ const Home: React.FC<HomeScreenProps> = () => {
   //getFeeds ( 무한 스크롤 )
   const {
     isLoading: feedsLoading,
-    data: feeds,
     isRefetching: isRefetchingFeeds,
+    data: queryFeedData,
     hasNextPage,
     refetch: feedsRefetch,
     fetchNextPage,
@@ -79,7 +83,7 @@ const Home: React.FC<HomeScreenProps> = () => {
       }
     },
     onSuccess: (res) => {
-      console.log(res.pages.length);
+      dispatch(feedSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
     },
     onError: (err) => {
       console.log(err);
@@ -101,6 +105,7 @@ const Home: React.FC<HomeScreenProps> = () => {
   const onRefresh = async () => {
     setRefreshing(true);
     await queryClient.refetchQueries(["feeds"]);
+    dispatch(feedSlice.actions.init(queryFeedData?.pages?.map((page) => page?.responses?.content).flat() ?? []));
     setRefreshing(false);
   };
 
@@ -132,7 +137,7 @@ const Home: React.FC<HomeScreenProps> = () => {
       });
     },
   });
-  const deleteFeedMutation = useMutation(FeedApi.feedDelete, {
+  const deleteFeedMutation = useMutation(FeedApi.deleteFeed, {
     onSuccess: (res) => {
       if (res.status === 200) {
         console.log(res);
@@ -157,12 +162,39 @@ const Home: React.FC<HomeScreenProps> = () => {
       });
     },
   });
+  const likeFeedMutation = useMutation(FeedApi.likeFeed);
+
+  const likeFeed = useCallback((feedIndex: number, feedId: number) => {
+    const requestData: FeedLikeRequest = {
+      data: { id: feedId },
+      token,
+    };
+    likeFeedMutation.mutate(requestData, {
+      onSuccess: (res) => {
+        if (res.status === 200) {
+          dispatch(feedSlice.actions.likeToggle(feedIndex));
+        } else {
+          console.log(res);
+          toast.show(`Like Feed Fail (Error Code: ${res.status}`, {
+            type: "warning",
+          });
+        }
+      },
+      onError: (error) => {
+        console.log(error);
+        toast.show(`Error Code: ${error}`, {
+          type: "warning",
+        });
+      },
+    });
+  }, []);
+
   const goToClub = useCallback((clubId: number) => {
     navigation.navigate("ClubStack", { screen: "ClubTopTabs", clubData: { id: clubId } });
   }, []);
 
-  const goToFeedComments = useCallback((feedId: number) => {
-    navigation.navigate("FeedStack", { screen: "FeedComments", feedId });
+  const goToFeedComments = useCallback((feedIndex: number, feedId: number) => {
+    navigation.navigate("FeedStack", { screen: "FeedComments", feedIndex, feedId });
   }, []);
 
   const goToFeedCreation = useCallback(() => {
@@ -242,6 +274,7 @@ const Home: React.FC<HomeScreenProps> = () => {
       <FeedDetail
         key={`Feed_${index}`}
         feedData={item}
+        feedIndex={index}
         feedSize={SCREEN_WIDTH}
         headerHeight={feedDetailHeaderHeight}
         infoHeight={feedDetailInfoHeight}
@@ -250,6 +283,7 @@ const Home: React.FC<HomeScreenProps> = () => {
         goToClub={goToClub}
         openFeedOption={openFeedOption}
         goToFeedComments={goToFeedComments}
+        likeFeed={likeFeed}
       />
     ),
     []
@@ -277,7 +311,7 @@ const Home: React.FC<HomeScreenProps> = () => {
         refreshing={refreshing}
         onRefresh={onRefresh}
         onEndReached={loadMore}
-        data={feeds?.pages?.map((page) => page?.responses?.content).flat()}
+        data={feeds}
         ItemSeparatorComponent={ItemSeparatorComponent}
         ListFooterComponent={ListFooterComponent}
         keyExtractor={keyExtractor}

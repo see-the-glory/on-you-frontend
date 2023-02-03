@@ -201,7 +201,7 @@ export interface ReportResponse extends BaseResponse {
 }
 export interface FeedsParams {
   clubId?: number;
-  token: string;
+  token: string | null;
 }
 
 export interface ClubsParams {
@@ -217,7 +217,7 @@ export interface ClubsParams {
 
 export interface ReplyParams {
   id: number;
-  token: string;
+  token: string | null;
 }
 export interface ClubSchedulesResponse extends BaseResponse {
   data: Schedule[];
@@ -247,7 +247,7 @@ export interface ImageType {
 export interface ClubCreationRequest {
   image?: ImageType | null;
   data: ClubCreationData;
-  token: string;
+  token: string | null;
 }
 
 export interface FeedCreationRequest {
@@ -256,7 +256,7 @@ export interface FeedCreationRequest {
     userId?: number;
     content?: string;
   };
-  token: string;
+  token: string | null;
 }
 
 export interface FeedUpdateRequest {
@@ -266,22 +266,7 @@ export interface FeedUpdateRequest {
     // access: string
     content: string;
   };
-  token: string;
-}
-export interface FeedLikeRequest {
-  data: {
-    id?: number;
-    userId?: number;
-  };
-  token: string;
-}
-
-export interface FeedReverseLikeRequest {
-  data: {
-    id: number;
-    userId: number;
-  };
-  token: string;
+  token: string | null;
 }
 
 export interface FeedReportRequest {
@@ -289,7 +274,7 @@ export interface FeedReportRequest {
     id: number;
     reason: string;
   };
-  token: string;
+  token: string | null;
 }
 
 export interface ClubUpdateRequest {
@@ -305,12 +290,12 @@ export interface ClubUpdateRequest {
     category1Id?: number;
     category2Id?: number;
   };
-  token: string;
+  token: string | null;
   clubId: number;
 }
 
 export interface ClubScheduleCreationRequest {
-  token: string;
+  token: string | null;
   body: {
     clubId: number;
     content: string;
@@ -322,7 +307,7 @@ export interface ClubScheduleCreationRequest {
 }
 
 export interface ClubScheduleUpdateRequest {
-  token: string;
+  token: string | null;
   clubId: number;
   scheduleId: number;
   body: {
@@ -335,13 +320,13 @@ export interface ClubScheduleUpdateRequest {
 }
 
 export interface ClubScheduleDeleteRequest {
-  token: string;
+  token: string | null;
   clubId: number;
   scheduleId: number;
 }
 
 export interface ClubScheduleJoinOrCancelRequest {
-  token: string;
+  token: string | null;
   clubId: number;
   scheduleId: number;
 }
@@ -349,27 +334,27 @@ export interface ClubScheduleJoinOrCancelRequest {
 export interface ClubApplyRequest {
   clubId: number;
   memo: string;
-  token: string;
+  token: string | null;
 }
 
 export interface ClubApproveRequest {
   clubId: number;
   actionId: number;
   userId: number;
-  token: string;
+  token: string | null;
 }
 
 export interface ClubRejectRequest {
   clubId: number;
   actionId: number;
   userId: number;
-  token: string;
+  token: string | null;
 }
 
 export interface ChangeRoleRequest {
   clubId: number;
   data: ChangeRole[];
-  token: string;
+  token: string | null;
 }
 
 export interface ChangeRole {
@@ -395,7 +380,7 @@ export interface FindPwRequest {
 }
 
 export interface UserInfoRequest {
-  token: string;
+  token: string | null;
   image?: {
     uri: string;
     type: string;
@@ -421,7 +406,7 @@ export interface UserUpdateRequest {
     sex?: string;
     phoneNumber?: string;
   };
-  token: string;
+  token: string | null;
 }
 
 export interface SignUp {
@@ -438,18 +423,18 @@ export interface PostChangePw {
   data: {
     password?: string;
   };
-  token: string;
+  token: string | null;
 }
 
-export interface getFeedLike {
+export interface FeedLikeRequest {
   data: {
-    id?: number;
+    id: number;
   };
-  token: string;
+  token: string | null;
 }
 
 export interface FeedCommentCreationRequest {
-  token: string;
+  token: string | null;
   data: {
     id: number;
     content: string;
@@ -457,7 +442,7 @@ export interface FeedCommentCreationRequest {
 }
 
 export interface FeedCommentDeleteRequest {
-  token: string;
+  token: string | null;
   data: {
     id: number;
   };
@@ -467,7 +452,7 @@ export interface FeedDeleteRequest {
   data: {
     id: number;
   };
-  token: string;
+  token: string | null;
 } // Categories
 const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
 
@@ -898,25 +883,9 @@ const reportFeed = (req: FeedReportRequest) => {
 };
 
 /**피드좋아요*/
-const likeCount = (req: getFeedLike) => {
-  console.log("LikeFeed");
+const likeFeed = (req: FeedLikeRequest) => {
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}/likes`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `${req.token}`,
-    },
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
-  });
-};
-
-/**피드 좋아요 취소*/
-const likeCountReverse = (req: getFeedLike) => {
-  console.log("LikeFeedCancle");
-  return fetch(`${BASE_URL}/api/feeds/${req.data.id}/likes`, {
-    method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `${req.token}`,
@@ -1018,8 +987,7 @@ export const FeedApi = {
   deleteFeed,
   reportFeed,
   updateFeed,
-  likeCount,
-  likeCountReverse,
+  likeFeed,
   getSelectFeeds,
 };
 
