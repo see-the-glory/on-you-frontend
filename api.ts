@@ -91,7 +91,7 @@ export interface Feed {
   userId: number;
   userName: string;
   thumbnail: string;
-  content: string | null;
+  content: string;
   imageUrls: string[] | null;
   hashtags: string | null;
   likeYn: boolean;

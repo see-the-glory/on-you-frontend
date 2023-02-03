@@ -10,7 +10,6 @@ const Container = styled.View<{ size: number; kerning: number; opacity: number }
   align-items: center;
   margin-right: ${(props: any) => props.kerning}px;
   opacity: ${(props: any) => props.opacity};
-  top: 2px;
 `;
 
 const BadgeIcon = styled.View`
@@ -29,6 +28,10 @@ const Backplate = styled.View<{ size: number }>`
   border-radius: ${(props: any) => Math.ceil(props.size / 2)}px;
   justify-content: center;
   align-items: center;
+  border: 1px;
+  border-color: rgba(0, 0, 0, 0);
+  background-color: white;
+  box-shadow: 1px 1px 1px gray;
   elevation: 10;
 `;
 

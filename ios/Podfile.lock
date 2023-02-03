@@ -260,8 +260,6 @@ PODS:
     - glog
   - react-native-date-picker (4.2.6):
     - React-Core
-  - react-native-flipper (0.177.0):
-    - React-Core
   - react-native-image-picker (4.10.1):
     - React-Core
   - react-native-pager-view (6.0.1):
@@ -425,7 +423,6 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
-  - react-native-flipper (from `../node_modules/react-native-flipper`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -525,8 +522,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
-  react-native-flipper:
-    :path: "../node_modules/react-native-flipper"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-pager-view:
@@ -612,7 +607,6 @@ SPEC CHECKSUMS:
   React-jsinspector: badd81696361249893a80477983e697aab3c1a34
   React-logger: fdda34dd285bdb0232e059b19d9606fa0ec3bb9c
   react-native-date-picker: 93e43b3084cea595b4d68b1405d6d99849663bd6
-  react-native-flipper: ccf9059793e4b36cb4e6e5e54208a5e01acba248
   react-native-image-picker: f2ab1215d17bcfe27b0eb6417cc236fd1f4775e7
   react-native-pager-view: 3051346698a0ba0c4e13e40097cc11b00ee03cca
   react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
@@ -642,4 +636,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 23a48ab7e08e3e6ca71bcbba1dfe978c836f343c
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.11.2
