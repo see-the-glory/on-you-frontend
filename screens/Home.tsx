@@ -272,7 +272,7 @@ const Home: React.FC<HomeScreenProps> = () => {
   };
 
   const keyExtractor = useCallback((item: Feed, index: number) => String(index), []);
-  const ItemSeparatorComponent = useCallback(() => <View style={{ height: itemSeparatorGap }} />, []);
+  const ItemSeparatorComponent = useCallback(() => <View style={{ height: 20 }} />, []);
   const ListFooterComponent = useCallback(() => <View style={{ height: 100 }} />, []);
   const renderItem = useCallback(
     ({ item, index }: { item: Feed; index: number }) => (
