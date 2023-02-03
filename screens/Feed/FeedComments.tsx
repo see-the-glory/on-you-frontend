@@ -37,18 +37,18 @@ const FooterView = styled.View<{ padding: number }>`
 `;
 const CommentInput = styled(CustomTextInput)`
   flex: 1;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
 `;
 const SubmitButton = styled.TouchableOpacity`
   align-items: center;
   padding-left: 5px;
+  padding-bottom: 6px;
 `;
 const SubmitButtonText = styled(CustomText)<{ disabled: boolean }>`
   font-size: 14px;
   line-height: 20px;
   color: #63abff;
-  padding-bottom: 5px;
-  opacity: ${(props: any) => (props.disabled ? 0.5 : 1)};
+  opacity: ${(props: any) => (props.disabled ? 0.3 : 1)};
 `;
 
 const EmptyView = styled.View`
@@ -246,6 +246,11 @@ const FeedComments = ({
             textAlign="left"
             multiline={true}
             maxLength={255}
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="off"
+            returnKeyType="done"
+            returnKeyLabel="done"
             onChangeText={(value: string) => {
               setComment(value);
               if (!validation && value !== "") setValidation(true);

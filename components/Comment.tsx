@@ -13,24 +13,26 @@ const Container = styled.View<{ padding: number }>`
 `;
 
 const LeftView = styled.View``;
-const RightView = styled.View``;
+const RightView = styled.View`
+  justify-content: center;
+  align-items: flex-start;
+`;
 
 const ContentTextBundle = styled(CustomText)<{ width: number }>`
   ${(props: any) => (props.width ? `width: ${props.width}px` : "")};
 `;
 
 const ContentUserName = styled(CustomText)`
-  font-size: 14px;
-  line-height: 21px;
-  font-family: "NotoSansKR-Bold";
+  font-size: 15px;
+  line-height: 22px;
+  color: #2b2b2b;
+  font-family: "NotoSansKR-Medium";
 `;
 const ContentText = styled(CustomText)`
   font-size: 14px;
   line-height: 21px;
 `;
-const InformationView = styled.View`
-  margin: 3px 0px;
-`;
+const InformationView = styled.View``;
 const CreatedTime = styled(CustomText)`
   font-size: 11px;
   color: #8e8e8e;

@@ -28,11 +28,6 @@ const Backplate = styled.View<{ size: number }>`
   border-radius: ${(props: any) => Math.ceil(props.size / 2)}px;
   justify-content: center;
   align-items: center;
-  border: 1px;
-  border-color: rgba(0, 0, 0, 0);
-  background-color: white;
-  box-shadow: 1px 1px 1px gray;
-  elevation: 10;
 `;
 
 const IconImage = styled(FastImage)<{ size: number }>`

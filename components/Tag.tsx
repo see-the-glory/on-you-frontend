@@ -6,7 +6,7 @@ const TagView = styled.View<{ backgroundColor: string; borderColor: string }>`
   flex-direction: row;
   align-items: center;
   background-color: ${(props: any) => (props.backgroundColor ? props.backgroundColor : "white")};
-  padding: 0px 3px;
+  padding: 2px 5px;
   border-radius: 5px;
   margin-right: 5px;
   ${(props: any) => (props.borderColor ? `border: 1px solid ${props.borderColor};` : "")}

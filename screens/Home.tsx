@@ -65,7 +65,7 @@ const Home: React.FC<HomeScreenProps> = () => {
   const feedDetailHeaderHeight = 62;
   const feedDetailInfoHeight = 36;
   const feedDetailContentHeight = 40;
-  const itemSeparatorGap = 30;
+  const itemSeparatorGap = 20;
   const [selectFeedId, setSelectFeedId] = useState<number>(-1);
   const [selectFeedData, setSelectFeedData] = useState<Feed>();
   const navigation = useNavigation();
@@ -305,10 +305,10 @@ const Home: React.FC<HomeScreenProps> = () => {
         <FastImage source={require("../assets/home_logo.png")} style={{ width: 100, height: 30 }} />
         <HeaderRightView>
           <HeaderButton>
-            <MaterialIcons name="notifications" size={20} color="black" />
+            <MaterialIcons name="notifications" size={23} color="black" />
           </HeaderButton>
           <HeaderButton onPress={goToFeedCreation}>
-            <MaterialIcons name="add-photo-alternate" size={20} color="black" />
+            <MaterialIcons name="add-photo-alternate" size={23} color="black" />
           </HeaderButton>
         </HeaderRightView>
       </HeaderView>
