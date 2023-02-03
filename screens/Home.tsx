@@ -132,7 +132,7 @@ const Home: React.FC<HomeScreenProps> = () => {
       });
     },
   });
-  const deleteFeedMutation = useMutation(FeedApi.feedDelete, {
+  const deleteFeedMutation = useMutation(FeedApi.deleteFeed, {
     onSuccess: (res) => {
       if (res.status === 200) {
         console.log(res);
