@@ -152,6 +152,7 @@ const MemberLineView = styled.View`
   flex-direction: row;
   justify-content: flex-start;
   margin-bottom: 25px;
+  margin-top: 2px;
 `;
 
 const MemberSubTitleView = styled.View`
