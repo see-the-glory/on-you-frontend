@@ -104,8 +104,8 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     closeOtherFeedOption();
     openComplainOption();
   };
-  const goToFeedComments = (feedId: number) => {
-    navigate("FeedStack", { screen: "FeedComments", feedId });
+  const goToFeedComments = (feedIndex: number, feedId: number) => {
+    navigate("FeedStack", { screen: "FeedComments", feedIndex, feedId });
   };
   const openFeedOption = (userId: number, feedId: number) => {
     setSelectFeedId(feedId);
@@ -182,6 +182,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       <FeedDetail
         key={`ClubFeed_${index}`}
         feedData={item}
+        feedIndex={index}
         feedSize={SCREEN_WIDTH}
         headerHeight={feedDetailHeaderHeight}
         infoHeight={feedDetailInfoHeight}

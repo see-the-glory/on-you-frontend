@@ -63,7 +63,7 @@ const Carousel: React.FC<CarouselProps> = ({ pages, pageWidth, gap, offset, rend
       />
       {showIndicator ? (
         <IndicatorWrapper>
-          {pages.map((page: any, index: number) => (
+          {pages?.map((page: any, index: number) => (
             <Indicator key={index} focused={index == currentIndex} />
           ))}
         </IndicatorWrapper>

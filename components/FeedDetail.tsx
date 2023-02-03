@@ -79,14 +79,16 @@ const ContentSubText = styled(CustomText)`
 
 interface FeedDetailProps {
   feedData: Feed;
+  feedIndex: number;
   feedSize: number;
   headerHeight: number;
   infoHeight: number;
   contentHeight: number;
   showClubName?: boolean;
   openFeedOption: (userId: number, feedId: number) => void;
-  goToFeedComments: (feedId: number) => void;
+  goToFeedComments: (feedIndex: number, feedId: number) => void;
   goToClub?: (clubId: number) => void;
+  likeFeed?: (feedIndex: number, feedId: number) => void;
 }
 
 interface FeedDetailState {
@@ -165,11 +167,11 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
         <ContentView padding={20}>
           <InformationView height={this.props.infoHeight}>
             <InformationLeftView>
-              <InformationButton>
-                <Ionicons name="heart-outline" size={20} color="black" />
+              <InformationButton onPress={() => (this.props.likeFeed ? this.props.likeFeed(this.props.feedIndex, this.props.feedData.id) : {})}>
+                {this.props.feedData.likeYn ? <Ionicons name="heart" size={20} color="black" /> : <Ionicons name="heart-outline" size={20} color="black" />}
                 <CountingNumber>{this.props.feedData.likesCount}</CountingNumber>
               </InformationButton>
-              <InformationButton onPress={() => this.props.goToFeedComments(this.props.feedData.id)}>
+              <InformationButton onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData.id)}>
                 <Ionicons name="md-chatbox-ellipses" size={20} color="black" />
                 <CountingNumber>{this.props.feedData.commentCount}</CountingNumber>
               </InformationButton>

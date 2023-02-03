@@ -268,21 +268,6 @@ export interface FeedUpdateRequest {
   };
   token: string | null;
 }
-export interface FeedLikeRequest {
-  data: {
-    id?: number;
-    userId?: number;
-  };
-  token: string | null;
-}
-
-export interface FeedReverseLikeRequest {
-  data: {
-    id: number;
-    userId: number;
-  };
-  token: string | null;
-}
 
 export interface FeedReportRequest {
   data: {
@@ -441,9 +426,9 @@ export interface PostChangePw {
   token: string | null;
 }
 
-export interface getFeedLike {
+export interface FeedLikeRequest {
   data: {
-    id?: number;
+    id: number;
   };
   token: string | null;
 }
@@ -898,25 +883,9 @@ const reportFeed = (req: FeedReportRequest) => {
 };
 
 /**피드좋아요*/
-const likeCount = (req: getFeedLike) => {
-  console.log("LikeFeed");
+const likeFeed = (req: FeedLikeRequest) => {
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}/likes`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `${req.token}`,
-    },
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
-  });
-};
-
-/**피드 좋아요 취소*/
-const likeCountReverse = (req: getFeedLike) => {
-  console.log("LikeFeedCancle");
-  return fetch(`${BASE_URL}/api/feeds/${req.data.id}/likes`, {
-    method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `${req.token}`,
@@ -1018,8 +987,7 @@ export const FeedApi = {
   deleteFeed,
   reportFeed,
   updateFeed,
-  likeCount,
-  likeCountReverse,
+  likeFeed,
   getSelectFeeds,
 };
 

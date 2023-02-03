@@ -12,6 +12,8 @@ import CustomTextInput from "../../components/CustomTextInput";
 import CircleIcon from "../../components/CircleIcon";
 import { SwipeListView, SwipeRow } from "react-native-swipe-list-view";
 import { RootState } from "../../redux/store/reducers";
+import { useAppDispatch } from "../../redux/store";
+import feedSlice from "../../redux/slices/feed";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -80,11 +82,12 @@ const HiddenItemButton = styled.TouchableOpacity<{ width: number }>`
 const FeedComments = ({
   navigation: { setOptions, navigate, goBack },
   route: {
-    params: { feedId },
+    params: { feedIndex, feedId },
   },
 }) => {
   const token = useSelector((state: RootState) => state.auth.token);
   const me = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useAppDispatch();
   const toast = useToast();
   const [comment, setComment] = useState<string>("");
   const [validation, setValidation] = useState<boolean>(false);
@@ -95,7 +98,9 @@ const FeedComments = ({
     refetch: commentsRefetch,
   } = useQuery<FeedCommentsResponse>(["getFeedComments", token, feedId], FeedApi.getFeedComments, {
     onSuccess: (res) => {
-      if (res.status !== 200) {
+      if (res.status === 200) {
+        dispatch(feedSlice.actions.updateCommentCount({ feedIndex, count: res.data.length }));
+      } else {
         console.log("--- Error getFeedComments ---");
         console.log(res);
         toast.show(`Error Code: ${res.status}`, {
@@ -123,9 +128,6 @@ const FeedComments = ({
         </TouchableOpacity>
       ),
     });
-    return () => {
-      DeviceEventEmitter.emit("HomeFeedRefetch");
-    };
   }, []);
 
   const submit = () => {
