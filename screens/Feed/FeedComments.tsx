@@ -34,6 +34,7 @@ const FooterView = styled.View<{ padding: number }>`
   align-items: flex-end;
   padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px 20px ${(props: any) => (props.padding ? props.padding : 0)}px;
   background-color: white;
+  top: ${Platform.OS === "ios" ? 20 : 0}px;
 `;
 const CommentInput = styled(CustomTextInput)`
   flex: 1;
@@ -212,8 +213,8 @@ const FeedComments = ({
     </Loader>
   ) : (
     <Container>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={100} style={{ flex: 1 }}>
-        <SwipeListView
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}
+                            keyboardVerticalOffset={Platform.OS === "ios" ? 50 : 180} style={{ flex: 1}}><SwipeListView
           contentContainerStyle={{ flexGrow: 1 }}
           data={[...(comments?.data ?? [])].reverse()}
           keyExtractor={(item: FeedComment, index: number) => String(index)}

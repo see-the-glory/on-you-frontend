@@ -45,7 +45,7 @@ const HeaderButton = styled.TouchableOpacity`
   height: 100%;
   align-items: center;
   justify-content: center;
-  padding: 0px 10px;
+  padding: 0 10px;
 `;
 
 const Home: React.FC<HomeScreenProps> = () => {
@@ -305,10 +305,10 @@ const Home: React.FC<HomeScreenProps> = () => {
         <FastImage source={require("../assets/home_logo.png")} style={{ width: 100, height: 30 }} />
         <HeaderRightView>
           <HeaderButton>
-            <MaterialIcons name="notifications" size={20} color="black" />
+            <MaterialIcons name="notifications" size={23} color="black" />
           </HeaderButton>
           <HeaderButton onPress={goToFeedCreation}>
-            <MaterialIcons name="add-photo-alternate" size={20} color="black" />
+            <MaterialIcons name="add-photo-alternate" size={23} color="black" />
           </HeaderButton>
         </HeaderRightView>
       </HeaderView>
