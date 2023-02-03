@@ -7,7 +7,7 @@ import CustomText from "../../components/CustomText";
 
 const ModalContainer = styled.View`
   flex: 1;
-  padding: 35px 0px 20px 0px;
+  padding: 35px 0 20px 0;
 `;
 
 const ModalHeader = styled.View<{ padding: number }>`

@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Ionicons } from "@expo/vector-icons";
+import {EvilIcons, Ionicons} from "@expo/vector-icons";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import CustomText from "./CustomText";
@@ -12,13 +12,15 @@ import Tag from "./Tag";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import Collapsible from "react-native-collapsible";
 
-const Container = styled.View``;
+const Container = styled.View`
+`;
 const HeaderView = styled.View<{ padding: number; height: number }>`
   height: ${(props: any) => props.height}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0px ${(props: any) => (props.padding ? props.padding : "0")}px;
+  padding: 10px 20px; 
+  //padding 주석 Todo
 `;
 const HeaderLeftView = styled.View`
   flex-direction: row;
@@ -27,6 +29,8 @@ const HeaderLeftView = styled.View`
 const HeaderNameView = styled.View`
   justify-content: center;
   align-items: flex-start;
+  right: 3px;
+  bottom: 1px;
 `;
 const HeaderRightView = styled.View`
   height: 100%;
@@ -38,9 +42,10 @@ const HeaderText = styled(CustomText)`
   font-family: "NotoSansKR-Medium";
   color: #2b2b2b;
   line-height: 25px;
+  bottom: 1px;
 `;
 const ContentView = styled.View<{ padding: number }>`
-  padding: 0px ${(props: any) => (props.padding ? props.padding : "0")}px;
+  padding: 3px ${(props: any) => (props.padding ? props.padding : "0")}px 0 ${(props: any) => (props.padding ? props.padding : "0")}px;
 `;
 const InformationView = styled.View<{ height: number }>`
   height: ${(props: any) => props.height}px;
@@ -58,12 +63,21 @@ const InformationButton = styled.TouchableOpacity`
   margin-right: 12px;
 `;
 
-const CountingNumber = styled(CustomText)`
-  margin-left: 3px;
+const HeartNumber = styled.Text`
+  right: 1px;
+  font-size: 14px;
+  line-height: 19px;
+`
+
+const CountingNumber = styled.Text`
+  margin-left: 4px;
+  font-size: 14px;
+  line-height: 19px;
 `;
 const InformationRightView = styled.View``;
 const CreatedTime = styled(CustomText)`
   color: #9a9a9a;
+  padding-bottom: 10px;
 `;
 const ContentTextView = styled.Text<{ height: number }>`
   ${(props: any) => (props.height ? `height: ${props.height}px` : "")};
@@ -128,12 +142,12 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
       <Container>
         <HeaderView padding={20} height={this.props.headerHeight}>
           <HeaderLeftView>
-            <CircleIcon uri={this.props.feedData.thumbnail} size={40} kerning={10} />
+            <CircleIcon uri={this.props.feedData.thumbnail} size={45} kerning={10} />
             <HeaderNameView>
               <HeaderText>{this.props.feedData.userName}</HeaderText>
               {this.props.showClubName ? (
                 <TouchableWithoutFeedback onPress={() => (this.props.goToClub ? this.props.goToClub(this.props.feedData.clubId) : {})}>
-                  <Tag name={this.props.feedData.clubName} textColor="white" backgroundColor="#C4C4C4" />
+                  <Tag name={this.props.feedData.clubName}  textColor="white" backgroundColor="#C4C4C4" />
                 </TouchableWithoutFeedback>
               ) : (
                 <></>
@@ -142,7 +156,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           </HeaderLeftView>
           <HeaderRightView>
             <TouchableOpacity onPress={() => this.props.openFeedOption(this.props.feedData.userId, this.props.feedData.id, this.props.feedData)} style={{ paddingLeft: 10, paddingVertical: 5 }}>
-              <Ionicons name="ellipsis-vertical" size={14} color="black" />
+              <Ionicons name="ellipsis-vertical" style={{top: 15}} size={15} color="black" />
             </TouchableOpacity>
           </HeaderRightView>
         </HeaderView>
@@ -158,7 +172,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
             <FastImage
               key={String(index)}
               source={item ? { uri: item } : require("../assets/basic.jpg")}
-              style={{ width: this.props.feedSize, height: this.props.feedSize }}
+              style={{ width: this.props.feedSize, height: this.props.feedSize, backgroundColor: 'gray'}}
               resizeMode={FastImage.resizeMode.contain}
             />
           )}
@@ -167,12 +181,15 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
         <ContentView padding={20}>
           <InformationView height={this.props.infoHeight}>
             <InformationLeftView>
+              {/*Todo 사진 이미지 변경*/}
               <InformationButton onPress={() => (this.props.likeFeed ? this.props.likeFeed(this.props.feedIndex, this.props.feedData.id) : {})}>
-                {this.props.feedData.likeYn ? <Ionicons name="heart" size={20} color="black" /> : <Ionicons name="heart-outline" size={20} color="black" />}
-                <CountingNumber>{this.props.feedData.likesCount}</CountingNumber>
+                {this.props.feedData.likeYn ?
+                    <EvilIcons name="heart" size={35} color="red" />
+                    : <EvilIcons name="heart" size={35} color="black" />}
+                <HeartNumber>{this.props.feedData.likesCount}</HeartNumber>
               </InformationButton>
               <InformationButton onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData.id)}>
-                <Ionicons name="md-chatbox-ellipses" size={20} color="black" />
+                <Ionicons name="md-chatbox-ellipses" size={25} color="black" />
                 <CountingNumber>{this.props.feedData.commentCount}</CountingNumber>
               </InformationButton>
             </InformationLeftView>
@@ -208,4 +225,5 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
   }
 }
 
+// Todo 흰여백 없애기 10px 줄이기
 export default FeedDetail;

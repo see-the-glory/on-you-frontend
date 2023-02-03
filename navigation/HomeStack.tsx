@@ -62,16 +62,6 @@ const HomeStack = ({
         initialParams={{ userId, clubId }}
         options={{
           title: "",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("HomeStack", { screen: "MyClubSelector" })}>
-              <Ionicons name="chevron-back" size={25} color="black" />
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Home" })}>
-              <Text style={{ color: "#2995fa" }}>저장</Text>
-            </TouchableOpacity>
-          ),
           headerShown: true,
         }}
       />
@@ -81,11 +71,6 @@ const HomeStack = ({
         initialParams={{ userId }}
         options={{
           title: "나의 모임",
-          headerLeft: () => (
-            <TouchableOpacity onPress={cancleCreate}>
-              <Ionicons name="chevron-back" size={20} color="black" />
-            </TouchableOpacity>
-          ),
           headerShown: true,
         }}
       />
