@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
-import { Dimensions, Animated } from "react-native";
+import { Dimensions, Animated, ActivityIndicator, FlatList } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { useSelector } from "react-redux";
-import { useQuery } from "react-query";
-import { UserApi, Club } from "../../api";
+import { useQuery, useQueryClient } from "react-query";
+import { UserApi, Club, MyClubResponse, MyClub } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 
@@ -26,7 +26,7 @@ const MyClubWrap = styled.View`
   border-bottom-color: #e9e9e9;
 `;
 
-const MyClubBox = styled.View`
+const MyClubBox = styled.TouchableOpacity`
   flex-direction: row;
   height: 53px;
   align-items: center;
@@ -70,12 +70,21 @@ const DeleteBox = styled.View`
   background-color: #ff714b;
 `;
 
-const MyClub: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigation: { navigate } }, props) => {
+const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigation: { navigate } }, props) => {
   const token = useSelector((state) => state.AuthReducers.authToken);
+  const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = useState(false);
+
   const {
     isLoading: myClubInfoLoading, // true or false
     data: myClub,
-  } = useQuery<Club>(["selectMyClubs", token], UserApi.selectMyClubs);
+  } = useQuery<MyClubResponse>(["selectMyClubs", token], UserApi.selectMyClubs);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await queryClient.refetchQueries(["selectMyClubs"]);
+    setRefreshing(false);
+  };
 
   const rightSwipe = (progress, dragX) => {
     const scale = dragX.interpolate({
@@ -101,34 +110,66 @@ const MyClub: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigat
     );
   };
 
+  const goToClubStack = (clubData: MyClub) => {
+    let clubNagivateData: MyClub = {
+      id: clubData.id,
+    };
+
+    console.log("clubNagivateData", clubNagivateData);
+    return navigate("ClubStack", {
+      screen: "ClubTopTabs",
+      clubData: clubNagivateData,
+    });
+  };
+
   return (
     <Container>
       <Title>가입한 모임 List</Title>
-      {myClub?.data.map((club: Club, index: number) => (
-        <MyClubWrap key={index}>
-          <Swipeable renderRightActions={rightSwipe}>
-            <MyClubBox style={{ width: SCREEN_WIDTH }}>
-              <CircleIcon size={37} uri={club.thumbnail} />
-              <MyClubTextBox>
-                <MyClubText>{club?.name}</MyClubText>
-              </MyClubTextBox>
-            </MyClubBox>
-          </Swipeable>
-        </MyClubWrap>
-      ))}
+      <FlatList
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        keyExtractor={(item: MyClub, index: number) => String(index)}
+        data={myClub?.data}
+        renderItem={({ item, index }: { item: MyClub; index: number }) => (
+          <>
+            {item.applyStatus === "APPROVED" ? (
+              <MyClubWrap key={index}>
+                <Swipeable renderRightActions={rightSwipe}>
+                  <MyClubBox style={{ width: SCREEN_WIDTH }} onPress={() => goToClubStack(item)}>
+                    <CircleIcon size={37} source={{ uri: item.thumbnail }} />
+                    <MyClubTextBox>
+                      <MyClubText>{item.name}</MyClubText>
+                    </MyClubTextBox>
+                  </MyClubBox>
+                </Swipeable>
+              </MyClubWrap>
+            ) : null}
+          </>
+        )}
+      />
       <Title>가입 대기중인 List</Title>
-      <MyClubWrap>
-        <MyClubBox>
-          <MyClubImgBox>
-            <MyClubImg />
-          </MyClubImgBox>
-          <MyClubBox>
-            <MyClubText></MyClubText>
-          </MyClubBox>
-        </MyClubBox>
-      </MyClubWrap>
+      <FlatList
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        keyExtractor={(item: MyClub, index: number) => String(index)}
+        data={myClub?.data}
+        renderItem={({ item, index }: { item: MyClub; index: number }) => (
+          <>
+            {item.applyStatus === "APPLIED" ? (
+              <MyClubWrap key={index}>
+                <MyClubBox style={{ width: SCREEN_WIDTH }} onPress={() => goToClubStack(item)}>
+                  <CircleIcon size={37} source={{ uri: item.thumbnail }} />
+                  <MyClubTextBox>
+                    <MyClubText>{item.name}</MyClubText>
+                  </MyClubTextBox>
+                </MyClubBox>
+              </MyClubWrap>
+            ) : null}
+          </>
+        )}
+      />
     </Container>
   );
 };
 
-export default MyClub;
+export default MyClubPage;
