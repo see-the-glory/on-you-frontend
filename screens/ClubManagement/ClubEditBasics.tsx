@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, TouchableOpacity, useWindowDimensions } from "react-native";
+import { DeviceEventEmitter, KeyboardAvoidingView, Platform, TouchableOpacity, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { ClubEditBasicsProps } from "../../Types/Club";
 import * as ImagePicker from "expo-image-picker";
@@ -10,6 +10,7 @@ import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -24,7 +25,7 @@ const Header = styled.View`
 
 const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
   width: 100%;
-  height: ${(props) => props.height}px;
+  height: ${(props: any) => props.height}px;
   justify-content: center;
   align-items: center;
   background-color: #d3d3d3;
@@ -39,7 +40,7 @@ const ImagePickerText = styled(CustomText)`
 
 const PickedImage = styled.Image<{ height: number }>`
   width: 100%;
-  height: ${(props) => props.height}px;
+  height: ${(props: any) => props.height}px;
 `;
 
 const Content = styled.View`
@@ -102,14 +103,14 @@ const CheckButton = styled.TouchableOpacity`
 
 const CheckBox = styled.View<{ check: boolean }>`
   border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: ${(props) => (props.check ? "white" : "#E8E8E8")};
+  background-color: ${(props: any) => (props.check ? "white" : "#E8E8E8")};
 `;
 
 const CategoryText = styled(CustomText)<{ selected?: boolean }>`
   font-size: 14px;
   line-height: 21px;
   text-align: center;
-  color: ${(props) => (props.selected ? "white" : "black")};
+  color: ${(props: any) => (props.selected ? "white" : "black")};
 `;
 
 const CategoryView = styled.View`
@@ -123,7 +124,7 @@ const CategoryLabel = styled.TouchableOpacity<{ selected?: boolean }>`
   padding: 3px 5px;
   border-radius: 20px;
   border: 1px solid #d7d7d7;
-  background-color: ${(props) => (props.selected ? "#295AF5" : "white")};
+  background-color: ${(props: any) => (props.selected ? "#295AF5" : "white")};
   margin: 0px 5px;
 `;
 
@@ -133,7 +134,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
     params: { clubData },
   },
 }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [clubName, setClubName] = useState<string>(clubData.name ?? "");
   const [maxNumber, setMaxNumber] = useState<string>(clubData.maxNumber === 0 ? "무제한 정원" : `${String(clubData.maxNumber)} 명`);
@@ -248,6 +249,8 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
             clubId: clubData.id,
           };
 
+    console.log(data);
+
     mutation.mutate(updateData);
   };
 
@@ -295,16 +298,16 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
               <ItemTitle>모임 이름</ItemTitle>
               <ItemTextInput
                 value={clubName}
-                placeholder="모임명 16자 이내 (특수문자 불가)"
+                placeholder="모임명 8자 이내 (특수문자 불가)"
                 placeholderTextColor="#B0B0B0"
-                maxLength={16}
+                maxLength={8}
                 onEndEditing={() => {
                   if (clubName === "") {
                     toast.show("모임 이름을 공백으로 설정할 수 없습니다.", {
                       type: "warning",
                     });
-                    setClubName(clubData.name);
-                  }
+                    setClubName(clubData.name ?? "");
+                  } else setClubName((prev) => prev.trim());
                 }}
                 onChangeText={(name: string) => setClubName(name)}
                 returnKeyType="done"
@@ -324,7 +327,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                   }}
                   onEndEditing={() =>
                     setMaxNumber((prev) => {
-                      if (prev === "" || prev === "0") return `${clubData.maxNumber} 명`;
+                      if (prev.trim() === "" || prev.trim() === "0") return `${clubData.maxNumber} 명`;
                       else return `${prev} 명`;
                     })
                   }
@@ -380,6 +383,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                 placeholderTextColor="#B0B0B0"
                 maxLength={16}
                 onChangeText={(name: string) => setOrganizationName(name)}
+                onEndEditing={() => setOrganizationName((prev) => prev.trim())}
                 returnKeyType="done"
                 returnKeyLabel="done"
                 includeFontPadding={false}

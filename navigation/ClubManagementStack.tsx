@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Entypo } from "@expo/vector-icons";
-import { ClubManagementStackProps, RootStackParamList } from "../Types/Club";
+import { ClubManagementStackProps, ClubStackParamList } from "../Types/Club";
 import ClubEditBasics from "../screens/ClubManagement/ClubEditBasics";
 import ClubManagementMain from "../screens/ClubManagement/ClubManagementMain";
 import ClubEditIntroduction from "../screens/ClubManagement/ClubEditIntroduction";
@@ -9,7 +9,7 @@ import ClubEditMembers from "../screens/ClubManagement/ClubEditMembers";
 import ClubDelete from "../screens/ClubManagement/ClubDelete";
 import { TouchableOpacity } from "react-native";
 
-const NativeStack = createNativeStackNavigator<RootStackParamList>();
+const NativeStack = createNativeStackNavigator<ClubStackParamList>();
 
 const ClubManagementStack: React.FC<ClubManagementStackProps> = ({
   navigation,

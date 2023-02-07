@@ -1,8 +1,9 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Club, Feed, Reply } from "../api";
 
-export type RootStackParamList = {
-  Home: { feedData: Feed };
+export type FeedStackParamList = {
+  Home: {};
+
   FeedCreater: {
     imageUrls: string;
     userId: number;
@@ -24,12 +25,12 @@ export type RootStackParamList = {
   HomeStack: {};
 };
 
-export type HomeScreenProps = NativeStackScreenProps<RootStackParamList, "Home">;
-export type FeedCreateScreenProps = NativeStackScreenProps<RootStackParamList, "FeedCreater">;
-export type MyClubSelectorScreenProps = NativeStackScreenProps<RootStackParamList, "MyClubSelector">;
-export type ReplyPageScreenProps = NativeStackScreenProps<RootStackParamList, "ReplyPage">;
-export type ModifiyFeedScreenProps = NativeStackScreenProps<RootStackParamList, "FeedUpdate">;
-export type ReportFeedScreenProps = NativeStackScreenProps<RootStackParamList, "FeedReport">;
+export type HomeScreenProps = NativeStackScreenProps<FeedStackParamList, "Home">;
+export type FeedCreateScreenProps = NativeStackScreenProps<FeedStackParamList, "FeedCreater">;
+export type MyClubSelectorScreenProps = NativeStackScreenProps<FeedStackParamList, "MyClubSelector">;
+export type ReplyPageScreenProps = NativeStackScreenProps<FeedStackParamList, "ReplyPage">;
+export type ModifiyFeedScreenProps = NativeStackScreenProps<FeedStackParamList, "FeedUpdate">;
+export type ReportFeedScreenProps = NativeStackScreenProps<FeedStackParamList, "FeedReport">;
 
 export interface FeedData extends Feed {
   id: number;

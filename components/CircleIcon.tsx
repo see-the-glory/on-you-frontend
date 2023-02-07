@@ -2,6 +2,7 @@ import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import CustomText from "./CustomText";
+import FastImage from "react-native-fast-image";
 
 const Container = styled.View<{ size: number; kerning: number; opacity: number }>`
   position: relative;
@@ -27,14 +28,9 @@ const Backplate = styled.View<{ size: number }>`
   border-radius: ${(props: any) => Math.ceil(props.size / 2)}px;
   justify-content: center;
   align-items: center;
-  border: 1px;
-  border-color: rgba(0, 0, 0, 0);
-  background-color: white;
-  box-shadow: 1px 1px 1px gray;
-  elevation: 10;
 `;
 
-const IconImage = styled.Image<{ size: number }>`
+const IconImage = styled(FastImage)<{ size: number }>`
   width: ${(props: any) => props.size - 2}px;
   height: ${(props: any) => props.size - 2}px;
   border-radius: ${(props: any) => Math.ceil(props.size / 2)}px;

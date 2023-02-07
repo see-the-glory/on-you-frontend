@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useState } from "react";
-import { FlatList, SectionList, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { DeviceEventEmitter, FlatList, SectionList, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
-import { ChangeRole, ChangeRoleRequest, Member } from "../../api";
+import { ChangeRole, Member } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { AntDesign } from "@expo/vector-icons";
@@ -11,6 +11,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useSelector } from "react-redux";
 import { useMutation } from "react-query";
 import { ClubApi } from "../../api";
+import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -73,7 +74,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
     params: { clubData },
   },
 }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [refreshing, setRefreshing] = useState(false);
   const [bundles, setBundles] = useState<MemberBundle[]>();
@@ -242,7 +243,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
   return (
     <Container>
       <Header>
-        <HeaderText>모임 리더와 매니저는 회원 관리와 모임 관리의 권한이 있습니다.</HeaderText>
+        <HeaderText>모임 리더는 회원 관리와 모임 관리의 권한이 있습니다.</HeaderText>
       </Header>
       {loading ? (
         <Text>Loading...</Text>

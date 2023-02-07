@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { Animated, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Feather, AntDesign, FontAwesome5, Entypo, Ionicons } from "@expo/vector-icons";
-import { ClubManagementMainProps, RootStackParamList } from "../../types/Club";
+import { ClubManagementMainProps, ClubStackParamList } from "../../types/Club";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { Shadow } from "react-native-shadow-2";
@@ -11,6 +11,7 @@ import { Club, ClubApi, ClubResponse, ClubUpdateRequest } from "../../api";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useToast } from "react-native-toast-notifications";
+import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -139,7 +140,7 @@ const AnimatedDot = Animated.createAnimatedComponent(Dot);
 interface ClubEditItem {
   icon: React.ReactNode;
   title: string;
-  screen: keyof RootStackParamList;
+  screen: keyof ClubStackParamList;
 }
 
 const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
@@ -148,7 +149,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
     params: { clubData, refresh },
   },
 }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [data, setData] = useState<Club>(clubData);
   const [isToggle, setIsToggle] = useState(false);
@@ -218,6 +219,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
             type: "success",
           });
         }
+        DeviceEventEmitter.emit("ClubRefetch");
       } else {
         console.log(`mutation success but please check status code`);
         console.log(`status: ${res.status}`);
@@ -262,14 +264,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
     }
   }, [isToggle]);
 
-  useEffect(() => {
-    return () => {
-      DeviceEventEmitter.emit("ClubRefetch");
-      DeviceEventEmitter.emit("SchedulesRefetch");
-    };
-  }, []);
-
-  const goToScreen = (screen: keyof RootStackParamList) => {
+  const goToScreen = (screen: keyof ClubStackParamList) => {
     return navigate(screen, { clubData: data });
   };
 

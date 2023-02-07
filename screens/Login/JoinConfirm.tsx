@@ -101,12 +101,12 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
 
   const mutation = useMutation(UserApi.registerUserInfo, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
-        console.log(`success`);
+      if (res.status === 200) {
         navigate("LoginStack", {
           screen: "JoinStepSuccess",
           email,
           password,
+          token: res.token,
         });
       } else if (res.status === 404) {
         console.log(res);
@@ -119,14 +119,17 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
       } else {
         console.log(`user register mutation success but please check status code`);
         console.log(res);
-        toast.show(`${res.error} (Error Code: ${res.status})`, {
+        toast.show(`회원가입에 실패했습니다. (Error Code: ${res.status})`, {
           type: "warning",
         });
       }
     },
     onError: (error) => {
-      console.log("--- Error ---");
+      console.log("--- regeister Error ---");
       console.log(`error: ${error}`);
+      toast.show(`회원가입에 실패했습니다. (Error Code: ${error})`, {
+        type: "warning",
+      });
     },
   });
 
@@ -142,8 +145,6 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
     };
 
     const requestData: SignUp = data;
-
-    console.log(requestData);
 
     mutation.mutate(requestData);
   };

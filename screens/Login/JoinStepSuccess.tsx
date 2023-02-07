@@ -2,10 +2,10 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { CommonApi, LoginRequest, UserApi, UserInfoResponse } from "../../api";
-import { useDispatch } from "react-redux";
-import { login, updateUser } from "../../store/Actions";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
+import { useAppDispatch } from "../../redux/store";
+import { login } from "../../redux/slices/auth";
 
 const Container = styled.View`
   width: 100%;
@@ -78,59 +78,68 @@ const Error = styled.Text`
 const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   navigation: { navigate },
   route: {
-    params: { email, password },
+    params: { email, password, token },
   },
 }) => {
-  const dispatch = useDispatch();
-  const [token, setToken] = useState<string>("");
+  const dispatch = useAppDispatch();
   const toast = useToast();
-  useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo, {
+  const [userToken, setUserToken] = useState<string>(token ?? "");
+  const [go, setGo] = useState<boolean>(false);
+  useQuery<UserInfoResponse>(["getUserInfo", userToken], UserApi.getUserInfo, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
-        dispatch(updateUser(res.data));
-        dispatch(login(token));
+      if (res.status === 200) {
+        dispatch(login({ user: res.data, token }));
       } else {
+        console.log(`get user info query success but please check status code`);
         console.log(res);
-        toast.show(`유저 정보를 불러올 수 없습니다.`, {
+        toast.show(`유저 정보를 불러오지 못했습니다. (Error Code: ${res.status})`, {
           type: "warning",
         });
       }
     },
     onError: (error) => {
+      console.log("--- getUserInfo Error ---");
       console.log(error);
+      toast.show(`유저 정보를 불러오지 못했습니다. (Error Code: ${error})`, {
+        type: "warning",
+      });
     },
-    enabled: token ? true : false,
+    enabled: go,
   });
 
-  const mutation = useMutation(CommonApi.getJWT, {
+  const mutation = useMutation(CommonApi.getUserToken, {
     onSuccess: (res) => {
-      console.log(res.status);
-      setToken(res.token);
+      if (res.status === 200) {
+        setUserToken(res.token);
+        setGo(true);
+      } else {
+        console.log(`get user token mutation success but please check status code`);
+        console.log(res);
+        toast.show(`유저 토큰을 불러오지 못했습니다. (Error Code: ${res.status})`, {
+          type: "warning",
+        });
+      }
     },
     onError: (error) => {
-      console.log("--- Error ---");
+      console.log("--- getUserToken Error ---");
       console.log(error);
-      // Toast Message 출력.
+      toast.show(`유저 토큰을 불러오지 못했습니다. (Error Code: ${error})`, {
+        type: "warning",
+      });
     },
   });
 
   const onSubmit = () => {
-    const token = {
+    if (userToken !== "") {
+      setGo(true);
+      return;
+    }
+    const requestData: LoginRequest = {
       email,
       password,
     };
 
-    const requestData: LoginRequest = token;
-
-    console.log(requestData);
-
     mutation.mutate(requestData);
-  };
-
-  const goToNext = () => {
-    navigate("LoginStack", {
-      screen: "Login",
-    });
   };
 
   return (

@@ -1,12 +1,13 @@
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useRef, useState } from "react";
-import { useEffect } from "react";
-import { ActivityIndicator, FlatList, useWindowDimensions, Animated, View, Text, TouchableOpacity } from "react-native";
-import { QueryClient, useInfiniteQuery, useQuery, useQueryClient } from "react-query";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity, DeviceEventEmitter } from "react-native";
+import FastImage from "react-native-fast-image";
+import { useInfiniteQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { Feed, FeedApi, FeedsResponse } from "../../api";
 import CustomText from "../../components/CustomText";
+import { RootState } from "../../redux/store/reducers";
 import { ClubFeedParamList, ClubFeedScreenProps } from "../../Types/Club";
 
 const Loader = styled.View`
@@ -15,7 +16,7 @@ const Loader = styled.View`
   align-items: center;
 `;
 
-const FeedImage = styled.Image<{ size: number }>`
+const FeedImage = styled(FastImage)<{ size: number }>`
   width: ${(props: any) => props.size}px;
   height: ${(props: any) => props.size}px;
 `;
@@ -42,7 +43,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   offsetY,
   headerDiff,
 }) => {
-  const token = useSelector((state: any) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -76,9 +77,22 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     setRefreshing(false);
   };
 
-  useFocusEffect(() => {
-    console.log("ClubFeed - useFocuseEffect");
-  });
+  useEffect(() => {
+    console.log("ClubFeed - add listner");
+    let clubFeedSubscription = DeviceEventEmitter.addListener("ClubFeedRefetch", () => {
+      console.log("ClubFeed - Club Feed Refetch Event");
+      feedsRefetch();
+    });
+
+    return () => {
+      clubFeedSubscription.remove();
+    };
+  }, []);
+
+  const goToClubFeedDetail = (index: number) => {
+    let feedData = feeds?.pages?.map((page) => page?.responses?.content).flat();
+    return navigate("ClubStack", { screen: "ClubFeedDetail", clubData, feedData, targetIndex: index });
+  };
 
   return feedsLoading ? (
     <Loader>
@@ -117,7 +131,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
         </EmptyView>
       )}
       renderItem={({ item, index }: { item: Feed; index: number }) => (
-        <TouchableOpacity style={index % 3 === 1 ? { marginHorizontal: 1 } : {}}>
+        <TouchableOpacity key={String(index)} onPress={() => goToClubFeedDetail(index)} style={index % 3 === 1 ? { marginHorizontal: 1 } : {}}>
           <FeedImage size={feedSize} source={item?.imageUrls[0] ? { uri: item.imageUrls[0] } : require("../../assets/basic.jpg")} />
         </TouchableOpacity>
       )}

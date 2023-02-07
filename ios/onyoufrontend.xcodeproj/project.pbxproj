@@ -307,7 +307,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2023011013;
+				CURRENT_PROJECT_VERSION = 2023020101;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = P83ZS7XR97;
 				ENABLE_BITCODE = NO;
@@ -316,7 +316,7 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = onyoufrontend/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = onyou;
+				INFOPLIST_KEY_CFBundleDisplayName = OnYou;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -348,11 +348,11 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2023011013;
+				CURRENT_PROJECT_VERSION = 2023020101;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = P83ZS7XR97;
 				INFOPLIST_FILE = onyoufrontend/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = onyou;
+				INFOPLIST_KEY_CFBundleDisplayName = OnYou;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

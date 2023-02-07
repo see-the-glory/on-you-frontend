@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { ClubApi, ClubApproveRequest, ClubRejectRequest } from "../../api";
 import { useMutation } from "react-query";
 import { useToast } from "react-native-toast-notifications";
+import { RootState } from "../../redux/store/reducers";
 
 const SCREEN_PADDING_SIZE = 20;
 
@@ -71,7 +72,7 @@ const ClubApplication = ({
   },
   navigation: { navigate, goBack, setOptions },
 }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const rejectMutation = useMutation(ClubApi.rejectToClubJoin, {
     onSuccess: (res) => {

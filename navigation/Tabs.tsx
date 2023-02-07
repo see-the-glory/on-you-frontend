@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Search from "../screens/Search";
 import Home from "../screens/Home";
 import Clubs from "../screens/Clubs";
 import Profile from "../screens/Profile";
@@ -9,7 +8,6 @@ import styled from "styled-components/native";
 import { Animated, useWindowDimensions, View } from "react-native";
 import { MainBottomTabParamList } from "../Types/Club";
 import { Shadow } from "react-native-shadow-2";
-import { Host } from "react-native-portalize";
 
 const Container = styled.View`
   height: 70px;
@@ -36,17 +34,17 @@ const ShadowBox = styled.View`
 
 const SlidingTabContainer = styled.View<{ tabWidth: number }>`
   position: absolute;
-  width: ${(props) => props.tabWidth}px;
+  width: ${(props: any) => props.tabWidth}px;
   left: 0;
   align-items: center;
   box-shadow: 1px 1px 3px gray;
 `;
 
 const Circle = styled.View<{ tabWidth: number }>`
-  width: ${(props) => props.tabWidth * 1.8}px;
-  height: ${(props) => props.tabWidth * 1.9}px;
+  width: ${(props: any) => props.tabWidth * 1.8}px;
+  height: ${(props: any) => props.tabWidth * 1.9}px;
   bottom: 18px;
-  border-radius: ${(props) => props.tabWidth}px;
+  border-radius: ${(props: any) => props.tabWidth}px;
   background-color: white;
 `;
 
@@ -120,20 +118,16 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
 };
 
 const Tabs = () => (
-  <Host
-    children={
-      <Tab.Navigator
-        initialRouteName="Clubs"
-        sceneContainerStyle={{ backgroundColor: "white" }}
-        screenOptions={{ tabBarShowLabel: false, headerShown: false }}
-        tabBar={(props) => <CustomTabBar {...props} />}
-      >
-        <Tab.Screen name="Home" component={Home} initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }} options={{ headerShown: false }} />
-        <Tab.Screen name="Clubs" component={Clubs} initialParams={{ activeIcon: "grid", inActiveIcon: "grid-outline" }} options={{}} />
-        <Tab.Screen name="Profile" component={Profile} initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }} options={{}} />
-      </Tab.Navigator>
-    }
-  ></Host>
+  <Tab.Navigator
+    initialRouteName="Home"
+    sceneContainerStyle={{ backgroundColor: "white" }}
+    screenOptions={{ tabBarShowLabel: false, headerShown: false }}
+    tabBar={(props) => <CustomTabBar {...props} />}
+  >
+    <Tab.Screen name="Home" component={Home} initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }} options={{ headerShown: false }} />
+    <Tab.Screen name="Clubs" component={Clubs} initialParams={{ activeIcon: "grid", inActiveIcon: "grid-outline" }} options={{}} />
+    <Tab.Screen name="Profile" component={Profile} initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }} options={{}} />
+  </Tab.Navigator>
 );
 
 export default Tabs;

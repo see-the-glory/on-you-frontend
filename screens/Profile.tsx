@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
-import { logout, updateUser } from "../store/Actions";
-import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
 import { UserApi, UserInfoResponse } from "../api";
@@ -11,6 +9,9 @@ import { DeviceEventEmitter } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../components/CustomText";
 import CircleIcon from "../components/CircleIcon";
+import { RootState } from "../redux/store/reducers";
+import { useAppDispatch } from "../redux/store";
+import { logout, updateUser } from "../redux/slices/auth";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -119,9 +120,11 @@ const EditBox = styled.View`
   justify-content: center;
 `;
 
+const EditButton = styled.TouchableWithoutFeedback``;
+
 const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation: { navigate } }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
-  const dispatch = useDispatch();
+  const token = useSelector((state: RootState) => state.auth.token);
+  const dispatch = useAppDispatch();
   const toast = useToast();
 
   const {
@@ -131,7 +134,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
-        dispatch(updateUser(res.data));
+        dispatch(updateUser({ user: res.data }));
       } else {
         console.log(`getUserInfo success but please check status code`);
         console.log(`status: ${res.status}`);
@@ -196,7 +199,9 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
           <Title>{userInfo?.data?.name}</Title>
         </InfoBox>
         <EditBox>
-          <MaterialCommunityIcons name="pencil-outline" color="#295AF5" size={20} onPress={goToEditProfile} />
+          <EditButton onPress={goToEditProfile}>
+            <MaterialCommunityIcons name="pencil-outline" color="#295AF5" size={20} />
+          </EditButton>
         </EditBox>
       </UserInfoSection>
       <MenuWrapper>

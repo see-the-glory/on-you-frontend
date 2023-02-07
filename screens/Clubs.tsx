@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
-import { ActivityIndicator, FlatList, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Platform, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
 import { Feather, MaterialCommunityIcons, Ionicons, createIconSetFromFontello } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
@@ -11,6 +11,7 @@ import CustomText from "../components/CustomText";
 import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { Slider } from "@miblanchard/react-native-slider";
+import { RootState } from "../redux/store/reducers";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -170,8 +171,8 @@ const SortingItemButton = styled.TouchableOpacity`
 const SortingItemText = styled(CustomText)<{ selected: boolean }>`
   font-size: 15px;
   line-height: 20px;
-  color: ${(props) => (props.selected ? "#FF714B" : "#b0b0b0")};
-  font-family: ${(props) => (props.selected ? "NotoSansKR-Medium" : "NotoSansKR-Regular")};
+  color: ${(props: any) => (props.selected ? "#FF714B" : "#b0b0b0")};
+  font-family: ${(props: any) => (props.selected ? "NotoSansKR-Medium" : "NotoSansKR-Regular")};
 `;
 
 interface ClubSortItem {
@@ -181,7 +182,7 @@ interface ClubSortItem {
 }
 
 const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
-  const token = useSelector((state) => state.AuthReducers.authToken);
+  const token = useSelector((state: RootState) => state.auth.token);
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
     token,
@@ -205,6 +206,9 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const { ref: sortingSheetRef, open: openSortingSheet, close: closeSortingSheet } = useModalize();
   const [sortItem, setSortItem] = useState<ClubSortItem[]>();
   const [selectedSortIndex, setSelectedSortIndex] = useState<number>(0);
+  const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const colSize = Math.round(SCREEN_WIDTH / 2);
+
   const {
     isLoading: clubsLoading,
     data: clubs,
@@ -213,9 +217,9 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     refetch: clubsRefetch,
     fetchNextPage,
   } = useInfiniteQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
-    getNextPageParam: (currentPage) => {
-      if (currentPage) {
-        return currentPage.hasNext === false ? null : currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor;
+    getNextPageParam: (lastPage) => {
+      if (lastPage) {
+        return lastPage.hasNext === false ? null : lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor;
       }
     },
     onSuccess: (res) => {
@@ -421,7 +425,8 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               data={clubs?.pages?.map((page) => page?.responses?.content).flat()}
               columnWrapperStyle={{ justifyContent: "space-between" }}
               ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
-              ListFooterComponent={() => <View style={{ height: 60 }} />}
+              ListFooterComponent={() => <View />}
+              ListFooterComponentStyle={{ marginBottom: 60 }}
               numColumns={2}
               keyExtractor={(item: Club, index: number) => String(index)}
               renderItem={({ item, index }: { item: Club; index: number }) => (
@@ -439,6 +444,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                     clubShortDesc={item.clubShortDesc}
                     categories={item.categories}
                     recruitStatus={item.recruitStatus}
+                    colSize={colSize}
                   />
                 </TouchableOpacity>
               )}

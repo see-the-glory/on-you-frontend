@@ -1,4 +1,5 @@
 import React from "react";
+import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import CustomText from "./CustomText";
 
@@ -31,7 +32,7 @@ const Backplate = styled.View<{ size: number }>`
   background-color: white;
 `;
 
-const IconImage = styled.Image<{ size: number }>`
+const IconImage = styled(FastImage)<{ size: number }>`
   width: ${(props: any) => props.size - 2}px;
   height: ${(props: any) => props.size - 2}px;
   border-radius: ${(props: any) => Math.ceil(props.size / 2)}px;
