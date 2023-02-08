@@ -145,7 +145,16 @@ function ImageSelecter(props: FeedCreateScreenProps) {
       multiple: true,
       height: 1080,
       width: 1080,
+      minFiles: 1,
+      maxFiles: 3,
     });
+
+    if (images.length > 3) {
+      toast.show(`이미지는 3개까지 선택할 수 있습니다.`, {
+        type: "warning",
+      });
+      return;
+    }
 
     let url = [];
     for (let i = 0; i < images.length; i++) {
