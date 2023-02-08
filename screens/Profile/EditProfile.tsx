@@ -14,6 +14,8 @@ import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import CustomTextInput from "../../components/CustomTextInput";
 import { RootState } from "../../redux/store/reducers";
+import FastImage from "react-native-fast-image";
+import CircleIcon from "../../components/CircleIcon";
 
 const Container = styled.ScrollView`
   padding-left: 15px;
@@ -27,10 +29,10 @@ const ImagePickerView = styled.View`
   margin: 20px 0;
 `;
 
-const ImagePickerWrap = styled.View`
-  width: 85px;
-  height: 85px;
-  border-radius: 50px;
+const ImagePickerWrap = styled.View<{ size: number }>`
+  width: ${(props: any) => (props.size ? props.size + 5 : 0)}px;
+  height: ${(props: any) => (props.size ? props.size + 5 : 0)}px;
+  border-radius: ${(props: any) => (props.size ? props.size : 0)}px;
   justify-content: center;
   align-items: center;
   border: 1px;
@@ -40,18 +42,13 @@ const ImagePickerWrap = styled.View`
   margin-top: 15px;
 `;
 
-const ImagePickerButton = styled.TouchableOpacity`
-  width: 80px;
-  height: 80px;
+const ImagePickerButton = styled.TouchableOpacity<{ size: number }>`
+  width: ${(props: any) => (props.size ? props.size : 0)}px;
+  height: ${(props: any) => (props.size ? props.size : 0)}px;
   border-radius: 50px;
   justify-content: center;
   align-items: center;
-`;
-
-const PickedImage = styled.Image`
-  width: 100%;
-  height: 100%;
-  border-radius: 50px;
+  border: 0.2px solid #c4c4c4;
 `;
 
 const ProfileText = styled(CustomText)`
@@ -106,9 +103,7 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
   const [organizationName, setOrganizationName] = useState<string>(userData?.organizationName);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const toast = useToast();
-
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
-  const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 4) * 3);
+  const imageSize = 85;
 
   const mutation = useMutation(UserApi.updateUserInfo, {
     onSuccess: (res) => {
@@ -212,9 +207,9 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={100} style={{ flex: 1 }}>
         <Container>
           <ImagePickerView>
-            <ImagePickerWrap>
-              <ImagePickerButton onPress={pickImage} activeOpacity={0.8}>
-                <PickedImage height={imageHeight} source={{ uri: imageURI }} />
+            <ImagePickerWrap size={imageSize}>
+              <ImagePickerButton size={imageSize} onPress={pickImage} activeOpacity={0.8}>
+                <CircleIcon size={imageSize} uri={imageURI} />
               </ImagePickerButton>
             </ImagePickerWrap>
             <ProfileText onPress={pickImage}>프로필 사진 설정</ProfileText>

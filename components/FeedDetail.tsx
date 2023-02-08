@@ -5,7 +5,7 @@ import styled from "styled-components/native";
 import CustomText from "./CustomText";
 import CircleIcon from "./CircleIcon";
 import { Feed } from "../api";
-import { NativeSyntheticEvent, ScrollView, TextLayoutEventData, TouchableOpacity } from "react-native";
+import { NativeSyntheticEvent, ScrollView, TextLayoutEventData, TouchableOpacity, View } from "react-native";
 import moment from "moment";
 import Carousel from "./Carousel";
 import Tag from "./Tag";
@@ -128,7 +128,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
       <Container>
         <HeaderView padding={20} height={this.props.headerHeight}>
           <HeaderLeftView>
-            <CircleIcon uri={this.props.feedData.thumbnail} size={46} kerning={10} />
+            <CircleIcon uri={this.props.feedData.thumbnail} size={46} kerning={6} />
             <HeaderNameView>
               <HeaderText>{this.props.feedData.userName}</HeaderText>
               {this.props.showClubName ? (
@@ -158,7 +158,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
             <FastImage
               key={String(index)}
               source={item ? { uri: item } : require("../assets/basic.jpg")}
-              style={{ width: this.props.feedSize, height: this.props.feedSize, backgroundColor: "#B7B7B7" }}
+              style={{ width: this.props.feedSize, height: this.props.feedSize }}
               resizeMode={FastImage.resizeMode.contain}
             />
           )}
@@ -166,19 +166,21 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
         />
         <ContentView padding={20}>
           <InformationView height={this.props.infoHeight}>
-            <InformationLeftView>
-              <InformationButton onPress={() => (this.props.likeFeed ? this.props.likeFeed(this.props.feedIndex, this.props.feedData.id) : {})}>
-                {this.props.feedData.likeYn ? <Ionicons name="heart-outline" size={24} color="red" /> : <Ionicons name="heart-outline" size={24} color="black" />}
-                <CountingNumber>{this.props.feedData.likesCount}</CountingNumber>
-              </InformationButton>
-              <InformationButton onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData.id)}>
-                <Ionicons name="md-chatbox-ellipses" size={24} color="black" />
-                <CountingNumber>{this.props.feedData.commentCount}</CountingNumber>
-              </InformationButton>
-            </InformationLeftView>
-            <InformationRightView>
-              <CreatedTime>{moment(this.props.feedData.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
-            </InformationRightView>
+            <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <InformationLeftView>
+                <InformationButton onPress={() => (this.props.likeFeed ? this.props.likeFeed(this.props.feedIndex, this.props.feedData.id) : {})}>
+                  {this.props.feedData.likeYn ? <Ionicons name="heart" size={24} color="#FF551F" /> : <Ionicons name="heart-outline" size={24} color="black" />}
+                  <CountingNumber>{this.props.feedData.likesCount}</CountingNumber>
+                </InformationButton>
+                <InformationButton onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData.id)}>
+                  <Ionicons name="md-chatbox-ellipses" size={24} color="black" />
+                  <CountingNumber>{this.props.feedData.commentCount}</CountingNumber>
+                </InformationButton>
+              </InformationLeftView>
+              <InformationRightView>
+                <CreatedTime>{moment(this.props.feedData.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
+              </InformationRightView>
+            </View>
           </InformationView>
           <ScrollView style={{ height: 0 }}>
             <ContentText onTextLayout={onTextLayout}>{this.props.feedData.content}</ContentText>

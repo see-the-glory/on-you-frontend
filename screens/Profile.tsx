@@ -50,7 +50,6 @@ const LogoImage = styled.Image`
 const InfoBox = styled.View`
   align-items: flex-start;
   justify-content: center;
-  margin-left: 20px;
 `;
 
 const Title = styled.Text`
@@ -193,7 +192,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   return (
     <Container>
       <UserInfoSection>
-        <CircleIcon size={65} uri={userInfo?.data?.thumbnail} />
+        <CircleIcon size={65} uri={userInfo?.data?.thumbnail} kerning={15} />
         <InfoBox>
           <Email>{userInfo?.data?.email}</Email>
           <Title>{userInfo?.data?.name}</Title>
