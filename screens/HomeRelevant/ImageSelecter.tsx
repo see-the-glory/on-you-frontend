@@ -31,7 +31,6 @@ const ImagePickerView = styled.View`
   width: 100%;
   height: ${Platform.OS === "android" ? 60 : 62}%;
   align-items: center;
-  background-color: burlywood;
 `;
 
 const PickBackground = styled.ImageBackground`
@@ -314,7 +313,7 @@ function ImageSelecter(props: FeedCreateScreenProps) {
   return (
     <Container>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "position" : "padding"} style={{ flex: 1 }}>
+        <KeyboardAvoidingView behavior={"position"} style={{ flex: 1 }}>
           <>
             <ImagePickerView>
               {imageURL.length !== 0 ? (
@@ -329,7 +328,6 @@ function ImageSelecter(props: FeedCreateScreenProps) {
                   />
                 </PinchGestureHandler>
               ) : (
-                //Todo 사진 사이즈 맞추기
                 <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={1}>
                   <PickBackground>
                     {alert ? (
@@ -357,8 +355,8 @@ function ImageSelecter(props: FeedCreateScreenProps) {
                   </SelectImageArea>
                 ))}
               </MyImage>
-              <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>
-              {/*  Todo 사진뜰때 뜨도록 수정*/}
+              {imageURL.length !== 0 ? (
+                  <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>) :null}
             </SelectImageView>
             <FeedText
               placeholder="사진과 함께 남길 게시글을 작성해 보세요."
