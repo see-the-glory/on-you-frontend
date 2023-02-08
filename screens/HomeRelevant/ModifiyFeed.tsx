@@ -368,7 +368,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
             {/* <TouchableOpacity>
               <Ionicons name="pencil" size={18} style={{left: 3, top: 2}} color="gray" />
             </TouchableOpacity>*/}
-            <Modalize ref={modalizeRef} modalHeight={500} handlePosition="inside" modalStyle={{}} >
+            <Modalize ref={modalizeRef} modalHeight={500} handlePosition="inside" modalStyle={{top: 300}} >
               <ModalContainer>
                 <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                   <IntroTextLeft>모임 변경</IntroTextLeft>
