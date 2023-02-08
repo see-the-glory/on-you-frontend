@@ -1,7 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Feed } from "../../api";
 
-const initialState = {
-  data: {},
+interface ClubState {
+  feeds: Feed[];
+  homeScrollY: number;
+  scheduleScrollX: number;
+}
+
+const initialState: ClubState = {
+  feeds: [],
   homeScrollY: 0,
   scheduleScrollX: 0,
 };
@@ -17,9 +24,25 @@ const clubSlice = createSlice({
       state.scheduleScrollX = action.payload.scrollX;
     },
     deleteClub(state) {
-      state.data = {};
+      state.feeds = [];
       state.homeScrollY = 0;
       state.scheduleScrollX = 0;
+    },
+    refreshFeed(state, action) {
+      state.feeds = [].concat(action.payload);
+    },
+    addFeed(state, action) {
+      state.feeds = state.feeds.concat(action.payload);
+    },
+    likeToggle(state, action) {
+      if (state.feeds[action.payload].likeYn) state.feeds[action.payload].likesCount--;
+      else state.feeds[action.payload].likesCount++;
+      state.feeds[action.payload].likeYn = !state.feeds[action.payload].likeYn;
+    },
+    updateCommentCount(state, action) {
+      if (state.feeds.length > action.payload.feedIndex) {
+        state.feeds[action.payload.feedIndex].commentCount = action.payload.count;
+      }
     },
   },
   // extraReducer는 비동기 액션 생성시 필요

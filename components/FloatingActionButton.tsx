@@ -40,7 +40,7 @@ const FloatingButton = styled.TouchableOpacity`
 
 const AnimatedFloatingMainButton = Animated.createAnimatedComponent(FloatingMainButton);
 
-const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, recruitStatus, onPressEdit, onPressJoin }) => {
+const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, recruitStatus, onPressEdit, onPressJoin, onPressFeed }) => {
   const [open, setOpen] = useState(0);
   const animation = useRef(new Animated.Value(0)).current;
   const rotation = animation.interpolate({
@@ -52,7 +52,8 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, rec
     outputRange: [0, 1],
   });
   const onPressImagePlus = () => {
-    console.log("onPress Feed Creation");
+    toggleMenu();
+    onPressFeed();
   };
   const onPressPencilOutline = () => {
     toggleMenu();

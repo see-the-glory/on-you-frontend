@@ -109,7 +109,7 @@ const Home: React.FC<HomeScreenProps> = () => {
   const onRefresh = async () => {
     setRefreshing(true);
     const result = await feedsRefetch();
-    dispatch(feedSlice.actions.init(result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? []));
+    dispatch(feedSlice.actions.refreshFeed(result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? []));
     setRefreshing(false);
   };
 

@@ -109,6 +109,20 @@ const ClubTopTabs = ({
     navigate("ClubJoin", { clubData: data });
   };
 
+  const goFeedCreation = () => {
+    if (me === undefined) {
+      toast.show("유저 정보를 알 수 없습니다.", {
+        type: "warning",
+      });
+      return;
+    }
+    navigate("HomeStack", {
+      screen: "ImageSelecter",
+      userId: me?.id,
+      clubId: data.id,
+    });
+  };
+
   const goClubNotification = () => {
     navigate("ClubNotification", { clubData: data, clubRole: clubRole?.data });
   };
@@ -284,7 +298,11 @@ const ClubTopTabs = ({
         </TopTab.Navigator>
       </Animated.View>
 
-      {clubRoleLoading ? <></> : <FloatingActionButton role={clubRole?.data?.role} recruitStatus={data?.recruitStatus} onPressEdit={goClubEdit} onPressJoin={goClubJoin} />}
+      {clubRoleLoading ? (
+        <></>
+      ) : (
+        <FloatingActionButton role={clubRole?.data?.role} recruitStatus={data?.recruitStatus} onPressEdit={goClubEdit} onPressJoin={goClubJoin} onPressFeed={goFeedCreation} />
+      )}
     </Container>
   );
 };

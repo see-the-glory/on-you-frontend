@@ -14,6 +14,7 @@ import { SwipeListView, SwipeRow } from "react-native-swipe-list-view";
 import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
 import feedSlice from "../../redux/slices/feed";
+import clubSlice from "../../redux/slices/club";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -82,7 +83,7 @@ const HiddenItemButton = styled.TouchableOpacity<{ width: number }>`
 const FeedComments = ({
   navigation: { setOptions, navigate, goBack },
   route: {
-    params: { feedIndex, feedId },
+    params: { feedIndex, feedId, clubId },
   },
 }) => {
   const token = useSelector((state: RootState) => state.auth.token);
@@ -99,7 +100,8 @@ const FeedComments = ({
   } = useQuery<FeedCommentsResponse>(["getFeedComments", token, feedId], FeedApi.getFeedComments, {
     onSuccess: (res) => {
       if (res.status === 200) {
-        dispatch(feedSlice.actions.updateCommentCount({ feedIndex, count: res.data.length }));
+        if (clubId) dispatch(clubSlice.actions.updateCommentCount({ feedIndex, count: res.data.length }));
+        else dispatch(feedSlice.actions.updateCommentCount({ feedIndex, count: res.data.length }));
       } else {
         console.log("--- Error getFeedComments ---");
         console.log(res);

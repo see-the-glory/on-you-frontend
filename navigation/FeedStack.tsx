@@ -6,7 +6,7 @@ const NativeStack = createNativeStackNavigator();
 
 const FeedStack = ({
   route: {
-    params: { feedIndex, feedId },
+    params: { feedIndex, feedId, clubId },
   },
   navigation: { navigate },
 }) => {
@@ -22,7 +22,7 @@ const FeedStack = ({
       <NativeStack.Screen
         name="FeedComments"
         component={FeedComments}
-        initialParams={{ feedIndex, feedId }}
+        initialParams={{ feedIndex, feedId, clubId }}
         options={{
           title: "댓글",
         }}

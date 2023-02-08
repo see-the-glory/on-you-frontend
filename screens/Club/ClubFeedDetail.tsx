@@ -5,13 +5,15 @@ import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Feed, FeedApi, FeedDeleteRequest, FeedReportRequest } from "../../api";
+import { Feed, FeedApi, FeedDeleteRequest, FeedLikeRequest, FeedReportRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import FeedDetail from "../../components/FeedDetail";
 import { ClubFeedDetailScreenProps } from "../../Types/Club";
 import FeedReportModal from "../Feed/FeedReportModal";
 import FeedOptionModal from "../Feed/FeedOptionModal";
 import { RootState } from "../../redux/store/reducers";
+import { useAppDispatch } from "../../redux/store";
+import clubSlice from "../../redux/slices/club";
 
 const Container = styled.View``;
 const HeaderTitleView = styled.View`
@@ -34,11 +36,13 @@ const HeaderText = styled(CustomText)`
 const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   navigation: { setOptions, navigate },
   route: {
-    params: { clubData, feedData, targetIndex },
+    params: { clubData, targetIndex },
   },
 }) => {
   const token = useSelector((state: RootState) => state.auth.token);
   const me = useSelector((state: RootState) => state.auth.user);
+  const feeds = useSelector((state: RootState) => state.club.feeds);
+  const dispatch = useAppDispatch();
   const toast = useToast();
   const { ref: myFeedOptionRef, open: openMyFeedOption, close: closeMyFeedOption } = useModalize();
   const { ref: otherFeedOptionRef, open: openOtherFeedOption, close: closeOtherFeedOption } = useModalize();
@@ -106,7 +110,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     openComplainOption();
   };
   const goToFeedComments = (feedIndex: number, feedId: number) => {
-    navigate("FeedStack", { screen: "FeedComments", feedIndex, feedId });
+    navigate("FeedStack", { screen: "FeedComments", feedIndex, feedId, clubId: clubData.id });
   };
   const openFeedOption = (userId: number, feedId: number, feedData: Feed) => {
     setSelectFeedId(feedId);
@@ -170,6 +174,37 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     complainMutation.mutate(requestData);
   };
 
+  const loadMore = () => {
+    console.log("ClubFeedDetail - Load more club feed!");
+    DeviceEventEmitter.emit("ClubFeedLoadmore");
+  };
+
+  const likeFeedMutation = useMutation(FeedApi.likeFeed);
+  const likeFeed = useCallback((feedIndex: number, feedId: number) => {
+    const requestData: FeedLikeRequest = {
+      data: { id: feedId },
+      token,
+    };
+    likeFeedMutation.mutate(requestData, {
+      onSuccess: (res) => {
+        if (res.status === 200) {
+          dispatch(clubSlice.actions.likeToggle(feedIndex));
+        } else {
+          console.log(res);
+          toast.show(`Like Feed Fail (Error Code: ${res.status}`, {
+            type: "warning",
+          });
+        }
+      },
+      onError: (error) => {
+        console.log(error);
+        toast.show(`Error Code: ${error}`, {
+          type: "warning",
+        });
+      },
+    });
+  }, []);
+
   useLayoutEffect(() => {
     setOptions({
       headerTitle: () => (
@@ -194,6 +229,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         contentHeight={feedDetailContentHeight}
         openFeedOption={openFeedOption}
         goToFeedComments={goToFeedComments}
+        likeFeed={likeFeed}
       />
     ),
     []
@@ -214,8 +250,8 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       <FlatList
         // refreshing={refreshing}
         // onRefresh={onRefresh}
-        // onEndReached={loadMore}
-        data={feedData}
+        onEndReached={loadMore}
+        data={feeds}
         ItemSeparatorComponent={ItemSeparatorComponent}
         ListFooterComponent={ListFooterComponent}
         keyExtractor={keyExtractor}

@@ -13,7 +13,7 @@ const feedSlice = createSlice({
   name: "feed",
   initialState,
   reducers: {
-    init(state, action) {
+    refreshFeed(state, action) {
       state.data = [].concat(action.payload);
     },
     addFeed(state, action) {

@@ -14,7 +14,7 @@ const NativeStack = createNativeStackNavigator();
 
 const ClubStack = ({
   route: {
-    params: { clubData, scheduleData, clubRole, feedData, targetIndex },
+    params: { clubData, scheduleData, clubRole, targetIndex },
   },
   navigation: { navigate, goBack },
 }) => {
@@ -102,7 +102,7 @@ const ClubStack = ({
       <NativeStack.Screen
         name="ClubFeedDetail"
         component={ClubFeedDetail}
-        initialParams={{ clubData, feedData, targetIndex }}
+        initialParams={{ clubData, targetIndex }}
         options={{
           headerBackVisible: false,
           headerLeft: () => (

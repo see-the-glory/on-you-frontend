@@ -111,6 +111,7 @@ export interface ClubHomeFloatingButtonProps {
   recruitStatus?: "OPEN" | "CLOSE" | null;
   onPressEdit: Function;
   onPressJoin: Function;
+  onPressFeed: Function;
 }
 
 export interface RefinedSchedule extends Schedule {
