@@ -144,7 +144,6 @@ const Home: React.FC<HomeScreenProps> = () => {
   const deleteFeedMutation = useMutation(FeedApi.deleteFeed, {
     onSuccess: (res) => {
       if (res.status === 200) {
-        console.log(res);
         toast.show(`게시글이 삭제되었습니다.`, {
           type: "success",
         });
