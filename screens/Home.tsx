@@ -63,7 +63,7 @@ const Home: React.FC<HomeScreenProps> = () => {
   const homeHeaderHeight = 50;
   const modalOptionButtonHeight = 45;
   const feedDetailHeaderHeight = 62;
-  const feedDetailInfoHeight = 36;
+  const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
   const itemSeparatorGap = 20;
   const [selectFeedId, setSelectFeedId] = useState<number>(-1);
@@ -86,15 +86,18 @@ const Home: React.FC<HomeScreenProps> = () => {
     onSuccess: (res) => {
       dispatch(feedSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
     },
-    onError: (err) => {
-      console.log(err);
+    onError: (error) => {
+      console.log(error);
+      toast.show(`Error Code: ${error}`, {
+        type: "warning",
+      });
     },
   });
 
   useEffect(() => {
     console.log("Home - add listner");
     let homeFeedSubscription = DeviceEventEmitter.addListener("HomeFeedRefetch", () => {
-      feedsRefetch();
+      onRefresh();
     });
 
     return () => {
@@ -105,8 +108,8 @@ const Home: React.FC<HomeScreenProps> = () => {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await queryClient.refetchQueries(["feeds"]);
-    dispatch(feedSlice.actions.init(queryFeedData?.pages?.map((page) => page?.responses?.content).flat() ?? []));
+    const result = await feedsRefetch();
+    dispatch(feedSlice.actions.init(result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? []));
     setRefreshing(false);
   };
 

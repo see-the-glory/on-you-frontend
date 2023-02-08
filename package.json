@@ -38,6 +38,7 @@
     "react-native-fast-image": "^8.6.3",
     "react-native-flipper": "^0.177.0",
     "react-native-gesture-handler": "^2.8.0",
+    "react-native-image-crop-picker": "^0.38.0",
     "react-native-image-picker": "^4.10.1",
     "react-native-image-slider-banner": "^1.0.3",
     "react-native-material-menu": "^2.0.0",
@@ -57,7 +58,6 @@
     "react-query": "^3.39.2",
     "react-redux": "^8.0.5",
     "redux": "^4.2.0",
-    "redux-flipper": "^2.0.2",
     "redux-thunk": "^2.4.2",
     "styled-components": "^5.3.6"
   },

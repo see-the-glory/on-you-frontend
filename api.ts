@@ -865,7 +865,8 @@ const selectMyClubs = ({ queryKey }: any) => {
       authorization: `${token}`,
     },
   }).then(async (res) => {
-    return { status: res.status, ...(await res.json()) };
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
   });
 };
 

@@ -1,25 +1,18 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, {useEffect, useLayoutEffect, useState} from "react";
-import {ActivityIndicator, FlatList, View, Text, TouchableOpacity, DeviceEventEmitter} from "react-native";
-import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
+import React, { useLayoutEffect } from "react";
+import { ActivityIndicator, FlatList, View, Text, TouchableOpacity, DeviceEventEmitter } from "react-native";
+import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Club, ClubApi, ClubResponse, ClubsParams, ClubsResponse, Feed, MyClub, MyClubResponse, UserApi } from "../../api";
+import { Club, MyClub, MyClubResponse, UserApi } from "../../api";
 import { MyClubSelectorScreenProps } from "../../types/feed";
 import CustomText from "../../components/CustomText";
-import {Entypo} from "@expo/vector-icons";
-import {useNavigation} from "@react-navigation/native";
+import { Entypo } from "@expo/vector-icons";
 const Container = styled.SafeAreaView`
   flex: 1;
-  height: 100%;
-  position: absolute;
-  width: 100%;
 `;
 
 const IntroText = styled(CustomText)`
-  text-align: left;
-  padding: 10px 0 0 20px;
-  font-size: 12px;
+  padding: 10px 0px 0px 20px;
   color: #b0b0b0;
 `;
 
@@ -104,31 +97,14 @@ const HeaderText = styled(CustomText)`
   line-height: 25px;
   bottom: 1px;
 `;
-const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
-                                                               navigation: {setOptions,navigate,goBack },
-                                                               route: {
-                                                                 params: { userId },
-                                                               },
-                                                             }) => {
+  navigation: { setOptions, navigate, goBack },
+  route: {
+    params: { userId },
+  },
+}) => {
   const token = useSelector((state: any) => state.auth.token);
-  const queryClient = useQueryClient();
-  const navigation = useNavigation();
-  const [params, setParams] = useState<ClubsParams>({
-    token,
-    categoryId: 0,
-    minMember: null,
-    maxMember: null,
-    sortType: "created",
-    orderBy: "DESC",
-    showRecruiting: 0,
-    showMy: 0,
-  });
-  const [clubId, setClubId] = useState("");
-  const [clubName, setClubName] = useState<string>("");
-  const [refreshing, setRefreshing] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const {
     isLoading: myClubInfoLoading, // true or false
@@ -143,66 +119,55 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
     });
   };
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await queryClient.refetchQueries(["selectMyClubs"]);
-    setRefreshing(false);
-  };
-
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-          <TouchableOpacity onPress={() => goBack()}>
-            <Entypo name="chevron-thin-left" size={20} color="black" />
-          </TouchableOpacity>
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
       ),
     });
-    return () => {
-      DeviceEventEmitter.emit("HomeFeedRefetch");
-    };
   }, []);
 
   return (
-      <Container>
-        <IntroText>가입한 모임 List</IntroText>
-        <ReplyContainer>
-          {loading ? (
-              <ActivityIndicator />
-          ) : (
-              <FlatList
-                  refreshing={refreshing}
-                  onRefresh={onRefresh}
-                  keyExtractor={(item: MyClub, index: number) => String(index)}
-                  data={myClub?.data}
-                  renderItem={({ item, index }: { item: MyClub; index: number }) => (
-                      <>
-                        {item.applyStatus === "APPROVED" ? (
-                            <ClubArea key={index} onPress={() => goToImageSelect(item)}>
-                              <ClubImg source={{ uri: item.thumbnail }} />
-                              <HeaderNameView>
-                                <CommentMent>
-                                  <ClubName>{item.name}</ClubName>
-                                </CommentMent>
-                                <CommentRemainder>
-                                  {item.categories?.map((name) => {
-                                    return (
-                                        <CtrgArea>
-                                          <CtgrText>
-                                            <ClubCtrgList>{name.name}</ClubCtrgList>
-                                          </CtgrText>
-                                        </CtrgArea>
-                                    );
-                                  })}
-                                </CommentRemainder>
-                              </HeaderNameView>
-                            </ClubArea>
-                        ) : null}
-                      </>
-                  )}
-              />
-          )}
-        </ReplyContainer>
-      </Container>
+    <Container>
+      <IntroText>가입한 모임 List</IntroText>
+      <ReplyContainer>
+        {myClubInfoLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <FlatList
+            keyExtractor={(item: MyClub, index: number) => String(index)}
+            data={myClub?.data}
+            renderItem={({ item, index }: { item: MyClub; index: number }) => (
+              <>
+                {item.applyStatus === "APPROVED" ? (
+                  <ClubArea key={index} onPress={() => goToImageSelect(item)}>
+                    <ClubImg source={{ uri: item.thumbnail }} />
+                    <HeaderNameView>
+                      <CommentMent>
+                        <ClubName>{item.name}</ClubName>
+                      </CommentMent>
+                      <CommentRemainder>
+                        {item.categories?.map((name) => {
+                          return (
+                            <CtrgArea>
+                              <CtgrText>
+                                <ClubCtrgList>{name.name}</ClubCtrgList>
+                              </CtgrText>
+                            </CtrgArea>
+                          );
+                        })}
+                      </CommentRemainder>
+                    </HeaderNameView>
+                  </ClubArea>
+                ) : null}
+              </>
+            )}
+          />
+        )}
+      </ReplyContainer>
+    </Container>
   );
 };
 export default MyClubSelector;

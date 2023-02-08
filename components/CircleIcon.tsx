@@ -34,6 +34,7 @@ const IconImage = styled(FastImage)<{ size: number }>`
   width: ${(props: any) => props.size - 2}px;
   height: ${(props: any) => props.size - 2}px;
   border-radius: ${(props: any) => Math.ceil(props.size / 2)}px;
+  border: 0.2px solid #c4c4c4;
 `;
 
 const CircleName = styled(CustomText)`
