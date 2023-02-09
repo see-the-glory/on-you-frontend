@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
 import { UserApi, UserInfoResponse } from "../api";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { DeviceEventEmitter } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../components/CustomText";
@@ -177,15 +177,15 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     });
   };
 
-  const goToChangePw = () => {
-    navigate("ProfileStack", {
-      screen: "ChangePw",
-    });
-  };
-
   const goToTerms = () => {
     navigate("ProfileStack", {
       screen: "Terms",
+    });
+  };
+
+  const goToAccount = () => {
+    navigate("ProfileStack", {
+      screen: "Account",
     });
   };
 
@@ -205,8 +205,17 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
       </UserInfoSection>
       <MenuWrapper>
         <TouchMenu>
+          <MenuItem onPress={goToAccount}>
+            <Entypo name="lock" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
+            <MenuItemText>계정</MenuItemText>
+            <ChevronBox>
+              <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
+            </ChevronBox>
+          </MenuItem>
+        </TouchMenu>
+        <TouchMenu>
           <MenuItem onPress={goToMyClub}>
-            <MaterialCommunityIcons name="star-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
+            <FontAwesome name="star" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
             <MenuItemText>나의 모임</MenuItemText>
             <ChevronBox>
               <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
@@ -214,27 +223,8 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
           </MenuItem>
         </TouchMenu>
         <TouchMenu>
-          <MenuItem onPress={goToChangePw}>
-            <MaterialCommunityIcons name="bell-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
-            <MenuItemText>비밀번호 재설정</MenuItemText>
-            <ChevronBox>
-              <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
-            </ChevronBox>
-          </MenuItem>
-        </TouchMenu>
-        {/* 
-        <TouchMenu>
-          <MenuItem onPress={goToHelp}>
-            <MaterialCommunityIcons name="comment-question-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
-            <MenuItemText>고객센터/도움말</MenuItemText>
-            <ChevronBox>
-              <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
-            </ChevronBox>
-          </MenuItem>
-        </TouchMenu> */}
-        <TouchMenu>
           <MenuItem onPress={goToTerms}>
-            <MaterialCommunityIcons name="file-document-outline" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
+            <Ionicons name="ios-document-sharp" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
             <MenuItemText>약관</MenuItemText>
             <ChevronBox>
               <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />

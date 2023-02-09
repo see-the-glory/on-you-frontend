@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components/native";
 import {
   ActivityIndicator,
-  Alert, DeviceEventEmitter,
+  Alert, DeviceEventEmitter, Dimensions,
   FlatList,
   Keyboard,
   KeyboardAvoidingView,
@@ -38,13 +38,15 @@ import {
   Ionicons,
   Entypo
 } from "@expo/vector-icons";
+import Carousel from "../../components/Carousel";
+import FastImage from "react-native-fast-image";
 
 const Container = styled.SafeAreaView`
   flex: 1;
 `;
 const FeedUser = styled.View`
   flex-direction: row;
-  padding: 15px;
+  padding: 10px 20px;
 `;
 
 const UserInfo = styled.View`
@@ -63,15 +65,11 @@ const UserImage = styled.Image`
 
 const UserId = styled(CustomText)`
   font-size: 16px;
-  font-family: "NotoSansKR-Medium";
   color: #2b2b2b;
   line-height: 25px;
   bottom: 1px;
 `;
-const ClubModIcon = styled.View`
-  display: flex;
-  flex-direction: row;
-`;
+
 const ClubBox = styled.View`
   flex-direction: row;
   align-items: center;
@@ -88,13 +86,6 @@ const ClubName = styled.Text`
   color: ${(props: any) => (props.color ? props.color : "white")};
 `;
 
-const FeedImage = styled.View`
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 430px;
-`;
-
 const ContentArea = styled.View`
   padding: 0 20px 0 20px;
   top: 2%;
@@ -109,12 +100,6 @@ const Ment = styled(CustomTextInput)`
   font-size: 14px;
 `;
 
-const ImageSource = styled.Image`
-  width: 100%;
-  height: 105%;
-  background-color: lightgray;
-`;
-
 const ModalArea = styled.View`
   flex: 1;
 `;
@@ -124,11 +109,10 @@ const ClubArea = styled.TouchableOpacity`
   flex-direction: row;
   width: 100%;
   height: auto;
-  padding: 5px 15px 0 0px;
+  padding: 5px 15px 0 0;
   border-style: solid;
   border-bottom-color: #e9e9e9;
   border-bottom-width: 1px;
-  align-self: flex-start;
 `;
 
 const ClubImg = styled.Image`
@@ -142,7 +126,6 @@ const HeaderNameView = styled.View`
   justify-content: center;
   align-items: flex-start;
   padding-left: 4px;
-  bottom: 1px;
 `;
 const ModalClubName = styled.Text`
   padding-left: 1%;
@@ -184,7 +167,6 @@ const ClubCtrgList = styled(CustomText)`
   color: #fff;
 `;
 
-//
 const ModalContainer = styled.View`
   flex: 1;
   top: 2%;
@@ -347,6 +329,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
     modalizeRef.current?.close();
   };
 
+  const feedSize  = Dimensions.get('window').width;
   return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Container>
@@ -365,10 +348,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
                 </View>
               </UserInfo>
             </FeedUser>
-            {/* <TouchableOpacity>
-              <Ionicons name="pencil" size={18} style={{left: 3, top: 2}} color="gray" />
-            </TouchableOpacity>*/}
-            <Modalize ref={modalizeRef} modalHeight={500} handlePosition="inside" modalStyle={{top: 300}} >
+            <Modalize ref={modalizeRef} modalHeight={400} handlePosition="inside" modalStyle={{top: 300}} >
               <ModalContainer>
                 <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                   <IntroTextLeft>모임 변경</IntroTextLeft>
@@ -410,19 +390,26 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
                 </ModalView>
               </ModalContainer>
             </Modalize>
-            <FeedImage>
-              {feedData?.imageUrls?.length > 1 ? (
-                  <ImageSlider
-                      data={imageList}
-                      preview={false}
-                      caroselImageStyle={{ resizeMode: "cover" }}
-                      activeIndicatorStyle={{ backgroundColor: "orange" }}
-                      indicatorContainerStyle={{ bottom: 0 }}
-                  />
-              ) : (
-                  <ImageSource source={{ uri: feedData?.imageUrls[0] }} size={0} resizeMode="contain" />
-              )}
-            </FeedImage>
+            <Carousel
+                  pages={feedData.imageUrls}
+                  pageWidth={0}
+                  gap={0}
+                  offset={0}
+                  initialScrollIndex={0}
+                  keyExtractor={(item: string, index: number) => String(index)}
+                  showIndicator={true}
+                  renderItem={({ item, index }: { item: string; index: number }) => (
+                      <FastImage
+                          key={String(index)}
+                          source={item ? { uri: item } : require("../../assets/basic.jpg")}
+                          style={{ width: feedSize, height: feedSize}}
+                          resizeMode={FastImage.resizeMode.contain}
+                      />
+                  )}
+                  ListEmptyComponent={<FastImage source={require("../../assets/basic.jpg")}
+                                                 style={{ width: feedSize, height: feedSize }}
+                                                  resizeMode={FastImage.resizeMode.contain}/>}
+            />
             <ContentArea>
               <Ment
                   onChangeText={(content: any) => setContent(content)}

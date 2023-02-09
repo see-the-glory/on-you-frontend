@@ -6,6 +6,7 @@ import ChangePw from "../screens/Profile/ChangePw";
 import Notice from "../screens/Profile/Notice";
 import Help from "../screens/Profile/Help";
 import Terms from "../screens/Profile/Terms";
+import Account from "../screens/Profile/Account";
 import { TouchableOpacity } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 
@@ -46,6 +47,18 @@ const ProfileStack = ({
           title: "나의 모임",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
+              <Entypo name="chevron-thin-left" size={20} color="black" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <NativeStack.Screen
+        name="Account"
+        component={Account}
+        options={{
+          title: "계정",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigate("Profile", { screen: "Account" })}>
               <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
