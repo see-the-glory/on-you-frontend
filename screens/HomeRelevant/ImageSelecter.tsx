@@ -23,13 +23,12 @@ import { useNavigation } from "@react-navigation/native";
 import { PinchGestureHandler, State } from "react-native-gesture-handler";
 import { RootState } from "../../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
-
 const Container = styled.SafeAreaView`
   flex: 1;
 `;
 const ImagePickerView = styled.View`
   width: 100%;
-  height: ${Platform.OS === "android" ? 60 : 62}%;
+  height: 62%;
   align-items: center;
 `;
 
@@ -287,7 +286,7 @@ function ImageSelecter(props: FeedCreateScreenProps) {
   for (let i = 0; i < imageURL.length; i++) {
     imageList.push({ img: imageURL[i] }); //슬라이더용
   }
-  const { width } = Dimensions.get("window");
+  const width  = Dimensions.get("window").width;
   const scale = new Animated.Value(1);
 
   const onZoomEvent = Animated.event(
@@ -322,7 +321,7 @@ function ImageSelecter(props: FeedCreateScreenProps) {
                     source={{ uri: imageURL.length == 0 ? undefined : imageURL[selectIndex ?? 0] }}
                     style={{
                       width: width,
-                      height: 380,
+                      height: 395,
                       transform: [{ scale: scale }],
                     }}
                   />
