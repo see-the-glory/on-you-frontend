@@ -14,16 +14,16 @@ const ItemTitle = styled(CustomText)`
   color: #8e8e8e;
 `;
 const ItemDateText = styled(CustomText)`
-  font-size: 10px;
-  line-height: 14px;
+  font-size: 11px;
+  line-height: 15px;
   color: #9a9a9a;
 `;
 const TextView = styled.View`
   flex-direction: row;
 `;
 const ItemText = styled(CustomText)<{ processDone: boolean }>`
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 15px;
+  line-height: 21px;
   ${(props: any) => (props.processDone ? "color: #8E8E8E" : "")};
 `;
 const ItemBoldText = styled(ItemText)`

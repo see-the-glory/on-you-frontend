@@ -18,20 +18,18 @@ const Container = styled.ScrollView`
 const HeaderView = styled.View`
   align-items: center;
   justify-content: center;
-  margin: 20px 0px 10px 0px;
+  padding: 20px 0px;
 `;
 
 const H1 = styled(CustomText)`
   font-size: 18px;
   line-height: 25px;
   font-family: "NotoSansKR-Bold";
-  margin: 10px 0px;
 `;
 
 const H2 = styled(CustomText)`
   font-size: 14px;
   color: #5c5c5c;
-  margin-bottom: 15px;
 `;
 
 const Content = styled.View`
@@ -41,37 +39,36 @@ const Content = styled.View`
 const ContentItem = styled.View`
   width: 100%;
   flex: 1;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 `;
 
 const ItemTitle = styled(CustomText)`
   font-size: 13px;
   line-height: 19px;
-  color: #b0b0b0;
   margin-bottom: 8px;
 `;
 
 const ItemText = styled(CustomText)`
-  font-size: 9px;
+  font-size: 11px;
   line-height: 15px;
-  padding: 8px 0px;
+  padding: 6px 0px;
   color: #8c8c8c;
 `;
 
 const ShortDescInput = styled(CustomTextInput)`
   width: 100%;
-  font-size: 12px;
-  line-height: 17px;
-  padding: 8px;
+  font-size: 14px;
+  line-height: 19px;
+  padding: 12px;
   background-color: #f3f3f3;
   text-align: center;
 `;
 
 const LongDescInput = styled(CustomTextInput)`
   width: 100%;
-  height: 300px;
-  font-size: 12px;
-  line-height: 20px;
+  height: 250px;
+  font-size: 14px;
+  line-height: 19px;
   padding: 12px;
   background-color: #f3f3f3;
 `;

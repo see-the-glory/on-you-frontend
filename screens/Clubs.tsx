@@ -92,7 +92,7 @@ const FloatingButton = styled.TouchableOpacity`
   bottom: 20px;
   width: 50px;
   height: 50px;
-  background-color: #295af5;
+  background-color: black;
   elevation: 5;
   box-shadow: 1px 1px 3px gray;
   border-radius: 50px;
@@ -141,7 +141,7 @@ const CheckBox = styled.View`
   width: 17px;
   justify-content: center;
   align-items: center;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid #d4d4d4;
   margin-left: 8px;
   background-color: white;
 `;
@@ -150,7 +150,7 @@ const SubmitButton = styled.TouchableOpacity`
   height: 60px;
   justify-content: center;
   align-items: center;
-  background-color: #ff714b;
+  background-color: #ff6534;
 `;
 const SubmitText = styled(CustomText)`
   font-size: 23px;
@@ -171,7 +171,7 @@ const SortingItemButton = styled.TouchableOpacity`
 const SortingItemText = styled(CustomText)<{ selected: boolean }>`
   font-size: 15px;
   line-height: 20px;
-  color: ${(props: any) => (props.selected ? "#FF714B" : "#b0b0b0")};
+  color: ${(props: any) => (props.selected ? "#FF6534" : "#b0b0b0")};
   font-family: ${(props: any) => (props.selected ? "NotoSansKR-Medium" : "NotoSansKR-Regular")};
 `;
 
@@ -466,7 +466,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
           ref={filteringSheetRef}
           modalHeight={270}
           handlePosition="inside"
-          handleStyle={{ top: 14, height: 3, width: 35 }}
+          handleStyle={{ top: 14, height: 3, width: 35, backgroundColor: "#d4d4d4" }}
           modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
           FooterComponent={
             <SubmitButton
@@ -492,7 +492,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 >
                   <ItemContentText>멤버 모집중인 모임만 보기</ItemContentText>
                   <CheckBox>
-                    <Ionicons name="checkmark-sharp" size={15} color={showRecruiting ? "#FF714B" : "white"} />
+                    <Ionicons name="checkmark-sharp" size={15} color={showRecruiting ? "#FF6534" : "white"} />
                   </CheckBox>
                 </ItemContentButton>
               </ItemRightView>
@@ -514,13 +514,13 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                   }}
                   onSlidingComplete={(value) => setMemberRange(value)}
                   minimumValue={0}
-                  minimumTrackTintColor="#FF714B"
+                  minimumTrackTintColor="#FF6534"
                   maximumValue={100}
                   maximumTrackTintColor="#E8E8E8"
                   step={5}
                   thumbTintColor="white"
                   trackStyle={{ height: 2 }}
-                  thumbStyle={{ width: 18, height: 18, borderWidth: 1, borderColor: "#FF714B" }}
+                  thumbStyle={{ width: 18, height: 18, borderWidth: 1, borderColor: "#FF6534" }}
                 />
                 <ItemContentSubText>{Array.isArray(memberRange) ? `최소 ${memberRange[0]} 명 이상 최대 ${memberRange[1]} 명 이하` : ``}</ItemContentSubText>
               </ItemRightView>
@@ -538,7 +538,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 >
                   <ItemContentText>내가 가입된 모임만 보기</ItemContentText>
                   <CheckBox>
-                    <Ionicons name="checkmark-sharp" size={15} color={showMy ? "#FF714B" : "#e8e8e8"} />
+                    <Ionicons name="checkmark-sharp" size={15} color={showMy ? "#FF6534" : "#e8e8e8"} />
                   </CheckBox>
                 </ItemContentButton>
               </ItemRightView>
@@ -548,7 +548,13 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
       </Portal>
 
       <Portal>
-        <Modalize ref={sortingSheetRef} modalHeight={260} handlePosition="inside" handleStyle={{ top: 14, height: 3, width: 35 }} modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+        <Modalize
+          ref={sortingSheetRef}
+          modalHeight={260}
+          handlePosition="inside"
+          handleStyle={{ top: 14, height: 3, width: 35, backgroundColor: "#d4d4d4" }}
+          modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+        >
           <ModalContainer>
             <SortingItemView>
               {sortItem?.map((item, index) => (

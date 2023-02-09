@@ -6,7 +6,7 @@ const Container = styled.View``;
 
 const Indicator = styled.View<{ focused: boolean }>`
   margin: 0px 4px;
-  background-color: ${(props: any) => (props.focused ? "#FF714B" : "#E0E0E0")};
+  background-color: ${(props: any) => (props.focused ? "#FF6534" : "#E0E0E0")};
   width: 4px;
   height: 4px;
   border-radius: 2px;

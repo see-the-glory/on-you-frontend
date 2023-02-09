@@ -27,15 +27,15 @@ const Gradient = styled(LinearGradient)<{ size: number }>`
 `;
 
 const RecruitView = styled.View`
-  background-color: #ff714b;
-  padding: 1px 3px;
-  border-radius: 3px;
+  background-color: #ff6534;
+  padding: 2px 4px;
+  border-radius: 5px;
 `;
 
 const RecruitText = styled(CustomText)`
-  font-size: 9px;
+  font-size: 10px;
   color: white;
-  line-height: 12px;
+  line-height: 14px;
 `;
 
 const TitleView = styled.View`
@@ -117,6 +117,7 @@ interface ClubListProps {
 }
 
 const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, clubName, memberNum, clubShortDesc, categories, recruitStatus, colSize }) => {
+  const lineCount = 13;
   return (
     <Club>
       <ThumbnailView>
@@ -142,7 +143,7 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
       <ClubInfo>
         {clubShortDesc && clubShortDesc.length > 0 ? (
           <DescView>
-            <ShortDescText>{clubShortDesc.length <= 15 ? clubShortDesc : `${clubShortDesc.slice(0, 15)}\n${clubShortDesc.slice(15)}`}</ShortDescText>
+            <ShortDescText>{clubShortDesc.length <= lineCount ? clubShortDesc : `${clubShortDesc.slice(0, lineCount)}\n${clubShortDesc.slice(lineCount)}`}</ShortDescText>
           </DescView>
         ) : (
           <></>

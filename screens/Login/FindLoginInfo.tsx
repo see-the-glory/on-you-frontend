@@ -19,7 +19,7 @@ const IdButton = styled.TouchableOpacity`
   width: 100%;
   height: 53px;
   border-width: 1px;
-  border-color: #ff714b;
+  border-color: #ff6534;
   background-color: #fff;
 `;
 
@@ -36,7 +36,7 @@ const PwButton = styled.TouchableOpacity`
   width: 100%;
   height: 53px;
   border-width: 1px;
-  border-color: #ff714b;
+  border-color: #ff6534;
   background-color: #fff;
   margin-top: 10%;
 `;

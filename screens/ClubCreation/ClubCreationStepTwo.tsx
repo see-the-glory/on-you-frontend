@@ -16,44 +16,41 @@ const Container = styled.ScrollView`
 const HeaderView = styled.View`
   align-items: center;
   justify-content: center;
-  margin: 20px 0px 10px 0px;
+  padding: 20px 0px;
 `;
 
 const H1 = styled(CustomText)`
   font-size: 18px;
   line-height: 25px;
   font-family: "NotoSansKR-Bold";
-  margin: 10px 0px;
 `;
 
 const H2 = styled(CustomText)`
   font-size: 14px;
   color: #5c5c5c;
-  margin-bottom: 15px;
 `;
-
 const Content = styled.View`
   width: 100%;
 `;
 
 const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
   width: 100%;
-  height: ${(props) => props.height}px;
+  height: ${(props: any) => props.height}px;
   justify-content: center;
   align-items: center;
   background-color: #d3d3d3;
-  margin: 15px 0px;
+  margin-bottom: 10px;
 `;
 
 const ImagePickerText = styled(CustomText)`
-  font-size: 14px;
+  font-size: 15px;
   color: #2995fa;
-  line-height: 22px;
+  line-height: 21px;
 `;
 
 const PickedImage = styled.Image<{ height: number }>`
   width: 100%;
-  height: ${(props) => props.height}px;
+  height: ${(props: any) => props.height}px;
 `;
 
 const ContentItem = styled.View`
@@ -62,7 +59,7 @@ const ContentItem = styled.View`
   border-bottom-width: 1px;
   border-bottom-color: #cecece;
   padding-bottom: 3px;
-  margin: 15px 0px;
+  margin: 10px 0px;
 `;
 
 const Item = styled.View`
@@ -81,13 +78,13 @@ const ItemTitle = styled(CustomText)`
 `;
 
 const ItemText = styled(CustomText)`
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 19px;
   margin-right: 5px;
 `;
 
 const ItemTextInput = styled(CustomTextInput)`
-  font-size: 14px;
+  font-size: 15px;
   line-height: 20px;
   padding: 0px 5px;
   flex: 1;
@@ -95,7 +92,7 @@ const ItemTextInput = styled(CustomTextInput)`
 
 const RadioButtonView = styled.View`
   flex-direction: row;
-  padding: 5px;
+  padding: 2px 5px;
   align-items: center;
 `;
 
@@ -112,7 +109,7 @@ const CheckButton = styled.TouchableOpacity`
 
 const CheckBox = styled.View<{ check: boolean }>`
   border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: ${(props) => (props.check ? "white" : "#E8E8E8")};
+  background-color: white;
 `;
 
 const FooterView = styled.View`
@@ -124,7 +121,7 @@ const FooterView = styled.View`
 const NextButton = styled.TouchableOpacity`
   width: 100%;
   height: 50px;
-  background-color: ${(props) => (props.disabled ? "#c4c4c4" : "#FF714B")};
+  background-color: ${(props: any) => (props.disabled ? "#c4c4c4" : "#FF6534")};
   justify-content: center;
   align-items: center;
 `;
@@ -151,7 +148,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [organizationName, setOrganizationName] = useState<string>("");
   const { width: SCREEN_WIDTH } = useWindowDimensions();
-  const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 4) * 3);
+  const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 5) * 3);
   let specialChar = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
 
   const pickImage = async () => {
@@ -260,7 +257,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
               >
                 <ItemText>인원 수 무제한으로 받기</ItemText>
                 <CheckBox check={maxNumberInfinity}>
-                  <Ionicons name="checkmark-sharp" size={16} color={maxNumberInfinity ? "#FF714B" : "#e8e8e8"} />
+                  <Ionicons name="checkmark-sharp" size={13} color={maxNumberInfinity ? "#FF6534" : "#e8e8e8"} />
                 </CheckBox>
               </CheckButton>
             </Item>
@@ -269,11 +266,21 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
             <ItemTitle>가입 승인 방법</ItemTitle>
             <RadioButtonView>
               <RadioButton onPress={() => setIsApproveRequired((prev) => (prev === "Y" ? "Y" : "Y"))}>
-                <Ionicons name={isApproveRequired === "Y" ? "radio-button-on" : "radio-button-off"} size={16} color={isApproveRequired === "Y" ? "#FF714B" : "black"} style={{ marginRight: 3 }} />
+                <Ionicons
+                  name={isApproveRequired === "Y" ? "radio-button-on" : "radio-button-off"}
+                  size={16}
+                  color={isApproveRequired === "Y" ? "#FF6534" : "rgba(0, 0, 0, 0.3)"}
+                  style={{ marginRight: 3 }}
+                />
                 <ItemText>관리자 승인 후 가입</ItemText>
               </RadioButton>
               <RadioButton onPress={() => setIsApproveRequired((prev) => (prev === "Y" ? "N" : "N"))}>
-                <Ionicons name={isApproveRequired === "N" ? "radio-button-on" : "radio-button-off"} size={16} color={isApproveRequired === "N" ? "#FF714B" : "black"} style={{ marginRight: 3 }} />
+                <Ionicons
+                  name={isApproveRequired === "N" ? "radio-button-on" : "radio-button-off"}
+                  size={16}
+                  color={isApproveRequired === "N" ? "#FF6534" : "rgba(0, 0, 0, 0.3)"}
+                  style={{ marginRight: 3 }}
+                />
                 <ItemText>누구나 바로 가입</ItemText>
               </RadioButton>
             </RadioButtonView>

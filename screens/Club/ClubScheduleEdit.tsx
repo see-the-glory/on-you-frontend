@@ -180,9 +180,9 @@ const ClubScheduleEdit = ({
           <Calendar
             theme={{
               arrowColor: "#6F6F6F",
-              dotColor: "#FF714B",
-              selectedDayBackgroundColor: "#FF714B",
-              todayTextColor: "#FF714B",
+              dotColor: "#FF6534",
+              selectedDayBackgroundColor: "#FF6534",
+              todayTextColor: "#FF6534",
             }}
             context={{ date: "" }}
             minDate={dateTime.toString()}

@@ -111,7 +111,7 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, rec
             }}
           >
             <FloatingButton onPress={item.onPress}>
-              <MaterialCommunityIcons name={item.iconName} size={18} color="#ff714b" />
+              <MaterialCommunityIcons name={item.iconName} size={18} color="#FF6534" />
             </FloatingButton>
           </Animated.View>
         ))}

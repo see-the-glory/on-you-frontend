@@ -20,7 +20,7 @@ const FilterView = styled.View`
   flex: 1;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.6);
-  padding-top: 30px;
+  padding-top: 70px;
   justify-content: center;
   align-items: center;
 `;
@@ -97,8 +97,8 @@ const CollapsedView = styled.SafeAreaView<{ height: number }>`
 `;
 
 const ContentText = styled(CustomText)`
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 13px;
+  line-height: 17px;
   color: white;
 `;
 

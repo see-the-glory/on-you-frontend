@@ -62,7 +62,13 @@ const FeedReportModal: React.FC<FeedReportModalProps> = ({ modalRef, buttonHeigh
 
   return (
     <Portal>
-      <Modalize ref={modalRef} modalHeight={modalHeight} handlePosition="inside" handleStyle={{ top: 14, height: 3, width: 35 }} modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+      <Modalize
+        ref={modalRef}
+        modalHeight={modalHeight}
+        handlePosition="inside"
+        handleStyle={{ top: 14, height: 3, width: 35, backgroundColor: "#d4d4d4" }}
+        modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+      >
         <ModalContainer style={{ flex: 1 }}>
           <ModalHeader padding={20}>
             <ModalHeaderTitle>신고가 필요한 게시물인가요?</ModalHeaderTitle>

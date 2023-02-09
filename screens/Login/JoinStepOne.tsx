@@ -57,7 +57,7 @@ const Text = styled.Text`
 
 const RedText = styled.Text`
   margin-right: 5px;
-  color: #ff714b;
+  color: #ff6534;
   font-size: 16px;
 `;
 
@@ -161,7 +161,7 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
 
           <TermsWrap onPress={() => setClick(true)}>
             <LeftBox>
-              <CheckBox check={check}>{!check ? <Ionicons name="checkmark-circle-outline" size={20} color={"#FF714B"} /> : <Ionicons name="checkmark-circle" size={20} color={"#FF714B"} />}</CheckBox>
+              <CheckBox check={check}>{!check ? <Ionicons name="checkmark-circle-outline" size={20} color={"#FF6534"} /> : <Ionicons name="checkmark-circle" size={20} color={"#FF6534"} />}</CheckBox>
               <RedText>(필수)</RedText>
               <Text>On You 서비스 이용약관</Text>
             </LeftBox>
@@ -172,7 +172,7 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
           <TermsWrap onPress={() => setClick2(true)}>
             <LeftBox>
               <CheckBox check={check2}>
-                {!check2 ? <Ionicons name="checkmark-circle-outline" size={20} color={"#FF714B"} /> : <Ionicons name="checkmark-circle" size={20} color={"#FF714B"} />}
+                {!check2 ? <Ionicons name="checkmark-circle-outline" size={20} color={"#FF6534"} /> : <Ionicons name="checkmark-circle" size={20} color={"#FF6534"} />}
               </CheckBox>
               <RedText>(필수)</RedText>
               <Text>개인정보 수집 및 이용 동의서</Text>

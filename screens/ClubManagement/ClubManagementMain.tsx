@@ -59,8 +59,9 @@ const Title = styled(CustomText)`
 
 const HeaderText = styled(CustomText)`
   font-family: "NotoSansKR-Medium";
-  font-size: 12px;
-  color: #b7b7b7;
+  font-size: 14px;
+  color: #a7a7a7;
+  line-height: 20px;
   padding-left: 5px;
   padding-right: 5px;
 `;
@@ -74,17 +75,17 @@ const TagView = styled.View`
 const Tag = styled.View<{ color: string }>`
   flex-direction: row;
   align-items: center;
-  background-color: ${(props) => props.color};
-  padding: 0px 3px;
+  background-color: ${(props: any) => props.color};
+  padding: 2px 4px;
   border-radius: 5px;
   margin-right: 5px;
-  border: 1px solid ${(props) => (props.color === "white" ? "#A5A5A5" : "#B4B4B4")};
+  border: 1px solid ${(props: any) => (props.color === "white" ? "#b4b4b4" : "#C4C4C4")};
 `;
 
 const TagText = styled(CustomText)`
   font-family: "NotoSansKR-Medium";
-  font-size: 10px;
-  line-height: 14px;
+  font-size: 11px;
+  line-height: 15px;
 `;
 
 const ButtonView = styled.View`
@@ -308,11 +309,11 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
             <InformationView>
               <TagView>
                 <Tag color={"white"}>
-                  <FontAwesome5 name="cross" size={6} color="#A5A5A5" />
-                  <TagText style={{ color: "#A5A5A5", marginLeft: 3 }}>{data.organizationName}</TagText>
+                  <FontAwesome5 name="cross" size={8} color="#A5A5A5" style={{ marginRight: -1 }} />
+                  <TagText style={{ color: "#B4B4B4", marginLeft: 3 }}>{data.organizationName}</TagText>
                 </Tag>
                 {data?.categories?.map((category, index) => (
-                  <Tag key={index} color={"#B4B4B4"}>
+                  <Tag key={index} color={"#C4C4C4"}>
                     <TagText style={{ color: "white" }}>{category.name}</TagText>
                   </Tag>
                 ))}
@@ -321,7 +322,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
             </InformationView>
             <CircleIcon size={70} uri={data.thumbnail} />
             <ButtonView>
-              <AntDesign name="user" size={10} color="#B7B7B7" />
+              <AntDesign name="user" size={12} color="#a7a7a7" style={{ marginRight: -3 }} />
               <HeaderText>멤버모집</HeaderText>
               <ToggleButton onPress={onPressToggle} isToggle={isToggle} activeOpacity={1}>
                 <AnimatedDot style={{ transform: [{ translateX: X }] }} />

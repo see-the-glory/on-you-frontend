@@ -27,8 +27,8 @@ const Backplate = styled.View<{ size: number }>`
   align-items: center;
   border: 1px;
   border-color: rgba(0, 0, 0, 0);
-  box-shadow: 1px 1px 1px gray;
-  elevation: 10;
+  /* box-shadow: 1px 1px 1px gray; */
+  /* elevation: 10; */
   background-color: white;
 `;
 

@@ -24,11 +24,11 @@ const Header = styled.View`
 `;
 
 const HeaderText = styled(CustomText)`
-  font-size: 9px;
+  font-size: 12px;
   color: #959595;
 `;
 const ContentItem = styled.TouchableOpacity<{ col: number }>`
-  flex: ${(props) => 1 / props.col};
+  flex: ${(props: any) => 1 / props.col};
   justify-content: center;
   align-items: flex-start;
 `;
@@ -41,8 +41,8 @@ const ItemTitleView = styled.View`
 `;
 
 const ItemTitle = styled(CustomText)`
-  font-size: 10px;
-  line-height: 16px;
+  font-size: 12px;
+  line-height: 17px;
   color: #b0b0b0;
 `;
 
@@ -294,41 +294,41 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
                       item.role === "MASTER" ? (
                         <>
                           <MenuItem onPress={() => changeRole(item, "MEMBER")} style={{ margin: -10 }}>
-                            <AntDesign name="closecircleo" size={12} color="#FF714B" />
+                            <AntDesign name="closecircleo" size={12} color="#FF6534" />
                             <ItemText>{` 리더 지정 취소`}</ItemText>
                           </MenuItem>
                           <MenuDivider />
                           <MenuItem onPress={() => changeRole(item, "MANAGER")} style={{ margin: -10 }}>
-                            <AntDesign name="checkcircle" size={12} color="#FF714B" />
+                            <AntDesign name="checkcircle" size={12} color="#FF6534" />
                             <ItemText>{` 매니저 지정`}</ItemText>
                           </MenuItem>
                         </>
                       ) : item.role === "MANAGER" ? (
                         <>
                           <MenuItem onPress={() => changeRole(item, "MASTER")} style={{ margin: -10 }}>
-                            <AntDesign name="star" size={12} color="#FF714B" />
+                            <AntDesign name="star" size={12} color="#FF6534" />
                             <ItemText>{` 리더 지정`}</ItemText>
                           </MenuItem>
                           <MenuDivider />
                           <MenuItem onPress={() => changeRole(item, "MEMBER")} style={{ margin: -10 }}>
-                            <AntDesign name="closecircleo" size={12} color="#FF714B" />
+                            <AntDesign name="closecircleo" size={12} color="#FF6534" />
                             <ItemText>{` 매니저 지정 취소`}</ItemText>
                           </MenuItem>
                         </>
                       ) : (
                         <>
                           <MenuItem onPress={() => changeRole(item, "MASTER")} style={{ margin: -10 }}>
-                            <AntDesign name="star" size={12} color="#FF714B" />
+                            <AntDesign name="star" size={12} color="#FF6534" />
                             <ItemText>{` 리더 지정`}</ItemText>
                           </MenuItem>
                           <MenuDivider />
                           <MenuItem onPress={() => changeRole(item, "MANAGER")} style={{ margin: -10 }}>
-                            <AntDesign name="checkcircle" size={12} color="#FF714B" />
+                            <AntDesign name="checkcircle" size={12} color="#FF6534" />
                             <ItemText>{` 매니저 지정`}</ItemText>
                           </MenuItem>
                           <MenuDivider />
                           <MenuItem onPress={() => kickOut(item.id)} style={{ margin: -10 }}>
-                            <AntDesign name="deleteuser" size={12} color="#FF714B" />
+                            <AntDesign name="deleteuser" size={12} color="#FF6534" />
                             <ItemText>{` 강제 탈퇴`}</ItemText>
                           </MenuItem>
                         </>
@@ -336,7 +336,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
                     ) : (
                       <>
                         <MenuItem onPress={() => cancelKickOut(item.id)} style={{ margin: -10 }}>
-                          <AntDesign name="deleteuser" size={12} color="#FF714B" />
+                          <AntDesign name="deleteuser" size={12} color="#FF6534" />
                           <ItemText>{` 강제 탈퇴 취소`}</ItemText>
                         </MenuItem>
                       </>

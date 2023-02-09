@@ -41,11 +41,11 @@ const LoginButton = styled.TouchableOpacity`
   align-items: center;
   width: 40%;
   height: 48px;
-  background-color: #ff714b;
+  background-color: #ff6534;
 `;
 
 const JoinTitle = styled.Text`
-  color: #ff714b;
+  color: #ff6534;
   font-size: 20px;
   font-weight: 700;
 `;

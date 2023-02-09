@@ -2,7 +2,7 @@ import React from "react";
 import { useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { ClubCreationSuccessScreenProps } from "../../Types/Club";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
 
 const Container = styled.SafeAreaView`
@@ -15,7 +15,7 @@ const SectionView = styled.View<{ height: number }>`
   width: 100%;
   justify-content: center;
   align-items: center;
-  height: ${(props) => props.height}px;
+  height: ${(props: any) => props.height}px;
   padding: 0px 20px;
 `;
 
@@ -23,7 +23,7 @@ const H1 = styled(CustomText)`
   font-size: 24px;
   line-height: 33px;
   font-family: "NotoSansKR-Bold";
-  margin-top: 20px;
+  margin-top: 15px;
 `;
 
 const H2 = styled(CustomText)`
@@ -37,7 +37,7 @@ const H2 = styled(CustomText)`
 const NextButton = styled.TouchableOpacity`
   width: 100%;
   height: 50px;
-  background-color: ${(props) => (props.disabled ? "#c4c4c4" : "#295AF5")};
+  background-color: #ff6534;
   justify-content: center;
   align-items: center;
 `;
@@ -72,7 +72,7 @@ const ClubCreationSuccess: React.FC<ClubCreationSuccessScreenProps> = ({
   return (
     <Container>
       <SectionView height={mainHeight}>
-        <Ionicons name="checkmark-circle" size={52} color="#FF714B" />
+        <Feather name="check" size={58} color="#CCCCCC" />
         <H1>모임 개설이 완료되었습니다.</H1>
         <H2>{`개설된 모임의 홈화면으로 가셔서\n상세 설정을 하실 수 있습니다.`}</H2>
       </SectionView>

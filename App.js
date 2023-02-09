@@ -104,7 +104,7 @@ export default function App() {
             offset={50}
             successColor="#295AF5"
             warningColor="#8E8E8E"
-            dangerColor="#FF714B"
+            dangerColor="#FF6534"
             duration={3000}
             animationType="zoom-in"
             style={{ borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8, fontFamily: "NotoSansKR-Regular" }}
