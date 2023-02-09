@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Animated, DeviceEventEmitter, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
+import { Alert, Animated, DeviceEventEmitter, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
@@ -9,8 +9,8 @@ import ClubHeader from "../../components/ClubHeader";
 import ClubTabBar from "../../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
-import { useQuery } from "react-query";
-import { Club, ClubApi, ClubResponse, ClubRoleResponse, ClubSchedulesResponse } from "../../api";
+import { useMutation, useQuery } from "react-query";
+import { Club, ClubApi, ClubResponse, ClubRoleResponse, ClubSchedulesResponse, ClubWithdrawRequest } from "../../api";
 import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 import { RefinedSchedule } from "../../Types/Club";
@@ -87,14 +87,14 @@ const ClubTopTabs = ({
     extrapolate: "clamp",
   });
   // Function in Modal
-  const goClubEdit = () => {
+  const goToClubEdit = () => {
     navigate("ClubManagementStack", {
       screen: "ClubManagementMain",
       clubData: data,
     });
   };
 
-  const goClubJoin = () => {
+  const goToClubJoin = () => {
     if (clubRole?.data?.applyStatus === "APPLIED") {
       return toast.show("가입신청서가 이미 전달되었습니다.", {
         type: "warning",
@@ -109,7 +109,7 @@ const ClubTopTabs = ({
     navigate("ClubJoin", { clubData: data });
   };
 
-  const goFeedCreation = () => {
+  const goToFeedCreation = () => {
     if (me === undefined) {
       toast.show("유저 정보를 알 수 없습니다.", {
         type: "warning",
@@ -127,10 +127,56 @@ const ClubTopTabs = ({
     navigate("ClubNotification", { clubData: data, clubRole: clubRole?.data });
   };
 
+  const withdrawClub = () => {
+    Alert.alert("모임 탈퇴", "정말로 모임에서 탈퇴하시겠습니까?", [
+      { text: "아니요", onPress: () => {} },
+      {
+        text: "예",
+        onPress: () => {
+          let requestData: ClubWithdrawRequest = {
+            clubId: data.id,
+            token,
+          };
+          withdrawClubMutation.mutate(requestData);
+        },
+      },
+    ]);
+  };
+
   // API Calling
+
+  const withdrawClubMutation = useMutation(ClubApi.withdrawClub, {
+    onSuccess: (res) => {
+      if (res.status === 200) {
+        toast.show(`모임에서 탈퇴하셨습니다.`, {
+          type: "success",
+        });
+        DeviceEventEmitter.emit("ClubRefetch");
+      } else if (res.status === 500) {
+        console.log("withdrawClub mutation success but please check status code");
+        console.log(res);
+        toast.show(`Error Code: ${res.status}`, {
+          type: "warning",
+        });
+      } else {
+        console.log(res);
+        toast.show(`${res.message}`, {
+          type: "warning",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error withdrawClub ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "warning",
+      });
+    },
+  });
+
   const { isLoading: clubLoading, refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
+      if (res.status === 200) {
         setData(res.data);
       } else {
         toast.show(`Error Code: ${res.status}`, {
@@ -301,7 +347,14 @@ const ClubTopTabs = ({
       {clubRoleLoading ? (
         <></>
       ) : (
-        <FloatingActionButton role={clubRole?.data?.role} recruitStatus={data?.recruitStatus} onPressEdit={goClubEdit} onPressJoin={goClubJoin} onPressFeed={goFeedCreation} />
+        <FloatingActionButton
+          role={clubRole?.data?.role}
+          recruitStatus={data?.recruitStatus}
+          goToClubEdit={goToClubEdit}
+          goToClubJoin={goToClubJoin}
+          goToFeedCreation={goToFeedCreation}
+          withdrawclub={withdrawClub}
+        />
       )}
     </Container>
   );

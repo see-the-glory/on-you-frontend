@@ -17,7 +17,7 @@ const FloatingActionView = styled.View`
 const FloatingMainButton = styled.TouchableOpacity<{ join?: boolean }>`
   width: 50px;
   height: 50px;
-  background-color: ${(props) => (props.join ? "#295af5" : "#ff714b")};
+  background-color: ${(props) => (props.join ? "#295af5" : "#FF551F")};
   elevation: 5;
   box-shadow: 1px 1px 3px gray;
   border-radius: 25px;
@@ -40,7 +40,7 @@ const FloatingButton = styled.TouchableOpacity`
 
 const AnimatedFloatingMainButton = Animated.createAnimatedComponent(FloatingMainButton);
 
-const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, recruitStatus, onPressEdit, onPressJoin, onPressFeed }) => {
+const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, recruitStatus, goToClubEdit, goToClubJoin, goToFeedCreation, withdrawclub }) => {
   const [open, setOpen] = useState(0);
   const animation = useRef(new Animated.Value(0)).current;
   const rotation = animation.interpolate({
@@ -53,11 +53,16 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, rec
   });
   const onPressImagePlus = () => {
     toggleMenu();
-    onPressFeed();
+    goToFeedCreation();
   };
   const onPressPencilOutline = () => {
     toggleMenu();
-    onPressEdit();
+    goToClubEdit();
+  };
+
+  const onPressWithdrawClub = () => {
+    toggleMenu();
+    withdrawclub();
   };
   const toggleItem = [
     {
@@ -69,6 +74,11 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, rec
       iconName: "pencil-outline",
       accessRole: ["MASTER", "MANAGER"],
       onPress: onPressPencilOutline,
+    },
+    {
+      iconName: "exit-to-app",
+      accessRole: ["MASTER", "MANAGER", "MEMBER"],
+      onPress: onPressWithdrawClub,
     },
   ];
 
@@ -94,7 +104,7 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, rec
                 {
                   translateY: animation.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [50, -(items.length * 10 + 5) + index * 10],
+                    outputRange: [40 * items.length - index * 40, -(items.length * 10 + 5) + index * 10],
                   }),
                 },
               ],
@@ -113,7 +123,7 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, rec
     <FloatingActionView>
       <FloatingMainButton
         onPress={() => {
-          onPressJoin();
+          goToClubJoin();
         }}
         join={true}
       >

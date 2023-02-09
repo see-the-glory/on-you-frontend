@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Modal, TouchableOpacity, useWindowDimensions } from "react-native";
+import { Animated, Modal, Text, TouchableOpacity, useWindowDimensions } from "react-native";
 import { RefinedSchedule } from "../../Types/Club";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import styled from "styled-components/native";
@@ -21,8 +21,6 @@ const ModalContainer = styled.View`
 `;
 const Container = styled.View<{ pageWidth: number; gap: number }>`
   background-color: white;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
   width: ${(props: any) => props.pageWidth}px;
   margin: 0px ${(props: any) => props.gap / 2}px;
 `;
@@ -30,7 +28,7 @@ const Header = styled.View<{ index: number }>`
   align-items: center;
   justify-content: center;
   width: 100%;
-  background-color: ${(props: any) => (props.index === 0 ? "#FF6C45" : "#CCCCCC")};
+  background-color: ${(props: any) => (props.index === 0 ? "#FF551F" : "#CCCCCC")};
   padding-top: 10px;
   padding-bottom: 10px;
 `;
@@ -61,17 +59,10 @@ const ContentItemView = styled.View`
   align-items: center;
   justify-content: center;
 `;
+
 const ContentCollapsibleView = styled.View`
   flex-direction: row;
-  justify-content: center;
   padding-left: 10px;
-`;
-
-const ContentMemberView = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin-right: 10px;
 `;
 
 const ContentText = styled(CustomText)`
@@ -79,12 +70,6 @@ const ContentText = styled(CustomText)`
   font-size: 10px;
   line-height: 15px;
   color: #6f6f6f;
-`;
-
-const ContentSubText = styled(CustomText)`
-  font-size: 9px;
-  line-height: 15px;
-  color: #8e8e8e;
 `;
 
 const MemoScrollView = styled.ScrollView`
@@ -108,7 +93,7 @@ const ApplyButton = styled.TouchableOpacity<{ participation: boolean }>`
   width: 130px;
   justify-content: center;
   align-items: center;
-  background-color: ${(props: any) => (props.participation ? "white" : "#ff714b")};
+  background-color: ${(props: any) => (props.participation ? "white" : "#FF551F")};
   padding: 5px 0px;
   border: 1px solid #ff714b;
 `;
@@ -117,7 +102,7 @@ const ButtonText = styled(CustomText)<{ participation: boolean }>`
   font-size: 12px;
   line-height: 16px;
   font-family: "NotoSansKR-Medium";
-  color: ${(props: any) => (props.participation ? "#ff714b" : "white")};
+  color: ${(props: any) => (props.participation ? "#FF551F" : "white")};
 `;
 
 const ModalHeaderLeft = styled.View`
@@ -313,16 +298,16 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                 <Header index={index}>
                   <ModalHeaderLeft>
                     <TouchableOpacity onPress={() => closeModal(true)}>
-                      <Ionicons name="close" size={14} color="black" />
+                      <Ionicons name="close" size={18} color="black" />
                     </TouchableOpacity>
                   </ModalHeaderLeft>
                   <ModalHeaderRight>
                     <Menu
                       visible={menuVisibleMap.get(item.id ?? -1)}
-                      style={{ marginTop: 20, borderRadius: 0, width: 55, marginLeft: -45 }}
+                      style={{ justifyContent: "center", alignItems: "center", marginTop: 20, borderRadius: 0, width: 70, marginLeft: -10 }}
                       anchor={
                         <TouchableOpacity onPress={() => showMenu(item.id ?? -1)}>
-                          <Ionicons name="ellipsis-vertical" size={14} color="black" />
+                          <Ionicons name="ellipsis-vertical" size={18} color="black" />
                         </TouchableOpacity>
                       }
                       onRequestClose={() => hideMenu(item.id ?? -1)}

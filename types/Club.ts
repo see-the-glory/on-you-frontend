@@ -109,9 +109,10 @@ export type ClubTopTabProps = MaterialTopTabScreenProps<TopTabParamList, "ClubTo
 export interface ClubHomeFloatingButtonProps {
   role?: "MASTER" | "MANAGER" | "MEMBER" | "PENDING" | null;
   recruitStatus?: "OPEN" | "CLOSE" | null;
-  onPressEdit: Function;
-  onPressJoin: Function;
-  onPressFeed: Function;
+  goToClubEdit: Function;
+  goToClubJoin: Function;
+  goToFeedCreation: Function;
+  withdrawclub: Function;
 }
 
 export interface RefinedSchedule extends Schedule {

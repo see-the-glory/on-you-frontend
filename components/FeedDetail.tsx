@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { EvilIcons, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import CustomText from "./CustomText";
@@ -74,6 +74,7 @@ const ContentText = styled(CustomText)`
 `;
 
 const ContentSubText = styled(CustomText)`
+  font-size: 14px;
   color: #9a9a9a;
 `;
 
@@ -199,11 +200,13 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
               )}
             </ContentTextView>
           </TouchableWithoutFeedback>
-          <Collapsible collapsed={this.state.isCollapsed} style={{ height: this.state.textHeight }}>
-            <ContentTextView>
-              <ContentText>{this.state.remainedText}</ContentText>
-            </ContentTextView>
-          </Collapsible>
+          <TouchableWithoutFeedback onPress={contentTextTouch}>
+            <Collapsible collapsed={this.state.isCollapsed} style={{ height: this.state.textHeight }}>
+              <ContentTextView>
+                <ContentText>{this.state.remainedText}</ContentText>
+              </ContentTextView>
+            </Collapsible>
+          </TouchableWithoutFeedback>
         </ContentView>
       </Container>
     );
