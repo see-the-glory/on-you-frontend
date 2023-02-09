@@ -102,10 +102,11 @@ const ClubApplication = ({
   const approveMutation = useMutation(ClubApi.approveToClubJoin, {
     onSuccess: (res) => {
       console.log(res);
-      if (res.status === 200 && res.resultCode === "OK") {
+      if (res.status === 200) {
         toast.show(`가입신청을 수락했습니다.`, {
           type: "success",
         });
+        DeviceEventEmitter.emit("ClubRefetch");
         goBack();
       } else {
         console.log(`approveToClubJoin mutation success but please check status code`);

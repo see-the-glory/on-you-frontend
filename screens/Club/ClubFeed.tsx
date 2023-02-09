@@ -1,4 +1,3 @@
-import { useFocusEffect } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity, DeviceEventEmitter } from "react-native";
 import FastImage from "react-native-fast-image";
@@ -7,6 +6,8 @@ import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { Feed, FeedApi, FeedsResponse } from "../../api";
 import CustomText from "../../components/CustomText";
+import clubSlice from "../../redux/slices/club";
+import { useAppDispatch } from "../../redux/store";
 import { RootState } from "../../redux/store/reducers";
 import { ClubFeedParamList, ClubFeedScreenProps } from "../../Types/Club";
 
@@ -44,15 +45,16 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   headerDiff,
 }) => {
   const token = useSelector((state: RootState) => state.auth.token);
+  const feeds = useSelector((state: RootState) => state.club.feeds);
   const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const numColumn = 3;
   const feedSize = Math.round(SCREEN_WIDTH / 3) - 1;
-
   const {
     isLoading: feedsLoading,
-    data: feeds,
+    data: queryFeedData,
     isRefetching: isRefetchingFeeds,
     hasNextPage,
     refetch: feedsRefetch,
@@ -63,7 +65,9 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
         return currentPage.hasNext === false ? null : currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor;
       }
     },
-    onSuccess: (res) => {},
+    onSuccess: (res) => {
+      dispatch(clubSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
+    },
     onError: (err) => {},
   });
 
@@ -73,28 +77,35 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await queryClient.refetchQueries(["getClubFeeds"]);
+    const result = await feedsRefetch();
+    dispatch(clubSlice.actions.refreshFeed(result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? []));
     setRefreshing(false);
   };
 
   useEffect(() => {
     console.log("ClubFeed - add listner");
-    let clubFeedSubscription = DeviceEventEmitter.addListener("ClubFeedRefetch", () => {
+    let clubFeedRefetchSub = DeviceEventEmitter.addListener("ClubFeedRefetch", () => {
       console.log("ClubFeed - Club Feed Refetch Event");
-      feedsRefetch();
+      onRefresh();
+    });
+    let ClubFeedLoadmoreSub = DeviceEventEmitter.addListener("ClubFeedLoadmore", () => {
+      console.log("ClubFeed - Load more!");
+      loadMore();
     });
 
     return () => {
-      clubFeedSubscription.remove();
+      console.log("ClubFeed - remove listner");
+      clubFeedRefetchSub.remove();
+      ClubFeedLoadmoreSub.remove();
+      queryClient.removeQueries({ queryKey: ["getClubFeeds"] });
     };
   }, []);
 
   const goToClubFeedDetail = (index: number) => {
-    let feedData = feeds?.pages?.map((page) => page?.responses?.content).flat();
-    return navigate("ClubStack", { screen: "ClubFeedDetail", clubData, feedData, targetIndex: index });
+    return navigate("ClubStack", { screen: "ClubFeedDetail", clubData, targetIndex: index });
   };
 
-  return feedsLoading ? (
+  return feedsLoading || refreshing ? (
     <Loader>
       <ActivityIndicator />
     </Loader>
@@ -121,7 +132,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
         backgroundColor: "white",
         flexGrow: 1,
       }}
-      data={feeds?.pages?.map((page) => page?.responses?.content).flat()}
+      data={feeds}
       keyExtractor={(item: Feed, index: number) => String(index)}
       numColumns={numColumn}
       columnWrapperStyle={{ paddingBottom: 1 }}

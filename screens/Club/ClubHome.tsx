@@ -104,7 +104,7 @@ const ScheduleBadgeText = styled(CustomText)`
 `;
 
 const ScheduleDateView = styled.View<{ index: number }>`
-  background-color: ${(props: any) => (props.index === 0 ? "#FF6C45" : "#EBEBEB")};
+  background-color: ${(props: any) => (props.index === 0 ? "#FF551F" : "#EBEBEB")};
   justify-content: center;
   align-items: center;
   padding: 7px 15px;

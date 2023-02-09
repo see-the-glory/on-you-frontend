@@ -294,6 +294,11 @@ export interface ClubUpdateRequest {
   clubId: number;
 }
 
+export interface ClubWithdrawRequest {
+  token: string | null;
+  clubId: number;
+}
+
 export interface ClubScheduleCreationRequest {
   token: string | null;
   body: {
@@ -627,7 +632,20 @@ const updateClub = async (req: ClubUpdateRequest) => {
     },
     body,
   }).then(async (res) => {
-    return { ...(await res.json()), status: res.status };
+    return { status: res.status, ...(await res.json()) };
+  });
+};
+
+const withdrawClub = async (req: ClubWithdrawRequest) => {
+  return fetch(`${BASE_URL}/api/clubs/${req.clubId}/withdraw`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/jsona",
+      authorization: `${req.token}`,
+      Accept: "*/*",
+    },
+  }).then(async (res) => {
+    return { status: res.status, ...(await res.json()) };
   });
 };
 
@@ -953,6 +971,7 @@ export const ClubApi = {
   getClubs,
   createClub,
   updateClub,
+  withdrawClub,
   changeRole,
   getClubSchedules,
   createClubSchedule,
