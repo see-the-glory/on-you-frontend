@@ -431,6 +431,10 @@ export interface PostChangePw {
   token: string | null;
 }
 
+export interface WithdrawMember {
+  token: string | null;
+}
+
 export interface FeedLikeRequest {
   data: {
     id: number;
@@ -876,6 +880,20 @@ const changePassword = (req: PostChangePw) => {
   });
 };
 
+const withdrawMember = (req: WithdrawMember) => {
+  return fetch(`${BASE_URL}/api/user/withdraw`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `${req.token}`,
+    },
+    body: JSON.stringify(req),
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
+};
+
 const selectMyClubs = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
   return fetch(`${BASE_URL}/api/clubs/my`, {
@@ -995,6 +1013,7 @@ export const UserApi = {
   FindUserId,
   FindUserPw,
   changePassword,
+  withdrawMember
 };
 
 export const FeedApi = {

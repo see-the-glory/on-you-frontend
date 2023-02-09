@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
@@ -20,7 +20,7 @@ const IdButton = styled.TouchableOpacity`
   height: 53px;
   border-width: 1px;
   border-color: #ff714b;
-  background-color: #fff;
+  background-color: ${(props) => (props.disabled ? "#ffffff" : "#ff714b")};
 `;
 
 const IdTitle = styled.Text`
@@ -48,6 +48,8 @@ const PwTitle = styled.Text`
 `;
 
 const FindLoginInfo: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
+  const [active, setActive] = useState(false);
+
   const goToFindId = () => {
     navigate("LoginStack", {
       screen: "FindId",
@@ -62,7 +64,7 @@ const FindLoginInfo: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ nav
 
   return (
     <Container>
-      <IdButton onPress={goToFindId}>
+      <IdButton onPress={goToFindId} onPressIn={() => setActive(true)}>
         <IdTitle>아이디 찾기</IdTitle>
       </IdButton>
       <PwButton onPress={goToFindPw}>

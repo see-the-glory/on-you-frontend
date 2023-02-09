@@ -20,8 +20,6 @@ const Title = styled.Text`
   margin: 15px 0 15px 20px;
 `;
 
-const TouchableOpacity = styled.TouchableOpacity``;
-
 const MyClubWrap = styled.View`
   border-bottom-width: 1px;
   border-bottom-color: #e9e9e9;
@@ -73,6 +71,7 @@ const DeleteBox = styled.View`
 
 const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigation: { navigate } }, props) => {
   const [refreshing, setRefreshing] = useState(false);
+  const queryClient = useQueryClient();
   const token = useSelector((state: RootState) => state.auth.token);
   
   const {
@@ -86,7 +85,7 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
     setRefreshing(false);
   };
 
-  const rightSwipe = (progress, dragX) => {
+  /*const rightSwipe = (progress, dragX) => {
     const scale = dragX.interpolate({
       inputRange: [0, 100],
       outputRange: [0, 1],
@@ -108,7 +107,7 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
         </DeleteBox>
       </TouchableOpacity>
     );
-  };
+  };*/
 
   const goToClubStack = (clubData: MyClub) => {
     let clubNagivateData: MyClub = {
@@ -134,14 +133,12 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
           <>
             {item.applyStatus === "APPROVED" ? (
               <MyClubWrap key={index}>
-                <Swipeable renderRightActions={rightSwipe}>
-                  <MyClubBox style={{ width: SCREEN_WIDTH }} onPress={() => goToClubStack(item)}>
-                    <CircleIcon size={37} source={{ uri: item.thumbnail }} />
-                    <MyClubTextBox>
-                      <MyClubText>{item.name}</MyClubText>
-                    </MyClubTextBox>
-                  </MyClubBox>
-                </Swipeable>
+                <MyClubBox style={{ width: SCREEN_WIDTH }} onPress={() => goToClubStack(item)}>
+                  <CircleIcon size={37} uri={item.thumbnail}/>
+                  <MyClubTextBox>
+                    <MyClubText>{item.name}</MyClubText>
+                  </MyClubTextBox>
+                </MyClubBox>
               </MyClubWrap>
             ) : null}
           </>
@@ -158,7 +155,7 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
             {item.applyStatus === "APPLIED" ? (
               <MyClubWrap key={index}>
                 <MyClubBox style={{ width: SCREEN_WIDTH }} onPress={() => goToClubStack(item)}>
-                  <CircleIcon size={37} source={{ uri: item.thumbnail }} />
+                  <CircleIcon size={37} uri={item.thumbnail} />
                   <MyClubTextBox>
                     <MyClubText>{item.name}</MyClubText>
                   </MyClubTextBox>
