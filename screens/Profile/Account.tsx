@@ -7,9 +7,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import { RootState } from "../../redux/store/reducers";
-import { UserApi, WithdrawMember } from "../../api";
+import { AccountWithdrawRequest, UserApi } from "../../api";
 import { Alert } from "react-native";
-import { logout  } from "../../redux/slices/auth";
+import { logout } from "../../redux/slices/auth";
 import { useAppDispatch } from "../../redux/store";
 
 const Container = styled.SafeAreaView`
@@ -48,7 +48,7 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   const toast = useToast();
   const dispatch = useAppDispatch();
 
-  const mutation = useMutation(UserApi.withdrawMember, {
+  const mutation = useMutation(UserApi.withdrawAccount, {
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
         console.log(res);
@@ -71,10 +71,8 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   });
 
   const onSubmit = () => {
-
-    const withdraw: WithdrawMember =
-      { token }
-    mutation.mutate(withdraw);
+    const requestData: AccountWithdrawRequest = { token };
+    mutation.mutate(requestData);
   };
 
   const goToChangePw = () => {
