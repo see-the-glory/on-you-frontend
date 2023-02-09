@@ -431,7 +431,7 @@ export interface PostChangePw {
   token: string | null;
 }
 
-export interface WithdrawMember {
+export interface AccountWithdrawRequest {
   token: string | null;
 }
 
@@ -880,14 +880,13 @@ const changePassword = (req: PostChangePw) => {
   });
 };
 
-const withdrawMember = (req: WithdrawMember) => {
+const withdrawAccount = (req: AccountWithdrawRequest) => {
   return fetch(`${BASE_URL}/api/user/withdraw`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
       Authorization: `${req.token}`,
     },
-    body: JSON.stringify(req),
   }).then(async (res) => {
     if (res.status === 200) return { status: res.status, ...(await res.json()) };
     else return { status: res.status };
@@ -1013,7 +1012,7 @@ export const UserApi = {
   FindUserId,
   FindUserPw,
   changePassword,
-  withdrawMember
+  withdrawAccount,
 };
 
 export const FeedApi = {
