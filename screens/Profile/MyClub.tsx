@@ -66,14 +66,14 @@ const DeleteBox = styled.View`
   height: 53px;
   justify-content: center;
   align-items: center;
-  background-color: #ff714b;
+  background-color: #ff6534;
 `;
 
 const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigation: { navigate } }, props) => {
   const [refreshing, setRefreshing] = useState(false);
   const queryClient = useQueryClient();
   const token = useSelector((state: RootState) => state.auth.token);
-  
+
   const {
     isLoading: myClubInfoLoading, // true or false
     data: myClub,

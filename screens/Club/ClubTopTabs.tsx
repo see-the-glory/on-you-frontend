@@ -27,7 +27,7 @@ const NavigationView = styled.SafeAreaView<{ height: number }>`
   position: absolute;
   z-index: 3;
   width: 100%;
-  height: ${(props) => props.height}px;
+  height: ${(props: any) => props.height}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;

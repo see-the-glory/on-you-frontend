@@ -20,7 +20,7 @@ const IdButton = styled.TouchableOpacity`
   height: 53px;
   border-width: 1px;
   border-color: #ff6534;
-  background-color: ${(props) => (props.disabled ? "#ffffff" : "#FF6534")};
+  background-color: ${(props) => (props.disabled ? "#ffffff" : "#ff6534")};
 `;
 
 const IdTitle = styled.Text`

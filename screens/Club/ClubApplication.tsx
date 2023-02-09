@@ -9,6 +9,7 @@ import { ClubApi, ClubApproveRequest, ClubRejectRequest } from "../../api";
 import { useMutation } from "react-query";
 import { useToast } from "react-native-toast-notifications";
 import { RootState } from "../../redux/store/reducers";
+import moment from "moment";
 
 const SCREEN_PADDING_SIZE = 20;
 
@@ -23,12 +24,10 @@ const Header = styled.View`
 `;
 
 const HeaderText = styled(CustomText)`
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 16px;
+  line-height: 21px;
 `;
-const HeaderBoldText = styled(CustomText)`
-  font-size: 14px;
-  line-height: 20px;
+const HeaderBoldText = styled(HeaderText)`
   font-family: "NotoSansKR-Bold";
 `;
 const Content = styled.View``;
@@ -36,9 +35,19 @@ const MessageView = styled.ScrollView`
   height: 250px;
   border: 1px solid #dcdcdc;
 `;
+
+const CreatedTimeView = styled.View`
+  justify-content: center;
+  align-items: flex-end;
+`;
+const CreatedTimeText = styled(CustomText)`
+  color: #8e8e8e;
+`;
 const ContentText = styled(CustomText)`
-  margin: 5px 5px;
+  margin: 8px;
   color: #343434;
+  font-size: 14px;
+  line-height: 20px;
 `;
 
 const Footer = styled.View`
@@ -68,7 +77,7 @@ const ButtonText = styled(CustomText)`
 
 const ClubApplication = ({
   route: {
-    params: { clubData, actionId, actionerName, actionerId, applyMessage },
+    params: { clubData, actionId, actionerName, actionerId, applyMessage, createdTime },
   },
   navigation: { navigate, goBack, setOptions },
 }) => {
@@ -175,6 +184,8 @@ const ClubApplication = ({
     ]);
   };
 
+  console.log(createdTime);
+
   return (
     <Container>
       <StatusBar barStyle={"dark-content"} />
@@ -188,6 +199,9 @@ const ClubApplication = ({
         <MessageView>
           <ContentText>{applyMessage}</ContentText>
         </MessageView>
+        <CreatedTimeView>
+          <CreatedTimeText>{moment(createdTime).tz("Asia/Seoul").format("YYYY-MM-DD  A h시 mm분")}</CreatedTimeText>
+        </CreatedTimeView>
       </Content>
       <Footer>
         <RejectButton onPress={reject}>

@@ -353,7 +353,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                 >
                   <ItemText>인원 수 무제한으로 받기</ItemText>
                   <CheckBox check={maxNumberInfinity}>
-                    <Ionicons name="checkmark-sharp" size={16} color={maxNumberInfinity ? "#FF714B" : "#e8e8e8"} />
+                    <Ionicons name="checkmark-sharp" size={16} color={maxNumberInfinity ? "#FF6534" : "#e8e8e8"} />
                   </CheckBox>
                 </CheckButton>
               </Item>
@@ -362,11 +362,11 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
               <ItemTitle>가입 승인 방법</ItemTitle>
               <RadioButtonView>
                 <RadioButton onPress={() => setIsApproveRequired((prev) => (prev === "Y" ? "Y" : "Y"))}>
-                  <Ionicons name={isApproveRequired === "Y" ? "radio-button-on" : "radio-button-off"} size={16} color={isApproveRequired === "Y" ? "#FF714B" : "black"} style={{ marginRight: 3 }} />
+                  <Ionicons name={isApproveRequired === "Y" ? "radio-button-on" : "radio-button-off"} size={16} color={isApproveRequired === "Y" ? "#FF6534" : "black"} style={{ marginRight: 3 }} />
                   <ItemText>관리자 승인 후 가입</ItemText>
                 </RadioButton>
                 <RadioButton onPress={() => setIsApproveRequired((prev) => (prev === "Y" ? "N" : "N"))}>
-                  <Ionicons name={isApproveRequired === "N" ? "radio-button-on" : "radio-button-off"} size={16} color={isApproveRequired === "N" ? "#FF714B" : "black"} style={{ marginRight: 3 }} />
+                  <Ionicons name={isApproveRequired === "N" ? "radio-button-on" : "radio-button-off"} size={16} color={isApproveRequired === "N" ? "#FF6534" : "black"} style={{ marginRight: 3 }} />
                   <ItemText>누구나 바로 가입</ItemText>
                 </RadioButton>
               </RadioButtonView>

@@ -38,10 +38,10 @@ const IconImage = styled(FastImage)<{ size: number }>`
 `;
 
 const CircleName = styled(CustomText)`
-  font-size: 10px;
-  margin-top: 7px;
-  font-family: "NotoSansKR-Bold";
-  line-height: 13px;
+  font-size: 11px;
+  margin-top: 4px;
+  font-family: "NotoSansKR-Medium";
+  line-height: 15px;
 `;
 
 interface CircleIconProps {
@@ -58,7 +58,7 @@ const CircleIcon: React.FC<CircleIconProps> = ({ size, uri, name, badge, kerning
     <Container size={size} kerning={kerning ?? 0} opacity={opacity ?? 1}>
       {badge ? (
         <BadgeIcon>
-          <MaterialIcons name={badge} size={18} color="#ff714b" />
+          <MaterialIcons name={badge} size={18} color="#FF6534" />
         </BadgeIcon>
       ) : (
         <></>

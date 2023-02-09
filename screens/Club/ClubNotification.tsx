@@ -87,6 +87,7 @@ const ClubNotification = ({
           actionerName: item.actionerName,
           actionerId: item.actionerId,
           applyMessage: item.applyMessage,
+          createdTime: item.created,
         });
       }
     } else {

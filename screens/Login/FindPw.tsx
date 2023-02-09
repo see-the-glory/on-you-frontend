@@ -38,7 +38,7 @@ const Button = styled.TouchableOpacity`
   align-items: center;
   width: 100%;
   height: 48px;
-  background-color: #ff714b;
+  background-color: #ff6534;
   margin-top: 10%;
 `;
 

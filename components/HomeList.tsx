@@ -429,7 +429,7 @@ const HomeList: React.FC<FeedListProps> = ({ feedId, clubId, clubName, userId, u
       </FeedHeader>
       <FeedMain>
         <FeedImage>
-          {/*<Swiper horizontal dotColor="#E0E0E0" activeDotColor="#FF714B" containerStyle={{ backgroundColor: "black", height: FEED_IMAGE_SIZE }}>
+          {/*<Swiper horizontal dotColor="#E0E0E0" activeDotColor="#FF6534" containerStyle={{ backgroundColor: "black", height: FEED_IMAGE_SIZE }}>
                   <SliderBox images={item.imageUrls} sliderBoxHeight={FEED_IMAGE_SIZE} />
                 </Swiper>*/}
           <ImageSource source={imageUrls[0] === undefined ? require("../assets/basic.jpg") : { uri: imageUrls[0] }} size={FEED_IMAGE_SIZE} />

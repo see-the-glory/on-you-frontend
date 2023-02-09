@@ -74,7 +74,7 @@ const MemoInput = styled(CustomTextInput)`
   margin-top: 15px;
   width: 100%;
   height: 300px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 20px;
   padding: 12px;
   background-color: #f3f3f3;
@@ -182,9 +182,9 @@ const ClubScheduleAdd = ({
           <Calendar
             theme={{
               arrowColor: "#6F6F6F",
-              dotColor: "#FF714B",
-              selectedDayBackgroundColor: "#FF714B",
-              todayTextColor: "#FF714B",
+              dotColor: "#FF6534",
+              selectedDayBackgroundColor: "#FF6534",
+              todayTextColor: "#FF6534",
             }}
             minDate={dateTime.toString()}
             context={{ date: "" }}

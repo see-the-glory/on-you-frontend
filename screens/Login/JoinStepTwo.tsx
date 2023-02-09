@@ -65,7 +65,7 @@ const ButtonTitle = styled.Text`
 `;
 
 const Error = styled.Text`
-  color: #ff714b;
+  color: #ff6534;
   font-size: 12px;
   margin-top: 7px;
 `;

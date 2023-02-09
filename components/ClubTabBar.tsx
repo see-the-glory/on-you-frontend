@@ -16,25 +16,25 @@ const TabBarContainer = styled.View<{ height: number }>`
 
 const TabButton = styled.TouchableOpacity<{ isFocused: boolean; height: number }>`
   flex: 1;
-  height: ${(props) => props.height}px;
+  height: ${(props: any) => props.height}px;
   justify-content: center;
   align-items: center;
   border-bottom-width: 2px;
-  border-bottom-color: ${(props) => (props.isFocused ? "black" : "transparent")};
+  border-bottom-color: ${(props: any) => (props.isFocused ? "black" : "transparent")};
 `;
 
 const TextWrap = styled.View<{ height: number }>`
-  height: ${(props) => props.height}px;
+  height: ${(props: any) => props.height}px;
   justify-content: center;
 `;
 
 const TabText = styled(CustomText)<{ isFocused: boolean }>`
-  font-size: 12px;
-  ${(props) => (props.isFocused ? "font-family: NotoSansKR-Bold" : "")};
-  color: ${(props) => (props.isFocused ? "black" : "gray")};
+  font-size: 14px;
+  ${(props: any) => (props.isFocused ? "font-family: NotoSansKR-Medium" : "")};
+  color: ${(props: any) => (props.isFocused ? "black" : "gray")};
 `;
 
-const TAP_TAP_HEIGHT = 40;
+const TAP_TAP_HEIGHT = 46;
 
 const ClubTabBar: React.FC<MaterialTopTabBarProps> = ({ state, descriptors, navigation }) => {
   return (

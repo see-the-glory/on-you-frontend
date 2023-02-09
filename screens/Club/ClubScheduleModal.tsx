@@ -15,7 +15,7 @@ import { Menu, MenuDivider, MenuItem } from "react-native-material-menu";
 import { useNavigation } from "@react-navigation/native";
 
 const ModalContainer = styled.View`
-  height: 480px;
+  height: 500px;
   justify-content: center;
   align-items: center;
 `;
@@ -28,21 +28,20 @@ const Header = styled.View<{ index: number }>`
   align-items: center;
   justify-content: center;
   width: 100%;
-  background-color: ${(props: any) => (props.index === 0 ? "#FF551F" : "#CCCCCC")};
-  padding-top: 10px;
-  padding-bottom: 10px;
+  background-color: ${(props: any) => (props.index === 0 ? "#FF551F" : "#C0C0C0")};
+  padding: 10px 0px;
 `;
 
 const ScheduleText = styled(CustomText)<{ index: number }>`
-  font-size: 16px;
-  line-height: 21px;
+  font-size: 18px;
+  line-height: 24px;
   color: ${(props: any) => (props.index === 0 ? "white" : "black")};
 `;
 
 const ScheduleTitle = styled(CustomText)<{ index: number }>`
-  font-size: 26px;
+  font-size: 28px;
   font-family: "NotoSansKR-Bold";
-  line-height: 32px;
+  line-height: 36px;
   color: ${(props: any) => (props.index === 0 ? "white" : "black")};
 `;
 
@@ -53,7 +52,7 @@ const Content = styled.View`
 `;
 
 const ContentItemView = styled.View`
-  height: 30px;
+  height: 35px;
   flex-direction: row;
   padding: 8px 8px;
   align-items: center;
@@ -67,9 +66,8 @@ const ContentCollapsibleView = styled.View`
 
 const ContentText = styled(CustomText)`
   padding: 0px 10px;
-  font-size: 10px;
-  line-height: 15px;
-  color: #6f6f6f;
+  font-size: 13px;
+  line-height: 18px;
 `;
 
 const MemoScrollView = styled.ScrollView`
@@ -78,9 +76,9 @@ const MemoScrollView = styled.ScrollView`
   padding: 0px 8px;
 `;
 const Memo = styled(CustomText)`
-  color: #6f6f6f;
-  font-size: 10px;
-  line-height: 15px;
+  color: #464646;
+  font-size: 14px;
+  line-height: 19px;
 `;
 
 const Footer = styled.View`
@@ -93,16 +91,17 @@ const ApplyButton = styled.TouchableOpacity<{ participation: boolean }>`
   width: 130px;
   justify-content: center;
   align-items: center;
-  background-color: ${(props: any) => (props.participation ? "white" : "#FF551F")};
-  padding: 5px 0px;
-  border: 1px solid #ff714b;
+  background-color: ${(props: any) => (props.participation ? "white" : "#FF6534")};
+  padding: 7px 0px;
+  border: 1px solid #ff6534;
+  border-radius: 20px;
 `;
 
 const ButtonText = styled(CustomText)<{ participation: boolean }>`
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 20px;
   font-family: "NotoSansKR-Medium";
-  color: ${(props: any) => (props.participation ? "#FF551F" : "white")};
+  color: ${(props: any) => (props.participation ? "#FF6534" : "white")};
 `;
 
 const ModalHeaderLeft = styled.View`
@@ -124,7 +123,7 @@ const Break = styled.View<{ sep: number }>`
   margin-bottom: ${(props: any) => props.sep}px;
   margin-top: ${(props: any) => props.sep}px;
   border-bottom-width: 1px;
-  border-bottom-color: rgba(0, 0, 0, 0.3);
+  border-bottom-color: rgba(0, 0, 0, 0.2);
   opacity: 0.5;
 `;
 
@@ -298,16 +297,16 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                 <Header index={index}>
                   <ModalHeaderLeft>
                     <TouchableOpacity onPress={() => closeModal(true)}>
-                      <Ionicons name="close" size={18} color="black" />
+                      <Ionicons name="close" size={18} color="white" />
                     </TouchableOpacity>
                   </ModalHeaderLeft>
                   <ModalHeaderRight>
                     <Menu
                       visible={menuVisibleMap.get(item.id ?? -1)}
-                      style={{ justifyContent: "center", alignItems: "center", marginTop: 20, borderRadius: 0, width: 70, marginLeft: -10 }}
+                      style={{ justifyContent: "center", alignItems: "center", paddingLeft: 13, marginTop: 20, borderRadius: 0, width: 70, marginLeft: -10 }}
                       anchor={
                         <TouchableOpacity onPress={() => showMenu(item.id ?? -1)}>
-                          <Ionicons name="ellipsis-vertical" size={18} color="black" />
+                          <Ionicons name="ellipsis-vertical" size={18} color="white" />
                         </TouchableOpacity>
                       }
                       onRequestClose={() => hideMenu(item.id ?? -1)}
@@ -319,8 +318,8 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                       </MenuItem>
                       <MenuDivider />
                       <MenuItem onPress={() => deleteSchedule(item.id)} style={{ margin: -8 }}>
-                        <Feather name="trash-2" size={12} color="#FF714B" />
-                        <MenuText color={"#FF714B"}>{` 삭제`}</MenuText>
+                        <Feather name="trash-2" size={12} color="#FF6534" />
+                        <MenuText color={"#FF6534"}>{` 삭제`}</MenuText>
                       </MenuItem>
                     </Menu>
                   </ModalHeaderRight>
@@ -331,7 +330,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                 </Header>
                 <Content>
                   <ContentItemView>
-                    <Feather name="clock" size={13} color="black" />
+                    <Feather name="clock" size={13} color="#A5A5A5" />
                     <ContentText>
                       {`${item.ampm} ${item.hour}시`}
                       {item.minute !== "0" ? ` ${item.minute}분` : ""}
@@ -339,16 +338,16 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                   </ContentItemView>
                   <Break sep={0} />
                   <ContentItemView>
-                    <Feather name="map-pin" size={13} color="black" />
+                    <Feather name="map-pin" size={13} color="#A5A5A5" />
                     <ContentText>{item.location}</ContentText>
                   </ContentItemView>
                   <Break sep={0} />
                   <ContentItemView>
-                    <Feather name="users" size={13} color="black" />
+                    <Feather name="users" size={13} color="#A5A5A5" />
                     {item.participation || item.members?.length ? (
                       <ContentCollapsibleView>
-                        {item.participation ? <CircleIcon size={18} uri={me?.thumbnail} kerning={5} /> : <></>}
-                        <CircleIconBundle size={18} kerning={-8} uris={item.members?.filter((member) => member.id != me?.id).map((member) => member.thumbnail)} />
+                        {item.participation ? <CircleIcon size={22} uri={me?.thumbnail} kerning={5} /> : <></>}
+                        <CircleIconBundle size={22} kerning={-8} uris={item.members?.filter((member) => member.id != me?.id).map((member) => member.thumbnail)} />
                       </ContentCollapsibleView>
                     ) : (
                       <ContentText>{`참여 멤버가 없습니다.`}</ContentText>
@@ -356,7 +355,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                   </ContentItemView>
                   <Break sep={0} />
                   <ContentItemView>
-                    <Ionicons name="checkmark-sharp" size={13} color="black" />
+                    <Ionicons name="checkmark-sharp" size={13} color="#A5A5A5" />
                     <ContentText>{`메모`}</ContentText>
                   </ContentItemView>
                   <MemoScrollView>

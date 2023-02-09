@@ -25,7 +25,7 @@ const Break = styled.View<{ sep: number }>`
   margin-bottom: ${(props: any) => props.sep}px;
   margin-top: ${(props: any) => props.sep}px;
   border-bottom-width: 1px;
-  border-bottom-color: rgba(0, 0, 0, 0.2);
+  border-bottom-color: #e3e3e3;
   opacity: 0.5;
 `;
 
@@ -45,7 +45,7 @@ const TitleView = styled.View`
 
 const SectionTitle = styled(CustomText)`
   font-family: "NotoSansKR-Bold";
-  font-size: 14px;
+  font-size: 15px;
   margin-left: 5px;
   line-height: 20px;
 `;
@@ -57,8 +57,8 @@ const ContentView = styled.View<{ paddingSize?: number }>`
 `;
 
 const ContentText = styled(CustomText)`
-  font-size: 12px;
-  line-height: 17px;
+  font-size: 13px;
+  line-height: 18px;
 `;
 
 const ScheduleSeparator = styled.View`
@@ -73,34 +73,12 @@ const ScheduleView = styled.TouchableOpacity`
 const ScheduleAddView = styled.TouchableOpacity`
   background-color: white;
   min-width: 110px;
-  min-height: 120px;
+  min-height: 150px;
   justify-content: space-evenly;
   align-items: center;
   box-shadow: 1px 1px 2px gray;
   elevation: 5;
   padding: 20px 5px;
-`;
-
-const ScheduleBadge = styled.View`
-  position: absolute;
-  z-index: 1;
-  right: -10px;
-  top: -15px;
-  border-radius: 50px;
-  background-color: #ff714b;
-  padding: 4px 6px;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  elevation: 3;
-`;
-
-const ScheduleBadgeText = styled(CustomText)`
-  color: white;
-  font-size: 8px;
-  font-family: "NotoSansKR-Bold";
-  line-height: 10px;
-  text-align: center;
 `;
 
 const ScheduleDateView = styled.View<{ index: number }>`
@@ -121,7 +99,7 @@ const ScheduleDetailView = styled.View`
 const ScheduleDetailItemView = styled.View`
   flex-direction: row;
   align-items: center;
-  margin: 1px 5px;
+  margin: 3px 5px;
 `;
 
 const ScheduleText = styled(CustomText)<{ index: number }>`
@@ -297,7 +275,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             onMomentumScrollEnd={(event) => dispatch(clubSlice.actions.updateClubHomeScheduleScrollX({ scrollX: event.nativeEvent.contentOffset.x }))}
             contentOffset={{ x: scheduleOffsetX ?? 0, y: 0 }}
             contentContainerStyle={{
-              paddingVertical: 15,
+              paddingVertical: 6,
               paddingHorizontal: SCREEN_PADDING_SIZE,
             }}
             data={schedules}
@@ -311,13 +289,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
                     setSelectedSchedule(index);
                   }}
                 >
-                  {index === 0 ? (
-                    <ScheduleBadge>
-                      <ScheduleBadgeText>{`다음\n모임`}</ScheduleBadgeText>
-                    </ScheduleBadge>
-                  ) : (
-                    <></>
-                  )}
                   <ScheduleDateView index={index}>
                     <ScheduleText index={index}>{item.year}</ScheduleText>
                     <ScheduleTitle index={index}>
@@ -341,7 +312,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
                       <Ionicons name="people-sharp" size={12} color="#CCCCCC" style={{ marginRight: 7 }} />
                       <ScheduleText>{item.members?.length}명 참석</ScheduleText>
                     </ScheduleDetailItemView>
-                    <Break sep={2} />
                     <ScheduleDetailItemView style={{ justifyContent: "center" }}>
                       <ScheduleSubText>더보기</ScheduleSubText>
                     </ScheduleDetailItemView>
@@ -350,7 +320,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
               ) : (
                 <ScheduleAddView onPress={goToScheduleAdd}>
                   <Feather name="plus" size={28} color="#6E6E6E" />
-                  <ScheduleText style={{ textAlign: "center", color: "#6E6E6E" }}>{`스케줄을 등록해\n멤버들과 공유해보세요.`}</ScheduleText>
+                  <ScheduleText style={{ textAlign: "center", color: "#6E6E6E" }}>{`새로운 스케줄을\n등록해보세요.`}</ScheduleText>
                 </ScheduleAddView>
               )
             }

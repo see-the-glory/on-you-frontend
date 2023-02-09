@@ -49,7 +49,13 @@ const FeedOptionModal: React.FC<FeedOptionModalProps> = ({ modalRef, buttonHeigh
 
   return (
     <Portal>
-      <Modalize ref={modalRef} modalHeight={modalHeight} handlePosition="inside" handleStyle={{ top: 14, height: 3, width: 35 }} modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+      <Modalize
+        ref={modalRef}
+        modalHeight={modalHeight}
+        handlePosition="inside"
+        handleStyle={{ top: 14, height: 3, width: 35, backgroundColor: "#d4d4d4" }}
+        modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+      >
         <ModalContainer style={{ flex: 1 }}>
           {feedOptionList.map((option, index) => (
             <View key={`FeedOption_${index}`}>
