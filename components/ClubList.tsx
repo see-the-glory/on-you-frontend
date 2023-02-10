@@ -78,12 +78,11 @@ const TagView = styled.View`
   justify-content: flex-start;
   align-items: center;
 `;
-
 const Tag = styled.View<{ color: string }>`
   flex-direction: row;
   align-items: center;
   background-color: ${(props: any) => props.color};
-  padding: 0px 3px;
+  padding: 1px 3px;
   border-radius: 5px;
   margin-right: 5px;
   border: 1px solid ${(props: any) => (props.color === "white" ? "#A5A5A5" : "#B4B4B4")};
@@ -117,7 +116,7 @@ interface ClubListProps {
 }
 
 const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, clubName, memberNum, clubShortDesc, categories, recruitStatus, colSize }) => {
-  const lineCount = 13;
+  const lineCount = Math.floor((colSize - 10) / 12);
   return (
     <Club>
       <ThumbnailView>
@@ -150,23 +149,15 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
         )}
         <TagView>
           <Tag color={"white"}>
-            <FontAwesome5 name="cross" size={6} color="#A5A5A5" />
-            <TagText style={{ color: "#A5A5A5", marginLeft: 3 }}>{organizationName}</TagText>
+            <FontAwesome5 name="cross" size={7} color="#A5A5A5" />
+            <TagText style={{ color: "#A5A5A5", marginLeft: 1 }}>{organizationName}</TagText>
           </Tag>
-          {categories && categories[0] ? (
-            <Tag color={"#B4B4B4"}>
-              <TagText style={{ color: "white" }}>{categories[0].name}</TagText>
+
+          {categories?.map((category, index) => (
+            <Tag key={index} color={"#B4B4B4"}>
+              <TagText style={{ color: "white" }}>{category.name}</TagText>
             </Tag>
-          ) : (
-            <></>
-          )}
-          {categories && categories[1] ? (
-            <Tag color={"#B4B4B4"}>
-              <TagText style={{ color: "white" }}>{categories[1].name}</TagText>
-            </Tag>
-          ) : (
-            <></>
-          )}
+          ))}
         </TagView>
       </ClubInfo>
     </Club>

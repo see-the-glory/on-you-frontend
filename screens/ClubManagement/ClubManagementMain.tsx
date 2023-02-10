@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useToast } from "react-native-toast-notifications";
 import { RootState } from "../../redux/store/reducers";
+import Tag from "../../components/Tag";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -70,22 +71,6 @@ const TagView = styled.View`
   width: 100%;
   flex-direction: row;
   margin-bottom: 3px;
-`;
-
-const Tag = styled.View<{ color: string }>`
-  flex-direction: row;
-  align-items: center;
-  background-color: ${(props: any) => props.color};
-  padding: 2px 4px;
-  border-radius: 5px;
-  margin-right: 5px;
-  border: 1px solid ${(props: any) => (props.color === "white" ? "#b4b4b4" : "#C4C4C4")};
-`;
-
-const TagText = styled(CustomText)`
-  font-family: "NotoSansKR-Medium";
-  font-size: 11px;
-  line-height: 15px;
 `;
 
 const ButtonView = styled.View`
@@ -285,7 +270,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
 
   return (
     <Container>
-      <StatusBar barStyle={"dark-content"} />
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <MainView>
         <Shadow distance={3} sides={{ top: false }} style={{ width: "100%" }}>
           <Header>
@@ -308,14 +293,9 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
 
             <InformationView>
               <TagView>
-                <Tag color={"white"}>
-                  <FontAwesome5 name="cross" size={8} color="#A5A5A5" style={{ marginRight: -1 }} />
-                  <TagText style={{ color: "#B4B4B4", marginLeft: 3 }}>{data.organizationName}</TagText>
-                </Tag>
+                <Tag name={data.organizationName ?? ""} iconName="cross" backgroundColor="white" textColor="#B4B4B4" borderColor="#B4B4B4" />
                 {data?.categories?.map((category, index) => (
-                  <Tag key={index} color={"#C4C4C4"}>
-                    <TagText style={{ color: "white" }}>{category.name}</TagText>
-                  </Tag>
+                  <Tag key={index} name={category.name} backgroundColor="#C4C4C4" textColor="white" borderColor="#C4C4C4" />
                 ))}
               </TagView>
               <Title>{data.name}</Title>

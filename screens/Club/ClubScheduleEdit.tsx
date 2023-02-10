@@ -174,7 +174,7 @@ const ClubScheduleEdit = ({
 
   return (
     <Container>
-      <StatusBar barStyle={"dark-content"} />
+      <StatusBar backgroundColor={"white"}  barStyle={"dark-content"} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
         <MainView>
           <Calendar

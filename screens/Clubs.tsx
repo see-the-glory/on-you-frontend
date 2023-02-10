@@ -349,7 +349,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   ) : (
     <>
       <Container>
-        <StatusBar barStyle={"dark-content"} />
+        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
         <HeaderView>
           <FlatList
             showsHorizontalScrollIndicator={false}
