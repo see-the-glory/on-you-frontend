@@ -179,6 +179,8 @@ const ClubTopTabs = ({
       if (res.status === 200) {
         setData(res.data);
       } else {
+        console.log("--- getClub Error ---");
+        console.log(res);
         toast.show(`Error Code: ${res.status}`, {
           type: "warning",
         });
@@ -285,7 +287,7 @@ const ClubTopTabs = ({
 
   return (
     <Container>
-      <StatusBar barStyle={"light-content"} />
+      <StatusBar backgroundColor={"black"} barStyle={"light-content"} />
       <NavigationView height={HEADER_HEIGHT}>
         <LeftNavigationView>
           <TouchableOpacity onPress={() => popToTop()}>

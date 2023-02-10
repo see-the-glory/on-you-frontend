@@ -302,7 +302,7 @@ const Home: React.FC<HomeScreenProps> = () => {
     </Loader>
   ) : (
     <Container>
-      <StatusBar barStyle={"dark-content"} />
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <HeaderView height={homeHeaderHeight}>
         <FastImage source={require("../assets/home_logo.png")} style={{ width: 100, height: 30 }} />
         <HeaderRightView>

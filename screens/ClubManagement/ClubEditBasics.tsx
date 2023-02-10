@@ -32,10 +32,9 @@ const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
 `;
 
 const ImagePickerText = styled(CustomText)`
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
   color: #2995fa;
-  line-height: 22px;
+  line-height: 21px;
 `;
 
 const PickedImage = styled.Image<{ height: number }>`
@@ -44,16 +43,17 @@ const PickedImage = styled.Image<{ height: number }>`
 `;
 
 const Content = styled.View`
-  padding: 20px;
+  padding: 10px 20px 0px 20px;
   margin-bottom: 50px;
 `;
+
 const ContentItem = styled.View`
   width: 100%;
   flex: 1;
   border-bottom-width: 1px;
   border-bottom-color: #cecece;
   padding-bottom: 3px;
-  margin-bottom: 30px;
+  margin: 10px 0px;
 `;
 
 const Item = styled.View`
@@ -72,13 +72,13 @@ const ItemTitle = styled(CustomText)`
 `;
 
 const ItemText = styled(CustomText)`
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 19px;
   margin-right: 5px;
 `;
 
 const ItemTextInput = styled(CustomTextInput)`
-  font-size: 14px;
+  font-size: 15px;
   line-height: 20px;
   padding: 0px 5px;
   flex: 1;
@@ -86,7 +86,7 @@ const ItemTextInput = styled(CustomTextInput)`
 
 const RadioButtonView = styled.View`
   flex-direction: row;
-  padding: 5px;
+  padding: 2px 5px;
   align-items: center;
 `;
 
@@ -103,7 +103,7 @@ const CheckButton = styled.TouchableOpacity`
 
 const CheckBox = styled.View<{ check: boolean }>`
   border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: ${(props: any) => (props.check ? "white" : "#E8E8E8")};
+  background-color: white;
 `;
 
 const CategoryText = styled(CustomText)<{ selected?: boolean }>`
@@ -147,7 +147,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   const [categoryBundle, setCategoryBundle] = useState<Array<Category[]>>();
   const [imageURI, setImageURI] = useState<string | null>(null);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
-  const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 4) * 3);
+  const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 5) * 3);
 
   const { isLoading: categoryLoading, data: categories } = useQuery<CategoryResponse>(["getCategories"], ClubApi.getCategories, {
     onSuccess: (res) => {
@@ -353,7 +353,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                 >
                   <ItemText>인원 수 무제한으로 받기</ItemText>
                   <CheckBox check={maxNumberInfinity}>
-                    <Ionicons name="checkmark-sharp" size={16} color={maxNumberInfinity ? "#FF6534" : "#e8e8e8"} />
+                    <Ionicons name="checkmark-sharp" size={13} color={maxNumberInfinity ? "#FF6534" : "#e8e8e8"} />
                   </CheckBox>
                 </CheckButton>
               </Item>
@@ -362,11 +362,21 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
               <ItemTitle>가입 승인 방법</ItemTitle>
               <RadioButtonView>
                 <RadioButton onPress={() => setIsApproveRequired((prev) => (prev === "Y" ? "Y" : "Y"))}>
-                  <Ionicons name={isApproveRequired === "Y" ? "radio-button-on" : "radio-button-off"} size={16} color={isApproveRequired === "Y" ? "#FF6534" : "black"} style={{ marginRight: 3 }} />
+                  <Ionicons
+                    name={isApproveRequired === "Y" ? "radio-button-on" : "radio-button-off"}
+                    size={16}
+                    color={isApproveRequired === "Y" ? "#FF6534" : "rgba(0, 0, 0, 0.3)"}
+                    style={{ marginRight: 3 }}
+                  />
                   <ItemText>관리자 승인 후 가입</ItemText>
                 </RadioButton>
                 <RadioButton onPress={() => setIsApproveRequired((prev) => (prev === "Y" ? "N" : "N"))}>
-                  <Ionicons name={isApproveRequired === "N" ? "radio-button-on" : "radio-button-off"} size={16} color={isApproveRequired === "N" ? "#FF6534" : "black"} style={{ marginRight: 3 }} />
+                  <Ionicons
+                    name={isApproveRequired === "N" ? "radio-button-on" : "radio-button-off"}
+                    size={16}
+                    color={isApproveRequired === "N" ? "#FF6534" : "rgba(0, 0, 0, 0.3)"}
+                    style={{ marginRight: 3 }}
+                  />
                   <ItemText>누구나 바로 가입</ItemText>
                 </RadioButton>
               </RadioButtonView>

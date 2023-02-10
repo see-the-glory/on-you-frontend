@@ -37,31 +37,30 @@ const Item = styled.View`
 const ItemTitle = styled(CustomText)`
   font-size: 13px;
   line-height: 19px;
-  color: #b0b0b0;
   margin-bottom: 8px;
 `;
 
 const ItemText = styled(CustomText)`
-  font-size: 9px;
+  font-size: 11px;
   line-height: 15px;
-  padding: 8px 0px;
+  padding: 6px 0px;
   color: #8c8c8c;
 `;
 
 const ShortDescInput = styled(CustomTextInput)`
   width: 100%;
-  font-size: 12px;
-  line-height: 17px;
-  padding: 8px;
+  font-size: 14px;
+  line-height: 19px;
+  padding: 12px;
   background-color: #f3f3f3;
   text-align: center;
 `;
 
 const LongDescInput = styled(CustomTextInput)`
   width: 100%;
-  height: 300px;
-  font-size: 12px;
-  line-height: 20px;
+  height: 250px;
+  font-size: 14px;
+  line-height: 19px;
   padding: 12px;
   background-color: #f3f3f3;
 `;
@@ -78,7 +77,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
   const [clubLongDesc, setClubLongDesc] = useState(clubData.clubLongDesc ?? "");
   const mutation = useMutation(ClubApi.updateClub, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
+      if (res.status === 200) {
         toast.show(`저장이 완료되었습니다.`, {
           type: "success",
         });

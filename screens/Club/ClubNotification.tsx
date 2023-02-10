@@ -103,7 +103,7 @@ const ClubNotification = ({
     </Loader>
   ) : (
     <Container>
-      <StatusBar barStyle={"dark-content"} />
+      <StatusBar backgroundColor={"white"}  barStyle={"dark-content"} />
       <FlatList
         contentContainerStyle={{ flexGrow: 1, marginVertical: 10, paddingHorizontal: SCREEN_PADDING_SIZE }}
         refreshing={refreshing}
