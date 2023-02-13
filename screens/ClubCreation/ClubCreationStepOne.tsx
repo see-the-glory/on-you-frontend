@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Alert, FlatList } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { ClubCreationStepOneScreenProps } from "../../Types/Club";
@@ -14,7 +14,8 @@ const Loader = styled.SafeAreaView`
 `;
 
 const Container = styled.SafeAreaView`
-  flex: 1;
+  width: 100%;
+  height: 100%;
 `;
 
 const HeaderView = styled.View`
@@ -62,13 +63,6 @@ const CategoryItem = styled.TouchableOpacity<{ selected: boolean }>`
   border: 0.5px solid #c3c3c3;
   padding: 0px 15px 0px 15px;
 `;
-
-const CategoryIcon = styled.Image<{ selected: boolean }>`
-  border-radius: 10px;
-  opacity: ${(props: any) => (props.selected ? "1" : "0.3")};
-  ${(props: any) => (props.selected ? "background-color: #295AF5;" : "")};
-`;
-
 const CategoryText = styled(CustomText)<{ selected: boolean }>`
   font-size: 14px;
   line-height: 21px;
@@ -76,8 +70,8 @@ const CategoryText = styled(CustomText)<{ selected: boolean }>`
 `;
 
 const FooterView = styled.View`
-  margin: 30px 0px 80px 0px;
   padding: 0px 20px;
+  margin: 30px 0px;
   align-items: center;
 `;
 
@@ -150,6 +144,7 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
   ) : (
     <Container>
       <FlatList
+        contentContainerStyle={{ flex: 1 }}
         ListHeaderComponentStyle={{ marginBottom: 4, paddingHorizontal: 20 }}
         ListHeaderComponent={
           <HeaderView>
@@ -163,12 +158,6 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
             </HeaderSubView>
           </HeaderView>
         }
-        ListFooterComponentStyle={{
-          marginTop: 30,
-          marginBottom: 80,
-          paddingHorizontal: 20,
-          alignItems: "center",
-        }}
         data={categories}
         keyExtractor={(item, index) => index + ""}
         renderItem={({ item }) => (

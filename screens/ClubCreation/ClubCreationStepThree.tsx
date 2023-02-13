@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from "react-native";
+import { DeviceEventEmitter, Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from "react-native";
+import { orange100 } from "react-native-paper/lib/typescript/styles/colors";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
@@ -10,9 +11,10 @@ import CustomTextInput from "../../components/CustomTextInput";
 import { RootState } from "../../redux/store/reducers";
 import { ClubCreationStepThreeScreenProps } from "../../Types/Club";
 
-const Container = styled.ScrollView`
-  flex: 1;
-  padding: 0px 20px;
+const Container = styled.ScrollView``;
+
+const MainView = styled.View`
+  width: 100%;
 `;
 
 const HeaderView = styled.View`
@@ -32,13 +34,9 @@ const H2 = styled(CustomText)`
   color: #5c5c5c;
 `;
 
-const Content = styled.View`
-  width: 100%;
-`;
+const Content = styled.View``;
 
 const ContentItem = styled.View`
-  width: 100%;
-  flex: 1;
   margin-bottom: 20px;
 `;
 
@@ -77,7 +75,7 @@ const FooterView = styled.View`
   width: 100%;
   align-items: center;
   justify-content: center;
-  margin: 30px 0px 80px 0px;
+  margin: 30px 0px;
 `;
 const NextButton = styled.TouchableOpacity`
   width: 100%;
@@ -111,6 +109,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
       console.log(res);
       setDisableSubmit(false);
       if (res.status === 200) {
+        DeviceEventEmitter.emit("ClubListRefetch");
         return navigate("ClubCreationSuccess", {
           clubData: res.data,
         });
@@ -179,49 +178,54 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={50} style={{ flex: 1 }}>
         <Container
           contentContainerStyle={{
-            justifyContent: "center",
+            width: "100%",
+            height: "100%",
+            paddingHorizontal: 20,
+            justifyContent: "space-between",
             alignItems: "center",
           }}
         >
-          <HeaderView>
-            <H1>모임 소개</H1>
-            <H2>모임을 소개해주세요.</H2>
-          </HeaderView>
-          <Content>
-            <ContentItem>
-              <ItemTitle>간단 소개</ItemTitle>
-              <ShortDescInput
-                placeholder="20자 이내로 간단 소개글을 적어주세요."
-                placeholderTextColor="#B0B0B0"
-                value={clubShortDesc}
-                textAlign="center"
-                maxLength={20}
-                textAlignVertical="center"
-                onChangeText={(value: string) => setClubShortDesc(value)}
-                onEndEditing={() => setClubShortDesc((prev) => prev.trim())}
-                includeFontPadding={false}
-              />
-              <ItemText>ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!</ItemText>
-            </ContentItem>
-            <ContentItem>
-              <ItemTitle>상세 소개</ItemTitle>
-              <LongDescInput
-                placeholder="모임의 상세 소개글을 적어주세요."
-                placeholderTextColor="#B0B0B0"
-                value={clubLongDesc}
-                textAlign="left"
-                multiline={true}
-                maxLength={100}
-                textAlignVertical="top"
-                onChangeText={(value: string) => setClubLongDesc(value)}
-                onEndEditing={() => setClubLongDesc((prev) => prev.trim())}
-                includeFontPadding={false}
-              />
-            </ContentItem>
-          </Content>
+          <MainView>
+            <HeaderView>
+              <H1>모임 소개</H1>
+              <H2>모임을 소개해주세요.</H2>
+            </HeaderView>
+            <Content>
+              <ContentItem>
+                <ItemTitle>간단 소개</ItemTitle>
+                <ShortDescInput
+                  placeholder="20자 이내로 간단 소개글을 적어주세요."
+                  placeholderTextColor="#B0B0B0"
+                  value={clubShortDesc}
+                  textAlign="center"
+                  maxLength={20}
+                  textAlignVertical="center"
+                  onChangeText={(value: string) => setClubShortDesc(value)}
+                  onEndEditing={() => setClubShortDesc((prev) => prev.trim())}
+                  includeFontPadding={false}
+                />
+                <ItemText>ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!</ItemText>
+              </ContentItem>
+              <ContentItem>
+                <ItemTitle>상세 소개</ItemTitle>
+                <LongDescInput
+                  placeholder="모임의 상세 소개글을 적어주세요."
+                  placeholderTextColor="#B0B0B0"
+                  value={clubLongDesc}
+                  textAlign="left"
+                  multiline={true}
+                  maxLength={100}
+                  textAlignVertical="top"
+                  onChangeText={(value: string) => setClubLongDesc(value)}
+                  onEndEditing={() => setClubLongDesc((prev) => prev.trim())}
+                  includeFontPadding={false}
+                />
+              </ContentItem>
+            </Content>
+          </MainView>
           <FooterView>
             <NextButton onPress={onSubmit} disabled={clubShortDesc === "" || clubLongDesc === "" || disableSubmit}>
               <ButtonText>완료</ButtonText>

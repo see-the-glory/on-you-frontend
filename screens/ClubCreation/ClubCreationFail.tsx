@@ -1,5 +1,4 @@
 import React from "react";
-import { useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { ClubCreationFailScreenProps } from "../../Types/Club";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,12 +10,18 @@ const Container = styled.SafeAreaView`
   align-items: center;
 `;
 
-const SectionView = styled.View<{ height: number }>`
+const MainView = styled.View`
   width: 100%;
-  height: ${(props) => props.height}px;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+`;
+
+const SectionView = styled.View`
   justify-content: center;
   align-items: center;
   padding: 0px 20px;
+  margin-bottom: 80px;
 `;
 
 const H1 = styled(CustomText)`
@@ -31,6 +36,14 @@ const H2 = styled(CustomText)`
   line-height: 21px;
   color: #5c5c5c;
   margin-top: 12px;
+`;
+
+const NextButtonView = styled.View`
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  margin: 30px 0px;
+  padding: 0px 20px;
 `;
 
 const NextButton = styled.TouchableOpacity`
@@ -49,10 +62,6 @@ const ButtonText = styled(CustomText)`
 `;
 
 const ClubCreationFail: React.FC<ClubCreationFailScreenProps> = ({ navigation: { navigate } }) => {
-  const { height: SCREEN_HEIGHT } = useWindowDimensions();
-  const mainHeight = (SCREEN_HEIGHT / 10) * 8;
-  const footerHeight = SCREEN_HEIGHT - mainHeight;
-
   const goClubs = () => {
     return navigate("Tabs", {
       screen: "Clubs",
@@ -61,16 +70,18 @@ const ClubCreationFail: React.FC<ClubCreationFailScreenProps> = ({ navigation: {
 
   return (
     <Container>
-      <SectionView height={mainHeight}>
-        <Ionicons name="warning" size={38} color="red" />
-        <H1>모임 개설에 실패했습니다.</H1>
-        <H2>다시 시도해주세요.</H2>
-      </SectionView>
-      <SectionView height={footerHeight}>
+      <MainView>
+        <SectionView>
+          <Ionicons name="warning" size={38} color="red" />
+          <H1>모임 개설에 실패했습니다.</H1>
+          <H2>다시 시도해주세요.</H2>
+        </SectionView>
+      </MainView>
+      <NextButtonView>
         <NextButton onPress={goClubs}>
           <ButtonText>완료</ButtonText>
         </NextButton>
-      </SectionView>
+      </NextButtonView>
     </Container>
   );
 };
