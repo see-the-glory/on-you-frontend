@@ -116,7 +116,7 @@ const FooterView = styled.View`
   width: 100%;
   align-items: center;
   justify-content: center;
-  margin: 30px 0px 80px 0px;
+  margin: 30px 0px;
 `;
 const NextButton = styled.TouchableOpacity`
   width: 100%;

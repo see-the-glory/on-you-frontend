@@ -1,22 +1,26 @@
 import React from "react";
-import { useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { ClubCreationSuccessScreenProps } from "../../Types/Club";
 import { Feather } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
 
 const Container = styled.SafeAreaView`
-  flex: 1;
   justify-content: center;
   align-items: center;
 `;
 
-const SectionView = styled.View<{ height: number }>`
+const MainView = styled.View`
   width: 100%;
+  height: 100%;
   justify-content: center;
   align-items: center;
-  height: ${(props: any) => props.height}px;
+`;
+
+const SectionView = styled.View`
+  justify-content: center;
+  align-items: center;
   padding: 0px 20px;
+  margin-bottom: 80px;
 `;
 
 const H1 = styled(CustomText)`
@@ -32,6 +36,14 @@ const H2 = styled(CustomText)`
   color: #5c5c5c;
   margin-top: 12px;
   text-align: center;
+`;
+
+const NextButtonView = styled.View`
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  margin: 30px 0px;
+  padding: 0px 20px;
 `;
 
 const NextButton = styled.TouchableOpacity`
@@ -55,12 +67,7 @@ const ClubCreationSuccess: React.FC<ClubCreationSuccessScreenProps> = ({
     params: { clubData },
   },
 }) => {
-  const { height: SCREEN_HEIGHT } = useWindowDimensions();
-  const mainHeight = (SCREEN_HEIGHT / 10) * 8;
-  const footerHeight = SCREEN_HEIGHT - mainHeight;
-
   const goClubHome = () => {
-    // Navigator stack reset 하는 거 찾아보기.
     return navigate("ClubStack", {
       screen: "ClubTopTabs",
       params: {
@@ -71,16 +78,18 @@ const ClubCreationSuccess: React.FC<ClubCreationSuccessScreenProps> = ({
 
   return (
     <Container>
-      <SectionView height={mainHeight}>
-        <Feather name="check" size={58} color="#CCCCCC" />
-        <H1>모임 개설이 완료되었습니다.</H1>
-        <H2>{`개설된 모임의 홈화면으로 가셔서\n상세 설정을 하실 수 있습니다.`}</H2>
-      </SectionView>
-      <SectionView height={footerHeight}>
+      <MainView>
+        <SectionView>
+          <Feather name="check" size={58} color="#CCCCCC" />
+          <H1>모임 개설이 완료되었습니다.</H1>
+          <H2>{`개설된 모임의 홈화면으로 가셔서\n상세 설정을 하실 수 있습니다.`}</H2>
+        </SectionView>
+      </MainView>
+      <NextButtonView>
         <NextButton onPress={goClubHome}>
           <ButtonText>완료</ButtonText>
         </NextButton>
-      </SectionView>
+      </NextButtonView>
     </Container>
   );
 };
