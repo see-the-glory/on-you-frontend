@@ -8,7 +8,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Feed, FeedApi, FeedDeleteRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse } from "../api";
+import { Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse } from "../api";
 import FeedDetail from "../components/FeedDetail";
 import feedSlice from "../redux/slices/feed";
 import { useAppDispatch } from "../redux/store";
@@ -230,7 +230,7 @@ const Home: React.FC<HomeScreenProps> = () => {
       });
       return;
     }
-    const requestData: FeedDeleteRequest = {
+    const requestData: FeedDeletionRequest = {
       token,
       data: {
         id: selectFeedId,

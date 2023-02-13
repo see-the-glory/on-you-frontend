@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
-import { ActivityIndicator, FlatList, Platform, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, DeviceEventEmitter, FlatList, Platform, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
 import { Feather, MaterialCommunityIcons, Ionicons, createIconSetFromFontello } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
@@ -307,10 +307,6 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
 
   const loading = categoryLoading && clubsLoading;
 
-  useLayoutEffect(() => {
-    console.log("Clubs useLayoutEffect!");
-  }, []);
-
   useEffect(() => {
     console.log("Clubs useEffect!");
     setSortItem([
@@ -340,6 +336,15 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
         orderBy: "DESC",
       },
     ]);
+
+    const ClubListSubscription = DeviceEventEmitter.addListener("ClubListRefetch", () => {
+      onRefresh();
+    });
+
+    return () => {
+      console.log("Clubs - remove listner");
+      ClubListSubscription.remove();
+    };
   }, []);
 
   return loading ? (

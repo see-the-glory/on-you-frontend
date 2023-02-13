@@ -6,7 +6,7 @@ import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import Carousel from "../../components/Carousel";
 import { useMutation } from "react-query";
-import { ClubApi, ClubScheduleDeleteRequest, ClubScheduleJoinOrCancelRequest, Schedule } from "../../api";
+import { ClubApi, ClubScheduleDeletionRequest, ClubScheduleJoinOrCancelRequest, Schedule } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import { useSelector } from "react-redux";
 import CircleIcon from "../../components/CircleIcon";
@@ -232,7 +232,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
         type: "warning",
       });
     }
-    let requestData: ClubScheduleDeleteRequest = {
+    let requestData: ClubScheduleDeletionRequest = {
       token,
       clubId,
       scheduleId,

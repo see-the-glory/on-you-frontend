@@ -249,6 +249,10 @@ export interface ClubCreationRequest {
   data: ClubCreationData;
   token: string | null;
 }
+export interface ClubDeletionRequest {
+  clubId: number;
+  token: string | null;
+}
 
 export interface FeedCreationRequest {
   image?: ImageType[] | null;
@@ -324,7 +328,7 @@ export interface ClubScheduleUpdateRequest {
   };
 }
 
-export interface ClubScheduleDeleteRequest {
+export interface ClubScheduleDeletionRequest {
   token: string | null;
   clubId: number;
   scheduleId: number;
@@ -450,14 +454,14 @@ export interface FeedCommentCreationRequest {
   };
 }
 
-export interface FeedCommentDeleteRequest {
+export interface FeedCommentDeletionRequest {
   token: string | null;
   data: {
     id: number;
   };
 }
 
-export interface FeedDeleteRequest {
+export interface FeedDeletionRequest {
   data: {
     id: number;
   };
@@ -613,6 +617,19 @@ const createClub = async (req: ClubCreationRequest) => {
   });
 };
 
+const deleteClub = async (req: ClubDeletionRequest) => {
+  return fetch(`${BASE_URL}/api/clubs/${req.clubId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `${req.token}`,
+      Accept: "*/*",
+    },
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
+};
+
 const updateClub = async (req: ClubUpdateRequest) => {
   const body = new FormData();
 
@@ -748,8 +765,7 @@ const updateClubSchedule = (req: ClubScheduleUpdateRequest) => {
   });
 };
 
-const deleteClubSchedule = (req: ClubScheduleDeleteRequest) => {
-  console.log(req);
+const deleteClubSchedule = (req: ClubScheduleDeletionRequest) => {
   return fetch(`${BASE_URL}/api/clubs/${req.clubId}/schedules/${req.scheduleId}`, {
     method: "DELETE",
     headers: {
@@ -959,7 +975,7 @@ const createFeedComment = (req: FeedCommentCreationRequest) => {
   });
 };
 
-const deleteFeedComment = (req: FeedCommentDeleteRequest) => {
+const deleteFeedComment = (req: FeedCommentDeletionRequest) => {
   return fetch(`${BASE_URL}/api/comments/${req.data.id}`, {
     method: "DELETE",
     headers: {
@@ -971,7 +987,7 @@ const deleteFeedComment = (req: FeedCommentDeleteRequest) => {
   });
 };
 
-const deleteFeed = (req: FeedDeleteRequest) => {
+const deleteFeed = (req: FeedDeletionRequest) => {
   return fetch(`${BASE_URL}/api/feeds/${req.data.id}`, {
     method: "DELETE",
     headers: {
@@ -987,6 +1003,7 @@ export const ClubApi = {
   getClub,
   getClubs,
   createClub,
+  deleteClub,
   updateClub,
   withdrawClub,
   changeRole,

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Animated, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
+import { Alert, Animated, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Feather, AntDesign, FontAwesome5, Entypo, Ionicons } from "@expo/vector-icons";
 import { ClubManagementMainProps, ClubStackParamList } from "../../types/Club";
@@ -7,7 +7,7 @@ import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { Shadow } from "react-native-shadow-2";
 import { useMutation, useQuery } from "react-query";
-import { Club, ClubApi, ClubResponse, ClubUpdateRequest } from "../../api";
+import { Club, ClubApi, ClubDeletionRequest, ClubResponse, ClubUpdateRequest } from "../../api";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useToast } from "react-native-toast-notifications";
@@ -126,11 +126,12 @@ const AnimatedDot = Animated.createAnimatedComponent(Dot);
 interface ClubEditItem {
   icon: React.ReactNode;
   title: string;
-  screen: keyof ClubStackParamList;
+  screen?: keyof ClubStackParamList;
+  onPress?: () => void;
 }
 
 const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
-  navigation: { navigate, goBack },
+  navigation: { navigate, goBack, popToTop },
   route: {
     params: { clubData, refresh },
   },
@@ -140,28 +141,6 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   const [data, setData] = useState<Club>(clubData);
   const [isToggle, setIsToggle] = useState(false);
   const iconSize = 14;
-  const items: ClubEditItem[] = [
-    {
-      icon: <Feather name="tool" size={iconSize} color="black" />,
-      title: "모임 기본 사항 수정",
-      screen: "ClubEditBasics",
-    },
-    {
-      icon: <Feather name="edit-3" size={iconSize} color="black" />,
-      title: "소개글 수정",
-      screen: "ClubEditIntroduction",
-    },
-    {
-      icon: <Feather name="users" size={iconSize} color="black" />,
-      title: "관리자 / 멤버 관리",
-      screen: "ClubEditMembers",
-    },
-    {
-      icon: <Feather name="trash-2" size={iconSize} color="red" />,
-      title: "모임 삭제",
-      screen: "ClubDelete",
-    },
-  ];
 
   const X = useRef(new Animated.Value(0)).current;
   const { refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
@@ -189,9 +168,9 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
     },
   });
 
-  const mutation = useMutation(ClubApi.updateClub, {
+  const updateClubMutation = useMutation(ClubApi.updateClub, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
+      if (res.status === 200) {
         if (res.data.recruitStatus === "OPEN") {
           setIsToggle(true);
 
@@ -207,7 +186,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
         }
         DeviceEventEmitter.emit("ClubRefetch");
       } else {
-        console.log(`mutation success but please check status code`);
+        console.log(`updateClub mutation success but please check status code`);
         console.log(`status: ${res.status}`);
         console.log(res);
         toast.show(`Error Code: ${res.status}`, {
@@ -216,7 +195,36 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
       }
     },
     onError: (error) => {
-      console.log("--- Error ---");
+      console.log("--- updateClub Error ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "warning",
+      });
+    },
+  });
+  const deleteClubMutation = useMutation(ClubApi.deleteClub, {
+    onSuccess: (res) => {
+      if (res.status === 200) {
+        toast.show(`모임이 삭제되었습니다.`, {
+          type: "success",
+        });
+        DeviceEventEmitter.emit("ClubListRefetch");
+        popToTop();
+      } else if (res.status === 403) {
+        toast.show(`${res.message} (${res.status})`, {
+          type: "warning",
+        });
+      } else {
+        console.log(res);
+        console.log(`deleteClub mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        toast.show(`Error Code: ${res.status}`, {
+          type: "warning",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- deleteClub Error ---");
       console.log(`error: ${error}`);
       toast.show(`Error Code: ${error}`, {
         type: "warning",
@@ -253,6 +261,22 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   const goToScreen = (screen: keyof ClubStackParamList) => {
     return navigate(screen, { clubData: data });
   };
+  const deleteClub = () => {
+    Alert.alert("가입 삭제", "정말로 모임을 삭제하시겠습니까?", [
+      { text: "아니요", onPress: () => {} },
+      {
+        text: "예",
+        onPress: () => {
+          let requestData: ClubDeletionRequest = {
+            clubId: clubData.id,
+            token,
+          };
+          console.log(requestData);
+          deleteClubMutation.mutate(requestData);
+        },
+      },
+    ]);
+  };
 
   const onPressToggle = () => {
     let updateData: ClubUpdateRequest = {
@@ -265,8 +289,31 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
       delete updateData.data?.category2Id;
     }
 
-    mutation.mutate(updateData);
+    updateClubMutation.mutate(updateData);
   };
+
+  const items: ClubEditItem[] = [
+    {
+      icon: <Feather name="tool" size={iconSize} color="black" />,
+      title: "모임 기본 사항 수정",
+      screen: "ClubEditBasics",
+    },
+    {
+      icon: <Feather name="edit-3" size={iconSize} color="black" />,
+      title: "소개글 수정",
+      screen: "ClubEditIntroduction",
+    },
+    {
+      icon: <Feather name="users" size={iconSize} color="black" />,
+      title: "관리자 / 멤버 관리",
+      screen: "ClubEditMembers",
+    },
+    {
+      icon: <Feather name="trash-2" size={iconSize} color="red" />,
+      title: "모임 삭제",
+      onPress: deleteClub,
+    },
+  ];
 
   return (
     <Container>
@@ -317,7 +364,8 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
             <ListView key={index}>
               <ListItem
                 onPress={() => {
-                  goToScreen(item.screen);
+                  if (item.screen) goToScreen(item.screen);
+                  if (item.onPress) item.onPress();
                 }}
               >
                 <ItemLeft>
