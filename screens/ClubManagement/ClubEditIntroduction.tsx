@@ -83,7 +83,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
         });
         navigate("ClubManagementMain", { clubData: res.data, refresh: true });
       } else {
-        console.log(`mutation success but please check status code`);
+        console.log(`updateClub mutation success but please check status code`);
         console.log(`status: ${res.status}`);
         console.log(res);
         toast.show(`Error Code: ${res.status}`, {
@@ -92,7 +92,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
       }
     },
     onError: (error) => {
-      console.log("--- Error ---");
+      console.log("--- updateClub Error ---");
       console.log(`error: ${error}`);
       toast.show(`Error Code: ${error}`, {
         type: "warning",

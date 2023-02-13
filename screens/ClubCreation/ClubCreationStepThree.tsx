@@ -114,15 +114,21 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
           clubData: res.data,
         });
       } else {
-        console.log(`mutation success but please check status code`);
+        console.log(`createClub mutation success but please check status code`);
         console.log(res);
+        toast.show(`${res.message} (status: ${res.status})`, {
+          type: "warning",
+        });
         return navigate("ClubCreationFail", {});
       }
     },
     onError: (error) => {
-      console.log("--- Error ---");
+      console.log("--- createClub Error ---");
       console.log(`error: ${error}`);
       setDisableSubmit(false);
+      toast.show(`${error}`, {
+        type: "warning",
+      });
       return navigate("ClubCreationFail", {});
     },
     onSettled: (res, error) => {},
