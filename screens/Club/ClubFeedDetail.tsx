@@ -5,7 +5,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Feed, FeedApi, FeedDeleteRequest, FeedLikeRequest, FeedReportRequest } from "../../api";
+import { Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import FeedDetail from "../../components/FeedDetail";
 import { ClubFeedDetailScreenProps } from "../../Types/Club";
@@ -126,7 +126,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       });
       return;
     }
-    const requestData: FeedDeleteRequest = {
+    const requestData: FeedDeletionRequest = {
       token,
       data: {
         id: selectFeedId,

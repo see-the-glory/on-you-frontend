@@ -65,7 +65,7 @@ interface CircleIconBundleProps {
 const CircleIconBundle: React.FC<CircleIconBundleProps> = ({ size, uris, kerning, opacity }) => {
   return (
     <BundleContainer size={size} kerning={kerning ?? 0} opacity={opacity ?? 1}>
-      {uris?.slice(0, 10).map((uri, index) => (
+      {uris?.slice(0, 5).map((uri, index) => (
         <Container key={index} kerning={kerning ?? 0} zIndex={-index}>
           <Backplate size={size}>
             <IconImage source={uri ? { uri: uri } : require("../assets/basic.jpg")} size={size} />
