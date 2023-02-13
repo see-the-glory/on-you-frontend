@@ -153,7 +153,7 @@ export interface ClubResponse extends BaseResponse {
 }
 
 export interface MyClubResponse extends BaseResponse {
-  data: MyClub;
+  data: MyClub[];
 }
 
 export interface ClubUpdateResponse extends BaseResponse {
