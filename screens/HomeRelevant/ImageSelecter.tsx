@@ -74,7 +74,7 @@ const FeedText = styled.TextInput`
 `;
 
 const SelectImageView = styled.View`
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: #F2F2F2;
   height: 100px;
   width: 100%;
   flex-direction: column;
@@ -90,7 +90,7 @@ const MyImage = styled.View`
 `;
 
 const MoveImageText = styled.Text`
-  color: white;
+  color: #979797;
   font-size: 13px;
   padding: 5px 0 5px 0;
 `;
@@ -137,6 +137,10 @@ function ImageSelecter(props: FeedCreateScreenProps) {
   const [content, setContent] = useState("");
   const navigation = useNavigation();
 
+  useEffect(()=>{
+    pickImage()
+  },[])
+
   const pickImage = async () => {
     let images = await ImagePicker.openPicker({
       mediaType: "photo",
@@ -145,6 +149,8 @@ function ImageSelecter(props: FeedCreateScreenProps) {
       width: 1080,
       minFiles: 1,
       maxFiles: 3,
+      cropperCancelText:'Cancle',
+      cropperChooseText:'Check'
     });
 
     if (images.length > 3) {
@@ -247,7 +253,7 @@ function ImageSelecter(props: FeedCreateScreenProps) {
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={cancleCreate}>
+         <TouchableOpacity onPress={pickImage}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),
@@ -262,12 +268,6 @@ function ImageSelecter(props: FeedCreateScreenProps) {
       ),
     });
   }, [imageURL, content, isSubmitShow]);
-
-  useEffect(() => {
-    let timer = setTimeout(() => {
-      alertSet(false);
-    }, 3000);
-  });
 
   /**
    * 이미지 리스트 선택하면 사진 크게보는쪽 사진뜨게
@@ -287,60 +287,12 @@ function ImageSelecter(props: FeedCreateScreenProps) {
     imageList.push({ img: imageURL[i] }); //슬라이더용
   }
   const width  = Dimensions.get("window").width;
-  const scale = new Animated.Value(1);
-
-  const onZoomEvent = Animated.event(
-    [
-      {
-        nativeEvent: { scale: scale },
-      },
-    ],
-    {
-      useNativeDriver: true,
-    }
-  );
-
-  const onZoomStateChange = (event: any) => {
-    if (event.nativeEvent.oldState === State.ACTIVE) {
-      Animated.spring(scale, {
-        toValue: 1,
-        useNativeDriver: true,
-      }).start();
-    }
-  };
 
   return (
     <Container>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardAvoidingView behavior={"position"} style={{ flex: 1 }}>
+        <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
           <>
-            <ImagePickerView>
-              {imageURL.length !== 0 ? (
-                <PinchGestureHandler onGestureEvent={onZoomEvent} onHandlerStateChange={onZoomStateChange}>
-                  <Animated.Image
-                    source={{ uri: imageURL.length == 0 ? undefined : imageURL[selectIndex ?? 0] }}
-                    style={{
-                      width: width,
-                      height: 395,
-                      transform: [{ scale: scale }],
-                    }}
-                  />
-                </PinchGestureHandler>
-              ) : (
-                <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={1}>
-                  <PickBackground>
-                    {alert ? (
-                      <ImageCrop>
-                        <AntDesign name="arrowsalt" size={30} color="red" style={{ textAlign: "center", top: 25 }} />
-                        <ImagePickerText>
-                          손가락을 좌우로{"\n"} 동시에 벌려{"\n"} 이미지 크롭을 {"\n"} 해보세요
-                        </ImagePickerText>
-                      </ImageCrop>
-                    ) : null}
-                  </PickBackground>
-                </ImagePickerButton>
-              )}
-            </ImagePickerView>
             <SelectImageView>
               <MyImage>
                 {imageURL?.map((image, index) => (

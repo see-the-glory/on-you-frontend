@@ -348,7 +348,9 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
                 </View>
               </UserInfo>
             </FeedUser>
-            <Modalize ref={modalizeRef} modalHeight={400} handlePosition="inside" modalStyle={{top: 300}} >
+            <Modalize ref={modalizeRef} modalHeight={400}
+                      handlePosition="inside"
+                      modalStyle={{marginTop:350}} >
               <ModalContainer>
                 <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                   <IntroTextLeft>모임 변경</IntroTextLeft>
