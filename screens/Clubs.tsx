@@ -308,7 +308,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const loading = categoryLoading && clubsLoading;
 
   useEffect(() => {
-    console.log("Clubs useEffect!");
+    console.log("Clubs - add listner");
     setSortItem([
       {
         title: "최신개설 모임 순",

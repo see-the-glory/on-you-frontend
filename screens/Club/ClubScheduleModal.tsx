@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, FlatList, Modal, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Animated, FlatList, Modal, NativeTouchEvent, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { RefinedSchedule } from "../../Types/Club";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import styled from "styled-components/native";
@@ -14,6 +14,7 @@ import CircleIconBundle from "../../components/CircleIconBundle";
 import { Menu, MenuDivider, MenuItem } from "react-native-material-menu";
 import { useNavigation } from "@react-navigation/native";
 import Collapsible from "react-native-collapsible";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const ModalContainer = styled.View`
   height: 500px;
@@ -153,7 +154,7 @@ interface ScheduleModalProps {
   scheduleData?: RefinedSchedule[];
   selectIndex: number;
   closeModal: (refresh: boolean) => void;
-  children: object;
+  children?: object;
 }
 
 const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, scheduleData, selectIndex, closeModal, children }) => {
@@ -176,18 +177,8 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
   const toggleModal = () => {
     if (visible) {
       setShowModal(true);
-      Animated.spring(opacity, {
-        toValue: 1,
-        speed: 20,
-        useNativeDriver: true,
-      }).start();
     } else {
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-      setTimeout(() => setShowModal(false), 200);
+      setShowModal(false);
     }
   };
 
@@ -289,17 +280,8 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
   };
 
   return (
-    <Modal transparent visible={showModal} onRequestClose={() => closeModal(true)} supportedOrientations={["landscape", "portrait"]}>
-      <Animated.View
-        style={{
-          flex: 1,
-          backgroundColor: "rgba(0,0,0,0.5)",
-          justifyContent: "center",
-          alignItems: "center",
-          opacity: opacity,
-          zIndex: 1,
-        }}
-      >
+    <Modal transparent visible={showModal} animationType="fade" onRequestClose={() => closeModal(true)} supportedOrientations={["landscape", "portrait"]}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", width: "100%", height: "100%", backgroundColor: "rgba(0,0,0,0.5)" }}>
         <ModalContainer>
           <Carousel
             gap={gap}
@@ -406,7 +388,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
             )}
           />
         </ModalContainer>
-      </Animated.View>
+      </View>
     </Modal>
   );
 };

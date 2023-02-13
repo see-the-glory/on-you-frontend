@@ -274,6 +274,7 @@ const ClubTopTabs = ({
       scheduleSubscription.remove();
       clubSubscription.remove();
       dispatch(clubSlice.actions.deleteClub());
+      console.log("ClubTopTabs - remove listner & delete clubslice");
     };
   }, []);
 

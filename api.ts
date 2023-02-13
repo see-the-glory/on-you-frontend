@@ -487,7 +487,6 @@ const getSelectFeeds = ({ queryKey }: any) => {
 const getFeeds = ({ queryKey, pageParam }: any) => {
   const [_key, feedsParams]: [string, FeedsParams] = queryKey;
   let parameters = feedsParams ? `cursor=${pageParam}` : "";
-  console.log("feed parameter: ", parameters);
   return fetch(`${BASE_URL}/api/feeds?${parameters}`, {
     headers: {
       authorization: `${feedsParams.token}`,
@@ -500,7 +499,6 @@ const getFeeds = ({ queryKey, pageParam }: any) => {
 const getClubFeeds = ({ queryKey, pageParam }: any) => {
   const [_key, feedsParams]: [string, FeedsParams] = queryKey;
   let parameters = pageParam ? `cursor=${pageParam}` : "";
-  console.log("feed parameter: ", parameters);
   return fetch(`${BASE_URL}/api/clubs/${feedsParams.clubId}/feeds?${parameters}`, {
     headers: {
       authorization: `${feedsParams.token}`,
@@ -517,7 +515,6 @@ const getClubs = ({ queryKey, pageParam }: any) => {
   parameters += clubsParams.maxMember !== null ? `&max=${clubsParams.maxMember}` : "";
   parameters += `&sort=${clubsParams.sortType}&orderBy=${clubsParams.orderBy}`;
   parameters += pageParam ? `&cursor=${pageParam}` : "";
-  console.log("club parameter: ", parameters);
   return fetch(`${BASE_URL}/api/clubs?${parameters}`, {
     headers: {
       authorization: `${clubsParams.token}`,
