@@ -9,6 +9,8 @@ import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { useAppDispatch } from "../../redux/store";
 import clubSlice from "../../redux/slices/club";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store/reducers";
 
 const MEMBER_ICON_KERNING = 25;
 const MEMBER_ICON_SIZE = 50;
@@ -163,7 +165,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   offsetY,
   scheduleOffsetX,
   headerDiff,
-  clubRole,
   schedules,
 }) => {
   const [scheduleVisible, setScheduleVisible] = useState(false);
@@ -175,6 +176,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const [masterData, setMasterData] = useState<Member>();
   const memberCountPerLine = Math.floor((SCREEN_WIDTH - SCREEN_PADDING_SIZE) / (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING));
   const dispatch = useAppDispatch();
+  const myRole = useSelector((state: RootState) => state.club.role);
 
   useLayoutEffect(() => {
     console.log(`${clubData.id} clubHome useLayoutEffect`);
@@ -268,7 +270,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           <Ionicons name="calendar" size={16} color="black" />
           <SectionTitle>SCHEDULE</SectionTitle>
         </TitleView>
-        {clubRole?.role && clubRole?.role !== "PENDING" ? (
+        {myRole && myRole !== "PENDING" ? (
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}

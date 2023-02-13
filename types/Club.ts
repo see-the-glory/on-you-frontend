@@ -77,7 +77,6 @@ export interface ClubHomeParamList {
   headerDiff: number;
   offsetY?: number;
   scheduleOffsetX?: number;
-  clubRole?: ClubRole;
   schedules?: RefinedSchedule[];
 }
 

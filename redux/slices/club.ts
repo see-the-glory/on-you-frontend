@@ -1,14 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Feed } from "../../api";
+import { ClubRole, Feed } from "../../api";
 
 interface ClubState {
   feeds: Feed[];
+  role: "MASTER" | "MANAGER" | "MEMBER" | "PENDING" | null;
+  applyStatus: "APPLIED" | "APPROVED" | null;
   homeScrollY: number;
   scheduleScrollX: number;
 }
 
 const initialState: ClubState = {
   feeds: [],
+  role: null,
+  applyStatus: null,
   homeScrollY: 0,
   scheduleScrollX: 0,
 };
@@ -25,6 +29,8 @@ const clubSlice = createSlice({
     },
     deleteClub(state) {
       state.feeds = [];
+      state.role = null;
+      state.applyStatus = null;
       state.homeScrollY = 0;
       state.scheduleScrollX = 0;
     },
@@ -43,6 +49,10 @@ const clubSlice = createSlice({
       if (state.feeds.length > action.payload.feedIndex) {
         state.feeds[action.payload.feedIndex].commentCount = action.payload.count;
       }
+    },
+    updateClubRole(state, action) {
+      state.role = action.payload.role;
+      state.applyStatus = action.payload.applyStatus;
     },
   },
   // extraReducer는 비동기 액션 생성시 필요

@@ -201,7 +201,8 @@ const ClubTopTabs = ({
     refetch: clubRoleRefetch,
   } = useQuery<ClubRoleResponse>(["getClubRole", token, data.id], ClubApi.getClubRole, {
     onSuccess: (res) => {
-      if (res.status !== 200 || res.resultCode !== "OK") {
+      if (res.status === 200) dispatch(clubSlice.actions.updateClubRole({ role: res.data.role, applyStatus: res.data.applyStatus }));
+      else {
         toast.show(`멤버 등급 정보를 불러오지 못했습니다. (Error Code: ${res.status})`, {
           type: "warning",
         });
@@ -279,9 +280,9 @@ const ClubTopTabs = ({
   const renderClubHome = useCallback(
     (props: any) => {
       props.route.params.clubData = data;
-      return <ClubHome {...props} scrollY={scrollY} offsetY={offsetY} scheduleOffsetX={scheduleOffsetX} headerDiff={headerDiff} clubRole={clubRole?.data} schedules={scheduleData} />;
+      return <ClubHome {...props} scrollY={scrollY} offsetY={offsetY} scheduleOffsetX={scheduleOffsetX} headerDiff={headerDiff} schedules={scheduleData} />;
     },
-    [headerDiff, data, clubRole, scheduleData]
+    [headerDiff, data, scheduleData]
   );
   const renderClubFeed = useCallback((props: any) => <ClubFeed {...props} offsetY={offsetY} scrollY={scrollY} headerDiff={headerDiff} />, [headerDiff]);
 
