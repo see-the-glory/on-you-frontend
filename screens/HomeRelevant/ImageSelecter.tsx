@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import React, {
+  useCallback,
+  useEffect,
+  useState
+} from "react";
+import {AntDesign, Entypo} from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
 import {
   ActivityIndicator,
   Alert,
-  Animated,
   DeviceEventEmitter,
-  Dimensions,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -15,14 +17,19 @@ import {
   useWindowDimensions,
 } from "react-native";
 import styled from "styled-components/native";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { FeedApi, FeedCreationRequest, FeedsResponse } from "../../api";
-import { FeedCreateScreenProps } from "../../types/feed";
-import { useNavigation } from "@react-navigation/native";
-import { PinchGestureHandler, State } from "react-native-gesture-handler";
-import { RootState } from "../../redux/store/reducers";
-import { useToast } from "react-native-toast-notifications";
+import {useMutation} from "react-query";
+import {useSelector} from "react-redux";
+import {FeedApi, FeedCreationRequest} from "../../api";
+import {FeedCreateScreenProps} from "../../types/feed";
+import {useNavigation} from "@react-navigation/native";
+import {RootState} from "../../redux/store/reducers";
+import {useToast} from "react-native-toast-notifications";
+import DraggableFlatList, {
+  RenderItemParams,
+  ScaleDecorator
+} from 'react-native-draggable-flatlist';
+import { DraggableGrid } from 'react-native-draggable-grid';
+
 const Container = styled.SafeAreaView`
   flex: 1;
 `;
@@ -83,10 +90,7 @@ const SelectImageView = styled.View`
 `;
 
 const MyImage = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  bottom: 3px;
+  align-items: center;
 `;
 
 const MoveImageText = styled.Text`
@@ -95,7 +99,6 @@ const MoveImageText = styled.Text`
   padding: 5px 0 5px 0;
 `;
 
-const SelectImageArea = styled.TouchableOpacity``;
 const SelectImage = styled.Image`
   width: 55px;
   height: 55px;
@@ -118,7 +121,7 @@ const FeedCreateText = styled.Text`
   padding-top: 5px;
 `;
 
-function ImageSelecter(props: FeedCreateScreenProps) {
+const ImageSelecter = (props: FeedCreateScreenProps) => {
   let {
     route: {
       params: { clubId, userId },
@@ -148,12 +151,12 @@ function ImageSelecter(props: FeedCreateScreenProps) {
       height: 1080,
       width: 1080,
       minFiles: 1,
-      maxFiles: 3,
-      cropperCancelText:'Cancle',
-      cropperChooseText:'Check'
+      maxFiles: 5,
+      cropperCancelText:"Cancle",
+      cropperChooseText:"Check",
     });
 
-    if (images.length > 3) {
+    if (images.length > 5) {
       toast.show(`이미지는 3개까지 선택할 수 있습니다.`, {
         type: "warning",
       });
@@ -233,38 +236,39 @@ function ImageSelecter(props: FeedCreateScreenProps) {
       mutation.mutate(requestData);
     }
   };
-  const cancleCreate = () => {
+
+/*  const cancleCreate = () => {
     Alert.alert(
-      "게시글을 생성을 취소하시겠어요?",
-      "",
-      // "30일 이내에 내 활동의 최근 삭제 항목에서 이 게시물을 복원할 수 있습니다." + "30일이 지나면 영구 삭제 됩니다. ",
-      [
-        {
-          text: "아니요",
-          onPress: () => console.log(""),
-          style: "cancel",
-        },
-        { text: "네", onPress: () => navigate("Tabs", { screen: "Home" }) },
-      ],
-      { cancelable: false }
+        "게시글을 생성을 취소하시겠어요?",
+        "",
+        // "30일 이내에 내 활동의 최근 삭제 항목에서 이 게시물을 복원할 수 있습니다." + "30일이 지나면 영구 삭제 됩니다. ",
+        [
+          {
+            text: "아니요",
+            onPress: () => console.log(""),
+            style: "cancel",
+          },
+          { text: "네", onPress: () => navigate("Tabs", { screen: "Home" }) },
+        ],
+        { cancelable: false }
     );
-  };
+  };*/
 
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-         <TouchableOpacity onPress={pickImage}>
-          <Entypo name="chevron-thin-left" size={20} color="black" />
-        </TouchableOpacity>
+          <TouchableOpacity onPress={pickImage}>
+            <Entypo name="chevron-thin-left" size={20} color="black" />
+          </TouchableOpacity>
       ),
       headerRight: () => (
-        <TouchableOpacity
-          onPress={() => {
-            onSubmit();
-          }}
-        >
-          {isSubmitShow ? <FeedCreateText>저장</FeedCreateText> : <ActivityIndicator />}
-        </TouchableOpacity>
+          <TouchableOpacity
+              onPress={() => {
+                onSubmit();
+              }}
+          >
+            {isSubmitShow ? <FeedCreateText>저장</FeedCreateText> : <ActivityIndicator />}
+          </TouchableOpacity>
       ),
     });
   }, [imageURL, content, isSubmitShow]);
@@ -282,47 +286,62 @@ function ImageSelecter(props: FeedCreateScreenProps) {
     if (selectIndex == q) setSelectIndex(0);
   };
 
-  const imageList = [];
-  for (let i = 0; i < imageURL.length; i++) {
-    imageList.push({ img: imageURL[i] }); //슬라이더용
-  }
-  const width  = Dimensions.get("window").width;
+  const renderItem = useCallback(({ drag, isActive, item }: RenderItemParams<any> & { item: string }) => {
+    return (
+        <ScaleDecorator>
+              <TouchableOpacity
+                  activeOpacity={1}
+                  onLongPress={drag}
+                  disabled={isActive}
+                  style={[
+                    {
+                      opacity: isActive ? 0.5 : 1,
+                    },
+                  ]}
+              >
+                <SelectImage source={{ uri: item }} />
+                <ImageCancleBtn onPress={() => ImageCancle(imageURL.indexOf(item))}>
+                  <CancleIcon>
+                    <AntDesign name="close" size={15} color="white" />
+                  </CancleIcon>
+                </ImageCancleBtn>
+              </TouchableOpacity>
+        </ScaleDecorator>
+    );
+  }, [imageURL]);
 
   return (
-    <Container>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
-          <>
-            <SelectImageView>
-              <MyImage>
-                {imageURL?.map((image, index) => (
-                  <SelectImageArea key={index} onPress={() => ImageFIx(index)}>
-                    <SelectImage source={{ uri: imageURL[index] }} />
-                    <ImageCancleBtn onPress={() => ImageCancle(index)}>
-                      <CancleIcon>
-                        <AntDesign name="close" size={15} color="white" />
-                      </CancleIcon>
-                    </ImageCancleBtn>
-                  </SelectImageArea>
-                ))}
-              </MyImage>
-              {imageURL.length !== 0 ? (
-                  <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>) :null}
-            </SelectImageView>
-            <FeedText
-              placeholder="사진과 함께 남길 게시글을 작성해 보세요."
-              onChangeText={(content: string) => setContent(content)}
-              onEndEditing={() => setContent((prev) => prev.trim())}
-              autoCapitalize="none"
-              autoCorrect={false}
-              multiline={true}
-              returnKeyType="done"
-              returnKeyLabel="done"
-            ></FeedText>
-          </>
-        </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
-    </Container>
+      <Container>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
+            <>
+              <SelectImageView>
+                <MyImage>
+                  <DraggableFlatList
+                      horizontal
+                      data={imageURL}
+                      onDragEnd={({ data }) => setImageURL(data)}
+                      keyExtractor={(item) => item}
+                      renderItem={(props) => renderItem({ ...props })}
+                  />
+                </MyImage>
+                {imageURL.length !== 0 ? (
+                    <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>) :null}
+              </SelectImageView>
+              <FeedText
+                  placeholder="사진과 함께 남길 게시글을 작성해 보세요."
+                  onChangeText={(content: string) => setContent(content)}
+                  onEndEditing={() => setContent((prev) => prev.trim())}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  multiline={true}
+                  returnKeyType="done"
+                  returnKeyLabel="done"
+              ></FeedText>
+            </>
+          </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
+      </Container>
   );
 }
 
