@@ -1,34 +1,16 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState
-} from "react";
-import {AntDesign, Entypo} from "@expo/vector-icons";
+import React, { useCallback, useEffect, useState } from "react";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
-import {
-  ActivityIndicator,
-  Alert,
-  DeviceEventEmitter,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  useWindowDimensions,
-} from "react-native";
+import { ActivityIndicator, Alert, DeviceEventEmitter, Keyboard, KeyboardAvoidingView, Platform, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
-import {useMutation} from "react-query";
-import {useSelector} from "react-redux";
-import {FeedApi, FeedCreationRequest} from "../../api";
-import {FeedCreateScreenProps} from "../../types/feed";
-import {useNavigation} from "@react-navigation/native";
-import {RootState} from "../../redux/store/reducers";
-import {useToast} from "react-native-toast-notifications";
-import DraggableFlatList, {
-  RenderItemParams,
-  ScaleDecorator
-} from 'react-native-draggable-flatlist';
-import { DraggableGrid } from 'react-native-draggable-grid';
+import { useMutation } from "react-query";
+import { useSelector } from "react-redux";
+import { FeedApi, FeedCreationRequest } from "../../api";
+import { FeedCreateScreenProps } from "../../types/feed";
+import { useNavigation } from "@react-navigation/native";
+import { RootState } from "../../redux/store/reducers";
+import { useToast } from "react-native-toast-notifications";
+import DraggableFlatList, { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -81,7 +63,7 @@ const FeedText = styled.TextInput`
 `;
 
 const SelectImageView = styled.View`
-  background-color: #F2F2F2;
+  background-color: #f2f2f2;
   height: 100px;
   width: 100%;
   flex-direction: column;
@@ -140,9 +122,9 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
   const [content, setContent] = useState("");
   const navigation = useNavigation();
 
-  useEffect(()=>{
-    pickImage()
-  },[])
+  useEffect(() => {
+    pickImage();
+  }, []);
 
   const pickImage = async () => {
     let images = await ImagePicker.openPicker({
@@ -152,8 +134,8 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
       width: 1080,
       minFiles: 1,
       maxFiles: 5,
-      cropperCancelText:"Cancle",
-      cropperChooseText:"Check",
+      cropperCancelText: "Cancle",
+      cropperChooseText: "Check",
     });
 
     if (images.length > 5) {
@@ -237,7 +219,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     }
   };
 
-/*  const cancleCreate = () => {
+  /*  const cancleCreate = () => {
     Alert.alert(
         "게시글을 생성을 취소하시겠어요?",
         "",
@@ -257,18 +239,18 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-          <TouchableOpacity onPress={pickImage}>
-            <Entypo name="chevron-thin-left" size={20} color="black" />
-          </TouchableOpacity>
+        <TouchableOpacity onPress={pickImage}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
       ),
       headerRight: () => (
-          <TouchableOpacity
-              onPress={() => {
-                onSubmit();
-              }}
-          >
-            {isSubmitShow ? <FeedCreateText>저장</FeedCreateText> : <ActivityIndicator />}
-          </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            onSubmit();
+          }}
+        >
+          {isSubmitShow ? <FeedCreateText>저장</FeedCreateText> : <ActivityIndicator />}
+        </TouchableOpacity>
       ),
     });
   }, [imageURL, content, isSubmitShow]);
@@ -286,63 +268,59 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     if (selectIndex == q) setSelectIndex(0);
   };
 
-  const renderItem = useCallback(({ drag, isActive, item }: RenderItemParams<any> & { item: string }) => {
-    return (
+  const renderItem = useCallback(
+    ({ drag, isActive, item }: RenderItemParams<any> & { item: string }) => {
+      return (
         <ScaleDecorator>
-              <TouchableOpacity
-                  activeOpacity={1}
-                  onLongPress={drag}
-                  disabled={isActive}
-                  style={[
-                    {
-                      opacity: isActive ? 0.5 : 1,
-                    },
-                  ]}
-              >
-                <SelectImage source={{ uri: item }} />
-                <ImageCancleBtn onPress={() => ImageCancle(imageURL.indexOf(item))}>
-                  <CancleIcon>
-                    <AntDesign name="close" size={15} color="white" />
-                  </CancleIcon>
-                </ImageCancleBtn>
-              </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={1}
+            onLongPress={drag}
+            disabled={isActive}
+            style={[
+              {
+                opacity: isActive ? 0.5 : 1,
+              },
+            ]}
+          >
+            <SelectImage source={{ uri: item }} />
+            <ImageCancleBtn onPress={() => ImageCancle(imageURL.indexOf(item))}>
+              <CancleIcon>
+                <AntDesign name="close" size={15} color="white" />
+              </CancleIcon>
+            </ImageCancleBtn>
+          </TouchableOpacity>
         </ScaleDecorator>
-    );
-  }, [imageURL]);
+      );
+    },
+    [imageURL]
+  );
 
   return (
-      <Container>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
-            <>
-              <SelectImageView>
-                <MyImage>
-                  <DraggableFlatList
-                      horizontal
-                      data={imageURL}
-                      onDragEnd={({ data }) => setImageURL(data)}
-                      keyExtractor={(item) => item}
-                      renderItem={(props) => renderItem({ ...props })}
-                  />
-                </MyImage>
-                {imageURL.length !== 0 ? (
-                    <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>) :null}
-              </SelectImageView>
-              <FeedText
-                  placeholder="사진과 함께 남길 게시글을 작성해 보세요."
-                  onChangeText={(content: string) => setContent(content)}
-                  onEndEditing={() => setContent((prev) => prev.trim())}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  multiline={true}
-                  returnKeyType="done"
-                  returnKeyLabel="done"
-              ></FeedText>
-            </>
-          </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
-      </Container>
+    <Container>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
+          <>
+            <SelectImageView>
+              <MyImage>
+                <DraggableFlatList horizontal data={imageURL} onDragEnd={({ data }) => setImageURL(data)} keyExtractor={(item) => item} renderItem={(props) => renderItem({ ...props })} />
+              </MyImage>
+              {imageURL.length !== 0 ? <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText> : null}
+            </SelectImageView>
+            <FeedText
+              placeholder="사진과 함께 남길 게시글을 작성해 보세요."
+              onChangeText={(content: string) => setContent(content)}
+              onEndEditing={() => setContent((prev) => prev.trim())}
+              autoCapitalize="none"
+              autoCorrect={false}
+              multiline={true}
+              returnKeyType="done"
+              returnKeyLabel="done"
+            ></FeedText>
+          </>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </Container>
   );
-}
+};
 
 export default ImageSelecter;
