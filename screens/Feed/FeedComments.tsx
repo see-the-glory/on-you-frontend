@@ -151,6 +151,7 @@ const FeedComments = ({
       onSuccess: (res) => {
         if (res.status === 200) {
           setComment("");
+          setValidation(false);
           commentsRefetch();
         } else {
           console.log("--- Error createFeedComment ---");
@@ -222,9 +223,7 @@ const FeedComments = ({
           ListFooterComponent={<View />}
           ListFooterComponentStyle={{ marginBottom: 100 }}
           renderItem={({ item, index }: { item: FeedComment; index: number }) => (
-            // 현재 타 유저의 댓글도 삭제 가능해서 테스트용으로 열어놓음.
-            // <SwipeRow disableRightSwipe={true} disableLeftSwipe={item.userId !== me?.id} rightOpenValue={-hiddenItemWidth}>
-            <SwipeRow disableRightSwipe={true} rightOpenValue={-hiddenItemWidth}>
+            <SwipeRow disableRightSwipe={true} disableLeftSwipe={item.userId !== me?.id} rightOpenValue={-hiddenItemWidth}>
               <HiddenItemContainer>
                 <HiddenItemButton width={hiddenItemWidth} onPress={() => deleteComment(item.commentId ?? -1)}>
                   <AntDesign name="delete" size={20} color="white" />
@@ -255,9 +254,10 @@ const FeedComments = ({
             returnKeyLabel="done"
             onChangeText={(value: string) => {
               setComment(value);
-              if (!validation && value !== "") setValidation(true);
-              if (validation && value === "") setValidation(false);
+              if (!validation && value.trim() !== "") setValidation(true);
+              if (validation && value.trim() === "") setValidation(false);
             }}
+            onEndEditing={() => setComment((prev) => prev.trim())}
             includeFontPadding={false}
           />
 
