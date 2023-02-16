@@ -27,23 +27,32 @@ const Container = styled.SafeAreaView`
   flex: 1;
 `;
 
-const FooterView = styled.View<{ padding: number }>`
+const FooterView = styled.SafeAreaView<{ padding: number }>`
   flex-direction: row;
   border-top-width: 1px;
   border-top-color: #c4c4c4;
-  justify-content: space-between;
   align-items: flex-end;
-  padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px 20px ${(props: any) => (props.padding ? props.padding : 0)}px;
-  background-color: white;
+  padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
+`;
+
+const RoundingView = styled.View`
+  flex-direction: row;
+  flex: 1;
+  height: 100%;
+  padding: 0px 10px;
+  border-width: 0.5px;
+  border-color: rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
 `;
 const CommentInput = styled(CustomTextInput)`
   flex: 1;
-  margin-bottom: 2px;
+  margin: 1px 0px;
 `;
 const SubmitButton = styled.TouchableOpacity`
+  justify-content: center;
   align-items: center;
-  padding-left: 5px;
-  padding-bottom: 6px;
+  padding-left: 8px;
+  margin-bottom: 8px;
 `;
 const SubmitButtonText = styled(CustomText)<{ disabled: boolean }>`
   font-size: 14px;
@@ -215,31 +224,31 @@ const FeedComments = ({
     </Loader>
   ) : (
     <Container>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={100} style={{ flex: 1 }}>
-        <SwipeListView
-          contentContainerStyle={{ flexGrow: 1 }}
-          data={[...(comments?.data ?? [])].reverse()}
-          keyExtractor={(item: FeedComment, index: number) => String(index)}
-          ListFooterComponent={<View />}
-          ListFooterComponentStyle={{ marginBottom: 100 }}
-          renderItem={({ item, index }: { item: FeedComment; index: number }) => (
-            <SwipeRow disableRightSwipe={true} disableLeftSwipe={item.userId !== me?.id} rightOpenValue={-hiddenItemWidth}>
-              <HiddenItemContainer>
-                <HiddenItemButton width={hiddenItemWidth} onPress={() => deleteComment(item.commentId ?? -1)}>
-                  <AntDesign name="delete" size={20} color="white" />
-                </HiddenItemButton>
-              </HiddenItemContainer>
-              <Comment commentData={item} />
-            </SwipeRow>
-          )}
-          ListEmptyComponent={() => (
-            <EmptyView>
-              <EmptyText>{`아직 등록된 댓글이 없습니다.\n첫 댓글을 남겨보세요.`}</EmptyText>
-            </EmptyView>
-          )}
-        />
-        <FooterView padding={20}>
-          <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
+      <SwipeListView
+        contentContainerStyle={{ flexGrow: 1 }}
+        data={[...(comments?.data ?? [])].reverse()}
+        keyExtractor={(item: FeedComment, index: number) => String(index)}
+        ListFooterComponent={<View />}
+        ListFooterComponentStyle={{ marginBottom: 40 }}
+        renderItem={({ item, index }: { item: FeedComment; index: number }) => (
+          <SwipeRow disableRightSwipe={true} disableLeftSwipe={item.userId !== me?.id} rightOpenValue={-hiddenItemWidth}>
+            <HiddenItemContainer>
+              <HiddenItemButton width={hiddenItemWidth} onPress={() => deleteComment(item.commentId ?? -1)}>
+                <AntDesign name="delete" size={20} color="white" />
+              </HiddenItemButton>
+            </HiddenItemContainer>
+            <Comment commentData={item} />
+          </SwipeRow>
+        )}
+        ListEmptyComponent={() => (
+          <EmptyView>
+            <EmptyText>{`아직 등록된 댓글이 없습니다.\n첫 댓글을 남겨보세요.`}</EmptyText>
+          </EmptyView>
+        )}
+      />
+      <FooterView padding={20}>
+        <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
+        <RoundingView>
           <CommentInput
             placeholder="댓글을 입력해보세요"
             placeholderTextColor="#B0B0B0"
@@ -260,12 +269,11 @@ const FeedComments = ({
             onEndEditing={() => setComment((prev) => prev.trim())}
             includeFontPadding={false}
           />
-
-          <SubmitButton disabled={!validation} onPress={submit}>
-            <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
-          </SubmitButton>
-        </FooterView>
-      </KeyboardAvoidingView>
+        </RoundingView>
+        <SubmitButton disabled={!validation} onPress={submit}>
+          <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
+        </SubmitButton>
+      </FooterView>
     </Container>
   );
 };
