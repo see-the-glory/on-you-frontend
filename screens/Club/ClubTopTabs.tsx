@@ -42,14 +42,11 @@ const RightNavigationView = styled.View`
   padding-right: 10px;
 `;
 
-const ModalHeaderRight = styled.View`
-  position: absolute;
-  right: 15px;
-`;
 const TopTab = createMaterialTopTabNavigator();
 
-const HEADER_HEIGHT_EXPANDED = 270;
+const HEADER_EXPANDED_HEIGHT = 270;
 const HEADER_HEIGHT = 100;
+const TAB_BUTTON_HEIGHT = 46;
 
 const ClubTopTabs = ({
   route: {
@@ -70,14 +67,16 @@ const ClubTopTabs = ({
   const headerConfig = useMemo(
     () => ({
       heightCollapsed: top + HEADER_HEIGHT,
-      heightExpanded: HEADER_HEIGHT_EXPANDED,
+      heightExpanded: HEADER_EXPANDED_HEIGHT,
     }),
-    [top, HEADER_HEIGHT, HEADER_HEIGHT_EXPANDED]
+    [top, HEADER_HEIGHT, HEADER_EXPANDED_HEIGHT]
   );
   const { heightCollapsed, heightExpanded } = headerConfig;
   const headerDiff = heightExpanded - heightCollapsed;
 
   // Animated Variables
+  const screenScrollRefs = useRef<any>({});
+  const screenScrollOffset = useRef<any>({});
   const scrollY = useRef(new Animated.Value(0)).current;
   const offsetY = useSelector((state: RootState) => state.club.homeScrollY);
   const scheduleOffsetX = useSelector((state: RootState) => state.club.scheduleScrollX);
@@ -86,6 +85,45 @@ const ClubTopTabs = ({
     outputRange: [0, -headerDiff],
     extrapolate: "clamp",
   });
+
+  // Screen Scroll Sync
+  const syncScrollOffset = (screenName: string) => {
+    screenScrollOffset.current[screenName] = scrollY._value;
+    for (const [key, ref] of Object.entries(screenScrollRefs.current)) {
+      if (key === screenName) continue;
+      const offsetY = screenScrollOffset.current[key] ?? 0;
+      if (scrollY._value < headerDiff) {
+        if (ref.scrollTo) {
+          ref.scrollTo({
+            x: 0,
+            y: scrollY._value,
+            animated: false,
+          });
+        } else {
+          ref.scrollToOffset({
+            offset: scrollY._value,
+            animated: false,
+          });
+        }
+        screenScrollOffset.current[key] = scrollY._value;
+      } else if (scrollY._value >= headerDiff && offsetY < headerDiff) {
+        if (ref.scrollTo) {
+          ref.scrollTo({
+            x: 0,
+            y: headerDiff,
+            animated: false,
+          });
+        } else {
+          ref.scrollToOffset({
+            offset: headerDiff,
+            animated: false,
+          });
+        }
+        screenScrollOffset.current[key] = headerDiff;
+      }
+    }
+  };
+
   // Function in Modal
   const goToClubEdit = () => {
     navigate("ClubManagementStack", {
@@ -259,6 +297,8 @@ const ClubTopTabs = ({
   });
 
   useEffect(() => {
+    scrollY.addListener(({ value }) => {});
+
     console.log("ClubTopTabs - add listner");
     let scheduleSubscription = DeviceEventEmitter.addListener("SchedulesRefetch", () => {
       console.log("ClubTopTabs - Schedule Refetch Event");
@@ -271,6 +311,7 @@ const ClubTopTabs = ({
     });
 
     return () => {
+      scrollY.removeListener();
       scheduleSubscription.remove();
       clubSubscription.remove();
       dispatch(clubSlice.actions.deleteClub());
@@ -281,11 +322,25 @@ const ClubTopTabs = ({
   const renderClubHome = useCallback(
     (props: any) => {
       props.route.params.clubData = data;
-      return <ClubHome {...props} scrollY={scrollY} offsetY={offsetY} scheduleOffsetX={scheduleOffsetX} headerDiff={headerDiff} schedules={scheduleData} />;
+      return (
+        <ClubHome
+          {...props}
+          scrollY={scrollY}
+          offsetY={offsetY}
+          scheduleOffsetX={scheduleOffsetX}
+          headerDiff={headerDiff}
+          schedules={scheduleData}
+          syncScrollOffset={syncScrollOffset}
+          screenScrollRefs={screenScrollRefs}
+        />
+      );
     },
     [headerDiff, data, scheduleData]
   );
-  const renderClubFeed = useCallback((props: any) => <ClubFeed {...props} offsetY={offsetY} scrollY={scrollY} headerDiff={headerDiff} />, [headerDiff]);
+  const renderClubFeed = useCallback(
+    (props: any) => <ClubFeed {...props} offsetY={offsetY} scrollY={scrollY} headerDiff={headerDiff} syncScrollOffset={syncScrollOffset} screenScrollRefs={screenScrollRefs} />,
+    [headerDiff]
+  );
 
   return (
     <Container>
@@ -340,7 +395,7 @@ const ClubTopTabs = ({
           screenOptions={{
             swipeEnabled: false,
           }}
-          tabBar={(props) => <ClubTabBar {...props} />}
+          tabBar={(props) => <ClubTabBar {...props} height={TAB_BUTTON_HEIGHT} />}
           sceneContainerStyle={{ position: "absolute", zIndex: 1 }}
         >
           <TopTab.Screen options={{ tabBarLabel: "모임 정보" }} name="ClubHome" component={renderClubHome} initialParams={{ clubData: data }} />

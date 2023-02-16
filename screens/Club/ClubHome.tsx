@@ -159,6 +159,7 @@ const MemberText = styled(CustomText)`
 const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   navigation: { navigate },
   route: {
+    name: screenName,
     params: { clubData },
   },
   scrollY,
@@ -166,10 +167,12 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   scheduleOffsetX,
   headerDiff,
   schedules,
+  syncScrollOffset,
+  screenScrollRefs,
 }) => {
   const [scheduleVisible, setScheduleVisible] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(-1);
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const [memberLoading, setMemberLoading] = useState(true);
   const [memberData, setMemberData] = useState<Member[][]>();
   const [managerData, setManagerData] = useState<Member[][]>();
@@ -232,8 +235,15 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     </Loader>
   ) : (
     <Animated.ScrollView
+      ref={(ref) => {
+        screenScrollRefs.current[screenName] = ref;
+      }}
       onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
-      onMomentumScrollEnd={(event) => dispatch(clubSlice.actions.updateClubHomeScrollY({ scrollY: event.nativeEvent.contentOffset.y }))}
+      onMomentumScrollEnd={(event) => {
+        dispatch(clubSlice.actions.updateClubHomeScrollY({ scrollY: event.nativeEvent.contentOffset.y }));
+        syncScrollOffset(screenName);
+      }}
+      onScrollEndDrag={() => syncScrollOffset(screenName)}
       contentOffset={{ x: 0, y: offsetY ?? 0 }}
       style={{
         flex: 1,
@@ -251,6 +261,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
       }}
       contentContainerStyle={{
         paddingTop: headerDiff,
+        minHeight: SCREEN_HEIGHT + headerDiff,
         backgroundColor: "white",
       }}
     >
