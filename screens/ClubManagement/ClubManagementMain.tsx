@@ -128,6 +128,7 @@ interface ClubEditItem {
   title: string;
   screen?: keyof ClubStackParamList;
   onPress?: () => void;
+  showRole?: string[];
 }
 
 const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
@@ -137,6 +138,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   },
 }) => {
   const token = useSelector((state: RootState) => state.auth.token);
+  const myRole = useSelector((state: RootState) => state.club.role);
   const toast = useToast();
   const [data, setData] = useState<Club>(clubData);
   const [isToggle, setIsToggle] = useState(false);
@@ -154,17 +156,13 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
           setIsToggle(false);
         }
       } else {
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
+        toast.show(`Error Code: ${res.status}`, { type: "warning" });
       }
     },
     onError: (error) => {
       console.log("--- Error getClub ---");
       console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      toast.show(`Error Code: ${error}`, { type: "warning" });
     },
   });
 
@@ -173,71 +171,51 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
       if (res.status === 200) {
         if (res.data.recruitStatus === "OPEN") {
           setIsToggle(true);
-
-          toast.show(`멤버 모집이 활성화되었습니다.`, {
-            type: "success",
-          });
+          toast.show(`멤버 모집이 활성화되었습니다.`, { type: "success" });
         } else if (res.data.recruitStatus === "CLOSE") {
           setIsToggle(false);
-
-          toast.show(`멤버 모집이 비활성화되었습니다.`, {
-            type: "success",
-          });
+          toast.show(`멤버 모집이 비활성화되었습니다.`, { type: "success" });
         }
         DeviceEventEmitter.emit("ClubRefetch");
       } else {
         console.log(`updateClub mutation success but please check status code`);
         console.log(`status: ${res.status}`);
         console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
+        toast.show(`Error Code: ${res.status}`, { type: "warning" });
       }
     },
     onError: (error) => {
       console.log("--- updateClub Error ---");
       console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      toast.show(`Error Code: ${error}`, { type: "warning" });
     },
   });
   const deleteClubMutation = useMutation(ClubApi.deleteClub, {
     onSuccess: (res) => {
       if (res.status === 200) {
-        toast.show(`모임이 삭제되었습니다.`, {
-          type: "success",
-        });
+        toast.show(`모임이 삭제되었습니다.`, { type: "success" });
         DeviceEventEmitter.emit("ClubListRefetch");
         popToTop();
       } else if (res.status === 403) {
-        toast.show(`${res.message} (${res.status})`, {
-          type: "warning",
-        });
+        toast.show(`${res.message} (${res.status})`, { type: "warning" });
       } else {
         console.log(res);
         console.log(`deleteClub mutation success but please check status code`);
         console.log(`status: ${res.status}`);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
+        toast.show(`Error Code: ${res.status}`, { type: "warning" });
       }
     },
     onError: (error) => {
       console.log("--- deleteClub Error ---");
       console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      toast.show(`Error Code: ${error}`, { type: "warning" });
     },
   });
 
   useFocusEffect(
     useCallback(() => {
       console.log("ClubManagementMain useFocusEffect!");
-      if (refresh) {
-        clubDataRefetch();
-      }
+      if (refresh) clubDataRefetch();
     }, [refresh])
   );
   useLayoutEffect(() => {
@@ -297,21 +275,25 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
       icon: <Feather name="tool" size={iconSize} color="black" />,
       title: "모임 기본 사항 수정",
       screen: "ClubEditBasics",
+      showRole: ["MANAGER", "MASTER"],
     },
     {
       icon: <Feather name="edit-3" size={iconSize} color="black" />,
       title: "소개글 수정",
       screen: "ClubEditIntroduction",
+      showRole: ["MANAGER", "MASTER"],
     },
     {
       icon: <Feather name="users" size={iconSize} color="black" />,
       title: "관리자 / 멤버 관리",
       screen: "ClubEditMembers",
+      showRole: ["MASTER"],
     },
     {
       icon: <Feather name="trash-2" size={iconSize} color="red" />,
       title: "모임 삭제",
       onPress: deleteClub,
+      showRole: ["MASTER"],
     },
   ];
 
@@ -364,8 +346,12 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
             <ListView key={index}>
               <ListItem
                 onPress={() => {
-                  if (item.screen) goToScreen(item.screen);
-                  if (item.onPress) item.onPress();
+                  if (item.showRole?.includes(myRole ?? "")) {
+                    if (item.screen) goToScreen(item.screen);
+                    if (item.onPress) item.onPress();
+                  } else {
+                    toast.show(`모임의 리더만 접근할 수 있습니다.`, { type: "warning" });
+                  }
                 }}
               >
                 <ItemLeft>

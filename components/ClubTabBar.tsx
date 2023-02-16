@@ -34,11 +34,13 @@ const TabText = styled(CustomText)<{ isFocused: boolean }>`
   color: ${(props: any) => (props.isFocused ? "black" : "gray")};
 `;
 
-const TAP_TAP_HEIGHT = 46;
+interface TabBarProps {
+  height: number;
+}
 
-const ClubTabBar: React.FC<MaterialTopTabBarProps> = ({ state, descriptors, navigation }) => {
+const ClubTabBar: React.FC<MaterialTopTabBarProps & TabBarProps> = ({ state, descriptors, navigation, height }) => {
   return (
-    <TabBarContainer height={TAP_TAP_HEIGHT}>
+    <TabBarContainer height={height}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label = options.tabBarLabel !== undefined ? options.tabBarLabel : options.title !== undefined ? options.title : route.name;
@@ -65,10 +67,10 @@ const ClubTabBar: React.FC<MaterialTopTabBarProps> = ({ state, descriptors, navi
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
             onPress={onPress}
-            height={TAP_TAP_HEIGHT}
+            height={height}
             isFocused={isFocused}
           >
-            <TextWrap height={TAP_TAP_HEIGHT}>
+            <TextWrap height={height}>
               <TabText isFocused={isFocused}>{label}</TabText>
             </TextWrap>
           </TabButton>

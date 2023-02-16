@@ -77,14 +77,17 @@ export interface ClubHomeParamList {
   headerDiff: number;
   offsetY?: number;
   scheduleOffsetX?: number;
-  clubRole?: ClubRole;
   schedules?: RefinedSchedule[];
+  syncScrollOffset: (screenName: string) => void;
+  screenScrollRefs: any;
 }
 
 export interface ClubFeedParamList {
   scrollY: Animated.Value;
   offsetY?: number;
   headerDiff: number;
+  syncScrollOffset: (screenName: string) => void;
+  screenScrollRefs: any;
 }
 
 // ClubHome Header

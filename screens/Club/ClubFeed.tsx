@@ -38,18 +38,21 @@ const EmptyText = styled(CustomText)`
 const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   navigation: { navigate },
   route: {
+    name: screenName,
     params: { clubData },
   },
   scrollY,
   offsetY,
   headerDiff,
+  syncScrollOffset,
+  screenScrollRefs,
 }) => {
   const token = useSelector((state: RootState) => state.auth.token);
   const feeds = useSelector((state: RootState) => state.club.feeds);
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const numColumn = 3;
   const feedSize = Math.round(SCREEN_WIDTH / 3) - 1;
   const {
@@ -111,11 +114,18 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     </Loader>
   ) : (
     <Animated.FlatList
+      ref={(ref) => {
+        screenScrollRefs.current[screenName] = ref;
+      }}
       onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
       contentOffset={{ x: 0, y: offsetY ?? 0 }}
+      onMomentumScrollEnd={(event) => {
+        dispatch(clubSlice.actions.updateClubHomeScrollY({ scrollY: event.nativeEvent.contentOffset.y }));
+        syncScrollOffset(screenName);
+      }}
+      onScrollEndDrag={() => syncScrollOffset(screenName)}
       style={{
         flex: 1,
-        paddingTop: headerDiff,
         backgroundColor: "white",
         transform: [
           {
@@ -127,11 +137,13 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
           },
         ],
       }}
-      onEndReached={loadMore}
       contentContainerStyle={{
+        paddingTop: headerDiff,
         backgroundColor: "white",
+        minHeight: SCREEN_HEIGHT + headerDiff,
         flexGrow: 1,
       }}
+      onEndReached={loadMore}
       data={feeds}
       keyExtractor={(item: Feed, index: number) => String(index)}
       numColumns={numColumn}

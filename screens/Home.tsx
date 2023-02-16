@@ -1,11 +1,11 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, DeviceEventEmitter, FlatList, Platform, StatusBar, Text, useWindowDimensions, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Alert, Animated, DeviceEventEmitter, Platform, StatusBar, useWindowDimensions, View } from "react-native";
 import FastImage from "react-native-fast-image";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
-import { useInfiniteQuery, useMutation, useQueryClient } from "react-query";
+import { useInfiniteQuery, useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse } from "../api";
@@ -49,7 +49,6 @@ const HeaderButton = styled.TouchableOpacity`
 `;
 
 const Home: React.FC<HomeScreenProps> = () => {
-  const queryClient = useQueryClient();
   const token = useSelector((state: RootState) => state.auth.token);
   const me = useSelector((state: RootState) => state.auth.user);
   const feeds = useSelector((state: RootState) => state.feed.data);
@@ -69,6 +68,12 @@ const Home: React.FC<HomeScreenProps> = () => {
   const [selectFeedId, setSelectFeedId] = useState<number>(-1);
   const [selectFeedData, setSelectFeedData] = useState<Feed>();
   const navigation = useNavigation();
+  let scrollY = useRef(new Animated.Value(0)).current;
+  let animatedHeaderOpacity = scrollY.interpolate({
+    inputRange: [0, 50],
+    outputRange: [0, 1],
+  });
+
   //getFeeds ( 무한 스크롤 )
   const {
     isLoading: feedsLoading,
@@ -314,7 +319,8 @@ const Home: React.FC<HomeScreenProps> = () => {
           </HeaderButton>
         </HeaderRightView>
       </HeaderView>
-      <FlatList
+      <Animated.View style={{ width: "100%", borderBottomWidth: 0.5, borderBottomColor: "rgba(0,0,0,0.3)", opacity: animatedHeaderOpacity }} />
+      <Animated.FlatList
         refreshing={refreshing}
         onRefresh={onRefresh}
         onEndReached={loadMore}
@@ -324,6 +330,7 @@ const Home: React.FC<HomeScreenProps> = () => {
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         removeClippedSubviews={true}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
       />
 
       <FeedOptionModal modalRef={myFeedOptionRef} buttonHeight={modalOptionButtonHeight} isMyFeed={true} goToUpdateFeed={goToUpdateFeed} deleteFeed={deleteFeed} goToComplain={goToComplain} />

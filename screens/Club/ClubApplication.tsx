@@ -77,7 +77,7 @@ const ButtonText = styled(CustomText)`
 
 const ClubApplication = ({
   route: {
-    params: { clubData, actionId, actionerName, actionerId, applyMessage, createdTime },
+    params: { clubData, actionId, actionerName, actionerId, applyMessage, createdTime, processDone },
   },
   navigation: { navigate, goBack, setOptions },
 }) => {
@@ -184,11 +184,9 @@ const ClubApplication = ({
     ]);
   };
 
-  console.log(createdTime);
-
   return (
     <Container>
-      <StatusBar backgroundColor={"white"}  barStyle={"dark-content"} />
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <Header style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
         <HeaderBoldText>{actionerName}</HeaderBoldText>
         <HeaderText>{`님이 `}</HeaderText>
@@ -203,14 +201,18 @@ const ClubApplication = ({
           <CreatedTimeText>{moment(createdTime).tz("Asia/Seoul").format("YYYY-MM-DD  A h시 mm분")}</CreatedTimeText>
         </CreatedTimeView>
       </Content>
-      <Footer>
-        <RejectButton onPress={reject}>
-          <ButtonText>거절</ButtonText>
-        </RejectButton>
-        <AcceptButton onPress={approve}>
-          <ButtonText>수락</ButtonText>
-        </AcceptButton>
-      </Footer>
+      {processDone !== true ? (
+        <Footer>
+          <RejectButton onPress={reject}>
+            <ButtonText>거절</ButtonText>
+          </RejectButton>
+          <AcceptButton onPress={approve}>
+            <ButtonText>수락</ButtonText>
+          </AcceptButton>
+        </Footer>
+      ) : (
+        <></>
+      )}
     </Container>
   );
 };

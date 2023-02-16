@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter } from "react-native";
+import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter, View } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
 import { ClubHomeScreenProps, ClubHomeParamList, RefinedSchedule } from "../../Types/Club";
@@ -9,6 +9,8 @@ import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { useAppDispatch } from "../../redux/store";
 import clubSlice from "../../redux/slices/club";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store/reducers";
 
 const MEMBER_ICON_KERNING = 25;
 const MEMBER_ICON_SIZE = 50;
@@ -157,27 +159,29 @@ const MemberText = styled(CustomText)`
 const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   navigation: { navigate },
   route: {
+    name: screenName,
     params: { clubData },
   },
   scrollY,
   offsetY,
   scheduleOffsetX,
   headerDiff,
-  clubRole,
   schedules,
+  syncScrollOffset,
+  screenScrollRefs,
 }) => {
   const [scheduleVisible, setScheduleVisible] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(-1);
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const [memberLoading, setMemberLoading] = useState(true);
   const [memberData, setMemberData] = useState<Member[][]>();
   const [managerData, setManagerData] = useState<Member[][]>();
   const [masterData, setMasterData] = useState<Member>();
   const memberCountPerLine = Math.floor((SCREEN_WIDTH - SCREEN_PADDING_SIZE) / (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING));
   const dispatch = useAppDispatch();
+  const myRole = useSelector((state: RootState) => state.club.role);
 
   useLayoutEffect(() => {
-    console.log(`${clubData.id} clubHome useLayoutEffect`);
     getData();
   }, []);
 
@@ -231,8 +235,15 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     </Loader>
   ) : (
     <Animated.ScrollView
+      ref={(ref) => {
+        screenScrollRefs.current[screenName] = ref;
+      }}
       onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
-      onMomentumScrollEnd={(event) => dispatch(clubSlice.actions.updateClubHomeScrollY({ scrollY: event.nativeEvent.contentOffset.y }))}
+      onMomentumScrollEnd={(event) => {
+        dispatch(clubSlice.actions.updateClubHomeScrollY({ scrollY: event.nativeEvent.contentOffset.y }));
+        syncScrollOffset(screenName);
+      }}
+      onScrollEndDrag={() => syncScrollOffset(screenName)}
       contentOffset={{ x: 0, y: offsetY ?? 0 }}
       style={{
         flex: 1,
@@ -250,6 +261,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
       }}
       contentContainerStyle={{
         paddingTop: headerDiff,
+        minHeight: SCREEN_HEIGHT + headerDiff,
         backgroundColor: "white",
       }}
     >
@@ -268,7 +280,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           <Ionicons name="calendar" size={16} color="black" />
           <SectionTitle>SCHEDULE</SectionTitle>
         </TitleView>
-        {clubRole?.role && clubRole?.role !== "PENDING" ? (
+        {myRole && myRole !== "PENDING" ? (
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
