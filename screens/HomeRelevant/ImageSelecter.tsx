@@ -10,7 +10,6 @@ import { FeedCreateScreenProps } from "../../types/feed";
 import { useNavigation } from "@react-navigation/native";
 import { RootState } from "../../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
-import DraggableFlatList, { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -268,32 +267,32 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     if (selectIndex == q) setSelectIndex(0);
   };
 
-  const renderItem = useCallback(
-    ({ drag, isActive, item }: RenderItemParams<any> & { item: string }) => {
-      return (
-        <ScaleDecorator>
-          <TouchableOpacity
-            activeOpacity={1}
-            onLongPress={drag}
-            disabled={isActive}
-            style={[
-              {
-                opacity: isActive ? 0.5 : 1,
-              },
-            ]}
-          >
-            <SelectImage source={{ uri: item }} />
-            <ImageCancleBtn onPress={() => ImageCancle(imageURL.indexOf(item))}>
-              <CancleIcon>
-                <AntDesign name="close" size={15} color="white" />
-              </CancleIcon>
-            </ImageCancleBtn>
-          </TouchableOpacity>
-        </ScaleDecorator>
-      );
-    },
-    [imageURL]
-  );
+  // const renderItem = useCallback(
+  //   ({ drag, isActive, item }: RenderItemParams<any> & { item: string }) => {
+  //     return (
+  //       <ScaleDecorator>
+  //         <TouchableOpacity
+  //           activeOpacity={1}
+  //           onLongPress={drag}
+  //           disabled={isActive}
+  //           style={[
+  //             {
+  //               opacity: isActive ? 0.5 : 1,
+  //             },
+  //           ]}
+  //         >
+  //           <SelectImage source={{ uri: item }} />
+  //           <ImageCancleBtn onPress={() => ImageCancle(imageURL.indexOf(item))}>
+  //             <CancleIcon>
+  //               <AntDesign name="close" size={15} color="white" />
+  //             </CancleIcon>
+  //           </ImageCancleBtn>
+  //         </TouchableOpacity>
+  //       </ScaleDecorator>
+  //     );
+  //   },
+  //   [imageURL]
+  // );
 
   return (
     <Container>
@@ -302,7 +301,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
           <>
             <SelectImageView>
               <MyImage>
-                <DraggableFlatList horizontal data={imageURL} onDragEnd={({ data }) => setImageURL(data)} keyExtractor={(item) => item} renderItem={(props) => renderItem({ ...props })} />
+                {/* <DraggableFlatList horizontal data={imageURL} onDragEnd={({ data }) => setImageURL(data)} keyExtractor={(item) => item} renderItem={(props) => renderItem({ ...props })} /> */}
               </MyImage>
               {imageURL.length !== 0 ? <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText> : null}
             </SelectImageView>
