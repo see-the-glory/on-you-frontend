@@ -86,7 +86,7 @@ interface FeedDetailProps {
   infoHeight: number;
   contentHeight: number;
   showClubName?: boolean;
-  openFeedOption: (userId: number, feedId: number, feedData: Feed) => void;
+  openFeedOption: (feedData: Feed) => void;
   goToFeedComments: (feedIndex: number, feedId: number) => void;
   goToClub?: (clubId: number) => void;
   likeFeed?: (feedIndex: number, feedId: number) => void;
@@ -142,7 +142,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
             </HeaderNameView>
           </HeaderLeftView>
           <HeaderRightView>
-            <TouchableOpacity onPress={() => this.props.openFeedOption(this.props.feedData.userId, this.props.feedData.id, this.props.feedData)} style={{ paddingLeft: 10 }}>
+            <TouchableOpacity onPress={() => this.props.openFeedOption(this.props.feedData)} style={{ paddingLeft: 10 }}>
               <Ionicons name="ellipsis-vertical" size={15} color="black" />
             </TouchableOpacity>
           </HeaderRightView>

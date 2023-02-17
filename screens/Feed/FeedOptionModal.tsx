@@ -19,6 +19,7 @@ const OptionButton = styled.TouchableOpacity<{ height: number; padding: number; 
 const OptionName = styled(CustomText)<{ warning: boolean }>`
   font-size: 16px;
   color: ${(props: any) => (props.warning ? "#FF551F" : "#2b2b2b")};
+  line-height: 22px;
 `;
 const Break = styled.View<{ sep: number }>`
   width: 100%;
@@ -36,15 +37,19 @@ interface FeedOptionModalProps {
   goToUpdateFeed: () => void;
   deleteFeed: () => void;
   goToComplain: () => void;
+  blockUser: () => void;
 }
 
-const FeedOptionModal: React.FC<FeedOptionModalProps> = ({ modalRef, buttonHeight, isMyFeed, goToUpdateFeed, deleteFeed, goToComplain }) => {
+const FeedOptionModal: React.FC<FeedOptionModalProps> = ({ modalRef, buttonHeight, isMyFeed, goToUpdateFeed, deleteFeed, goToComplain, blockUser }) => {
   const feedOptionList = isMyFeed
     ? [
         { name: "수정", warning: false, onPress: goToUpdateFeed },
         { name: "삭제", warning: true, onPress: deleteFeed },
       ]
-    : [{ name: "신고", warning: false, onPress: goToComplain }];
+    : [
+        { name: "신고", warning: false, onPress: goToComplain },
+        { name: "사용자 차단", warning: true, onPress: blockUser },
+      ];
   const modalHeight = buttonHeight * feedOptionList.length + 60;
 
   return (

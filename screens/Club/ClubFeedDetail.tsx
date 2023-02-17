@@ -54,7 +54,6 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   const feedDetailContentHeight = 40;
   const itemSeparatorGap = 30;
   const itemLength = SCREEN_WIDTH + feedDetailHeaderHeight + feedDetailInfoHeight + feedDetailContentHeight + itemSeparatorGap;
-  const [selectFeedId, setSelectFeedId] = useState<number>(-1);
   const [selectFeedData, setSelectFeedData] = useState<Feed>();
 
   const complainMutation = useMutation(FeedApi.reportFeed, {
@@ -80,6 +79,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       });
     },
   });
+
   const deleteFeedMutation = useMutation(FeedApi.deleteFeed, {
     onSuccess: (res) => {
       if (res.status === 200) {
@@ -109,27 +109,29 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     closeOtherFeedOption();
     openComplainOption();
   };
+
   const goToFeedComments = (feedIndex: number, feedId: number) => {
     navigate("FeedStack", { screen: "FeedComments", feedIndex, feedId, clubId: clubData.id });
   };
-  const openFeedOption = (userId: number, feedId: number, feedData: Feed) => {
-    setSelectFeedId(feedId);
+
+  const openFeedOption = (feedData: Feed) => {
     setSelectFeedData(feedData);
-    if (userId === me?.id) openMyFeedOption();
+    if (feedData?.userId === me?.id) openMyFeedOption();
     else openOtherFeedOption();
   };
 
   const deleteFeed = () => {
-    if (selectFeedId === -1) {
+    if (selectFeedData === undefined || selectFeedData?.id === -1) {
       toast.show("게시글 정보가 잘못되었습니다.", {
         type: "warning",
       });
       return;
     }
+
     const requestData: FeedDeletionRequest = {
       token,
       data: {
-        id: selectFeedId,
+        id: selectFeedData.id,
       },
     };
 
@@ -152,13 +154,38 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     );
   };
 
+  const blockUser = () => {
+    if (selectFeedData === undefined || selectFeedData?.id === -1) {
+      toast.show("게시글 정보가 잘못되었습니다.", {
+        type: "warning",
+      });
+      return;
+    }
+
+    Alert.alert(
+      "사용자 차단",
+      "정말로 이 사용자를 차단하시겠습니까?",
+      [
+        {
+          text: "아니요",
+          style: "cancel",
+        },
+        {
+          text: "네",
+          onPress: () => {},
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   const goToUpdateFeed = () => {
     closeMyFeedOption();
     navigate("HomeStack", { screen: "ModifiyFeed", feedData: selectFeedData });
   };
 
   const complainSubmit = () => {
-    if (selectFeedId === -1) {
+    if (selectFeedData === undefined || selectFeedData?.id === -1) {
       toast.show("게시글 정보가 잘못되었습니다.", {
         type: "warning",
       });
@@ -167,7 +194,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     const requestData: FeedReportRequest = {
       token,
       data: {
-        id: selectFeedId,
+        id: selectFeedData.id,
         reason: "SPAM",
       },
     };
@@ -261,8 +288,24 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         removeClippedSubviews={true}
       />
 
-      <FeedOptionModal modalRef={myFeedOptionRef} buttonHeight={modalOptionButtonHeight} isMyFeed={true} goToUpdateFeed={goToUpdateFeed} deleteFeed={deleteFeed} goToComplain={goToComplain} />
-      <FeedOptionModal modalRef={otherFeedOptionRef} buttonHeight={modalOptionButtonHeight} isMyFeed={false} goToUpdateFeed={goToUpdateFeed} deleteFeed={deleteFeed} goToComplain={goToComplain} />
+      <FeedOptionModal
+        modalRef={myFeedOptionRef}
+        buttonHeight={modalOptionButtonHeight}
+        isMyFeed={true}
+        goToUpdateFeed={goToUpdateFeed}
+        deleteFeed={deleteFeed}
+        goToComplain={goToComplain}
+        blockUser={blockUser}
+      />
+      <FeedOptionModal
+        modalRef={otherFeedOptionRef}
+        buttonHeight={modalOptionButtonHeight}
+        isMyFeed={false}
+        goToUpdateFeed={goToUpdateFeed}
+        deleteFeed={deleteFeed}
+        goToComplain={goToComplain}
+        blockUser={blockUser}
+      />
       <FeedReportModal modalRef={complainOptionRef} buttonHeight={modalOptionButtonHeight} complainSubmit={complainSubmit} />
     </Container>
   );

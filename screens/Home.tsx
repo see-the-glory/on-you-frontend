@@ -65,7 +65,6 @@ const Home: React.FC<HomeScreenProps> = () => {
   const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
   const itemSeparatorGap = 20;
-  const [selectFeedId, setSelectFeedId] = useState<number>(-1);
   const [selectFeedData, setSelectFeedData] = useState<Feed>();
   const navigation = useNavigation();
   let scrollY = useRef(new Animated.Value(0)).current;
@@ -217,10 +216,9 @@ const Home: React.FC<HomeScreenProps> = () => {
     });
   }, [me]);
 
-  const openFeedOption = (userId: number, feedId: number, feedData: Feed) => {
-    setSelectFeedId(feedId);
+  const openFeedOption = (feedData: Feed) => {
     setSelectFeedData(feedData);
-    if (userId === me?.id) openMyFeedOption();
+    if (feedData.userId === me?.id) openMyFeedOption();
     else openOtherFeedOption();
   };
   const goToComplain = () => {
@@ -229,7 +227,7 @@ const Home: React.FC<HomeScreenProps> = () => {
   };
 
   const deleteFeed = () => {
-    if (selectFeedId === -1) {
+    if (selectFeedData === undefined || selectFeedData?.id === -1) {
       toast.show("게시글 정보가 잘못되었습니다.", {
         type: "warning",
       });
@@ -238,7 +236,7 @@ const Home: React.FC<HomeScreenProps> = () => {
     const requestData: FeedDeletionRequest = {
       token,
       data: {
-        id: selectFeedId,
+        id: selectFeedData.id,
       },
     };
 
@@ -262,7 +260,7 @@ const Home: React.FC<HomeScreenProps> = () => {
   };
 
   const complainSubmit = () => {
-    if (selectFeedId === -1) {
+    if (selectFeedData === undefined || selectFeedData?.id === -1) {
       toast.show("게시글 정보가 잘못되었습니다.", {
         type: "warning",
       });
@@ -271,11 +269,36 @@ const Home: React.FC<HomeScreenProps> = () => {
     const requestData: FeedReportRequest = {
       token,
       data: {
-        id: selectFeedId,
+        id: selectFeedData.id,
         reason: "SPAM",
       },
     };
     complainMutation.mutate(requestData);
+  };
+
+  const blockUser = () => {
+    if (selectFeedData === undefined || selectFeedData?.id === -1) {
+      toast.show("게시글 정보가 잘못되었습니다.", {
+        type: "warning",
+      });
+      return;
+    }
+
+    Alert.alert(
+      "사용자 차단",
+      "정말로 이 사용자를 차단하시겠습니까?",
+      [
+        {
+          text: "아니요",
+          style: "cancel",
+        },
+        {
+          text: "네",
+          onPress: () => {},
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const keyExtractor = useCallback((item: Feed, index: number) => String(index), []);
@@ -333,8 +356,24 @@ const Home: React.FC<HomeScreenProps> = () => {
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
       />
 
-      <FeedOptionModal modalRef={myFeedOptionRef} buttonHeight={modalOptionButtonHeight} isMyFeed={true} goToUpdateFeed={goToUpdateFeed} deleteFeed={deleteFeed} goToComplain={goToComplain} />
-      <FeedOptionModal modalRef={otherFeedOptionRef} buttonHeight={modalOptionButtonHeight} isMyFeed={false} goToUpdateFeed={goToUpdateFeed} deleteFeed={deleteFeed} goToComplain={goToComplain} />
+      <FeedOptionModal
+        modalRef={myFeedOptionRef}
+        buttonHeight={modalOptionButtonHeight}
+        isMyFeed={true}
+        goToUpdateFeed={goToUpdateFeed}
+        deleteFeed={deleteFeed}
+        goToComplain={goToComplain}
+        blockUser={blockUser}
+      />
+      <FeedOptionModal
+        modalRef={otherFeedOptionRef}
+        buttonHeight={modalOptionButtonHeight}
+        isMyFeed={false}
+        goToUpdateFeed={goToUpdateFeed}
+        deleteFeed={deleteFeed}
+        goToComplain={goToComplain}
+        blockUser={blockUser}
+      />
       <FeedReportModal modalRef={complainOptionRef} buttonHeight={modalOptionButtonHeight} complainSubmit={complainSubmit} />
     </Container>
   );
