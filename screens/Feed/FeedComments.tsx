@@ -1,6 +1,6 @@
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import React, { useLayoutEffect, useState } from "react";
-import { ActivityIndicator, DeviceEventEmitter, FlatList, KeyboardAvoidingView, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, DeviceEventEmitter, FlatList, KeyboardAvoidingView, LayoutChangeEvent, NativeSyntheticEvent, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
@@ -15,6 +15,7 @@ import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
 import feedSlice from "../../redux/slices/feed";
 import clubSlice from "../../redux/slices/club";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -101,6 +102,8 @@ const FeedComments = ({
   const toast = useToast();
   const [comment, setComment] = useState<string>("");
   const [validation, setValidation] = useState<boolean>(false);
+  const [commentInputHeight, setCommentInputHeight] = useState<number>(0);
+  const insets = useSafeAreaInsets();
   const hiddenItemWidth = 60;
   const {
     data: comments,
@@ -224,56 +227,64 @@ const FeedComments = ({
     </Loader>
   ) : (
     <Container>
-      <SwipeListView
-        contentContainerStyle={{ flexGrow: 1 }}
-        data={[...(comments?.data ?? [])].reverse()}
-        keyExtractor={(item: FeedComment, index: number) => String(index)}
-        ListFooterComponent={<View />}
-        ListFooterComponentStyle={{ marginBottom: 40 }}
-        renderItem={({ item, index }: { item: FeedComment; index: number }) => (
-          <SwipeRow disableRightSwipe={true} disableLeftSwipe={item.userId !== me?.id} rightOpenValue={-hiddenItemWidth}>
-            <HiddenItemContainer>
-              <HiddenItemButton width={hiddenItemWidth} onPress={() => deleteComment(item.commentId ?? -1)}>
-                <AntDesign name="delete" size={20} color="white" />
-              </HiddenItemButton>
-            </HiddenItemContainer>
-            <Comment commentData={item} />
-          </SwipeRow>
-        )}
-        ListEmptyComponent={() => (
-          <EmptyView>
-            <EmptyText>{`아직 등록된 댓글이 없습니다.\n첫 댓글을 남겨보세요.`}</EmptyText>
-          </EmptyView>
-        )}
-      />
-      <FooterView padding={20}>
-        <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
-        <RoundingView>
-          <CommentInput
-            placeholder="댓글을 입력해보세요"
-            placeholderTextColor="#B0B0B0"
-            value={comment}
-            textAlign="left"
-            multiline={true}
-            maxLength={255}
-            autoCapitalize="none"
-            autoCorrect={false}
-            autoComplete="off"
-            returnKeyType="done"
-            returnKeyLabel="done"
-            onChangeText={(value: string) => {
-              setComment(value);
-              if (!validation && value.trim() !== "") setValidation(true);
-              if (validation && value.trim() === "") setValidation(false);
-            }}
-            onEndEditing={() => setComment((prev) => prev.trim())}
-            includeFontPadding={false}
-          />
-        </RoundingView>
-        <SubmitButton disabled={!validation} onPress={submit}>
-          <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
-        </SubmitButton>
-      </FooterView>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={commentInputHeight} style={{ flex: 1 }}>
+        <SwipeListView
+          contentContainerStyle={{ flexGrow: 1 }}
+          data={[...(comments?.data ?? [])].reverse()}
+          keyExtractor={(item: FeedComment, index: number) => String(index)}
+          ListFooterComponent={<View />}
+          ListFooterComponentStyle={{ marginBottom: 40 }}
+          renderItem={({ item, index }: { item: FeedComment; index: number }) => (
+            <SwipeRow disableRightSwipe={true} disableLeftSwipe={item.userId !== me?.id} rightOpenValue={-hiddenItemWidth}>
+              <HiddenItemContainer>
+                <HiddenItemButton width={hiddenItemWidth} onPress={() => deleteComment(item.commentId ?? -1)}>
+                  <AntDesign name="delete" size={20} color="white" />
+                </HiddenItemButton>
+              </HiddenItemContainer>
+              <Comment commentData={item} />
+            </SwipeRow>
+          )}
+          ListEmptyComponent={() => (
+            <EmptyView>
+              <EmptyText>{`아직 등록된 댓글이 없습니다.\n첫 댓글을 남겨보세요.`}</EmptyText>
+            </EmptyView>
+          )}
+        />
+        <FooterView
+          padding={20}
+          onLayout={(event: LayoutChangeEvent) => {
+            const { height } = event.nativeEvent.layout;
+            setCommentInputHeight(height + insets.bottom + 10);
+          }}
+        >
+          <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
+          <RoundingView>
+            <CommentInput
+              placeholder="댓글을 입력해보세요"
+              placeholderTextColor="#B0B0B0"
+              value={comment}
+              textAlign="left"
+              multiline={true}
+              maxLength={255}
+              autoCapitalize="none"
+              autoCorrect={false}
+              autoComplete="off"
+              returnKeyType="done"
+              returnKeyLabel="done"
+              onChangeText={(value: string) => {
+                setComment(value);
+                if (!validation && value.trim() !== "") setValidation(true);
+                if (validation && value.trim() === "") setValidation(false);
+              }}
+              onEndEditing={() => setComment((prev) => prev.trim())}
+              includeFontPadding={false}
+            />
+          </RoundingView>
+          <SubmitButton disabled={!validation} onPress={submit}>
+            <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
+          </SubmitButton>
+        </FooterView>
+      </KeyboardAvoidingView>
     </Container>
   );
 };

@@ -104,18 +104,18 @@ const Footer = styled.View`
 `;
 
 const ApplyButton = styled.TouchableOpacity<{ participation: boolean }>`
-  width: 130px;
+  width: 110px;
   justify-content: center;
   align-items: center;
   background-color: ${(props: any) => (props.participation ? "white" : "#FF6534")};
-  padding: 7px 0px;
+  padding: 9px 0px;
   border: 1px solid #ff6534;
   border-radius: 20px;
 `;
 
 const ButtonText = styled(CustomText)<{ participation: boolean }>`
   font-size: 14px;
-  line-height: 20px;
+  line-height: 22px;
   font-family: "NotoSansKR-Medium";
   color: ${(props: any) => (props.participation ? "#FF6534" : "white")};
 `;
@@ -295,7 +295,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                 <Header index={index}>
                   <ModalHeaderLeft>
                     <TouchableOpacity onPress={() => closeModal(true)}>
-                      <Ionicons name="close" size={18} color="white" />
+                      <Ionicons name="close" size={21} color="white" style={{ paddingLeft: 1, marginTop: -2 }} />
                     </TouchableOpacity>
                   </ModalHeaderLeft>
                   <ModalHeaderRight>

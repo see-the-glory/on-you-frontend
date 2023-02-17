@@ -5,12 +5,12 @@ import Clubs from "../screens/Clubs";
 import Profile from "../screens/Profile";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
-import { Animated, useWindowDimensions, View } from "react-native";
+import { Animated, Platform, useWindowDimensions, View } from "react-native";
 import { MainBottomTabParamList } from "../Types/Club";
 import { Shadow } from "react-native-shadow-2";
 
 const Container = styled.View`
-  height: 70px;
+  height: ${Platform.OS === "ios" ? 70 : 60}px;
 `;
 
 const TabBarContainer = styled.View`
@@ -18,7 +18,7 @@ const TabBarContainer = styled.View`
   bottom: 0px;
   flex-direction: row;
   width: 100%;
-  height: 70px;
+  height: 100%;
   justify-content: space-around;
   align-items: center;
   background-color: white;
@@ -27,7 +27,7 @@ const TabBarContainer = styled.View`
 const ShadowBox = styled.View`
   position: absolute;
   width: 100%;
-  height: 70px;
+  height: 100%;
   background-color: white;
   box-shadow: 1px 1px 3px gray;
 `;
@@ -43,7 +43,7 @@ const SlidingTabContainer = styled.View<{ tabWidth: number }>`
 const Circle = styled.View<{ tabWidth: number }>`
   width: ${(props: any) => props.tabWidth * 1.8}px;
   height: ${(props: any) => props.tabWidth * 1.9}px;
-  bottom: 18px;
+  bottom: ${Platform.OS === "ios" ? 18 : 16}px;
   border-radius: ${(props: any) => props.tabWidth}px;
   background-color: white;
 `;
@@ -107,7 +107,12 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
 
             return (
               <IconButton key={index} accessibilityRole="button" accessibilityState={isFocused ? { selected: true } : {}} accessibilityLabel={options.tabBarAccessibilityLabel} onPress={onPress}>
-                <AnimatedIcon name={isFocused ? route.params.activeIcon : route.params.inActiveIcon} size={24} color={isFocused ? "black" : "gray"} style={{ bottom: 6, padding: 10 }} />
+                <AnimatedIcon
+                  name={isFocused ? route.params.activeIcon : route.params.inActiveIcon}
+                  size={24}
+                  color={isFocused ? "black" : "gray"}
+                  style={{ bottom: Platform.OS === "ios" ? 6 : 0, padding: 10 }}
+                />
               </IconButton>
             );
           })}
