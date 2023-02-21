@@ -1,42 +1,41 @@
 {
   "project_info": {
-    "project_number": "878030875637",
-    "project_id": "onyou-8f617",
-    "storage_bucket": "onyou-8f617.appspot.com"
+    "project_number": "38316243301",
+    "project_id": "onyou-7e97f",
+    "storage_bucket": "onyou-7e97f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:878030875637:android:cb28b04d535db5be820ebc",
+        "mobilesdk_app_id": "1:38316243301:android:34de37a14e1226e6ee098c",
         "android_client_info": {
           "package_name": "com.onyoufrontend"
         }
       },
       "oauth_client": [
         {
-          "client_id": "878030875637-ktrqveoikmv8qjsscq6pcarcjkfngd32.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.onyoufrontend",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
-          }
-        },
-        {
-          "client_id": "878030875637-g1906fkpmu20a1r6me1ufmrlbb2ori3r.apps.googleusercontent.com",
+          "client_id": "38316243301-udnvknutddr3gmuqrbgap1b61p5829vj.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBfrCR69u93YFYxHwoC2hfhKTJLq2zYJXs"
+          "current_key": "AIzaSyC1PcQkkNGNQHt4WXxz8vg1APFRaVrmb3E"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "878030875637-g1906fkpmu20a1r6me1ufmrlbb2ori3r.apps.googleusercontent.com",
+              "client_id": "38316243301-udnvknutddr3gmuqrbgap1b61p5829vj.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "38316243301-e2988ncv7e7s8ep2pcfopvhui5qj49ne.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.onyou.project"
+              }
             }
           ]
         }
