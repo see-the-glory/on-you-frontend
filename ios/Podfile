@@ -9,9 +9,13 @@ platform :ios, podfile_properties['ios.deploymentTarget'] || '13.0'
 install! 'cocoapods',
   :deterministic_uuids => false
 
+use_frameworks! :linkage => :static
+
 target 'onyoufrontend' do
   use_expo_modules!
   config = use_native_modules!
+  
+  pod 'GoogleUtilities', :modular_headers => true
 
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
 

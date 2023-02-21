@@ -3,6 +3,7 @@ import styled from "styled-components/native";
 import { ClubCreationFailScreenProps } from "../../Types/Club";
 import { Ionicons } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
+import { Platform } from "react-native";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -42,7 +43,7 @@ const NextButtonView = styled.View`
   width: 100%;
   position: absolute;
   bottom: 0;
-  margin: 30px 0px;
+  margin: ${Platform.OS === "ios" ? 10 : 30}px 0px;
   padding: 0px 20px;
 `;
 

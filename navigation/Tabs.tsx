@@ -18,7 +18,7 @@ const TabBarContainer = styled.View`
   bottom: 0px;
   flex-direction: row;
   width: 100%;
-  height: 100%;
+  height: ${Platform.OS === "ios" ? 70 : 60}px;
   justify-content: space-around;
   align-items: center;
   background-color: white;
@@ -27,7 +27,7 @@ const TabBarContainer = styled.View`
 const ShadowBox = styled.View`
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: ${Platform.OS === "ios" ? 70 : 60}px;
   background-color: white;
   box-shadow: 1px 1px 3px gray;
 `;

@@ -16,6 +16,7 @@ import CustomTextInput from "../../components/CustomTextInput";
 import { RootState } from "../../redux/store/reducers";
 import FastImage from "react-native-fast-image";
 import CircleIcon from "../../components/CircleIcon";
+import messaging from "@react-native-firebase/messaging";
 
 const Container = styled.ScrollView`
   padding-left: 15px;
@@ -104,6 +105,21 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const toast = useToast();
   const imageSize = 85;
+  const [apnsToken, setAPNSToken] = useState<string | null>(null);
+  const [fcmToken, setFCMToken] = useState<string | null>(null);
+
+  const getFCMTokeen = async () => {
+    const apns = await messaging().getAPNSToken();
+    setAPNSToken(apns);
+    if (apns) {
+      const fcm = await messaging().getToken();
+      setFCMToken(fcm);
+    }
+  };
+
+  useEffect(() => {
+    getFCMTokeen();
+  }, []);
 
   const mutation = useMutation(UserApi.updateUserInfo, {
     onSuccess: (res) => {
@@ -254,6 +270,11 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
               onChangeText={(text: string) => setOrganizationName(text)}
               onEndEditing={() => setOrganizationName((prev) => prev.trim())}
             />
+          </Form>
+          <Form>
+            <Title>테스트</Title>
+            <Title>{apnsToken ?? "Null"}</Title>
+            <Title>{fcmToken ?? "Null"}</Title>
           </Form>
           {/* <Form>
           <Title>관심사(3개 이상 택)</Title>

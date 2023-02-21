@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
+import { KeyboardAvoidingView, Platform, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";

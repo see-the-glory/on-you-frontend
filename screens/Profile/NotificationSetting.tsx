@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Switch, View } from "react-native";
+import { Switch, View, Platform } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
@@ -117,7 +117,7 @@ const NotificationSetting = () => {
               thumbColor={"white"}
               onValueChange={() => onValueChange("USER")}
               value={userPush}
-              style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
+              style={Platform.OS === "ios" ? { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] } : {}}
             />
           </ItemSub>
           <ItemText>{`홈화면 알림창에서 확인 할 수 있는 모임 가입 신청 결과`}</ItemText>
@@ -130,7 +130,7 @@ const NotificationSetting = () => {
               thumbColor={"white"}
               onValueChange={() => onValueChange("CLUB")}
               value={clubPush}
-              style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
+              style={Platform.OS === "ios" ? { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] } : {}}
             />
           </ItemSub>
           <ItemText>{`관리자로 있는 모임에서 가입 신청서를 확인할 수 있는 메세지 박스`}</ItemText>

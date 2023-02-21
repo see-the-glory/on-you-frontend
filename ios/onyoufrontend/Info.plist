@@ -39,6 +39,11 @@
 	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Photo library access is required to add photos in the feed.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>SplashScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
