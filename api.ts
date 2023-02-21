@@ -439,6 +439,13 @@ export interface AccountWithdrawRequest {
   token: string | null;
 }
 
+export interface UserBlockRequest {
+  token: string | null;
+  data: {
+    userId: number;
+  };
+}
+
 export interface FeedLikeRequest {
   data: {
     id: number;
@@ -906,6 +913,20 @@ const withdrawAccount = (req: AccountWithdrawRequest) => {
   });
 };
 
+const blockUser = (req: UserBlockRequest) => {
+  return fetch(`${BASE_URL}/api/user/block`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `${req.token}`,
+    },
+    body: JSON.stringify(req.data),
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
+};
+
 const selectMyClubs = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
   return fetch(`${BASE_URL}/api/clubs/my`, {
@@ -1027,6 +1048,7 @@ export const UserApi = {
   FindUserPw,
   changePassword,
   withdrawAccount,
+  blockUser,
 };
 
 export const FeedApi = {

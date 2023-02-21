@@ -8,7 +8,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse } from "../api";
+import { Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, UserApi, UserBlockRequest } from "../api";
 import FeedDetail from "../components/FeedDetail";
 import feedSlice from "../redux/slices/feed";
 import { useAppDispatch } from "../redux/store";
@@ -171,6 +171,31 @@ const Home: React.FC<HomeScreenProps> = () => {
   });
   const likeFeedMutation = useMutation(FeedApi.likeFeed);
 
+  const blockUserMutation = useMutation(UserApi.blockUser, {
+    onSuccess: (res) => {
+      if (res.status === 200) {
+        toast.show(`사용자를 차단했습니다.`, {
+          type: "success",
+        });
+        onRefresh();
+        closeMyFeedOption();
+      } else {
+        console.log("--- blockUser Error ---");
+        console.log(res);
+        toast.show(`Error Code: ${res.status}`, {
+          type: "warning",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- blockUser Error ---");
+      console.log(error);
+      toast.show(`Error Code: ${error}`, {
+        type: "warning",
+      });
+    },
+  });
+
   const likeFeed = useCallback((feedIndex: number, feedId: number) => {
     const requestData: FeedLikeRequest = {
       data: { id: feedId },
@@ -284,6 +309,13 @@ const Home: React.FC<HomeScreenProps> = () => {
       return;
     }
 
+    const requestData: UserBlockRequest = {
+      token,
+      data: {
+        userId: selectFeedData.userId,
+      },
+    };
+
     Alert.alert(
       "사용자 차단",
       "정말로 이 사용자를 차단하시겠습니까?",
@@ -294,7 +326,9 @@ const Home: React.FC<HomeScreenProps> = () => {
         },
         {
           text: "네",
-          onPress: () => {},
+          onPress: () => {
+            blockUserMutation.mutate(requestData);
+          },
         },
       ],
       { cancelable: false }

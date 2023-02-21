@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { Platform, StatusBar, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import styled from "styled-components/native";
@@ -68,6 +68,18 @@ const FeedReportModal: React.FC<FeedReportModalProps> = ({ modalRef, buttonHeigh
         handlePosition="inside"
         handleStyle={{ top: 14, height: 3, width: 35, backgroundColor: "#d4d4d4" }}
         modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+        onOpen={() => {
+          if (Platform.OS === "android") {
+            StatusBar.setBackgroundColor("black", true);
+            StatusBar.setBarStyle("light-content", true);
+          }
+        }}
+        onClose={() => {
+          if (Platform.OS === "android") {
+            StatusBar.setBackgroundColor("white", true);
+            StatusBar.setBarStyle("dark-content", true);
+          }
+        }}
       >
         <ModalContainer style={{ flex: 1 }}>
           <ModalHeader padding={20}>
