@@ -300,7 +300,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                 value={clubName}
                 placeholder="모임명 8자 이내 (특수문자 불가)"
                 placeholderTextColor="#B0B0B0"
-                maxLength={8}
+                maxLength={9}
                 onEndEditing={() => {
                   if (clubName === "") {
                     toast.show("모임 이름을 공백으로 설정할 수 없습니다.", {
@@ -309,7 +309,13 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                     setClubName(clubData.name ?? "");
                   } else setClubName((prev) => prev.trim());
                 }}
-                onChangeText={(name: string) => setClubName(name)}
+                onChangeText={(name: string) => {
+                  if (name.length > 8) {
+                    toast.show("모임 이름은 8자 제한입니다.", {
+                      type: "warning",
+                    });
+                  } else setClubName(name);
+                }}
                 returnKeyType="done"
                 returnKeyLabel="done"
                 includeFontPadding={false}

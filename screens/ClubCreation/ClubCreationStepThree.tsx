@@ -207,9 +207,15 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
                   placeholderTextColor="#B0B0B0"
                   value={clubShortDesc}
                   textAlign="center"
-                  maxLength={20}
+                  maxLength={21}
                   textAlignVertical="center"
-                  onChangeText={(value: string) => setClubShortDesc(value)}
+                  onChangeText={(value: string) => {
+                    if (value.length > 20) {
+                      toast.show(`간단 소개는 20자 제한입니다.`, {
+                        type: "warning",
+                      });
+                    } else setClubShortDesc(value);
+                  }}
                   onEndEditing={() => setClubShortDesc((prev) => prev.trim())}
                   includeFontPadding={false}
                 />
@@ -223,9 +229,15 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
                   value={clubLongDesc}
                   textAlign="left"
                   multiline={true}
-                  maxLength={100}
+                  maxLength={101}
                   textAlignVertical="top"
-                  onChangeText={(value: string) => setClubLongDesc(value)}
+                  onChangeText={(value: string) => {
+                    if (value.length > 100) {
+                      toast.show(`상세 소개는 100자 제한입니다.`, {
+                        type: "warning",
+                      });
+                    } else setClubLongDesc(value);
+                  }}
                   onEndEditing={() => setClubLongDesc((prev) => prev.trim())}
                   includeFontPadding={false}
                 />
