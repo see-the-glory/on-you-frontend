@@ -5,7 +5,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest } from "../../api";
+import { Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, UserApi } from "../../api";
 import CustomText from "../../components/CustomText";
 import FeedDetail from "../../components/FeedDetail";
 import { ClubFeedDetailScreenProps } from "../../Types/Club";
@@ -105,6 +105,34 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       });
     },
   });
+
+  const likeFeedMutation = useMutation(FeedApi.likeFeed);
+
+  const blockUserMutation = useMutation(UserApi.blockUser, {
+    onSuccess: (res) => {
+      if (res.status === 200) {
+        toast.show(`사용자를 차단했습니다.`, {
+          type: "success",
+        });
+        DeviceEventEmitter.emit("ClubFeedRefetch");
+        closeMyFeedOption();
+      } else {
+        console.log("--- blockUser Error ---");
+        console.log(res);
+        toast.show(`Error Code: ${res.status}`, {
+          type: "warning",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- blockUser Error ---");
+      console.log(error);
+      toast.show(`Error Code: ${error}`, {
+        type: "warning",
+      });
+    },
+  });
+
   const goToComplain = () => {
     closeOtherFeedOption();
     openComplainOption();
@@ -112,6 +140,11 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
 
   const goToFeedComments = (feedIndex: number, feedId: number) => {
     navigate("FeedStack", { screen: "FeedComments", feedIndex, feedId, clubId: clubData.id });
+  };
+
+  const goToUpdateFeed = () => {
+    closeMyFeedOption();
+    navigate("HomeStack", { screen: "ModifiyFeed", feedData: selectFeedData });
   };
 
   const openFeedOption = (feedData: Feed) => {
@@ -154,59 +187,6 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     );
   };
 
-  const blockUser = () => {
-    if (selectFeedData === undefined || selectFeedData?.id === -1) {
-      toast.show("게시글 정보가 잘못되었습니다.", {
-        type: "warning",
-      });
-      return;
-    }
-
-    Alert.alert(
-      "사용자 차단",
-      "정말로 이 사용자를 차단하시겠습니까?",
-      [
-        {
-          text: "아니요",
-          style: "cancel",
-        },
-        {
-          text: "네",
-          onPress: () => {},
-        },
-      ],
-      { cancelable: false }
-    );
-  };
-
-  const goToUpdateFeed = () => {
-    closeMyFeedOption();
-    navigate("HomeStack", { screen: "ModifiyFeed", feedData: selectFeedData });
-  };
-
-  const complainSubmit = () => {
-    if (selectFeedData === undefined || selectFeedData?.id === -1) {
-      toast.show("게시글 정보가 잘못되었습니다.", {
-        type: "warning",
-      });
-      return;
-    }
-    const requestData: FeedReportRequest = {
-      token,
-      data: {
-        id: selectFeedData.id,
-        reason: "SPAM",
-      },
-    };
-    complainMutation.mutate(requestData);
-  };
-
-  const loadMore = () => {
-    console.log("ClubFeedDetail - Load more club feed!");
-    DeviceEventEmitter.emit("ClubFeedLoadmore");
-  };
-
-  const likeFeedMutation = useMutation(FeedApi.likeFeed);
   const likeFeed = useCallback((feedIndex: number, feedId: number) => {
     const requestData: FeedLikeRequest = {
       data: { id: feedId },
@@ -231,6 +211,62 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       },
     });
   }, []);
+
+  const blockUser = () => {
+    if (selectFeedData === undefined || selectFeedData?.id === -1) {
+      toast.show("게시글 정보가 잘못되었습니다.", {
+        type: "warning",
+      });
+      return;
+    }
+
+    const requestData: UserBlockRequest = {
+      token,
+      data: {
+        userId: selectFeedData.userId,
+      },
+    };
+
+    Alert.alert(
+      "사용자 차단",
+      "정말로 이 사용자를 차단하시겠습니까?",
+      [
+        {
+          text: "아니요",
+          style: "cancel",
+        },
+        {
+          text: "네",
+          onPress: () => {
+            blockUserMutation.mutate(requestData);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const complainSubmit = () => {
+    if (selectFeedData === undefined || selectFeedData?.id === -1) {
+      toast.show("게시글 정보가 잘못되었습니다.", {
+        type: "warning",
+      });
+      return;
+    }
+    const requestData: FeedReportRequest = {
+      token,
+      data: {
+        id: selectFeedData.id,
+        reason: "SPAM",
+      },
+    };
+    complainMutation.mutate(requestData);
+  };
+
+  const loadMore = () => {
+    console.log("ClubFeedDetail - Load more club feed!");
+    DeviceEventEmitter.emit("ClubFeedLoadmore");
+  };
 
   useLayoutEffect(() => {
     setOptions({

@@ -483,6 +483,18 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               <SubmitText>모임 보기</SubmitText>
             </SubmitButton>
           }
+          onOpen={() => {
+            if (Platform.OS === "android") {
+              StatusBar.setBackgroundColor("black", true);
+              StatusBar.setBarStyle("light-content", true);
+            }
+          }}
+          onClose={() => {
+            if (Platform.OS === "android") {
+              StatusBar.setBackgroundColor("white", true);
+              StatusBar.setBarStyle("dark-content", true);
+            }
+          }}
         >
           <ModalContainer>
             <ItemView>
@@ -559,6 +571,18 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
           handlePosition="inside"
           handleStyle={{ top: 14, height: 3, width: 35, backgroundColor: "#d4d4d4" }}
           modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+          onOpen={() => {
+            if (Platform.OS === "android") {
+              StatusBar.setBackgroundColor("black", true);
+              StatusBar.setBarStyle("light-content", true);
+            }
+          }}
+          onClose={() => {
+            if (Platform.OS === "android") {
+              StatusBar.setBackgroundColor("white", true);
+              StatusBar.setBarStyle("dark-content", true);
+            }
+          }}
         >
           <ModalContainer>
             <SortingItemView>
