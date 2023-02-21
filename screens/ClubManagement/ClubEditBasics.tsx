@@ -286,7 +286,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
 
   return (
     <Container>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={40} style={{ flex: 1 }}>
         <MainView>
           <Header>
             <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={0.8}>
