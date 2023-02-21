@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
 import { UserApi, UserInfoResponse } from "../api";
-import { MaterialCommunityIcons, Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Entypo, FontAwesome, Ionicons, Feather, MaterialIcons } from "@expo/vector-icons";
 import { DeviceEventEmitter } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../components/CustomText";
@@ -28,39 +28,20 @@ const UserInfoSection = styled.View`
   elevation: 10;
 `;
 
-const LogoBox = styled.View`
-  width: 65px;
-  height: 65px;
-  border-radius: 50px;
-  justify-content: center;
-  align-items: center;
-  border: 1px;
-  border-color: rgb(255, 255, 255);
-  background-color: white;
-  box-shadow: 1px 2px 1px rgba(0, 0, 0, 0.25);
-`;
-
-const LogoImage = styled.Image`
-  width: 60px;
-  height: 60px;
-  border-radius: 100px;
-  z-index: 1;
-`;
-
 const InfoBox = styled.View`
   align-items: flex-start;
   justify-content: center;
 `;
 
-const Title = styled.Text`
+const Title = styled(CustomText)`
+  font-family: "NotoSansKR-Medium";
   font-size: 18px;
-  font-weight: bold;
-  color: #000;
+  line-height: 24px;
 `;
 
-const Email = styled.Text`
+const Email = styled(CustomText)`
   font-size: 11px;
-  font-weight: normal;
+  line-height: 18px;
   color: #878787;
   margin-bottom: 5px;
 `;
@@ -82,6 +63,7 @@ const MenuItemText = styled(CustomText)`
   font-family: "NotoSansKR-Medium";
   font-size: 16px;
   line-height: 22px;
+  margin-left: 10px;
 `;
 
 const TouchMenu = styled.View`
@@ -96,8 +78,7 @@ const LogoutButton = styled.TouchableOpacity`
   align-self: flex-end;
   width: 80px;
   height: 30px;
-  margin-top: 10px;
-  margin-right: 25px;
+  margin: 10px 25px 10px 0px;
   border-radius: 15px;
   background-color: #000;
 `;
@@ -121,18 +102,25 @@ const EditBox = styled.View`
 
 const EditButton = styled.TouchableWithoutFeedback``;
 
+interface ProfileEditItem {
+  icon: React.ReactNode;
+  title: string;
+  screen?: string;
+  onPress?: () => void;
+}
+
 const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation: { navigate } }) => {
   const token = useSelector((state: RootState) => state.auth.token);
   const dispatch = useAppDispatch();
   const toast = useToast();
-
+  const iconSize = 18;
   const {
     isLoading: userInfoLoading, // true or false
     refetch: userInfoRefetch,
     data: userInfo,
   } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
+      if (res.status === 200) {
         dispatch(updateUser({ user: res.data }));
       } else {
         console.log(`getUserInfo success but please check status code`);
@@ -164,6 +152,10 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     dispatch(logout());
   };
 
+  const goToScreen = (screen?: string) => {
+    if (screen) navigate("ProfileStack", { screen });
+  };
+
   const goToEditProfile = () => {
     navigate("ProfileStack", {
       screen: "EditProfile",
@@ -171,23 +163,33 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     });
   };
 
-  const goToMyClub = () => {
-    navigate("ProfileStack", {
-      screen: "MyClub",
-    });
-  };
-
-  const goToTerms = () => {
-    navigate("ProfileStack", {
-      screen: "Terms",
-    });
-  };
-
-  const goToAccount = () => {
-    navigate("ProfileStack", {
+  const items: ProfileEditItem[] = [
+    {
+      icon: <MaterialIcons name="lock" color="#2E2E2E" size={iconSize} />,
+      title: "계정",
       screen: "Account",
-    });
-  };
+    },
+    {
+      icon: <MaterialIcons name="star" color="#2E2E2E" size={iconSize} />,
+      title: "나의 모임",
+      screen: "MyClub",
+    },
+    {
+      icon: <MaterialIcons name="notifications" size={iconSize} color="#2E2E2E" />,
+      title: "알림 설정",
+      screen: "NotificationSetting",
+    },
+    {
+      icon: <MaterialIcons name="textsms" color="#2E2E2E" size={iconSize} />,
+      title: "건의사항 요청",
+      screen: "Suggestion",
+    },
+    {
+      icon: <MaterialIcons name="sim-card-alert" color="#2E2E2E" size={iconSize} />,
+      title: "약관",
+      screen: "Terms",
+    },
+  ];
 
   return (
     <Container>
@@ -204,33 +206,17 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
         </EditBox>
       </UserInfoSection>
       <MenuWrapper>
-        <TouchMenu>
-          <MenuItem onPress={goToAccount}>
-            <Entypo name="lock" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
-            <MenuItemText>계정</MenuItemText>
-            <ChevronBox>
-              <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
-            </ChevronBox>
-          </MenuItem>
-        </TouchMenu>
-        <TouchMenu>
-          <MenuItem onPress={goToMyClub}>
-            <FontAwesome name="star" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
-            <MenuItemText>나의 모임</MenuItemText>
-            <ChevronBox>
-              <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
-            </ChevronBox>
-          </MenuItem>
-        </TouchMenu>
-        <TouchMenu>
-          <MenuItem onPress={goToTerms}>
-            <Ionicons name="ios-document-sharp" color="#2E2E2E" size={16} style={{ marginRight: 10 }} />
-            <MenuItemText>약관</MenuItemText>
-            <ChevronBox>
-              <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
-            </ChevronBox>
-          </MenuItem>
-        </TouchMenu>
+        {items?.map((item: ProfileEditItem, index: number) => (
+          <TouchMenu key={index}>
+            <MenuItem onPress={() => goToScreen(item.screen)}>
+              {item.icon}
+              <MenuItemText>{item.title}</MenuItemText>
+              <ChevronBox>
+                <Feather name="chevron-right" color="#A0A0A0" size={20} />
+              </ChevronBox>
+            </MenuItem>
+          </TouchMenu>
+        ))}
       </MenuWrapper>
 
       <LogoutButton onPress={goLogout}>

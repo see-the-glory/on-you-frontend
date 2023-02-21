@@ -10,6 +10,7 @@ import { useToast } from "react-native-toast-notifications";
 import CustomTextInput from "../../components/CustomTextInput";
 import { UserApi, PostChangePw } from "../../api";
 import { RootState } from "../../redux/store/reducers";
+import { Entypo } from "@expo/vector-icons";
 
 const Container = styled.ScrollView`
   padding-left: 15px;
@@ -37,13 +38,18 @@ const Input = styled(CustomTextInput)`
   color: black;
 `;
 
-const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigation: { navigate, setOptions } }) => {
+const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigation: { navigate, setOptions, goBack } }) => {
   const token = useSelector((state: RootState) => state.auth.token);
   const [pw, setPw] = useState<string>("");
   const toast = useToast();
 
   useEffect(() => {
     setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
       headerRight: () => (
         <TouchableOpacity onPress={onSubmit}>
           <Text style={{ color: "#2995FA" }}>저장</Text>

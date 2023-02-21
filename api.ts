@@ -446,6 +446,14 @@ export interface UserBlockRequest {
   };
 }
 
+export interface UserPushAlarmRequest {
+  token: string | null;
+  data: {
+    alarmType: "USER" | "CLUB";
+    isOnOff: "ON" | "OFF";
+  };
+}
+
 export interface FeedLikeRequest {
   data: {
     id: number;
@@ -927,6 +935,20 @@ const blockUser = (req: UserBlockRequest) => {
   });
 };
 
+const setPushAlarm = (req: UserPushAlarmRequest) => {
+  return fetch(`${BASE_URL}/api/user/pushAlarm`, {
+    method: "PUT",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `${req.token}`,
+    },
+    body: JSON.stringify(req.data),
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
+};
+
 const selectMyClubs = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
   return fetch(`${BASE_URL}/api/clubs/my`, {
@@ -1049,6 +1071,7 @@ export const UserApi = {
   changePassword,
   withdrawAccount,
   blockUser,
+  setPushAlarm,
 };
 
 export const FeedApi = {
