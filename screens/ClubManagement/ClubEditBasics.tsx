@@ -278,7 +278,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
     } else if (selectCategory2 === -1) {
       return setCategory2(id);
     } else {
-      toast.show("카테고리는 2개만 고를 수 있습니다.", {
+      toast.show("카테고리는 최대 2개만 고를 수 있습니다.", {
         type: "warning",
       });
     }
