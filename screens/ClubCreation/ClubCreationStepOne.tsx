@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, FlatList } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Platform } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { ClubCreationStepOneScreenProps } from "../../Types/Club";
@@ -71,7 +71,7 @@ const CategoryText = styled(CustomText)<{ selected: boolean }>`
 
 const FooterView = styled.View`
   padding: 0px 20px;
-  margin: 30px 0px;
+  margin: ${Platform.OS === "ios" ? 10 : 30}px 0px;
   align-items: center;
 `;
 

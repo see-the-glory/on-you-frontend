@@ -42,9 +42,14 @@ const requestUserPermissionForFCM = async () => {
   const authStatus = await messaging().requestPermission();
   const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
   if (enabled) {
-    const token = await messaging().getToken();
+    let fcmToken;
+    if (Platform.OS === "ios") {
+      const APNSToken = await messaging().getAPNSToken();
+      console.log(APNSToken);
+      if (APNSToken) fcmToken = await messaging().getToken();
+    } else fcmToken = await messaging().getToken();
     //푸시 토큰 표시
-    console.log("FCM token:", token);
+    console.log("FCM token:", fcmToken);
     console.log("Authorization status:", authStatus);
     handleFcmMessage();
   } else {
