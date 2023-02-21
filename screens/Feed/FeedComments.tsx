@@ -28,7 +28,7 @@ const Container = styled.SafeAreaView`
   flex: 1;
 `;
 
-const FooterView = styled.SafeAreaView<{ padding: number }>`
+const FooterView = styled.View<{ padding: number }>`
   flex-direction: row;
   border-top-width: 1px;
   border-top-color: #c4c4c4;
