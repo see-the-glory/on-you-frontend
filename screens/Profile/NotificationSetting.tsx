@@ -61,11 +61,6 @@ const NotificationSetting = () => {
 
   const setPushAlarmMutation = useMutation(UserApi.setPushAlarm, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        toast.show(`설정 완료`, {
-          type: "success",
-        });
-      }
       if (res.status !== 200) {
         console.log(`setPushAlarm success but please check status code`);
         console.log(`status: ${res.status}`);
@@ -85,20 +80,20 @@ const NotificationSetting = () => {
   });
 
   const onValueChange = (alarmType: "USER" | "CLUB") => {
-    let isOnOff: "ON" | "OFF" = "ON";
+    let isOnOff: "Y" | "N" = "Y";
     if (alarmType === "USER") {
-      isOnOff = !userPush ? "ON" : "OFF";
+      isOnOff = !userPush ? "Y" : "N";
       setUserPush((prev) => !prev);
     }
     if (alarmType === "CLUB") {
-      isOnOff = !clubPush ? "ON" : "OFF";
+      isOnOff = !clubPush ? "Y" : "N";
       setClubPush((prev) => !prev);
     }
 
     const requestData: UserPushAlarmRequest = {
       token,
       data: {
-        alarmType,
+        alarmType: alarmType === "USER" ? "HOME" : alarmType,
         isOnOff,
       },
     };

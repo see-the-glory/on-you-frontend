@@ -449,8 +449,8 @@ export interface UserBlockRequest {
 export interface UserPushAlarmRequest {
   token: string | null;
   data: {
-    alarmType: "USER" | "CLUB";
-    isOnOff: "ON" | "OFF";
+    alarmType: "HOME" | "CLUB";
+    isOnOff: "Y" | "N";
   };
 }
 
