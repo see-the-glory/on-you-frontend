@@ -12,6 +12,7 @@ import { useToast } from "react-native-toast-notifications";
 import { ClubApi, ClubScheduleUpdateRequest } from "../../api";
 import { useMutation } from "react-query";
 import { RootState } from "../../redux/store/reducers";
+import moment from "moment";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -90,7 +91,7 @@ const ClubScheduleEdit = ({
   const [place, setPlace] = useState<string>(scheduleData?.location);
   const [memo, setMemo] = useState<string>(scheduleData?.content);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-  const [dateTime, setDateTime] = useState(new Date(scheduleData?.startDate));
+  const [dateTime, setDateTime] = useState(new Date(moment(scheduleData?.startDate).tz("Asia/Seoul").format("YYYY-MM-DDTHH:mm:ss")));
   const [selectedDate, setSelectedDate] = useState<string>(scheduleData?.startDate.split("T")[0]);
   const markedDate = {
     [selectedDate]: { selected: true },
@@ -144,7 +145,7 @@ const ClubScheduleEdit = ({
       return;
     }
 
-    const startDate = `${selectedDate}T${dateTime.toISOString().split("T")[1]}`.split(".")[0];
+    const startDate = `${selectedDate}T${dateTime.toTimeString().split(" ")[0]}`;
     const endDate = `${startDate.split("T")[0]}T23:59:59`;
 
     const requestData: ClubScheduleUpdateRequest = {
@@ -174,7 +175,7 @@ const ClubScheduleEdit = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"}  barStyle={"dark-content"} />
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
         <MainView>
           <Calendar
@@ -185,7 +186,7 @@ const ClubScheduleEdit = ({
               todayTextColor: "#FF6534",
             }}
             context={{ date: "" }}
-            minDate={dateTime.toString()}
+            minDate={moment.tz("Asia/Seoul").format("YYYY-MM-DD")}
             markedDates={markedDate}
             onDayPress={(day) => {
               setSelectedDate(day.dateString);
