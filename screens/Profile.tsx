@@ -149,7 +149,17 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   }, []);
 
   const goLogout = () => {
-    dispatch(logout());
+    dispatch(logout()).then((res) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        toast.show(`로그아웃 되었습니다..`, {
+          type: "success",
+        });
+      } else {
+        toast.show(`로그아웃에 실패했습니다.`, {
+          type: "warning",
+        });
+      }
+    });
   };
 
   const goToScreen = (screen?: string) => {

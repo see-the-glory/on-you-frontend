@@ -176,7 +176,7 @@ const ClubScheduleAdd = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"}  barStyle={"dark-content"} />
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
         <MainView>
           <Calendar
@@ -186,7 +186,7 @@ const ClubScheduleAdd = ({
               selectedDayBackgroundColor: "#FF6534",
               todayTextColor: "#FF6534",
             }}
-            minDate={dateTime.toString()}
+            minDate={moment.tz("Asia/Seoul").format("YYYY-MM-DD")}
             context={{ date: "" }}
             markedDates={markedDate}
             onDayPress={(day) => {
