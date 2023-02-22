@@ -174,7 +174,7 @@
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = P83ZS7XR97;
 						LastSwiftMigration = 1250;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -327,11 +327,9 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2023020901;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = P83ZS7XR97;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2023022201;
+				DEVELOPMENT_TEAM = P83ZS7XR97;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -353,7 +351,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.onyou.project;
 				PRODUCT_NAME = onyou;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "onyou-development";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -368,11 +365,9 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2023020901;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = P83ZS7XR97;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2023022201;
+				DEVELOPMENT_TEAM = P83ZS7XR97;
 				INFOPLIST_FILE = onyoufrontend/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OnYou;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
@@ -389,7 +384,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.onyou.project;
 				PRODUCT_NAME = onyou;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = onyou;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
