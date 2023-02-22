@@ -43,7 +43,7 @@ const NextButtonView = styled.View`
   width: 100%;
   position: absolute;
   bottom: 0;
-  margin: ${Platform.OS === "ios" ? 10 : 30}px 0px;
+  margin: 30px 0px;
   padding: 0px 20px;
 `;
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, useWindowDimensions } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -7,11 +7,6 @@ import { ClubCreationStepTwoScreenProps } from "../../Types/Club";
 import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import CustomTextInput from "../../components/CustomTextInput";
-
-const Container = styled.ScrollView`
-  flex: 1;
-  padding: 0px 20px;
-`;
 
 const HeaderView = styled.View`
   align-items: center;
@@ -114,8 +109,6 @@ const CheckBox = styled.View<{ check: boolean }>`
 
 const FooterView = styled.View`
   width: 100%;
-  align-items: center;
-  justify-content: center;
   margin: 30px 0px;
 `;
 const NextButton = styled.TouchableOpacity`
@@ -147,7 +140,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   const [imageURI, setImageURI] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [organizationName, setOrganizationName] = useState<string>("");
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 5) * 3);
   let specialChar = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
 
@@ -177,139 +170,143 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   }, [phoneNumber]);
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={80} style={{ flex: 1 }}>
-      <Container
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={90} style={{ flex: 1 }}>
+      <ScrollView
         contentContainerStyle={{
-          justifyContent: "center",
+          flexGrow: 1,
+          justifyContent: "space-between",
           alignItems: "center",
+          paddingHorizontal: 20,
         }}
       >
-        <HeaderView>
-          <H1>모임 이름 / 정원</H1>
-          <H2>모임 이름과 정원을 설정하세요.</H2>
-        </HeaderView>
+        <View style={{ width: "100%" }}>
+          <HeaderView>
+            <H1>모임 이름 / 정원</H1>
+            <H2>모임 이름과 정원을 설정하세요.</H2>
+          </HeaderView>
 
-        <Content>
-          <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={0.8}>
-            {imageURI ? <PickedImage height={imageHeight} source={{ uri: imageURI }} /> : <ImagePickerText>대표 사진 설정</ImagePickerText>}
-          </ImagePickerButton>
-          <ContentItem>
-            <ItemTitle>모임 이름</ItemTitle>
-            <ItemTextInput
-              value={clubName}
-              placeholder="모임명 8자 이내 (특수문자 불가)"
-              placeholderTextColor="#B0B0B0"
-              maxLength={9}
-              onEndEditing={() => {
-                if (clubName.trim() === "") {
-                  toast.show("모임 이름을 공백으로 설정할 수 없습니다.", {
-                    type: "warning",
-                  });
-                }
-                if (specialChar.test(clubName)) {
-                  toast.show("모임 이름에 특수문자가 있습니다.", {
-                    type: "warning",
-                  });
-                }
-                setClubName((prev) => prev.trim());
-              }}
-              onChangeText={(name: string) => {
-                if (name.length > 8) {
-                  toast.show("모임 이름은 8자 제한입니다.", {
-                    type: "warning",
-                  });
-                } else setClubName(name);
-              }}
-              returnKeyType="done"
-              returnKeyLabel="done"
-              includeFontPadding={false}
-            />
-          </ContentItem>
-          <ContentItem>
-            <ItemTitle>모집 정원</ItemTitle>
-            <Item>
+          <Content>
+            <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={0.8}>
+              {imageURI ? <PickedImage height={imageHeight} source={{ uri: imageURI }} /> : <ImagePickerText>대표 사진 설정</ImagePickerText>}
+            </ImagePickerButton>
+            <ContentItem>
+              <ItemTitle>모임 이름</ItemTitle>
               <ItemTextInput
-                keyboardType="number-pad"
-                placeholder="최대 수용가능 정원 수"
+                value={clubName}
+                placeholder="모임명 8자 이내 (특수문자 불가)"
                 placeholderTextColor="#B0B0B0"
-                onPressIn={() => {
-                  if (maxNumberInfinity === false) setMaxNumber((prev) => prev.split(" ")[0]);
-                }}
-                onEndEditing={() =>
-                  setMaxNumber((prev) => {
-                    prev = prev.trim();
-                    if (prev === "" || prev === "0") return "";
-                    else return `${prev} 명`;
-                  })
-                }
-                value={maxNumber}
-                maxLength={6}
-                onChangeText={(num: string) => {
-                  if (num.length < 3) setMaxNumber(num);
-                  else
-                    toast.show("최대 99명까지 가능합니다.", {
+                maxLength={9}
+                onEndEditing={() => {
+                  if (clubName.trim() === "") {
+                    toast.show("모임 이름을 공백으로 설정할 수 없습니다.", {
                       type: "warning",
                     });
+                  }
+                  if (specialChar.test(clubName)) {
+                    toast.show("모임 이름에 특수문자가 있습니다.", {
+                      type: "warning",
+                    });
+                  }
+                  setClubName((prev) => prev.trim());
                 }}
-                editable={!maxNumberInfinity}
+                onChangeText={(name: string) => {
+                  if (name.length > 8) {
+                    toast.show("모임 이름은 8자 제한입니다.", {
+                      type: "warning",
+                    });
+                  } else setClubName(name);
+                }}
+                returnKeyType="done"
+                returnKeyLabel="done"
                 includeFontPadding={false}
               />
-              <CheckButton
-                onPress={() => {
-                  if (!maxNumberInfinity) setMaxNumber("무제한 정원");
-                  else setMaxNumber("");
-                  setMaxNumberInfinity((prev) => !prev);
-                }}
-              >
-                <ItemText>인원 수 무제한으로 받기</ItemText>
-                <CheckBox check={maxNumberInfinity}>
-                  <Ionicons name="checkmark-sharp" size={13} color={maxNumberInfinity ? "#FF6534" : "#e8e8e8"} />
-                </CheckBox>
-              </CheckButton>
-            </Item>
-          </ContentItem>
-          <ContentItem>
-            <ItemTitle>가입 승인 방법</ItemTitle>
-            <RadioButtonView>
-              <RadioButton onPress={() => setIsApproveRequired((prev) => (prev === "Y" ? "Y" : "Y"))}>
-                <Ionicons
-                  name={isApproveRequired === "Y" ? "radio-button-on" : "radio-button-off"}
-                  size={16}
-                  color={isApproveRequired === "Y" ? "#FF6534" : "rgba(0, 0, 0, 0.3)"}
-                  style={{ marginRight: 3 }}
+            </ContentItem>
+            <ContentItem>
+              <ItemTitle>모집 정원</ItemTitle>
+              <Item>
+                <ItemTextInput
+                  keyboardType="number-pad"
+                  placeholder="최대 수용가능 정원 수"
+                  placeholderTextColor="#B0B0B0"
+                  onPressIn={() => {
+                    if (maxNumberInfinity === false) setMaxNumber((prev) => prev.split(" ")[0]);
+                  }}
+                  onEndEditing={() =>
+                    setMaxNumber((prev) => {
+                      prev = prev.trim();
+                      if (prev === "" || prev === "0") return "";
+                      else return `${prev} 명`;
+                    })
+                  }
+                  value={maxNumber}
+                  maxLength={6}
+                  onChangeText={(num: string) => {
+                    if (num.length < 3) setMaxNumber(num);
+                    else
+                      toast.show("최대 99명까지 가능합니다.", {
+                        type: "warning",
+                      });
+                  }}
+                  editable={!maxNumberInfinity}
+                  includeFontPadding={false}
                 />
-                <ItemText>관리자 승인 후 가입</ItemText>
-              </RadioButton>
-              <RadioButton onPress={() => setIsApproveRequired((prev) => (prev === "Y" ? "N" : "N"))}>
-                <Ionicons
-                  name={isApproveRequired === "N" ? "radio-button-on" : "radio-button-off"}
-                  size={16}
-                  color={isApproveRequired === "N" ? "#FF6534" : "rgba(0, 0, 0, 0.3)"}
-                  style={{ marginRight: 3 }}
-                />
-                <ItemText>누구나 바로 가입</ItemText>
-              </RadioButton>
-            </RadioButtonView>
-          </ContentItem>
-          <ContentItem>
-            <ItemTitle>모임 담당자 연락처</ItemTitle>
-            <ItemTextInput keyboardType="numeric" placeholder="010-0000-0000" maxLength={13} onChangeText={(phone) => setPhoneNumber(phone)} value={phoneNumber} includeFontPadding={false} />
-          </ContentItem>
-          <ContentItem>
-            <ItemTitle>모임 소속 교회</ItemTitle>
-            <ItemTextInput
-              value={organizationName}
-              placeholder="모임이 소속된 교회 또는 담당자가 섬기는 교회명"
-              placeholderTextColor="#B0B0B0"
-              maxLength={16}
-              onChangeText={(name: string) => setOrganizationName(name)}
-              onEndEditing={() => setOrganizationName((prev) => prev.trim())}
-              returnKeyType="done"
-              returnKeyLabel="done"
-              includeFontPadding={false}
-            />
-          </ContentItem>
-        </Content>
+                <CheckButton
+                  onPress={() => {
+                    if (!maxNumberInfinity) setMaxNumber("무제한 정원");
+                    else setMaxNumber("");
+                    setMaxNumberInfinity((prev) => !prev);
+                  }}
+                >
+                  <ItemText>인원 수 무제한으로 받기</ItemText>
+                  <CheckBox check={maxNumberInfinity}>
+                    <Ionicons name="checkmark-sharp" size={13} color={maxNumberInfinity ? "#FF6534" : "#e8e8e8"} />
+                  </CheckBox>
+                </CheckButton>
+              </Item>
+            </ContentItem>
+            <ContentItem>
+              <ItemTitle>가입 승인 방법</ItemTitle>
+              <RadioButtonView>
+                <RadioButton onPress={() => setIsApproveRequired((prev) => (prev === "Y" ? "Y" : "Y"))}>
+                  <Ionicons
+                    name={isApproveRequired === "Y" ? "radio-button-on" : "radio-button-off"}
+                    size={16}
+                    color={isApproveRequired === "Y" ? "#FF6534" : "rgba(0, 0, 0, 0.3)"}
+                    style={{ marginRight: 3 }}
+                  />
+                  <ItemText>관리자 승인 후 가입</ItemText>
+                </RadioButton>
+                <RadioButton onPress={() => setIsApproveRequired((prev) => (prev === "Y" ? "N" : "N"))}>
+                  <Ionicons
+                    name={isApproveRequired === "N" ? "radio-button-on" : "radio-button-off"}
+                    size={16}
+                    color={isApproveRequired === "N" ? "#FF6534" : "rgba(0, 0, 0, 0.3)"}
+                    style={{ marginRight: 3 }}
+                  />
+                  <ItemText>누구나 바로 가입</ItemText>
+                </RadioButton>
+              </RadioButtonView>
+            </ContentItem>
+            <ContentItem>
+              <ItemTitle>모임 담당자 연락처</ItemTitle>
+              <ItemTextInput keyboardType="numeric" placeholder="010-0000-0000" maxLength={13} onChangeText={(phone) => setPhoneNumber(phone)} value={phoneNumber} includeFontPadding={false} />
+            </ContentItem>
+            <ContentItem>
+              <ItemTitle>모임 소속 교회</ItemTitle>
+              <ItemTextInput
+                value={organizationName}
+                placeholder="모임이 소속된 교회 또는 담당자가 섬기는 교회명"
+                placeholderTextColor="#B0B0B0"
+                maxLength={16}
+                onChangeText={(name: string) => setOrganizationName(name)}
+                onEndEditing={() => setOrganizationName((prev) => prev.trim())}
+                returnKeyType="done"
+                returnKeyLabel="done"
+                includeFontPadding={false}
+              />
+            </ContentItem>
+          </Content>
+        </View>
 
         <FooterView>
           <NextButton
@@ -340,7 +337,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
             <ButtonText>다음 2/3</ButtonText>
           </NextButton>
         </FooterView>
-      </Container>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };

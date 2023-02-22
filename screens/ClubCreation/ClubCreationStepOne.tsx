@@ -13,7 +13,7 @@ const Loader = styled.SafeAreaView`
   align-items: center;
 `;
 
-const Container = styled.SafeAreaView`
+const Container = styled.View`
   width: 100%;
   height: 100%;
 `;
@@ -71,7 +71,7 @@ const CategoryText = styled(CustomText)<{ selected: boolean }>`
 
 const FooterView = styled.View`
   padding: 0px 20px;
-  margin: ${Platform.OS === "ios" ? 10 : 30}px 0px;
+  margin: 30px 0px;
   align-items: center;
 `;
 
