@@ -3,7 +3,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import { useSelector } from "react-redux";
 import { useMutation } from "react-query";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import { RootState } from "../../redux/store/reducers";
@@ -103,7 +103,7 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
         <MenuItem onPress={goToChangePw}>
           <MenuItemText>비밀번호 변경</MenuItemText>
           <ChevronBox>
-            <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
+            <Feather name="chevron-right" color="#A0A0A0" size={20} />
           </ChevronBox>
         </MenuItem>
       </TouchMenu>
@@ -111,7 +111,7 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
         <MenuItem onPress={handleAlert}>
           <MenuItemText>탈퇴</MenuItemText>
           <ChevronBox>
-            <MaterialCommunityIcons name="chevron-right" color="#A0A0A0" size={24} style={{}} />
+            <Feather name="chevron-right" color="#A0A0A0" size={20} />
           </ChevronBox>
         </MenuItem>
       </TouchMenu>

@@ -4,12 +4,12 @@ import EditProfile from "../screens/Profile/EditProfile";
 import MyClub from "../screens/Profile/MyClub";
 import ChangePw from "../screens/Profile/ChangePw";
 import Notice from "../screens/Profile/Notice";
-import Terms from "../screens/Profile/Terms";
 import Account from "../screens/Profile/Account";
 import { TouchableOpacity } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import NotificationSetting from "../screens/Profile/NotificationSetting";
 import Suggestion from "../screens/Profile/Suggestion";
+import Info from "../screens/Profile/Info";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -110,10 +110,10 @@ const ProfileStack = ({
         }}
       />
       <NativeStack.Screen
-        name="Terms"
-        component={Terms}
+        name="Info"
+        component={Info}
         options={{
-          title: "약관",
+          title: "정보",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
               <Entypo name="chevron-thin-left" size={20} color="black" />

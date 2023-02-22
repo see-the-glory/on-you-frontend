@@ -195,9 +195,9 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
       screen: "Suggestion",
     },
     {
-      icon: <MaterialIcons name="sim-card-alert" color="#2E2E2E" size={iconSize} />,
-      title: "약관",
-      screen: "Terms",
+      icon: <MaterialIcons name="info" color="#2E2E2E" size={iconSize} />,
+      title: "정보",
+      screen: "Info",
     },
   ];
 
