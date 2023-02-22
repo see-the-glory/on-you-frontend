@@ -15,6 +15,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import store, { useAppDispatch } from "./redux/store";
 import messaging from "@react-native-firebase/messaging";
 import { init } from "./redux/slices/auth";
+import BackgroundColor from "react-native-background-color";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -115,6 +116,7 @@ const RootNavigation = () => {
 
   useEffect(() => {
     prepare();
+    if (Platform.OS === "android") BackgroundColor.setColor("#FFFFFF");
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
