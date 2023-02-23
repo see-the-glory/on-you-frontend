@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "react-query";
 import { CommonApi, LoginRequest, UserApi, UserInfoResponse } from "../../api";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import { DeviceEventEmitter, Keyboard, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
@@ -79,6 +79,7 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
     onSuccess: (res) => {
       if (res.status === 200 && res.resultCode === "OK") {
         dispatch(login({ user: res.data, token }));
+        DeviceEventEmitter.emit("PushSubscribe", { token });
       } else {
         console.log(res);
         console.log(`getUserInfo query success but please check status code`);

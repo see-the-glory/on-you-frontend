@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
 import { UserApi, UserInfoResponse } from "../api";
-import { MaterialCommunityIcons, Entypo, FontAwesome, Ionicons, Feather, MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Feather, MaterialIcons } from "@expo/vector-icons";
 import { DeviceEventEmitter } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../components/CustomText";
@@ -111,6 +111,7 @@ interface ProfileEditItem {
 
 const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation: { navigate } }) => {
   const token = useSelector((state: RootState) => state.auth.token);
+  const fcmToken = useSelector((state: RootState) => state.auth.fcmToken);
   const dispatch = useAppDispatch();
   const toast = useToast();
   const iconSize = 18;
@@ -151,6 +152,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   const goLogout = () => {
     dispatch(logout()).then((res) => {
       if (res.meta.requestStatus === "fulfilled") {
+        DeviceEventEmitter.emit("PushUnsubscribe", { fcmToken });
         toast.show(`로그아웃 되었습니다..`, {
           type: "success",
         });
