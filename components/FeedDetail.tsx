@@ -170,11 +170,15 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
             <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "flex-start" }}>
               <InformationLeftView>
                 <InformationButton onPress={() => (this.props.likeFeed ? this.props.likeFeed(this.props.feedIndex, this.props.feedData.id) : {})}>
-                  {this.props.feedData.likeYn ? <Ionicons name="heart" size={24} color="#FF551F" /> : <Ionicons name="heart-outline" size={24} color="black" />}
+                  {this.props.feedData.likeYn ? (
+                    <Ionicons name="heart" size={26} color="#FF551F" style={{ marginLeft: -2, marginRight: -2 }} />
+                  ) : (
+                    <Ionicons name="heart-outline" size={26} color="black" style={{ marginLeft: -2, marginRight: -2 }} />
+                  )}
                   <CountingNumber>{this.props.feedData.likesCount}</CountingNumber>
                 </InformationButton>
                 <InformationButton onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData.id)}>
-                  <Ionicons name="md-chatbox-ellipses" size={24} color="black" />
+                  <Ionicons name="md-chatbox-ellipses" size={24} color="black" style={{}} />
                   <CountingNumber>{this.props.feedData.commentCount}</CountingNumber>
                 </InformationButton>
               </InformationLeftView>

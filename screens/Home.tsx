@@ -24,7 +24,9 @@ const Loader = styled.SafeAreaView`
   padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
 `;
 
-const Container = styled.SafeAreaView``;
+const Container = styled.SafeAreaView`
+  flex: 1;
+`;
 
 const HeaderView = styled.View<{ height: number }>`
   height: ${(props: any) => props.height}px;
