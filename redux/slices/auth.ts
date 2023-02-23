@@ -5,18 +5,22 @@ import { User } from "../../api";
 interface AuthState {
   user: User | null;
   token: string | null;
+  fcmToken: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
   token: null,
+  fcmToken: null,
 };
 
 export const init = createAsyncThunk("auth/init", async (payload, thunkAPI) => {
   let token = null;
+  let fcmToken = null;
   let user = null;
   try {
     token = await AsyncStorage.getItem("token");
+    fcmToken = await AsyncStorage.getItem("fcmToken");
     user = await AsyncStorage.getItem("user");
     if (user) user = JSON.parse(user);
     else user = "";
@@ -24,7 +28,7 @@ export const init = createAsyncThunk("auth/init", async (payload, thunkAPI) => {
     console.log(err);
     return thunkAPI.rejectWithValue(payload);
   }
-  return thunkAPI.fulfillWithValue({ user, token });
+  return thunkAPI.fulfillWithValue({ user, token, fcmToken });
 });
 
 export const login = createAsyncThunk("auth/login", async (payload: { user: User; token: string }, thunkAPI) => {
@@ -44,6 +48,7 @@ export const logout = createAsyncThunk("auth/logout", async (payload, thunkAPI) 
   try {
     await AsyncStorage.removeItem("token");
     await AsyncStorage.removeItem("user");
+    await AsyncStorage.removeItem("fcmToken");
   } catch (err) {
     console.log(err);
     return thunkAPI.rejectWithValue(payload);
@@ -62,6 +67,17 @@ export const updateUser = createAsyncThunk("auth/updateUser", async (payload: { 
   return thunkAPI.fulfillWithValue(payload);
 });
 
+export const updateFCMToken = createAsyncThunk("auth/updateFCMToken", async (payload: { fcmToken: string | null }, thunkAPI) => {
+  try {
+    await AsyncStorage.removeItem("fcmToken");
+    if (payload.fcmToken) await AsyncStorage.setItem("fcmToken", payload.fcmToken);
+  } catch (err) {
+    console.log(err);
+    return thunkAPI.rejectWithValue(payload);
+  }
+  return thunkAPI.fulfillWithValue(payload);
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -71,6 +87,7 @@ const authSlice = createSlice({
     builder.addCase(init.fulfilled, (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
+      state.fcmToken = action.payload.fcmToken;
     }),
       builder.addCase(login.fulfilled, (state, action) => {
         state.user = action.payload.user;
@@ -79,9 +96,13 @@ const authSlice = createSlice({
       builder.addCase(logout.fulfilled, (state, action) => {
         state.user = null;
         state.token = null;
+        state.fcmToken = null;
       }),
       builder.addCase(updateUser.fulfilled, (state, action) => {
         state.user = action.payload.user;
+      }),
+      builder.addCase(updateFCMToken.fulfilled, (state, action) => {
+        state.fcmToken = action.payload.fcmToken;
       });
   },
 });

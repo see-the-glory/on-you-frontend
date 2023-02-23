@@ -93,12 +93,10 @@ const NotificationSetting = () => {
     const requestData: UserPushAlarmRequest = {
       token,
       data: {
-        alarmType: alarmType === "USER" ? "HOME" : alarmType,
+        alarmType,
         isOnOff,
       },
     };
-
-    console.log(requestData);
     setPushAlarmMutation.mutate(requestData);
   };
 
