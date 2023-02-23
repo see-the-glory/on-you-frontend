@@ -110,7 +110,7 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
           >
             <LeftBox>
               {!check ? (
-                <Ionicons name="checkmark-circle-outline" size={26} color={"A0A0A0"} style={{ marginLeft: -1, marginRight: 5 }} />
+                <Ionicons name="checkmark-circle-outline" size={26} color={"#FF714B"} style={{ marginLeft: -1, marginRight: 5 }} />
               ) : (
                 <Ionicons name="checkmark-circle" size={26} color={"#FF714B"} style={{ marginLeft: -1, marginRight: 5 }} />
               )}
@@ -131,7 +131,7 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
           >
             <LeftBox>
               {!check2 ? (
-                <Ionicons name="checkmark-circle-outline" size={26} color={"A0A0A0"} style={{ marginLeft: -1, marginRight: 5 }} />
+                <Ionicons name="checkmark-circle-outline" size={26} color={"#FF714B"} style={{ marginLeft: -1, marginRight: 5 }} />
               ) : (
                 <Ionicons name="checkmark-circle" size={26} color={"#FF714B"} style={{ marginLeft: -1, marginRight: 5 }} />
               )}
