@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { DeviceEventEmitter, Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from "react-native";
-import { orange100 } from "react-native-paper/lib/typescript/styles/colors";
+import { DeviceEventEmitter, KeyboardAvoidingView, Platform, ScrollView, useWindowDimensions } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
@@ -10,8 +9,6 @@ import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
 import { RootState } from "../../redux/store/reducers";
 import { ClubCreationStepThreeScreenProps } from "../../Types/Club";
-
-const Container = styled.ScrollView``;
 
 const MainView = styled.View`
   width: 100%;
@@ -73,9 +70,10 @@ const LongDescInput = styled(CustomTextInput)`
 
 const FooterView = styled.View`
   width: 100%;
-  align-items: center;
-  justify-content: center;
-  margin: ${Platform.OS === "ios" ? 0 : 30}px 0px;
+  position: absolute;
+  bottom: 0;
+  padding: 0px 20px;
+  margin: 30px 0px;
 `;
 const NextButton = styled.TouchableOpacity`
   width: 100%;
@@ -103,6 +101,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   const [clubShortDesc, setClubShortDesc] = useState<string>("");
   const [clubLongDesc, setClubLongDesc] = useState<string>("");
   const [disableSubmit, setDisableSubmit] = useState<boolean>(false);
+  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
 
   const mutation = useMutation(ClubApi.createClub, {
     onSuccess: (res) => {
@@ -183,75 +182,71 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={80} style={{ flex: 1 }}>
-        <Container
-          contentContainerStyle={{
-            width: "100%",
-            height: "100%",
-            paddingHorizontal: 20,
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <MainView>
-            <HeaderView>
-              <H1>모임 소개</H1>
-              <H2>모임을 소개해주세요.</H2>
-            </HeaderView>
-            <Content>
-              <ContentItem>
-                <ItemTitle>간단 소개</ItemTitle>
-                <ShortDescInput
-                  placeholder="20자 이내로 간단 소개글을 적어주세요."
-                  placeholderTextColor="#B0B0B0"
-                  value={clubShortDesc}
-                  textAlign="center"
-                  maxLength={21}
-                  textAlignVertical="center"
-                  onChangeText={(value: string) => {
-                    if (value.length > 20) {
-                      toast.show(`간단 소개는 20자 제한입니다.`, {
-                        type: "warning",
-                      });
-                    } else setClubShortDesc(value);
-                  }}
-                  onEndEditing={() => setClubShortDesc((prev) => prev.trim())}
-                  includeFontPadding={false}
-                />
-                <ItemText>ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!</ItemText>
-              </ContentItem>
-              <ContentItem>
-                <ItemTitle>상세 소개</ItemTitle>
-                <LongDescInput
-                  placeholder="모임의 상세 소개글을 적어주세요."
-                  placeholderTextColor="#B0B0B0"
-                  value={clubLongDesc}
-                  textAlign="left"
-                  multiline={true}
-                  maxLength={101}
-                  textAlignVertical="top"
-                  onChangeText={(value: string) => {
-                    if (value.length > 100) {
-                      toast.show(`상세 소개는 100자 제한입니다.`, {
-                        type: "warning",
-                      });
-                    } else setClubLongDesc(value);
-                  }}
-                  onEndEditing={() => setClubLongDesc((prev) => prev.trim())}
-                  includeFontPadding={false}
-                />
-              </ContentItem>
-            </Content>
-          </MainView>
-          <FooterView>
-            <NextButton onPress={onSubmit} disabled={clubShortDesc === "" || clubLongDesc === "" || disableSubmit}>
-              <ButtonText>완료</ButtonText>
-            </NextButton>
-          </FooterView>
-        </Container>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={90} style={{ flex: 1 }}>
+      <ScrollView
+        contentContainerStyle={{
+          alignItems: "center",
+          paddingHorizontal: 20,
+        }}
+      >
+        <MainView>
+          <HeaderView>
+            <H1>모임 소개</H1>
+            <H2>모임을 소개해주세요.</H2>
+          </HeaderView>
+          <Content>
+            <ContentItem>
+              <ItemTitle>간단 소개</ItemTitle>
+              <ShortDescInput
+                placeholder="20자 이내로 간단 소개글을 적어주세요."
+                placeholderTextColor="#B0B0B0"
+                value={clubShortDesc}
+                textAlign="center"
+                maxLength={21}
+                textAlignVertical="center"
+                onChangeText={(value: string) => {
+                  if (value.length > 20) {
+                    toast.show(`간단 소개는 20자 제한입니다.`, {
+                      type: "warning",
+                    });
+                  } else setClubShortDesc(value);
+                }}
+                onEndEditing={() => setClubShortDesc((prev) => prev.trim())}
+                includeFontPadding={false}
+              />
+              <ItemText>ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!</ItemText>
+            </ContentItem>
+            <ContentItem>
+              <ItemTitle>상세 소개</ItemTitle>
+              <LongDescInput
+                placeholder="모임의 상세 소개글을 적어주세요."
+                placeholderTextColor="#B0B0B0"
+                value={clubLongDesc}
+                textAlign="left"
+                multiline={true}
+                maxLength={101}
+                textAlignVertical="top"
+                onChangeText={(value: string) => {
+                  if (value.length > 100) {
+                    toast.show(`상세 소개는 100자 제한입니다.`, {
+                      type: "warning",
+                    });
+                  } else setClubLongDesc(value);
+                }}
+                onEndEditing={() => setClubLongDesc((prev) => prev.trim())}
+                includeFontPadding={false}
+              />
+            </ContentItem>
+          </Content>
+        </MainView>
+      </ScrollView>
+
+      <FooterView>
+        <NextButton onPress={onSubmit} disabled={clubShortDesc === "" || clubLongDesc === "" || disableSubmit}>
+          <ButtonText>완료</ButtonText>
+        </NextButton>
+      </FooterView>
+    </KeyboardAvoidingView>
   );
 };
 
