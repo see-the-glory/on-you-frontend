@@ -43,6 +43,11 @@ const ChevronBox = styled.View`
   align-items: flex-end;
 `;
 
+interface AccountItem {
+  title: string;
+  onPress?: () => void;
+}
+
 const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation: { navigate } }) => {
   const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
@@ -50,14 +55,14 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
 
   const mutation = useMutation(UserApi.withdrawAccount, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
+      if (res.status === 200) {
         console.log(res);
         toast.show("탈퇴에 성공하였습니다.", {
           type: "success",
         });
         dispatch(logout());
       } else {
-        console.log(`mutation success but please check status code`);
+        console.log(`withdrawAccount mutation success but please check status code`);
         console.log(`status: ${res.status}`);
         toast.show(`탈퇴에 실패하였습니다. (Error Code: ${res.status})`, {
           type: "warning",
@@ -65,7 +70,7 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
       }
     },
     onError: (error) => {
-      console.log("--- Error ---");
+      console.log("--- withdrawAccount Error ---");
       console.log(`error: ${error}`);
     },
   });
@@ -75,9 +80,9 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     mutation.mutate(requestData);
   };
 
-  const goToChangePw = () => {
+  const goToScreen = (screen: string) => {
     navigate("ProfileStack", {
-      screen: "ChangePw",
+      screen,
     });
   };
 
@@ -97,24 +102,33 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     );
   };
 
+  const items: AccountItem[] = [
+    {
+      title: "비밀번호 변경",
+      onPress: () => goToScreen("ChangePw"),
+    },
+    {
+      title: "차단된 계정",
+      onPress: () => goToScreen("BlockUserList"),
+    },
+    {
+      title: "탈퇴",
+      onPress: handleAlert,
+    },
+  ];
+
   return (
     <Container>
-      <TouchMenu>
-        <MenuItem onPress={goToChangePw}>
-          <MenuItemText>비밀번호 변경</MenuItemText>
-          <ChevronBox>
-            <Feather name="chevron-right" color="#A0A0A0" size={20} />
-          </ChevronBox>
-        </MenuItem>
-      </TouchMenu>
-      <TouchMenu>
-        <MenuItem onPress={handleAlert}>
-          <MenuItemText>탈퇴</MenuItemText>
-          <ChevronBox>
-            <Feather name="chevron-right" color="#A0A0A0" size={20} />
-          </ChevronBox>
-        </MenuItem>
-      </TouchMenu>
+      {items.map((item, index) => (
+        <TouchMenu key={index}>
+          <MenuItem onPress={item.onPress}>
+            <MenuItemText>{item.title}</MenuItemText>
+            <ChevronBox>
+              <Feather name="chevron-right" color="#A0A0A0" size={20} />
+            </ChevronBox>
+          </MenuItem>
+        </TouchMenu>
+      ))}
     </Container>
   );
 };

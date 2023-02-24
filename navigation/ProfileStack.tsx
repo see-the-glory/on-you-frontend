@@ -10,6 +10,7 @@ import { Entypo } from "@expo/vector-icons";
 import NotificationSetting from "../screens/Profile/NotificationSetting";
 import Suggestion from "../screens/Profile/Suggestion";
 import Info from "../screens/Profile/Info";
+import BlockUserList from "../screens/Profile/BlockUserList";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -72,6 +73,15 @@ const ProfileStack = ({
           title: "비밀번호 재설정",
         }}
       />
+
+      <NativeStack.Screen
+        name="BlockUserList"
+        component={BlockUserList}
+        options={{
+          title: "차단된 계정",
+        }}
+      />
+
       <NativeStack.Screen
         name="NotificationSetting"
         component={NotificationSetting}
