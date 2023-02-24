@@ -28,6 +28,17 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   console.log("Message handled in the background!", remoteMessage);
 });
 
+//푸시를 받으면 호출됨
+messaging().onMessage(async (remoteMessage) => {
+  console.log("Test!");
+  Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
+});
+
+//알림창을 클릭한 경우 호출됨
+messaging().onNotificationOpenedApp((remoteMessage) => {
+  console.log("Notification caused app to open from background state:", remoteMessage.notification);
+});
+
 const RootNavigation = () => {
   const token = useSelector((state) => state.auth.token);
   const fcmToken = useSelector((state) => state.auth.fcmToken);
@@ -36,34 +47,20 @@ const RootNavigation = () => {
   const dispatch = useAppDispatch();
   const updateTargetTokenMutation = useMutation(UserApi.updateTargetToken);
 
-  const handleFcmMessage = () => {
-    //푸시를 받으면 호출됨
-    const pushUnsubscribe = messaging().onMessage(async (remoteMessage) => {
-      Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
-    });
-
-    //알림창을 클릭한 경우 호출됨
-    messaging().onNotificationOpenedApp((remoteMessage) => {
-      console.log("Notification caused app to open from background state:", remoteMessage.notification);
-    });
-  };
-
-  const requestUserPermissionForFCM = async (token) => {
+  const updateFCM = async (token) => {
+    console.log("App - FCM token update");
     const authStatus = await messaging().requestPermission();
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    if (enabled) {
-      let fcmToken;
-      if (Platform.OS === "ios") {
-        const APNSToken = await messaging().getAPNSToken();
-        console.log(APNSToken);
-        if (APNSToken) fcmToken = await messaging().getToken();
-      } else fcmToken = await messaging().getToken();
-      //푸시 토큰 표시
+    console.log(`enabled: ${enabled}`);
+    if (!enabled) {
+      console.log("FCM Authorization Fail");
+      return;
+    }
+    try {
+      const fcmToken = await messaging().getToken();
       console.log("FCM token:", fcmToken);
       console.log("Authorization status:", authStatus);
       dispatch(updateFCMToken({ fcmToken }));
-
-      handleFcmMessage();
 
       const requestData = {
         token,
@@ -71,9 +68,6 @@ const RootNavigation = () => {
           targetToken: fcmToken,
         },
       };
-
-      console.log(requestData);
-
       updateTargetTokenMutation.mutate(requestData, {
         onSuccess: (res) => {
           if (res.status === 200) {
@@ -97,14 +91,14 @@ const RootNavigation = () => {
           });
         },
       });
-    } else {
-      console.log("FCM Authorization Fail");
+    } catch (e) {
+      console.warn(e);
     }
   };
 
   const prepare = async () => {
     try {
-      console.log(`App Prepare!`);
+      console.log(`App - Prepare!`);
       await dispatch(init());
       await Font.loadAsync({
         "NotoSansKR-Bold": require("./assets/fonts/NotoSansKR-Bold.otf"),
@@ -158,7 +152,7 @@ const RootNavigation = () => {
     // login 할 때
     const pushSubscription = DeviceEventEmitter.addListener("PushSubscribe", async ({ token }) => {
       console.log(`App - Push Subscribe`);
-      if (token) await requestUserPermissionForFCM(token);
+      if (token) await updateFCM(token);
     });
 
     // Logout 할 때
@@ -176,13 +170,8 @@ const RootNavigation = () => {
 
   // 자동 로그인할 때
   useEffect(() => {
-    if (!fcmToken) {
-      try {
-        if (token) requestUserPermissionForFCM(token);
-      } catch (e) {
-        console.warn(e);
-      }
-    }
+    // 로그인 확인 후 FCM 토큰이 없으면
+    if (token && !fcmToken) updateFCM(token);
   }, [appIsReady]);
 
   const onLayoutRootView = useCallback(async () => {

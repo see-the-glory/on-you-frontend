@@ -110,15 +110,8 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
 
   const getFCMTokeen = async () => {
     try {
-      const apns = await messaging().getAPNSToken();
-      setAPNSToken(apns);
-    } catch (error) {
-      toast.show(`${error}`, {
-        type: "warning",
-      });
-    }
-    try {
       const fcm = await messaging().getToken();
+      console.log(fcm);
       setFCMToken(fcm);
     } catch (error) {
       toast.show(`${error}`, {
@@ -283,7 +276,6 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
           </Form>
           <Form>
             <Title>테스트</Title>
-            <Title>{apnsToken ?? "Null"}</Title>
             <Title>{fcmToken ?? "Null"}</Title>
           </Form>
           {/* <Form>
