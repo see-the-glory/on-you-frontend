@@ -57,6 +57,7 @@ const RootNavigation = () => {
       return;
     }
     try {
+      if (Platform.OS === "android") await messaging().registerDeviceForRemoteMessages();
       const fcmToken = await messaging().getToken();
       console.log("FCM token:", fcmToken);
       console.log("Authorization status:", authStatus);
@@ -156,9 +157,13 @@ const RootNavigation = () => {
     });
 
     // Logout 할 때
-    const pushUnsubscriotion = DeviceEventEmitter.addListener("PushUnsubscribe", (fcmToken) => {
+    const pushUnsubscriotion = DeviceEventEmitter.addListener("PushUnsubscribe", async ({ fcmToken }) => {
       console.log(`App - Push Unsubscribe`);
-      messaging().deleteToken(fcmToken);
+      try {
+        await messaging().deleteToken(fcmToken);
+      } catch (e) {
+        console.warn(e);
+      }
     });
 
     return () => {
