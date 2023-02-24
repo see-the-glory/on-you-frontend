@@ -4,7 +4,7 @@ import CustomText from "../../components/CustomText";
 import styled from "styled-components/native";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useMutation } from "react-query";
-import { UserApi } from "../../api";
+import { SuggestionSubmitRequest, UserApi } from "../../api";
 import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 import { RootState } from "../../redux/store/reducers";
@@ -44,49 +44,47 @@ const MemoTextInput = styled(CustomTextInput)`
 `;
 
 const Suggestion = ({ navigation: { navigate, goBack, setOptions } }) => {
-  const [memo, setMemo] = useState<string>("");
+  const [content, setContent] = useState<string>("");
   const token = useSelector((state: RootState) => state.auth.token);
   const me = useSelector((state: RootState) => state.auth.user);
   const toast = useToast();
 
-  // const suggestionMutation = useMutation(UserApi.submitSuggestion, {
-  //   onSuccess: (res) => {
-  //     if (res.status === 200 && res.resultCode === "OK") {
-  //       toast.show(`건의사항이 제출되었습니다.`, {
-  //         type: "success",
-  //       });
-  //       goBack();
-  //     } else {
-  //       console.log(`submitSuggestion mutation success but please check status code`);
-  //       console.log(`status: ${res.status}`);
-  //       console.log(res);
-  //       toast.show(`${res.message} (Error Code: ${res.status})`, {
-  //         type: "warning",
-  //       });
-  //     }
-  //   },
-  //   onError: (error) => {
-  //     console.log("--- Error ---");
-  //     console.log(`error: ${error}`);
-  //     toast.show(`Error Code: ${error}`, {
-  //       type: "warning",
-  //     });
-  //   },
-  // });
+  const suggestionMutation = useMutation(UserApi.submitSuggestion, {
+    onSuccess: (res) => {
+      if (res.status === 200 && res.resultCode === "OK") {
+        toast.show(`건의사항이 제출되었습니다.`, {
+          type: "success",
+        });
+        goBack();
+      } else {
+        console.log(`submitSuggestion mutation success but please check status code`);
+        console.log(`status: ${res.status}`);
+        console.log(res);
+        toast.show(`${res.message} (Error Code: ${res.status})`, {
+          type: "warning",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("--- Error ---");
+      console.log(`error: ${error}`);
+      toast.show(`Error Code: ${error}`, {
+        type: "warning",
+      });
+    },
+  });
 
   const save = () => {
-    // const requestData: submitSuggestionRequest = {
-    //   token,
-    //   data: {
-    //     userId: me?.id,
-    //     memo,
-    //   },
-    // };
-    // suggestionMutation.mutate(requestData);
+    const requestData: SuggestionSubmitRequest = {
+      token,
+      data: {
+        content,
+      },
+    };
+    suggestionMutation.mutate(requestData);
   };
 
   useLayoutEffect(() => {
-    console.log(`Suggestion useLayoutEffect`);
     setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={save}>
@@ -94,7 +92,7 @@ const Suggestion = ({ navigation: { navigate, goBack, setOptions } }) => {
         </TouchableOpacity>
       ),
     });
-  }, [memo]);
+  }, [content]);
 
   return (
     <Container>
@@ -112,8 +110,8 @@ const Suggestion = ({ navigation: { navigate, goBack, setOptions } }) => {
             multiline={true}
             maxLength={1000}
             textAlignVertical="top"
-            onChangeText={(text: string) => setMemo(text)}
-            onEndEditing={() => setMemo((prev) => prev.trim())}
+            onChangeText={(text: string) => setContent(text)}
+            onEndEditing={() => setContent((prev) => prev.trim())}
             includeFontPadding={false}
           />
         </MainView>
