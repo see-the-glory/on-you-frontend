@@ -84,6 +84,13 @@ export interface User {
   phoneNumber: string;
   interests: [];
 }
+
+export interface BlockUser {
+  userId: number;
+  userName: string;
+  thumbnail: string | null;
+  organizationName: string;
+}
 export interface Feed {
   id: number;
   clubId: number;
@@ -192,6 +199,9 @@ export interface FeedsLikeReponse extends BaseResponse {
 }
 export interface UserInfoResponse extends BaseResponse {
   data: User;
+}
+export interface BlockUserListResponse extends BaseResponse {
+  data: BlockUser[];
 }
 export interface ReplyReponse extends BaseResponse {
   data: Reply[];
@@ -458,6 +468,13 @@ export interface TargetTokenUpdateRequest {
   token: string | null;
   data: {
     targetToken: string;
+  };
+}
+
+export interface SuggestionSubmitRequest {
+  token: string | null;
+  data: {
+    content: string;
   };
 }
 
@@ -942,6 +959,18 @@ const blockUser = (req: UserBlockRequest) => {
   });
 };
 
+const getBlockUserList = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return fetch(`${BASE_URL}/api/user/blockUserList`, {
+    method: "GET",
+    headers: {
+      authorization: `${token}`,
+    },
+  }).then(async (res) => {
+    return { ...(await res.json()), status: res.status };
+  });
+};
+
 const setPushAlarm = (req: UserPushAlarmRequest) => {
   return fetch(`${BASE_URL}/api/user/pushAlarm`, {
     method: "PUT",
@@ -958,6 +987,20 @@ const setPushAlarm = (req: UserPushAlarmRequest) => {
 
 const updateTargetToken = (req: TargetTokenUpdateRequest) => {
   return fetch(`${BASE_URL}/api/user/updateTargetToken`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `${req.token}`,
+    },
+    body: JSON.stringify(req.data),
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
+};
+
+const submitSuggestion = (req: SuggestionSubmitRequest) => {
+  return fetch(`${BASE_URL}/api/user/suggestion`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -1092,8 +1135,10 @@ export const UserApi = {
   changePassword,
   withdrawAccount,
   blockUser,
+  getBlockUserList,
   setPushAlarm,
   updateTargetToken,
+  submitSuggestion,
 };
 
 export const FeedApi = {
