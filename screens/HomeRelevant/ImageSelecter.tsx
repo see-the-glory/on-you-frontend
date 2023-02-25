@@ -25,7 +25,7 @@ import { FeedCreateScreenProps } from "../../types/feed";
 import { useNavigation } from "@react-navigation/native";
 import { RootState } from "../../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
-import DraggableFlatList, { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
+// import DraggableFlatList, { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -83,15 +83,19 @@ const SelectImageView = styled.View`
   width: 100%;
   flex-direction: column;
   justify-content: space-around;
-  padding: 10px 20px 10px 20px;
+  padding: 15px 20px 10px 20px;
 `;
 
 const MyImage = styled.View`
   align-items: center;
+  flex-direction: row;
+  justify-content: center;
 `;
 
 const ImageUnderArea = styled.View`
-  justify-content: space-around;
+  justify-content: space-between;
+  flex-direction: row;
+  padding-top: 20px;
 `
 
 const MoveImageText = styled.Text`
@@ -240,7 +244,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     }
   };
 
-  const moreImageFix=async () => {
+  const moreImageFix=async (imageURL:any) => {
     let url = [];
     for (let i = 0; i < imageURL.length; i++) {
       let croped = await ImagePicker.openCropper({
@@ -335,7 +339,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
               <SelectImageView>
                 <MyImage>
                   {imageURL?.map((image, index) => (
-                      <SelectImageArea key={index}>
+                      <SelectImageArea onPress={()=>moreImageFix(imageURL)} key={index}>
                         <SelectImage source={{ uri: imageURL[index] }} />
                         <ImageCancleBtn onPress={() => ImageCancle(index)}>
                           <CancleIcon>
@@ -349,10 +353,14 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
                   <DraggableFlatList horizontal data={imageURL} onDragEnd={({ data }) => setImageURL(data)} keyExtractor={(item) => item} renderItem={(props) => renderItem({ ...props })} />
                 </MyImage>*/}
                 <ImageUnderArea>
-                  {imageURL.length !== 0 ? <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText> : null}
-                  <TouchableOpacity onPress={pickImage}>
-                    <MaterialIcons name="add-photo-alternate" size={23} color="black" />
-                  </TouchableOpacity>
+                  {imageURL.length !== 0 ?
+                      <>
+                        <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>
+                        <TouchableOpacity onPress={pickImage}>
+                          <MaterialIcons name="add-photo-alternate" size={23} color="black" />
+                        </TouchableOpacity>
+                      </>
+                      : null}
                 </ImageUnderArea>
               </SelectImageView>
               <FeedText
