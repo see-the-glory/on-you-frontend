@@ -919,7 +919,7 @@ const FindUserPw = (req: FindPwRequest) => {
 };
 
 const changePassword = (req: PostChangePw) => {
-  return fetch(`${BASE_URL}/api/user/changePw`, {
+  return fetch(`${BASE_URL}/api/user/changePassword`, {
     method: "POST",
     headers: {
       "content-type": "application/json",

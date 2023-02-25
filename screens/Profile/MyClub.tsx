@@ -116,7 +116,7 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
           </>
         )}
       />
-      <Title>가입 대기중인 List</Title>
+      {/*<Title>가입 대기중인 List</Title>
       <FlatList
         refreshing={refreshing}
         onRefresh={onRefresh}
@@ -136,7 +136,7 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
             ) : null}
           </>
         )}
-      />
+      />*/}
     </Container>
   );
 };
