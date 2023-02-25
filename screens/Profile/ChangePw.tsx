@@ -41,6 +41,7 @@ const Input = styled(CustomTextInput)`
 const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigation: { navigate, setOptions, goBack } }) => {
   const token = useSelector((state: RootState) => state.auth.token);
   const [pw, setPw] = useState<string>("");
+  const [pw2, setPw2] = useState<string>("");
   const toast = useToast();
 
   useEffect(() => {
@@ -56,7 +57,7 @@ const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigatio
         </TouchableOpacity>
       ),
     });
-  }, [pw]);
+  }, [pw, pw2]);
 
   const mutation = useMutation(UserApi.changePassword, {
     onSuccess: (res) => {
@@ -90,8 +91,16 @@ const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigatio
 
     console.log(requestData);
 
-    mutation.mutate(requestData);
+    if ( pw === pw2 ) {
+      mutation.mutate(requestData);
+    }else {
+      toast.show(`입력을 다시 확인해주세요.`, {
+        type: "warning",
+      });
+    }
+
   };
+
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -99,7 +108,11 @@ const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigatio
         <Container>
           <Form>
             <Title>비밀번호 재설정</Title>
-            <Input secureTextEntry={true} placeholderTextColor={"#B0B0B0"} autoCorrect={false} placeholder="재설정할 비밀번호를 입력해주세요." onChangeText={(pw: string) => setPw(pw)} />
+            <Input clearButtonMode="always" secureTextEntry={true} placeholderTextColor={"#B0B0B0"} autoCorrect={false} placeholder="재설정할 비밀번호를 입력해주세요." onChangeText={(pw: string) => setPw(pw)} />
+          </Form>
+          <Form>
+            <Title>비밀번호 확인</Title>
+            <Input clearButtonMode="always" secureTextEntry={true} placeholderTextColor={"#B0B0B0"} autoCorrect={false} placeholder="비밀번호를 한번 더 입력해주세요." onChangeText={(pw: string) => setPw2(pw)} />
           </Form>
         </Container>
       </KeyboardAvoidingView>
