@@ -4,7 +4,7 @@ import Root from "./navigation/Root";
 import AuthStack from "./navigation/AuthStack";
 import { QueryClient, QueryClientProvider, useMutation } from "react-query";
 import { Provider, useSelector } from "react-redux";
-import { ToastProvider, useToast } from "react-native-toast-notifications";
+import { ToastProvider, useToast, Toast } from "react-native-toast-notifications";
 import { Ionicons } from "@expo/vector-icons";
 import { Alert, DeviceEventEmitter, LogBox, Platform, Text, TextInput, View } from "react-native";
 import * as Font from "expo-font";
@@ -14,9 +14,10 @@ import "moment/locale/ko";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import store, { useAppDispatch } from "./redux/store";
 import messaging from "@react-native-firebase/messaging";
-import authSlice, { init, updateFCMToken } from "./redux/slices/auth";
+import { init, updateFCMToken } from "./redux/slices/auth";
 import BackgroundColor from "react-native-background-color";
 import { UserApi } from "./api";
+import axios from "axios";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -30,7 +31,6 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
 
 //푸시를 받으면 호출됨
 messaging().onMessage(async (remoteMessage) => {
-  console.log("Test!");
   Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
 });
 
@@ -46,7 +46,6 @@ const RootNavigation = () => {
   const toast = useToast();
   const dispatch = useAppDispatch();
   const updateTargetTokenMutation = useMutation(UserApi.updateTargetToken);
-
   const updateFCM = async (token) => {
     console.log("App - FCM token update");
     const authStatus = await messaging().requestPermission();
@@ -97,47 +96,96 @@ const RootNavigation = () => {
     }
   };
 
+  const timezoneSetting = () => {
+    moment.tz.setDefault("Asia/Seoul");
+    moment.updateLocale("ko", {
+      relativeTime: {
+        future: "%s 후",
+        past: "%s 전",
+        s: "1초",
+        m: "1분",
+        mm: "%d분",
+        h: "1시간",
+        hh: "%d시간",
+        d: "1일",
+        dd: "%d일",
+        M: "1달",
+        MM: "%d달",
+        y: "1년",
+        yy: "%d년",
+      },
+    });
+  };
+
+  const fontSetting = async () => {
+    await Font.loadAsync({
+      "NotoSansKR-Bold": require("./assets/fonts/NotoSansKR-Bold.otf"),
+      "NotoSansKR-Regular": require("./assets/fonts/NotoSansKR-Regular.otf"),
+      "NotoSansKR-Medium": require("./assets/fonts/NotoSansKR-Medium.otf"),
+    });
+
+    const texts = [Text, TextInput];
+    texts.forEach((v) => {
+      v.defaultProps = {
+        ...(v.defaultProps || {}),
+        allowFontScaling: false,
+        style: {
+          fontFamily: "NotoSansKR-Regular",
+          lineHeight: Platform.OS === "ios" ? 19 : 21,
+        },
+      };
+    });
+  };
+
+  const apiSetting = (token) => {
+    axios.defaults.baseURL = "http://3.39.190.23:8080";
+    if (token) axios.defaults.headers.common["Authorization"] = token;
+    axios.defaults.headers.common["Content-Type"] = "application/json";
+    axios.interceptors.request.use(
+      (config) => {
+        config.timeout = 5000;
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+
+    axios.interceptors.response.use(
+      (response) => {}, // 2xx
+      (error) => {
+        // 2xx 범위 밖
+        if (error.response) {
+          status = error.response.status;
+          if (status === 400) {
+            if (!error.response.data)
+              error.response.data = {
+                message: "잘못된 요청입니다.",
+              };
+          } else if (status === 401) {
+            dispatch(logout()).then((res) => {
+              if (res.meta.requestStatus === "fulfilled") {
+                DeviceEventEmitter.emit("PushUnsubscribe", { fcmToken });
+                error.response.data.message = "중복 로그인이 감지되어\n로그아웃 합니다.";
+              } else {
+                error.response.data.message = "로그아웃 실패";
+              }
+            });
+          } else if (status === 500) {
+            error.response.data.message = "알 수 없는 오류";
+          }
+        }
+
+        return Promise.reject(error);
+      }
+    );
+  };
+
   const prepare = async () => {
     try {
       console.log(`App - Prepare!`);
       await dispatch(init());
-      await Font.loadAsync({
-        "NotoSansKR-Bold": require("./assets/fonts/NotoSansKR-Bold.otf"),
-        "NotoSansKR-Regular": require("./assets/fonts/NotoSansKR-Regular.otf"),
-        "NotoSansKR-Medium": require("./assets/fonts/NotoSansKR-Medium.otf"),
-      });
-      const texts = [Text, TextInput];
-
-      texts.forEach((v) => {
-        v.defaultProps = {
-          ...(v.defaultProps || {}),
-          allowFontScaling: false,
-          style: {
-            fontFamily: "NotoSansKR-Regular",
-            lineHeight: Platform.OS === "ios" ? 19 : 21,
-          },
-        };
-      });
-
-      moment.tz.setDefault("Asia/Seoul");
-      moment.updateLocale("ko", {
-        relativeTime: {
-          future: "%s 후",
-          past: "%s 전",
-          s: "1초",
-          m: "1분",
-          mm: "%d분",
-          h: "1시간",
-          hh: "%d시간",
-          d: "1일",
-          dd: "%d일",
-          M: "1달",
-          MM: "%d달",
-          y: "1년",
-          yy: "%d년",
-        },
-      });
-
+      await fontSetting();
+      timezoneSetting();
+      apiSetting();
       await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (e) {
       console.warn(e);

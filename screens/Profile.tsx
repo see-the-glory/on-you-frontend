@@ -153,7 +153,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     dispatch(logout()).then((res) => {
       if (res.meta.requestStatus === "fulfilled") {
         DeviceEventEmitter.emit("PushUnsubscribe", { fcmToken });
-        toast.show(`로그아웃 되었습니다..`, {
+        toast.show(`로그아웃 되었습니다.`, {
           type: "success",
         });
       } else {

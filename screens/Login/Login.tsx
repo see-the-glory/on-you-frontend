@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "react-query";
-import { CommonApi, LoginRequest, UserApi, UserInfoResponse } from "../../api";
+import { CommonApi, ErrorResponse, LoginRequest, LoginResponse, UserApi, UserInfoResponse } from "../../api";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { DeviceEventEmitter, Keyboard, TouchableWithoutFeedback } from "react-native";
@@ -98,22 +98,15 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
     enabled: token ? true : false,
   });
 
-  const mutation = useMutation(CommonApi.getUserToken, {
+  const mutation = useMutation<LoginResponse, ErrorResponse, LoginRequest>(CommonApi.getUserToken, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        setToken(res.token);
-      } else {
-        console.log(`getUserToken mutation success but please check status code`);
-        console.log(res);
-        toast.show(`로그인에 실패했습니다. (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
+      console.log("onSuccess.");
+      console.log(res);
+      setToken(res?.token);
     },
     onError: (error) => {
-      console.log("--- getUserToken Error ---");
-      console.log(error);
-      toast.show(`로그인에 실패했습니다. (Error Code: ${error})`, {
+      console.log(`API ERROR | getUserToken ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, {
         type: "warning",
       });
     },

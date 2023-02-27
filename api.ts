@@ -1,9 +1,18 @@
+import axios from "axios";
 const BASE_URL = "http://3.39.190.23:8080";
 
 interface BaseResponse {
-  resultCode: string;
-  transactionTime: string;
-  status: number;
+  resultCode?: string;
+  transactionTime?: string;
+  status?: number;
+}
+
+export interface ErrorResponse {
+  error?: string;
+  message?: string;
+  transactionTime?: string;
+  status?: number;
+  code: string;
 }
 
 export interface Category {
@@ -149,6 +158,10 @@ export interface ClubRole {
   userId: number;
   role?: "MASTER" | "MANAGER" | "MEMBER" | "PENDING";
   applyStatus?: "APPLIED" | "APPROVED";
+}
+
+export interface LoginResponse extends BaseResponse {
+  token: string;
 }
 
 export interface CategoryResponse extends BaseResponse {
@@ -709,7 +722,7 @@ const withdrawClub = async (req: ClubWithdrawRequest) => {
   return fetch(`${BASE_URL}/api/clubs/${req.clubId}/withdraw`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/jsona",
+      "Content-Type": "application/json",
       authorization: `${req.token}`,
       Accept: "*/*",
     },
@@ -840,15 +853,21 @@ const joinOrCancelClubSchedule = (req: ClubScheduleJoinOrCancelRequest) => {
 };
 
 const getUserToken = (req: LoginRequest) => {
-  return fetch(`${BASE_URL}/api/user/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(req),
-  }).then(async (res) => {
-    return { ...(await res.json()), status: res.status };
-  });
+  return axios
+    .post<LoginResponse>(`/api/user/login`, req)
+    .then((response) => {
+      return { ...response.data, status: response.status };
+    })
+    .catch((error) => {
+      // 2xx 외의 상태 코드로 응답받음
+      if (error.response) {
+        return Promise.reject({ ...error.response.data, status: error.response.status, code: error.code });
+      } else if (error.request) {
+        // 응답 수신이 없을 경우.
+        return Promise.reject({ message: "요청시간이 만료되었습니다.", code: error.code });
+      }
+      return error;
+    });
 };
 
 const getUserInfo = ({ queryKey }: any) => {
