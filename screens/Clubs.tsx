@@ -12,6 +12,7 @@ import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { Slider } from "@miblanchard/react-native-slider";
 import { RootState } from "../redux/store/reducers";
+import { useToast } from "react-native-toast-notifications";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -183,6 +184,7 @@ interface ClubSortItem {
 
 const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const token = useSelector((state: RootState) => state.auth.token);
+  const toast = useToast();
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
     token,
@@ -234,21 +236,33 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     isLoading: categoryLoading,
     data: category,
     isRefetching: isRefetchingCategory,
-  } = useQuery<CategoryResponse>(["getCategories"], ClubApi.getCategories, {
+  } = useQuery<CategoryResponse>(["getCategories", token], ClubApi.getCategories, {
     onSuccess: (res) => {
-      setCategoryData([
-        {
-          description: "All Category",
-          id: 0,
-          name: "전체",
-          thumbnail: null,
-          order: null,
-        },
-        ...res.data,
-      ]);
+      if (res.status === 200) {
+        setCategoryData([
+          {
+            description: "All Category",
+            id: 0,
+            name: "전체",
+            thumbnail: null,
+            order: null,
+          },
+          ...res.data,
+        ]);
+      } else {
+        console.log(`--- getCategories status: ${res.status} ---`);
+        console.log(res);
+        toast.show(`카테고리를 불러오지 못했습니다. (status: ${res.status}})`, {
+          type: "warning",
+        });
+      }
     },
-    onError: (err) => {
-      console.log(err);
+    onError: (error) => {
+      console.log(`--- getCategories error ---`);
+      console.log(error);
+      toast.show(`카테고리를 불러오지 못했습니다. (error: ${error})`, {
+        type: "warning",
+      });
     },
   });
 

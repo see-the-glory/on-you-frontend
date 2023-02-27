@@ -69,7 +69,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       }
     },
     onSuccess: (res) => {
-      dispatch(clubSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
+      if (res.pages[res.pages.length - 1].responses) dispatch(clubSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
     },
     onError: (err) => {},
   });

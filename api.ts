@@ -505,13 +505,25 @@ export interface FeedDeletionRequest {
     id: number;
   };
   token: string | null;
-} // Categories
-const getCategories = () => fetch(`${BASE_URL}/api/categories`).then((res) => res.json());
+}
+
+// Categories
+const getCategories = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return fetch(`${BASE_URL}/api/categories`, {
+    method: "GET",
+    headers: {
+      authorization: `${token}`,
+    },
+  }).then(async (res) => {
+    if (res.status === 200) return { status: res.status, ...(await res.json()) };
+    else return { status: res.status };
+  });
+};
 
 /**피드 선택*/
 const getSelectFeeds = ({ queryKey }: any) => {
   const [_key, token, id]: [string, string, number] = queryKey;
-  console.log(id + "id");
   return fetch(`${BASE_URL}/api/feeds/${id}`, {
     method: "GET",
     headers: {

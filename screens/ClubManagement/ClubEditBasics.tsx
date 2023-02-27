@@ -149,12 +149,27 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 5) * 3);
 
-  const { isLoading: categoryLoading, data: categories } = useQuery<CategoryResponse>(["getCategories"], ClubApi.getCategories, {
+  const { isLoading: categoryLoading, data: categories } = useQuery<CategoryResponse>(["getCategories", token], ClubApi.getCategories, {
     onSuccess: (res) => {
-      const count = 4;
-      const bundle = [];
-      for (let i = 0; i < res.data.length; i += count) bundle.push(res.data.slice(i, i + count));
-      setCategoryBundle(bundle);
+      if (res.status === 200) {
+        const count = 4;
+        const bundle = [];
+        for (let i = 0; i < res.data.length; i += count) bundle.push(res.data.slice(i, i + count));
+        setCategoryBundle(bundle);
+      } else {
+        console.log(`--- getCategories status: ${res.status} ---`);
+        console.log(res);
+        toast.show(`카테고리를 불러오지 못했습니다. (status: ${res.status}})`, {
+          type: "warning",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log(`--- getCategories error ---`);
+      console.log(error);
+      toast.show(`카테고리를 불러오지 못했습니다. (error: ${error})`, {
+        type: "warning",
+      });
     },
   });
   const mutation = useMutation(ClubApi.updateClub, {

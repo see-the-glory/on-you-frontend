@@ -90,7 +90,7 @@ const Home: React.FC<HomeScreenProps> = () => {
       }
     },
     onSuccess: (res) => {
-      dispatch(feedSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
+      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
     },
     onError: (error) => {
       console.log(error);
