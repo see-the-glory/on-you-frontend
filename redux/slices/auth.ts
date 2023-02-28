@@ -31,12 +31,10 @@ export const init = createAsyncThunk("auth/init", async (payload, thunkAPI) => {
   return thunkAPI.fulfillWithValue({ user, token, fcmToken });
 });
 
-export const login = createAsyncThunk("auth/login", async (payload: { user: User; token: string }, thunkAPI) => {
+export const login = createAsyncThunk("auth/login", async (payload: { token: string }, thunkAPI) => {
   try {
     await AsyncStorage.removeItem("token");
-    await AsyncStorage.removeItem("user");
     await AsyncStorage.setItem("token", payload.token);
-    await AsyncStorage.setItem("user", JSON.stringify(payload.user));
   } catch (err) {
     console.log(err);
     return thunkAPI.rejectWithValue(payload);
@@ -90,7 +88,6 @@ const authSlice = createSlice({
       state.fcmToken = action.payload.fcmToken;
     }),
       builder.addCase(login.fulfilled, (state, action) => {
-        state.user = action.payload.user;
         state.token = action.payload.token;
       }),
       builder.addCase(logout.fulfilled, (state, action) => {

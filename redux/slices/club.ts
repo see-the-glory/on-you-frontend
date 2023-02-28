@@ -3,8 +3,8 @@ import { ClubRole, Feed } from "../../api";
 
 interface ClubState {
   feeds: Feed[];
-  role: "MASTER" | "MANAGER" | "MEMBER" | "PENDING" | null;
-  applyStatus: "APPLIED" | "APPROVED" | null;
+  role?: "MASTER" | "MANAGER" | "MEMBER" | "PENDING" | null;
+  applyStatus?: "APPLIED" | "APPROVED" | null;
   homeScrollY: number;
   scheduleScrollX: number;
 }

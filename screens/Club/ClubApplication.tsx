@@ -5,7 +5,7 @@ import { Alert, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-na
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import { useSelector } from "react-redux";
-import { ClubApi, ClubApproveRequest, ClubRejectRequest } from "../../api";
+import { BaseResponse, ClubApi, ClubApproveRequest, ClubRejectRequest, ErrorResponse } from "../../api";
 import { useMutation } from "react-query";
 import { useToast } from "react-native-toast-notifications";
 import { RootState } from "../../redux/store/reducers";
@@ -83,55 +83,27 @@ const ClubApplication = ({
 }) => {
   const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
-  const rejectMutation = useMutation(ClubApi.rejectToClubJoin, {
+  const rejectMutation = useMutation<BaseResponse, ErrorResponse, ClubRejectRequest>(ClubApi.rejectToClubJoin, {
     onSuccess: (res) => {
-      console.log(res);
-      if (res.status === 200 && res.resultCode === "OK") {
-        toast.show(`가입신청을 거절했습니다.`, {
-          type: "warning",
-        });
-        goBack();
-      } else {
-        console.log(`rejectToClubJoin mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-        toast.show(`${res.message} (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
+      toast.show(`가입신청을 거절했습니다.`, { type: "warning" });
+      goBack();
     },
     onError: (error) => {
-      console.log("--- Error rejectToClubJoin ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | rejectToClubJoin ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
-  const approveMutation = useMutation(ClubApi.approveToClubJoin, {
+  const approveMutation = useMutation<BaseResponse, ErrorResponse, ClubApproveRequest>(ClubApi.approveToClubJoin, {
     onSuccess: (res) => {
-      console.log(res);
-      if (res.status === 200) {
-        toast.show(`가입신청을 수락했습니다.`, {
-          type: "success",
-        });
-        DeviceEventEmitter.emit("ClubRefetch");
-        goBack();
-      } else {
-        console.log(`approveToClubJoin mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-        toast.show(`${res.message} (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
+      toast.show(`가입신청을 수락했습니다.`, {
+        type: "success",
+      });
+      DeviceEventEmitter.emit("ClubRefetch");
+      goBack();
     },
     onError: (error) => {
-      console.log("--- Error approveToClubJoin ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | approveMutation ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
   useLayoutEffect(() => {

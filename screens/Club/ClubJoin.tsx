@@ -4,7 +4,7 @@ import CustomText from "../../components/CustomText";
 import styled from "styled-components/native";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useMutation } from "react-query";
-import { ClubApi, ClubApplyRequest } from "../../api";
+import { BaseResponse, ClubApi, ClubApplyRequest, ErrorResponse } from "../../api";
 import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 import { RootState } from "../../redux/store/reducers";
@@ -49,29 +49,18 @@ const ClubJoin = ({
   },
 }) => {
   const [memo, setMemo] = useState<string>("");
-  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
 
-  const clubApplyMutation = useMutation(ClubApi.applyClub, {
+  const clubApplyMutation = useMutation<BaseResponse, ErrorResponse, ClubApplyRequest>(ClubApi.applyClub, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
-        toast.show(`가입 신청이 완료되었습니다.`, {
-          type: "success",
-        });
-        goBack();
-      } else {
-        console.log(`mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-        toast.show(`${res.message} (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
+      toast.show(`가입 신청이 완료되었습니다.`, {
+        type: "success",
+      });
+      goBack();
     },
     onError: (error) => {
-      console.log("--- Error ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
+      console.log(`API ERROR | applyClub ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, {
         type: "warning",
       });
     },
@@ -81,7 +70,6 @@ const ClubJoin = ({
     const requestData: ClubApplyRequest = {
       clubId: clubData.id,
       memo,
-      token,
     };
 
     clubApplyMutation.mutate(requestData);
@@ -106,7 +94,7 @@ const ClubJoin = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"}  barStyle={"dark-content"} />
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
         <MainView>
           <Header>

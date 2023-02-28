@@ -8,7 +8,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, UserApi, UserBlockRequest } from "../api";
+import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, UserApi, UserBlockRequest } from "../api";
 import FeedDetail from "../components/FeedDetail";
 import feedSlice from "../redux/slices/feed";
 import { useAppDispatch } from "../redux/store";
@@ -83,20 +83,18 @@ const Home: React.FC<HomeScreenProps> = () => {
     hasNextPage,
     refetch: feedsRefetch,
     fetchNextPage,
-  } = useInfiniteQuery<FeedsResponse>(["feeds", { token }], FeedApi.getFeeds, {
+  } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["feeds"], FeedApi.getFeeds, {
     getNextPageParam: (lastPage) => {
       if (lastPage) {
         return lastPage.hasNext === false ? null : lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor;
       }
     },
     onSuccess: (res) => {
-      dispatch(feedSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
+      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
     },
     onError: (error) => {
-      console.log(error);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | getFeeds ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -123,106 +121,41 @@ const Home: React.FC<HomeScreenProps> = () => {
     if (hasNextPage) fetchNextPage();
   };
 
-  const complainMutation = useMutation(FeedApi.reportFeed, {
+  const complainMutation = useMutation<BaseResponse, ErrorResponse, FeedReportRequest>(FeedApi.reportFeed, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        toast.show(`신고 요청이 완료 되었습니다.`, {
-          type: "success",
-        });
-        onRefresh();
-        closeComplainOption();
-      } else {
-        console.log("--- feedReport Error ---");
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
-      }
+      toast.show(`신고 요청이 완료 되었습니다.`, { type: "success" });
+      onRefresh();
+      closeComplainOption();
     },
     onError: (error) => {
-      console.log("--- feedReport Error ---");
-      console.log(error);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | reportFeed ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
-  const deleteFeedMutation = useMutation(FeedApi.deleteFeed, {
+  const deleteFeedMutation = useMutation<BaseResponse, ErrorResponse, FeedDeletionRequest>(FeedApi.deleteFeed, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        toast.show(`게시글이 삭제되었습니다.`, {
-          type: "success",
-        });
-        onRefresh();
-        closeMyFeedOption();
-      } else {
-        console.log("--- deleteFeed Error ---");
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
-      }
+      toast.show(`게시글이 삭제되었습니다.`, { type: "success" });
+      onRefresh();
+      closeMyFeedOption();
     },
     onError: (error) => {
-      console.log("--- deleteFeed Error ---");
-      console.log(error);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | deleteFeed ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
-  const likeFeedMutation = useMutation(FeedApi.likeFeed);
+  const likeFeedMutation = useMutation<BaseResponse, ErrorResponse, FeedLikeRequest>(FeedApi.likeFeed);
 
-  const blockUserMutation = useMutation(UserApi.blockUser, {
+  const blockUserMutation = useMutation<BaseResponse, ErrorResponse, UserBlockRequest>(UserApi.blockUser, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        toast.show(`사용자를 차단했습니다.`, {
-          type: "success",
-        });
-        onRefresh();
-        closeMyFeedOption();
-      } else {
-        console.log("--- blockUser Error ---");
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
-      }
+      toast.show(`사용자를 차단했습니다.`, { type: "success" });
+      onRefresh();
+      closeOtherFeedOption();
     },
     onError: (error) => {
-      console.log("--- blockUser Error ---");
-      console.log(error);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | blockUser ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
-
-  const likeFeed = useCallback((feedIndex: number, feedId: number) => {
-    const requestData: FeedLikeRequest = {
-      data: { id: feedId },
-      token,
-    };
-    likeFeedMutation.mutate(requestData, {
-      onSuccess: (res) => {
-        if (res.status === 200) {
-          dispatch(feedSlice.actions.likeToggle(feedIndex));
-        } else {
-          console.log(res);
-          toast.show(`Like Feed Fail (Error Code: ${res.status}`, {
-            type: "warning",
-          });
-        }
-      },
-      onError: (error) => {
-        console.log(error);
-        toast.show(`Error Code: ${error}`, {
-          type: "warning",
-        });
-      },
-    });
-  }, []);
-
   const goToClub = useCallback((clubId: number) => {
     navigation.navigate("ClubStack", { screen: "ClubTopTabs", clubData: { id: clubId } });
   }, []);
@@ -253,6 +186,21 @@ const Home: React.FC<HomeScreenProps> = () => {
     openComplainOption();
   };
 
+  const likeFeed = useCallback((feedIndex: number, feedId: number) => {
+    const requestData: FeedLikeRequest = {
+      feedId,
+    };
+    likeFeedMutation.mutate(requestData, {
+      onSuccess: (res) => {
+        dispatch(feedSlice.actions.likeToggle(feedIndex));
+      },
+      onError: (error) => {
+        console.log(`API ERROR | likeFeed ${error.code} ${error.status}`);
+        toast.show(`${error.message ?? error.code}`, { type: "warning" });
+      },
+    });
+  }, []);
+
   const deleteFeed = () => {
     if (selectFeedData === undefined || selectFeedData?.id === -1) {
       toast.show("게시글 정보가 잘못되었습니다.", {
@@ -261,10 +209,7 @@ const Home: React.FC<HomeScreenProps> = () => {
       return;
     }
     const requestData: FeedDeletionRequest = {
-      token,
-      data: {
-        id: selectFeedData.id,
-      },
+      feedId: selectFeedData.id,
     };
 
     Alert.alert(
@@ -288,17 +233,12 @@ const Home: React.FC<HomeScreenProps> = () => {
 
   const complainSubmit = () => {
     if (selectFeedData === undefined || selectFeedData?.id === -1) {
-      toast.show("게시글 정보가 잘못되었습니다.", {
-        type: "warning",
-      });
+      toast.show("게시글 정보가 잘못되었습니다.", { type: "warning" });
       return;
     }
     const requestData: FeedReportRequest = {
-      token,
-      data: {
-        id: selectFeedData.id,
-        reason: "SPAM",
-      },
+      feedId: selectFeedData.id,
+      reason: "SPAM",
     };
     complainMutation.mutate(requestData);
   };
@@ -312,10 +252,7 @@ const Home: React.FC<HomeScreenProps> = () => {
     }
 
     const requestData: UserBlockRequest = {
-      token,
-      data: {
-        userId: selectFeedData.userId,
-      },
+      userId: selectFeedData.userId,
     };
 
     Alert.alert(

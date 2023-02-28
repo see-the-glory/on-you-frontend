@@ -123,18 +123,18 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
 
     const contentTextTouch = () => {
       if (this.state.moreContent && this.state.isCollapsed) this.setState({ ...this.state, isCollapsed: !this.state.isCollapsed });
-      else this.props.goToFeedComments(this.props.feedIndex, this.props.feedData.id);
+      else this.props.goToFeedComments(this.props.feedIndex, this.props.feedData?.id);
     };
     return (
       <Container>
         <HeaderView padding={20} height={this.props.headerHeight}>
           <HeaderLeftView>
-            <CircleIcon uri={this.props.feedData.thumbnail} size={46} kerning={6} />
+            <CircleIcon uri={this.props.feedData?.thumbnail} size={46} kerning={6} />
             <HeaderNameView>
-              <HeaderText>{this.props.feedData.userName}</HeaderText>
+              <HeaderText>{this.props.feedData?.userName}</HeaderText>
               {this.props.showClubName ? (
-                <TouchableWithoutFeedback onPress={() => (this.props.goToClub ? this.props.goToClub(this.props.feedData.clubId) : {})}>
-                  <Tag name={this.props.feedData.clubName} textColor="white" backgroundColor="#C4C4C4" />
+                <TouchableWithoutFeedback onPress={() => (this.props.goToClub ? this.props.goToClub(this.props.feedData?.clubId) : {})}>
+                  <Tag name={this.props.feedData?.clubName} textColor="white" backgroundColor="#C4C4C4" />
                 </TouchableWithoutFeedback>
               ) : (
                 <></>
@@ -148,7 +148,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           </HeaderRightView>
         </HeaderView>
         <Carousel
-          pages={this.props.feedData.imageUrls}
+          pages={this.props.feedData?.imageUrls}
           pageWidth={this.props.feedSize}
           gap={0}
           offset={0}
@@ -169,26 +169,26 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           <InformationView height={this.props.infoHeight}>
             <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "flex-start" }}>
               <InformationLeftView>
-                <InformationButton onPress={() => (this.props.likeFeed ? this.props.likeFeed(this.props.feedIndex, this.props.feedData.id) : {})}>
-                  {this.props.feedData.likeYn ? (
+                <InformationButton onPress={() => (this.props.likeFeed ? this.props.likeFeed(this.props.feedIndex, this.props.feedData?.id) : {})}>
+                  {this.props.feedData?.likeYn ? (
                     <Ionicons name="heart" size={26} color="#FF551F" style={{ marginLeft: -2, marginRight: -2 }} />
                   ) : (
                     <Ionicons name="heart-outline" size={26} color="black" style={{ marginLeft: -2, marginRight: -2 }} />
                   )}
-                  <CountingNumber>{this.props.feedData.likesCount}</CountingNumber>
+                  <CountingNumber>{this.props.feedData?.likesCount}</CountingNumber>
                 </InformationButton>
-                <InformationButton onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData.id)}>
+                <InformationButton onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData?.id)}>
                   <Ionicons name="md-chatbox-ellipses" size={24} color="black" style={{}} />
-                  <CountingNumber>{this.props.feedData.commentCount}</CountingNumber>
+                  <CountingNumber>{this.props.feedData?.commentCount}</CountingNumber>
                 </InformationButton>
               </InformationLeftView>
               <InformationRightView>
-                <CreatedTime>{moment(this.props.feedData.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
+                <CreatedTime>{moment(this.props.feedData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
               </InformationRightView>
             </View>
           </InformationView>
           <ScrollView style={{ height: 0 }}>
-            <ContentText onTextLayout={onTextLayout}>{this.props.feedData.content}</ContentText>
+            <ContentText onTextLayout={onTextLayout}>{this.props.feedData?.content}</ContentText>
           </ScrollView>
           <TouchableWithoutFeedback onPress={contentTextTouch}>
             <ContentTextView height={this.props.contentHeight}>

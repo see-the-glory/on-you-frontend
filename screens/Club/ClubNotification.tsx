@@ -3,7 +3,7 @@ import { ActivityIndicator, DeviceEventEmitter, FlatList, StatusBar, TouchableOp
 import { useToast } from "react-native-toast-notifications";
 import { useQuery } from "react-query";
 import styled from "styled-components/native";
-import { ClubApi, Notification } from "../../api";
+import { ClubApi, ClubNotificationsResponse, ErrorResponse, Notification } from "../../api";
 import CustomText from "../../components/CustomText";
 import NotificationItem from "../../components/NotificationItem";
 
@@ -44,23 +44,11 @@ const ClubNotification = ({
     data: notifications,
     isLoading: notiLoading,
     refetch: notiRefetch,
-  } = useQuery(["getClubNotifications", clubData.id], ClubApi.getClubNotifications, {
-    onSuccess: (res) => {
-      if (res.status !== 200 || res.resultCode !== "OK") {
-        console.log(`--- getClubNotifications Error ---`);
-        console.log(`getClubNotifications status: ${res.status}`);
-        console.log(res);
-        toast.show("모임 소식정보를 불러오지 못했습니다.", {
-          type: "warning",
-        });
-      }
-    },
+  } = useQuery<ClubNotificationsResponse, ErrorResponse>(["getClubNotifications", clubData.id], ClubApi.getClubNotifications, {
+    onSuccess: (res) => {},
     onError: (error) => {
-      console.log(`--- getClubNotifications Error ---`);
-      console.log(error);
-      toast.show(`모임 소식 정보를 불러오지 못했습니다. ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | getClubNotifications ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 

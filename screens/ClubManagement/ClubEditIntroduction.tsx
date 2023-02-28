@@ -163,11 +163,11 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
                 value={clubLongDesc}
                 textAlign="left"
                 multiline={true}
-                maxLength={101}
+                maxLength={1001}
                 textAlignVertical="top"
                 onChangeText={(value: string) => {
-                  if (value.length > 100) {
-                    toast.show(`상세 소개는 100자 제한입니다.`, {
+                  if (value.length > 1000) {
+                    toast.show(`상세 소개는 1000자 제한입니다.`, {
                       type: "warning",
                     });
                   } else setClubLongDesc(value);

@@ -5,7 +5,7 @@ import { ClubEditBasicsProps } from "../../Types/Club";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery, useMutation } from "react-query";
-import { Category, CategoryResponse, ClubApi, ClubUpdateRequest } from "../../api";
+import { Category, CategoryResponse, ClubApi, ClubUpdateRequest, ErrorResponse } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -149,12 +149,16 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 5) * 3);
 
-  const { isLoading: categoryLoading, data: categories } = useQuery<CategoryResponse>(["getCategories"], ClubApi.getCategories, {
+  const { isLoading: categoryLoading, data: categories } = useQuery<CategoryResponse, ErrorResponse>(["getCategories"], ClubApi.getCategories, {
     onSuccess: (res) => {
       const count = 4;
       const bundle = [];
       for (let i = 0; i < res.data.length; i += count) bundle.push(res.data.slice(i, i + count));
       setCategoryBundle(bundle);
+    },
+    onError: (error) => {
+      console.log(`API ERROR | getFeeds ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
   const mutation = useMutation(ClubApi.updateClub, {

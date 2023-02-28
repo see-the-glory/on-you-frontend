@@ -12,6 +12,7 @@ import CircleIcon from "../components/CircleIcon";
 import { RootState } from "../redux/store/reducers";
 import { useAppDispatch } from "../redux/store";
 import { logout, updateUser } from "../redux/slices/auth";
+import feedSlice from "../redux/slices/feed";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -149,19 +150,15 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     return () => subscription.remove();
   }, []);
 
-  const goLogout = () => {
-    dispatch(logout()).then((res) => {
-      if (res.meta.requestStatus === "fulfilled") {
-        DeviceEventEmitter.emit("PushUnsubscribe", { fcmToken });
-        toast.show(`로그아웃 되었습니다..`, {
-          type: "success",
-        });
-      } else {
-        toast.show(`로그아웃에 실패했습니다.`, {
-          type: "warning",
-        });
-      }
-    });
+  const goLogout = async () => {
+    DeviceEventEmitter.emit("Logout", { fcmToken });
+    const res = await dispatch(logout());
+    if (res.meta.requestStatus === "fulfilled") {
+      dispatch(feedSlice.actions.deleteFeed());
+      toast.show(`로그아웃 되었습니다.`, { type: "success" });
+    } else {
+      toast.show(`로그아웃에 실패했습니다.`, { type: "warning" });
+    }
   };
 
   const goToScreen = (screen?: string) => {

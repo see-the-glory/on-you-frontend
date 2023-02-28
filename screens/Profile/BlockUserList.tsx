@@ -6,7 +6,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { BlockUserListResponse, UserApi } from "../../api";
+import { BlockUserListResponse, ErrorResponse, UserApi } from "../../api";
 import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.SafeAreaView`
@@ -14,24 +14,12 @@ const Container = styled.SafeAreaView`
 `;
 
 const BlockUserList: React.FC<NativeStackScreenProps<any, "BlockUserList">> = ({ navigation: { navigate, setOptions, goBack } }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
-  console.log(token);
-  const { data: blockUserList, isLoading: blockUserListLoading } = useQuery<BlockUserListResponse>(["blockUserList", { token }], UserApi.getBlockUserList, {
-    onSuccess: (res) => {
-      console.log(res);
-      if (res.status === 200) {
-      } else {
-        toast.show(`유저목록을 불러오지 못했습니다. (status: ${res.status})`, {
-          type: "warning",
-        });
-      }
-    },
+  const { data: blockUserList, isLoading: blockUserListLoading } = useQuery<BlockUserListResponse, ErrorResponse>(["blockUserList"], UserApi.getBlockUserList, {
+    onSuccess: (res) => {},
     onError: (error) => {
-      console.log(error);
-      toast.show(`유저목록을 불러오지 못했습니다. (error: ${error})`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | getBlockUserList ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
