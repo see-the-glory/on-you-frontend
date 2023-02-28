@@ -9,7 +9,7 @@ import DatePicker from "react-native-date-picker";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
-import { ClubApi, ClubScheduleCreationRequest } from "../../api";
+import { BaseResponse, ClubApi, ClubScheduleCreationRequest, ErrorResponse } from "../../api";
 import { useMutation } from "react-query";
 import moment from "moment";
 import { RootState } from "../../redux/store/reducers";
@@ -97,29 +97,15 @@ const ClubScheduleAdd = ({
     [selectedDate]: { selected: true },
   };
 
-  const scheduleMutation = useMutation(ClubApi.createClubSchedule, {
+  const scheduleMutation = useMutation<BaseResponse, ErrorResponse, ClubScheduleCreationRequest>(ClubApi.createClubSchedule, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
-        toast.show("일정 등록이 완료되었습니다.", {
-          type: "success",
-        });
-        DeviceEventEmitter.emit("SchedulesRefetch");
-        goBack();
-      } else {
-        toast.show("일정 등록에 실패했습니다.", {
-          type: "warning",
-        });
-        console.log(`mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-      }
+      toast.show("일정 등록이 완료되었습니다.", { type: "success" });
+      DeviceEventEmitter.emit("SchedulesRefetch");
+      goBack();
     },
     onError: (error) => {
-      toast.show("일정 등록에 실패했습니다.", {
-        type: "warning",
-      });
-      console.log("--- Error ---");
-      console.log(`error: ${error}`);
+      console.log(`API ERROR | createClubSchedule ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -149,18 +135,14 @@ const ClubScheduleAdd = ({
     const endDate = `${startDate.split("T")[0]}T23:59:59`;
 
     const requestData: ClubScheduleCreationRequest = {
-      token,
-      body: {
-        clubId: clubData.id,
-        content: memo,
-        location: place,
-        name: "schedule",
-        startDate,
-        endDate,
-      },
+      clubId: clubData.id,
+      content: memo,
+      location: place,
+      name: "schedule",
+      startDate,
+      endDate,
     };
 
-    console.log(requestData);
     scheduleMutation.mutate(requestData);
   };
 

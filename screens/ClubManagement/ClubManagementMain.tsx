@@ -7,7 +7,7 @@ import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { Shadow } from "react-native-shadow-2";
 import { useMutation, useQuery } from "react-query";
-import { Club, ClubApi, ClubDeletionRequest, ClubResponse, ClubUpdateRequest } from "../../api";
+import { BaseResponse, Club, ClubApi, ClubDeletionRequest, ClubResponse, ClubUpdateRequest, ErrorResponse } from "../../api";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useToast } from "react-native-toast-notifications";
@@ -145,24 +145,13 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   const iconSize = 14;
 
   const X = useRef(new Animated.Value(0)).current;
-  const { refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
+  const { refetch: clubDataRefetch } = useQuery<ClubResponse, ErrorResponse>(["getClub", clubData.id], ClubApi.getClub, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
-        setData(res.data);
-        if (res.data.recruitStatus === "OPEN") {
-          setIsToggle(true);
-          X.setValue(13);
-        } else {
-          setIsToggle(false);
-        }
-      } else {
-        toast.show(`Error Code: ${res.status}`, { type: "warning" });
-      }
+      setData(res.data);
     },
     onError: (error) => {
-      console.log("--- Error getClub ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, { type: "warning" });
+      console.log(`API ERROR | getClub ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -190,25 +179,15 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
       toast.show(`Error Code: ${error}`, { type: "warning" });
     },
   });
-  const deleteClubMutation = useMutation(ClubApi.deleteClub, {
+  const deleteClubMutation = useMutation<BaseResponse, ErrorResponse, ClubDeletionRequest>(ClubApi.deleteClub, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        toast.show(`모임이 삭제되었습니다.`, { type: "success" });
-        DeviceEventEmitter.emit("ClubListRefetch");
-        popToTop();
-      } else if (res.status === 403) {
-        toast.show(`${res.message} (${res.status})`, { type: "warning" });
-      } else {
-        console.log(res);
-        console.log(`deleteClub mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        toast.show(`Error Code: ${res.status}`, { type: "warning" });
-      }
+      toast.show(`모임이 삭제되었습니다.`, { type: "success" });
+      DeviceEventEmitter.emit("ClubListRefetch");
+      popToTop();
     },
     onError: (error) => {
-      console.log("--- deleteClub Error ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, { type: "warning" });
+      console.log(`API ERROR | deleteClub ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -247,9 +226,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
         onPress: () => {
           let requestData: ClubDeletionRequest = {
             clubId: clubData.id,
-            token,
           };
-          console.log(requestData);
           deleteClubMutation.mutate(requestData);
         },
       },

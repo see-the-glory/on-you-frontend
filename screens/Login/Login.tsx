@@ -7,6 +7,8 @@ import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
 import { login } from "../../redux/slices/auth";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.View`
   width: 100%;
@@ -55,13 +57,13 @@ const ForgetText = styled.Text`
   text-decoration: underline;
 `;
 
-const LoginButton = styled.TouchableOpacity`
+const LoginButton = styled.TouchableOpacity<{ disabled: boolean }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 48px;
-  background-color: #ff6534;
+  background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : "#ff6534")};
 `;
 
 const LoginTitle = styled.Text`
@@ -70,50 +72,27 @@ const LoginTitle = styled.Text`
   font-weight: 700;
 `;
 
-const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
+const Login: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
   const dispatch = useAppDispatch();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const toast = useToast();
-  const [token, setToken] = useState<string>("");
 
-  useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo, {
-    onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
-        dispatch(login({ user: res.data, token }));
-        DeviceEventEmitter.emit("PushSubscribe", { token });
-      } else {
-        console.log(res);
-        console.log(`getUserInfo query success but please check status code`);
-        toast.show(`유저 정보를 불러올 수 없습니다. (Error Code: ${res.status})`, {
-          type: "warning",
-        });
+  const mutation = useMutation<LoginResponse, any, LoginRequest>(CommonApi.login, {
+    onSuccess: async (res) => {
+      if (res.status === 200) {
+        const token = res.token;
+        console.log(`Login: ${token}`);
+        if (token) await dispatch(login({ token }));
+      } else if (res.status === 400) {
+        toast.show(`아이디와 비밀번호가 잘못되었습니다.`, { type: "warning" });
       }
     },
     onError: (error) => {
-      console.log("--- getUserInfo Error ---");
       console.log(error);
-      toast.show(`유저 정보를 불러올 수 없습니다. (Error Code: ${error})`, {
-        type: "warning",
-      });
-    },
-    enabled: token ? true : false,
-  });
-
-  const mutation = useMutation<LoginResponse, ErrorResponse, LoginRequest>(CommonApi.getUserToken, {
-    onSuccess: (res) => {
-      console.log("onSuccess.");
-      console.log(res);
-      setToken(res?.token);
-    },
-    onError: (error) => {
-      console.log(`API ERROR | getUserToken ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, {
-        type: "warning",
-      });
+      toast.show(`네트워크를 확인해주세요.`, { type: "warning" });
     },
   });
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   const goToFindLoginInfo = () => {
     navigate("LoginStack", {
@@ -123,7 +102,7 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
 
   const onSubmit = () => {
     const requestData: LoginRequest = {
-      email,
+      email: email.trim(),
       password,
     };
 
@@ -140,18 +119,18 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
         <Wrap>
           <Form>
             <Title>아이디</Title>
-            <Input placeholder="example@email.com" placeholderTextColor={"#B0B0B0"} onChangeText={(text) => setEmail(text)} />
+            <Input placeholder="example@email.com" placeholderTextColor={"#B0B0B0"} onChangeText={(text: string) => setEmail(text)} />
           </Form>
           <Form>
             <Title>비밀번호</Title>
-            <Input secureTextEntry={true} placeholder="비밀번호를 입력해주세요." placeholderTextColor={"#B0B0B0"} onChangeText={(text) => setPassword(text)} />
+            <Input secureTextEntry={true} placeholder="비밀번호를 입력해주세요." placeholderTextColor={"#B0B0B0"} onChangeText={(text: string) => setPassword(text)} />
             <View onPress={goToFindLoginInfo}>
               <ForgetText>로그인 정보가 기억나지 않을때</ForgetText>
             </View>
           </Form>
         </Wrap>
         <Wrap>
-          <LoginButton onPress={onSubmit}>
+          <LoginButton onPress={onSubmit} disabled={!(email.trim() && password)}>
             <LoginTitle>로그인</LoginTitle>
           </LoginButton>
         </Wrap>
@@ -160,4 +139,4 @@ const SignIn: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation
   );
 };
 
-export default SignIn;
+export default Login;

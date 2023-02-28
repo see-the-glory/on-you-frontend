@@ -1,16 +1,12 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
-import { ActivityIndicator, Dimensions, FlatList, Platform, StatusBar } from "react-native";
-import { useSelector } from "react-redux";
+import { ActivityIndicator, Dimensions, FlatList, Platform, StatusBar, useWindowDimensions } from "react-native";
 import { useQuery } from "react-query";
-import { UserApi, Club, MyClubResponse, MyClub } from "../../api";
+import { UserApi, Club, MyClubsResponse, ErrorResponse, MyClub } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
-import { RootState } from "../../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
-
-const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -19,29 +15,30 @@ const Loader = styled.SafeAreaView`
   padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
 `;
 
-const Container = styled.SafeAreaView``;
-
-const Title = styled.Text`
-  font-size: 10px;
-  color: #b0b0b0;
-  margin: 15px 0 15px 20px;
+const Header = styled.View`
+  background-color: white;
+  padding: 10px 20px;
 `;
 
-const MyClubWrap = styled.View`
+const Title = styled(CustomText)`
+  color: #b0b0b0;
+`;
+
+const Break = styled.View`
   border-bottom-width: 1px;
   border-bottom-color: #e9e9e9;
 `;
 
 const MyClubBox = styled.TouchableOpacity`
   flex-direction: row;
-  height: 53px;
+  width: 100%;
   align-items: center;
-  background-color: #fff;
-  padding-left: 20px;
+  background-color: white;
+  padding: 5px 20px;
 `;
 
 const MyClubTextBox = styled.View`
-  padding: 0px 10px;
+  padding-left: 10px;
 `;
 
 const MyClubText = styled(CustomText)`
@@ -52,27 +49,15 @@ const MyClubText = styled(CustomText)`
 const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigation: { navigate } }, props) => {
   const [refreshing, setRefreshing] = useState(false);
   const toast = useToast();
-  const token = useSelector((state: RootState) => state.auth.token);
   const {
     isLoading: myClubInfoLoading, // true or false
-    data: myClub,
+    data: myClubs,
     refetch: myClubRefetch,
-  } = useQuery<MyClubResponse>(["selectMyClubs", token], UserApi.selectMyClubs, {
-    onSuccess: (res) => {
-      if (res.status !== 200) {
-        console.log("--- selectMyClubs Error ---");
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
-      }
-    },
+  } = useQuery<MyClubsResponse, ErrorResponse>(["selectMyClubs"], UserApi.getMyClubs, {
+    onSuccess: (res) => {},
     onError: (error) => {
-      console.log("--- selectMyClubs Error ---");
-      console.log(error);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | getMyClubs ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -89,55 +74,43 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
     });
   };
 
+  const listHeaderComponent = useCallback(
+    () => (
+      <Header>
+        <Title>가입한 모임 리스트</Title>
+      </Header>
+    ),
+    []
+  );
+  const itemSeparatorComponent = useCallback(() => <Break />, []);
+  const renderItem = useCallback(
+    ({ item, index }: { item: MyClub; index: number }) => (
+      <MyClubBox key={index} onPress={() => goToClubStack(item)}>
+        <CircleIcon size={37} uri={item.thumbnail} />
+        <MyClubTextBox>
+          <MyClubText>{item.name}</MyClubText>
+        </MyClubTextBox>
+      </MyClubBox>
+    ),
+    []
+  );
+
   return myClubInfoLoading ? (
     <Loader>
       <ActivityIndicator />
     </Loader>
   ) : (
-    <Container>
-      <Title>가입한 모임 List</Title>
-      <FlatList
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        keyExtractor={(item: MyClub, index: number) => String(index)}
-        data={myClub?.data}
-        renderItem={({ item, index }: { item: MyClub; index: number }) => (
-          <>
-            {item.applyStatus === "APPROVED" ? (
-              <MyClubWrap key={index}>
-                <MyClubBox style={{ width: SCREEN_WIDTH }} onPress={() => goToClubStack(item)}>
-                  <CircleIcon size={37} uri={item.thumbnail} />
-                  <MyClubTextBox>
-                    <MyClubText>{item.name}</MyClubText>
-                  </MyClubTextBox>
-                </MyClubBox>
-              </MyClubWrap>
-            ) : null}
-          </>
-        )}
-      />
-      {/*<Title>가입 대기중인 List</Title>
-      <FlatList
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        keyExtractor={(item: MyClub, index: number) => String(index)}
-        data={myClub?.data}
-        renderItem={({ item, index }: { item: MyClub; index: number }) => (
-          <>
-            {item.applyStatus === "APPLIED" ? (
-              <MyClubWrap key={index}>
-                <MyClubBox style={{ width: SCREEN_WIDTH }} onPress={() => goToClubStack(item)}>
-                  <CircleIcon size={37} uri={item.thumbnail} />
-                  <MyClubTextBox>
-                    <MyClubText>{item.name}</MyClubText>
-                  </MyClubTextBox>
-                </MyClubBox>
-              </MyClubWrap>
-            ) : null}
-          </>
-        )}
-      />*/}
-    </Container>
+    <FlatList
+      contentContainerStyle={{ flexGrow: 1 }}
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      keyExtractor={(item: MyClub, index: number) => String(index)}
+      data={myClubs?.data.filter((item) => item.applyStatus === "APPROVED")}
+      ItemSeparatorComponent={itemSeparatorComponent}
+      ListHeaderComponent={listHeaderComponent}
+      stickyHeaderIndices={[0]}
+      renderItem={renderItem}
+    />
   );
 };
 

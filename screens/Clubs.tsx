@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import { Feather, MaterialCommunityIcons, Ionicons, createIconSetFromFontello } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
 import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
-import { Category, CategoryResponse, ClubApi, Club, ClubsResponse, ClubsParams } from "../api";
+import { Category, CategoryResponse, ClubApi, Club, ClubsResponse, ClubsParams, ErrorResponse } from "../api";
 import { ClubListScreenProps } from "../Types/Club";
 import { useSelector } from "react-redux";
 import CustomText from "../components/CustomText";
@@ -218,7 +218,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     hasNextPage,
     refetch: clubsRefetch,
     fetchNextPage,
-  } = useInfiniteQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
+  } = useInfiniteQuery<ClubsResponse, ErrorResponse>(["clubs", params], ClubApi.getClubs, {
     getNextPageParam: (lastPage) => {
       if (lastPage) {
         return lastPage.hasNext === false ? null : lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor;
@@ -227,8 +227,9 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     onSuccess: (res) => {
       setIsPageTransition(false);
     },
-    onError: (err) => {
-      console.log(err);
+    onError: (error) => {
+      console.log(`API ERROR | getClubs ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -236,9 +237,9 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     isLoading: categoryLoading,
     data: category,
     isRefetching: isRefetchingCategory,
-  } = useQuery<CategoryResponse>(["getCategories", token], ClubApi.getCategories, {
+  } = useQuery<CategoryResponse, ErrorResponse>(["getCategories"], ClubApi.getCategories, {
     onSuccess: (res) => {
-      if (res.status === 200) {
+      if (res.data)
         setCategoryData([
           {
             description: "All Category",
@@ -249,18 +250,10 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
           },
           ...res.data,
         ]);
-      } else {
-        console.log(`--- getCategories status: ${res.status} ---`);
-        console.log(res);
-        toast.show(`카테고리를 불러오지 못했습니다. (status: ${res.status}})`, {
-          type: "warning",
-        });
-      }
     },
     onError: (error) => {
-      console.log(`--- getCategories error ---`);
-      console.log(error);
-      toast.show(`카테고리를 불러오지 못했습니다. (error: ${error})`, {
+      console.log(`API ERROR | getCategories ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, {
         type: "warning",
       });
     },

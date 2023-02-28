@@ -24,6 +24,9 @@ const feedSlice = createSlice({
       else state.data[action.payload].likesCount++;
       state.data[action.payload].likeYn = !state.data[action.payload].likeYn;
     },
+    deleteFeed(state) {
+      state.data = [];
+    },
     updateCommentCount(state, action) {
       if (state.data.length > action.payload.feedIndex) {
         state.data[action.payload.feedIndex].commentCount = action.payload.count;

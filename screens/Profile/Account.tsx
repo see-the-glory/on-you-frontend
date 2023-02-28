@@ -7,8 +7,8 @@ import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import { RootState } from "../../redux/store/reducers";
-import { AccountWithdrawRequest, UserApi } from "../../api";
-import { Alert } from "react-native";
+import { AccountWithdrawRequest, BaseResponse, ErrorResponse, UserApi } from "../../api";
+import { Alert, DeviceEventEmitter } from "react-native";
 import { logout } from "../../redux/slices/auth";
 import { useAppDispatch } from "../../redux/store";
 
@@ -49,35 +49,24 @@ interface AccountItem {
 }
 
 const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation: { navigate } }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
+  const fcmToken = useSelector((state: RootState) => state.auth.fcmToken);
   const dispatch = useAppDispatch();
 
-  const mutation = useMutation(UserApi.withdrawAccount, {
+  const mutation = useMutation<BaseResponse, ErrorResponse>(UserApi.withdrawAccount, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        console.log(res);
-        toast.show("탈퇴에 성공하였습니다.", {
-          type: "success",
-        });
-        dispatch(logout());
-      } else {
-        console.log(`withdrawAccount mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        toast.show(`탈퇴에 실패하였습니다. (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
+      toast.show("회원탈퇴 되었습니다.", { type: "success" });
+      DeviceEventEmitter.emit("Logout", { fcmToken });
+      dispatch(logout());
     },
     onError: (error) => {
-      console.log("--- withdrawAccount Error ---");
-      console.log(`error: ${error}`);
+      console.log(`API ERROR | withdrawAccount ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
   const onSubmit = () => {
-    const requestData: AccountWithdrawRequest = { token };
-    mutation.mutate(requestData);
+    mutation.mutate();
   };
 
   const goToScreen = (screen: string) => {

@@ -4,12 +4,10 @@ import styled from "styled-components/native";
 import { TouchableOpacity, Text, Platform, KeyboardAvoidingView } from "react-native";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { useMutation } from "react-query";
-import { useSelector } from "react-redux";
 import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import CustomTextInput from "../../components/CustomTextInput";
-import { UserApi, PostChangePw } from "../../api";
-import { RootState } from "../../redux/store/reducers";
+import { UserApi, BaseResponse, ErrorResponse, PasswordChangeRequest } from "../../api";
 import { Entypo } from "@expo/vector-icons";
 
 const Container = styled.ScrollView`
@@ -39,7 +37,6 @@ const Input = styled(CustomTextInput)`
 `;
 
 const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigation: { navigate, setOptions, goBack } }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const [pw, setPw] = useState<string>("");
   const [pw2, setPw2] = useState<string>("");
   const toast = useToast();
@@ -59,48 +56,30 @@ const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigatio
     });
   }, [pw, pw2]);
 
-  const mutation = useMutation(UserApi.changePassword, {
+  const mutation = useMutation<BaseResponse, ErrorResponse, PasswordChangeRequest>(UserApi.changePassword, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        toast.show(`비밀번호가 재설정되었습니다.`, {
-          type: "success",
-        });
-        navigate("Tabs", {
-          screen: "Profile",
-        });
-      } else {
-        console.log(`changePassword mutation success but please check status code`);
-        console.log(res);
-        toast.show(`${res.error} (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
+      toast.show(`비밀번호가 재설정되었습니다.`, { type: "success" });
+      navigate("Tabs", {
+        screen: "Profile",
+      });
     },
     onError: (error) => {
-      console.log("--- Error ---");
-      console.log(`error: ${error}`);
+      console.log(`API ERROR | getClubs ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
   const onSubmit = () => {
-    const data = {
+    const requestData: PasswordChangeRequest = {
       password: pw,
     };
 
-    const requestData: PostChangePw = { data, token };
-
-    console.log(requestData);
-
-    if ( pw === pw2 ) {
+    if (pw === pw2) {
       mutation.mutate(requestData);
-    }else {
-      toast.show(`입력을 다시 확인해주세요.`, {
-        type: "warning",
-      });
+    } else {
+      toast.show(`입력을 다시 확인해주세요.`, { type: "warning" });
     }
-
   };
-
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -108,11 +87,25 @@ const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigatio
         <Container>
           <Form>
             <Title>비밀번호 재설정</Title>
-            <Input clearButtonMode="always" secureTextEntry={true} placeholderTextColor={"#B0B0B0"} autoCorrect={false} placeholder="재설정할 비밀번호를 입력해주세요." onChangeText={(pw: string) => setPw(pw)} />
+            <Input
+              clearButtonMode="always"
+              secureTextEntry={true}
+              placeholderTextColor={"#B0B0B0"}
+              autoCorrect={false}
+              placeholder="재설정할 비밀번호를 입력해주세요."
+              onChangeText={(pw: string) => setPw(pw)}
+            />
           </Form>
           <Form>
             <Title>비밀번호 확인</Title>
-            <Input clearButtonMode="always" secureTextEntry={true} placeholderTextColor={"#B0B0B0"} autoCorrect={false} placeholder="비밀번호를 한번 더 입력해주세요." onChangeText={(pw: string) => setPw2(pw)} />
+            <Input
+              clearButtonMode="always"
+              secureTextEntry={true}
+              placeholderTextColor={"#B0B0B0"}
+              autoCorrect={false}
+              placeholder="비밀번호를 한번 더 입력해주세요."
+              onChangeText={(pw: string) => setPw2(pw)}
+            />
           </Form>
         </Container>
       </KeyboardAvoidingView>

@@ -6,7 +6,7 @@ import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import Carousel from "../../components/Carousel";
 import { useMutation } from "react-query";
-import { ClubApi, ClubScheduleDeletionRequest, ClubScheduleJoinOrCancelRequest, Member, Schedule } from "../../api";
+import { BaseResponse, ClubApi, ClubScheduleDeletionRequest, ClubScheduleJoinOrCancelRequest, ErrorResponse, Member, Schedule } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import { useSelector } from "react-redux";
 import CircleIcon from "../../components/CircleIcon";
@@ -185,49 +185,35 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
   const hideMenu = (scheduleId: number) => setMenuVisibleMap((prev) => new Map(prev).set(scheduleId, false));
   const showMenu = (scheduleId: number) => setMenuVisibleMap((prev) => new Map(prev).set(scheduleId, true));
 
-  const joinOrCancelMutation = useMutation(ClubApi.joinOrCancelClubSchedule);
-  const deleteScheduleMutation = useMutation(ClubApi.deleteClubSchedule);
+  const joinOrCancelMutation = useMutation<BaseResponse, ErrorResponse, ClubScheduleJoinOrCancelRequest>(ClubApi.joinOrCancelClubSchedule);
+  const deleteScheduleMutation = useMutation<BaseResponse, ErrorResponse, ClubScheduleDeletionRequest>(ClubApi.deleteClubSchedule);
 
   const joinOrCancel = (index: number, scheduleId?: number) => {
     if (scheduleId === undefined) {
-      return toast.show(`Schedule ID Error`, {
-        type: "warning",
-      });
+      return toast.show(`Schedule ID Error`, { type: "warning" });
     }
     let requestData: ClubScheduleJoinOrCancelRequest = {
-      token,
       clubId,
       scheduleId,
     };
 
     joinOrCancelMutation.mutate(requestData, {
       onSuccess: (res) => {
-        if (res.status === 200) {
-          if (scheduleData) {
-            // 이 스케줄에 참여한 상태라면, 멤버 중 '나'를 찾고 삭제한다.
-            if (scheduleData[index].participation) {
-              let target = scheduleData[index].members?.findIndex((member) => member.id === me?.id);
-              if (target !== undefined && target > -1) scheduleData[index].members?.splice(target, 1);
-            } else {
-              // 이 스케줄에 내가 참여되어 있지 않다면, '나'를 추가한다.
-              if (me) scheduleData[index].members?.push(me);
-            }
-            scheduleData[index].participation = !scheduleData[index].participation;
+        if (scheduleData) {
+          // 이 스케줄에 참여한 상태라면, 멤버 중 '나'를 찾고 삭제한다.
+          if (scheduleData[index].participation) {
+            let target = scheduleData[index].members?.findIndex((member) => member.id === me?.id);
+            if (target !== undefined && target > -1) scheduleData[index].members?.splice(target, 1);
+          } else {
+            // 이 스케줄에 내가 참여되어 있지 않다면, '나'를 추가한다.
+            if (me) scheduleData[index].members?.push(me);
           }
-        } else {
-          console.log("--- joinOrCancelMutation Error ---");
-          console.log(res);
-          toast.show(`Error Code: ${res.status}`, {
-            type: "warning",
-          });
+          scheduleData[index].participation = !scheduleData[index].participation;
         }
       },
       onError: (error) => {
-        console.log("--- joinOrCancelClubSchedule Error ---");
-        console.log(`error: ${error}`);
-        toast.show(`Error Code: ${error}`, {
-          type: "warning",
-        });
+        console.log(`API ERROR | joinOrCancelClubSchedule ${error.code} ${error.status}`);
+        toast.show(`${error.message ?? error.code}`, { type: "warning" });
       },
     });
   };
@@ -235,37 +221,20 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
   const deleteSchedule = (scheduleId?: number) => {
     hideMenu(scheduleId ?? -1);
     if (scheduleId === undefined) {
-      return toast.show(`Schedule ID Error`, {
-        type: "warning",
-      });
+      return toast.show(`Schedule ID Error`, { type: "warning" });
     }
     let requestData: ClubScheduleDeletionRequest = {
-      token,
       clubId,
       scheduleId,
     };
 
     deleteScheduleMutation.mutate(requestData, {
       onSuccess: (res) => {
-        console.log(res);
-        if (res.status === 200) {
-          toast.show(`일정을 삭제했습니다.`, {
-            type: "success",
-          });
-        } else {
-          console.log("--- deleteScheduleMutation Error ---");
-          console.log(res);
-          toast.show(`Error Code: ${res.status}`, {
-            type: "warning",
-          });
-        }
+        toast.show(`일정을 삭제했습니다.`, { type: "success" });
       },
       onError: (error) => {
-        console.log("--- deleteScheduleMutation Error ---");
-        console.log(error);
-        toast.show(`Error Code: ${error}`, {
-          type: "warning",
-        });
+        console.log(`API ERROR | deleteClubSchedule ${error.code} ${error.status}`);
+        toast.show(`${error.message ?? error.code}`, { type: "warning" });
       },
       onSettled: () => {
         closeModal(true);
