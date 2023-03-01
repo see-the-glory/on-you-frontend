@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity, DeviceEventEmitter } from "react-native";
 import FastImage from "react-native-fast-image";
+import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Feed, FeedApi, FeedsResponse } from "../../api";
+import { ErrorResponse, Feed, FeedApi, FeedsResponse } from "../../api";
 import CustomText from "../../components/CustomText";
 import clubSlice from "../../redux/slices/club";
 import { useAppDispatch } from "../../redux/store";
@@ -49,6 +50,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
 }) => {
   const token = useSelector((state: RootState) => state.auth.token);
   const feeds = useSelector((state: RootState) => state.club.feeds);
+  const toast = useToast();
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -62,16 +64,19 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     hasNextPage,
     refetch: feedsRefetch,
     fetchNextPage,
-  } = useInfiniteQuery<FeedsResponse>(["getClubFeeds", { token, clubId: clubData.id }], FeedApi.getClubFeeds, {
+  } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["getClubFeeds", clubData.id], FeedApi.getClubFeeds, {
     getNextPageParam: (currentPage) => {
       if (currentPage) {
         return currentPage.hasNext === false ? null : currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor;
       }
     },
     onSuccess: (res) => {
-      dispatch(clubSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
+      if (res.pages[res.pages.length - 1].responses) dispatch(clubSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
     },
-    onError: (err) => {},
+    onError: (error) => {
+      console.log(`API ERROR | getClubFeeds ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
   });
 
   const loadMore = () => {

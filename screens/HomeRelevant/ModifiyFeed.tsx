@@ -6,11 +6,11 @@ import {
   DeviceEventEmitter,
   Dimensions,
   FlatList,
+  Image,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StatusBar,
   TouchableOpacity,
   TouchableWithoutFeedback,
   useWindowDimensions,
@@ -18,17 +18,18 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Feed, FeedApi, FeedUpdateRequest, ModifiedReponse, UserApi, UserInfoResponse, Club, ClubResponse, ClubApi, MyClub } from "../../api";
+import { Feed, FeedApi, FeedUpdateRequest, UserApi, UserInfoResponse, Club, ClubResponse, ClubApi, MyClub, ErrorResponse, FeedResponse, MyClubsResponse } from "../../api";
 import { ModifiyFeedScreenProps } from "../../types/feed";
 import { ClubStackParamList } from "../../types/Club";
 import { useNavigation } from "@react-navigation/native";
 import CustomTextInput from "../../components/CustomTextInput";
 import CustomText from "../../components/CustomText";
-import { ImageSlider } from "react-native-image-slider-banner";
 import { Modalize, useModalize } from "react-native-modalize";
 import { MaterialIcons, Ionicons, Entypo } from "@expo/vector-icons";
 import Carousel from "../../components/Carousel";
 import FastImage from "react-native-fast-image";
+import { Portal } from "react-native-portalize";
+import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -205,8 +206,6 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const token = useSelector((state: any) => state.auth.token);
-  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
-  const SCREEN_PADDING_SIZE = 20;
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
   const [content, setContent] = useState(feedData.content);
   const [data, setData] = useState<Feed>(feedData);
@@ -216,6 +215,9 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
   const [isSummitShow, setSummitShow] = useState(true); //저장버튼 로딩
   const [clubId, setClubId] = useState(feedData.clubId);
   const [clubName, setClubName] = useState(feedData.clubName);
+  const feedSize = Dimensions.get("window").width;
+  const toast = useToast();
+
   const onOpen = () => {
     console.log("Before Modal Passed FeedId");
     modalizeRef.current?.open();
@@ -225,12 +227,15 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
     isLoading: feedsLoading,
     data: feeds,
     isRefetching: isRefetchingFeeds,
-  } = useQuery<ModifiedReponse>(["getFeed", token, feedData.id], FeedApi.getSelectFeeds, {
+  } = useQuery<FeedResponse, ErrorResponse>(["getFeed", feedData.id], FeedApi.getFeed, {
     onSuccess: (res) => {
       setIsPageTransition(false);
     },
-    onError: (err) => {
-      console.log(err);
+    onError: (error) => {
+      console.log(`API ERROR | getFeed ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, {
+        type: "warning",
+      });
     },
   });
 
@@ -250,17 +255,11 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
         console.log(`mutation success but please check status code`);
         console.log(`status: ${res.status}`);
         console.log(res.json);
-        /*  return navigate("Tabs", {
-            screen: "Home",
-          });*/
       }
     },
     onError: (error) => {
       console.log("--- Error ---");
       console.log(`error: ${error}`);
-      /*   return navigate("Tabs", {
-           screen: "Home",
-         });*/
     },
     onSettled: (res, error) => {},
   });
@@ -298,15 +297,10 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
     });
   }, [navigation, FixComplete, isSummitShow]);
 
-  const imageList = [];
-  for (let i = 0; i < feedData?.imageUrls?.length; i++) {
-    imageList.push({ img: feedData?.imageUrls[i] });
-  }
-
   const {
     isLoading: clubInfoLoading, // true or false
     data: club,
-  } = useQuery<ClubResponse>(["myClub", token], ClubApi.selectMyClubs);
+  } = useQuery<MyClubsResponse, ErrorResponse>(["myClub"], UserApi.getMyClubs);
 
   const ChangeClub = (id: any, name: any) => {
     console.log(id, name);
@@ -315,43 +309,25 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
     modalizeRef.current?.close();
   };
 
-  const feedSize = Dimensions.get("window").width;
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Container>
-        <KeyboardAvoidingView behavior={Platform.select({ ios: "position", android: "position" })} style={{ flex: 1 }}>
-          <FeedUser>
-            <UserImage source={{ uri: userInfo?.data?.thumbnail }} />
-            <UserInfo>
-              <UserId>{feedData.userName}</UserId>
-              <View style={{ display: "flex", flexDirection: "row" }}>
-                <ClubBox>
-                  <ClubName>{clubName}</ClubName>
-                </ClubBox>
-                <TouchableOpacity onPress={onOpen}>
-                  <Ionicons name="pencil" size={18} style={{ top: 1 }} color="gray" />
-                </TouchableOpacity>
-              </View>
-            </UserInfo>
-          </FeedUser>
-          <Modalize
-            ref={modalizeRef}
-            modalHeight={400}
-            handlePosition="inside"
-            modalStyle={{ marginTop: 350 }}
-            onOpen={() => {
-              if (Platform.OS === "android") {
-                StatusBar.setBackgroundColor("black", true);
-                StatusBar.setBarStyle("light-content", true);
-              }
-            }}
-            onClose={() => {
-              if (Platform.OS === "android") {
-                StatusBar.setBackgroundColor("white", true);
-                StatusBar.setBarStyle("dark-content", true);
-              }
-            }}
-          >
+    <Container>
+      <KeyboardAvoidingView behavior={Platform.select({ ios: "position", android: "position" })} style={{ flex: 1 }}>
+        <FeedUser>
+          <UserImage source={{ uri: userInfo?.data?.thumbnail }} />
+          <UserInfo>
+            <UserId>{feedData.userName}</UserId>
+            <View style={{ display: "flex", flexDirection: "row" }}>
+              <ClubBox>
+                <ClubName>{clubName}</ClubName>
+              </ClubBox>
+              <TouchableOpacity onPress={onOpen}>
+                <Ionicons name="pencil" size={18} style={{ top: 1 }} color="gray" />
+              </TouchableOpacity>
+            </View>
+          </UserInfo>
+        </FeedUser>
+        <Portal>
+          <Modalize ref={modalizeRef} modalHeight={400} handlePosition="inside" modalStyle={{ marginTop: 500 }}>
             <ModalContainer>
               <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                 <IntroTextLeft>모임 변경</IntroTextLeft>
@@ -393,41 +369,36 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
               </ModalView>
             </ModalContainer>
           </Modalize>
-          <Carousel
-            pages={feedData.imageUrls}
-            pageWidth={0}
-            gap={0}
-            offset={0}
-            initialScrollIndex={0}
-            keyExtractor={(item: string, index: number) => String(index)}
-            showIndicator={true}
-            renderItem={({ item, index }: { item: string; index: number }) => (
-              <FastImage
-                key={String(index)}
-                source={item ? { uri: item } : require("../../assets/basic.jpg")}
-                style={{ width: feedSize, height: feedSize }}
-                resizeMode={FastImage.resizeMode.contain}
-              />
-            )}
-            ListEmptyComponent={<FastImage source={require("../../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} resizeMode={FastImage.resizeMode.contain} />}
-          />
-          <ContentArea>
-            <Ment
-              onChangeText={(content: any) => setContent(content)}
-              placeholderTextColor="#B0B0B0"
-              placeholder="게시글 입력 ..."
-              textAlign="left"
-              multiline={true}
-              maxLength={999}
-              returnKeyType="done"
-              returnKeyLabel="done"
-            >
-              {feedData.content}
-            </Ment>
-          </ContentArea>
-        </KeyboardAvoidingView>
-      </Container>
-    </TouchableWithoutFeedback>
+        </Portal>
+        <Carousel
+          pages={feedData.imageUrls}
+          pageWidth={feedSize}
+          gap={0}
+          offset={0}
+          initialScrollIndex={0}
+          keyExtractor={(item: string, index: number) => String(index)}
+          showIndicator={true}
+          renderItem={({ item, index }: { item: string; index: number }) => (
+            <FastImage key={String(index)} source={item ? { uri: item } : require("../../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} resizeMode={"contain"} />
+          )}
+          ListEmptyComponent={<FastImage source={require("../../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} resizeMode={"contain"} />}
+        />
+        <ContentArea>
+          <Ment
+            onChangeText={(content: any) => setContent(content)}
+            placeholderTextColor="#B0B0B0"
+            placeholder="게시글 입력 ..."
+            textAlign="left"
+            multiline={true}
+            maxLength={999}
+            returnKeyType="done"
+            returnKeyLabel="done"
+          >
+            {feedData.content}
+          </Ment>
+        </ContentArea>
+      </KeyboardAvoidingView>
+    </Container>
   );
 };
 export default ModifiyFeed;

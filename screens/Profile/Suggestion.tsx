@@ -4,7 +4,7 @@ import CustomText from "../../components/CustomText";
 import styled from "styled-components/native";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useMutation } from "react-query";
-import { SuggestionSubmitRequest, UserApi } from "../../api";
+import { BaseResponse, ErrorResponse, SuggestionSubmitRequest, UserApi } from "../../api";
 import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 import { RootState } from "../../redux/store/reducers";
@@ -45,41 +45,22 @@ const MemoTextInput = styled(CustomTextInput)`
 
 const Suggestion = ({ navigation: { navigate, goBack, setOptions } }) => {
   const [content, setContent] = useState<string>("");
-  const token = useSelector((state: RootState) => state.auth.token);
-  const me = useSelector((state: RootState) => state.auth.user);
   const toast = useToast();
 
-  const suggestionMutation = useMutation(UserApi.submitSuggestion, {
+  const suggestionMutation = useMutation<BaseResponse, ErrorResponse, SuggestionSubmitRequest>(UserApi.submitSuggestion, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
-        toast.show(`건의사항이 제출되었습니다.`, {
-          type: "success",
-        });
-        goBack();
-      } else {
-        console.log(`submitSuggestion mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-        toast.show(`${res.message} (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
+      toast.show(`건의사항이 제출되었습니다.`, { type: "success" });
+      goBack();
     },
     onError: (error) => {
-      console.log("--- Error ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | submitSuggestion ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
   const save = () => {
     const requestData: SuggestionSubmitRequest = {
-      token,
-      data: {
-        content,
-      },
+      content,
     };
     suggestionMutation.mutate(requestData);
   };

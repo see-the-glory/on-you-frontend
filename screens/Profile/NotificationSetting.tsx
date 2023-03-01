@@ -4,7 +4,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { UserApi, UserPushAlarmRequest } from "../../api";
+import { BaseResponse, ErrorResponse, UserApi, UserPushAlarmRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import { RootState } from "../../redux/store/reducers";
 
@@ -54,28 +54,15 @@ const ItemText = styled(CustomText)`
 `;
 
 const NotificationSetting = () => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [userPush, setUserPush] = useState<boolean>(true);
   const [clubPush, setClubPush] = useState<boolean>(true);
 
-  const setPushAlarmMutation = useMutation(UserApi.setPushAlarm, {
-    onSuccess: (res) => {
-      if (res.status !== 200) {
-        console.log(`setPushAlarm success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-        toast.show(`설정에 실패했습니다. (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
-    },
+  const setPushAlarmMutation = useMutation<BaseResponse, ErrorResponse, UserPushAlarmRequest>(UserApi.setPushAlarm, {
+    onSuccess: (res) => {},
     onError: (error) => {
-      console.log("--- Error setPushAlarm ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | setPushAlarm ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -91,11 +78,8 @@ const NotificationSetting = () => {
     }
 
     const requestData: UserPushAlarmRequest = {
-      token,
-      data: {
-        alarmType,
-        isOnOff,
-      },
+      alarmType,
+      isOnOff,
     };
     setPushAlarmMutation.mutate(requestData);
   };

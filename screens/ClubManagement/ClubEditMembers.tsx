@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useState } from "react";
 import { DeviceEventEmitter, FlatList, SectionList, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
-import { ChangeRole, Member } from "../../api";
+import { BaseResponse, ChangeRole, ChangeRoleRequest, ErrorResponse, Member } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { AntDesign } from "@expo/vector-icons";
@@ -82,34 +82,22 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
   const ICON_SIZE = 45;
   const DEFAULT_PADDING = 40;
   const COLUMN_NUM = Math.floor((SCREEN_WIDTH - DEFAULT_PADDING) / (ICON_SIZE + 10));
-  const [menuVisibleMap, setMenuVisibleMap] = useState(new Map(clubData.members.map((member) => [member.id, false])));
-  const [kickOutMap, setKickOutMap] = useState(new Map(clubData.members.map((member) => [member.id, false])));
-  const [memberMap, setMemberMap] = useState(new Map(clubData.members.map((member) => [member.id, { ...member }]))); // 깊은 복사를 위해서 Spread 구문 사용
-  const mutation = useMutation(ClubApi.changeRole, {
+  const [menuVisibleMap, setMenuVisibleMap] = useState(new Map(clubData.members?.map((member) => [member.id, false])));
+  const [kickOutMap, setKickOutMap] = useState(new Map(clubData.members?.map((member) => [member.id, false])));
+  const [memberMap, setMemberMap] = useState(new Map(clubData.members?.map((member) => [member.id, { ...member }]))); // 깊은 복사를 위해서 Spread 구문 사용
+  const mutation = useMutation<BaseResponse, ErrorResponse, ChangeRoleRequest>(ClubApi.changeRole, {
     onSuccess: (res) => {
-      console.log(res);
-      if (res.status === 200 && res.resultCode === "OK") {
-        toast.show(`저장이 완료되었습니다.`, {
-          type: "success",
-        });
-        navigate("ClubManagementMain", { clubData, refresh: true });
-      } else {
-        console.log(`changeRole mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-        toast.show(`${res.message} (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
+      toast.show(`저장이 완료되었습니다.`, {
+        type: "success",
+      });
+      navigate("ClubManagementMain", { clubData, refresh: true });
     },
     onError: (error) => {
-      console.log("--- Error changeRole ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
+      console.log(`API ERROR | changeRole ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, {
         type: "warning",
       });
     },
-    onSettled: (res, error) => {},
   });
 
   const hideMenu = (userId: number) => setMenuVisibleMap((prev) => new Map(prev).set(userId, false));

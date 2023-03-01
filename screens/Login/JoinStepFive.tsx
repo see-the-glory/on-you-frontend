@@ -56,14 +56,14 @@ const Input = styled.TextInput`
   font-size: 18px;
 `;
 
-const Button = styled.TouchableOpacity`
+const Button = styled.TouchableOpacity<{ disabled: boolean }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 68px;
   padding-bottom: 8px;
-  background-color: #295AF5;
+  background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : "#295af5")};
 `;
 
 const ButtonTitle = styled(CustomText)`
@@ -83,9 +83,21 @@ const FieldContentLine = styled.View`
   margin-bottom: 15px;
 `;
 
+const FieldContentOptionLine = styled.View`
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 15px;
+`;
+
 const FieldContentText = styled.Text`
   font-size: 18px;
   margin-right: 10px;
+`;
+
+const SkipButton = styled.TouchableOpacity``;
+
+const SkipText = styled(CustomText)`
+  color: #8e8e8e;
 `;
 
 const ChoiceButton = styled.TouchableOpacity`
@@ -103,12 +115,15 @@ const JoinStepFive: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   const [approvalMethod, setApprovalMethod] = useState<number>(0);
 
   const goToNext = () => {
+    let sex = null;
+    if (approvalMethod === 1) sex = "남성";
+    if (approvalMethod === 2) sex = "여성";
     navigate("LoginStack", {
       screen: "JoinStepSix",
       name,
       email,
       password,
-      sex: approvalMethod === 0 ? "남성" : "여성",
+      sex,
     });
   };
 
@@ -137,17 +152,22 @@ const JoinStepFive: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
           <SubText>멤버 관리와, 동명이인 구분을 위함 입니다.</SubText>
           <FieldContentView>
             <FieldContentLine>
-              <ChoiceButton onPress={() => setApprovalMethod(0)} activeOpacity={0.5}>
+              <ChoiceButton onPress={() => setApprovalMethod((prev) => (prev === 1 ? 0 : 1))} activeOpacity={0.5}>
                 <FieldContentText> 남성</FieldContentText>
-                {approvalMethod ? <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" /> : <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" />}
+                {approvalMethod === 1 ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
               </ChoiceButton>
             </FieldContentLine>
             <FieldContentLine>
-              <ChoiceButton onPress={() => setApprovalMethod(1)} activeOpacity={0.5}>
+              <ChoiceButton onPress={() => setApprovalMethod((prev) => (prev === 2 ? 0 : 2))} activeOpacity={0.5}>
                 <FieldContentText> 여성</FieldContentText>
-                {approvalMethod ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
+                {approvalMethod === 2 ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
               </ChoiceButton>
             </FieldContentLine>
+            <FieldContentOptionLine>
+              <SkipButton onPress={goToNext}>
+                <SkipText>선택하지 않고 넘어가기</SkipText>
+              </SkipButton>
+            </FieldContentOptionLine>
           </FieldContentView>
         </Wrap>
         <ButtonWrap>

@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import { Feather, MaterialCommunityIcons, Ionicons, createIconSetFromFontello } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
 import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
-import { Category, CategoryResponse, ClubApi, Club, ClubsResponse, ClubsParams } from "../api";
+import { Category, CategoryResponse, ClubApi, Club, ClubsResponse, ClubsParams, ErrorResponse } from "../api";
 import { ClubListScreenProps } from "../Types/Club";
 import { useSelector } from "react-redux";
 import CustomText from "../components/CustomText";
@@ -12,6 +12,7 @@ import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { Slider } from "@miblanchard/react-native-slider";
 import { RootState } from "../redux/store/reducers";
+import { useToast } from "react-native-toast-notifications";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -183,6 +184,7 @@ interface ClubSortItem {
 
 const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const token = useSelector((state: RootState) => state.auth.token);
+  const toast = useToast();
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
     token,
@@ -216,7 +218,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     hasNextPage,
     refetch: clubsRefetch,
     fetchNextPage,
-  } = useInfiniteQuery<ClubsResponse>(["clubs", params], ClubApi.getClubs, {
+  } = useInfiniteQuery<ClubsResponse, ErrorResponse>(["clubs", params], ClubApi.getClubs, {
     getNextPageParam: (lastPage) => {
       if (lastPage) {
         return lastPage.hasNext === false ? null : lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor;
@@ -225,8 +227,9 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     onSuccess: (res) => {
       setIsPageTransition(false);
     },
-    onError: (err) => {
-      console.log(err);
+    onError: (error) => {
+      console.log(`API ERROR | getClubs ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -234,21 +237,25 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     isLoading: categoryLoading,
     data: category,
     isRefetching: isRefetchingCategory,
-  } = useQuery<CategoryResponse>(["getCategories"], ClubApi.getCategories, {
+  } = useQuery<CategoryResponse, ErrorResponse>(["getCategories"], ClubApi.getCategories, {
     onSuccess: (res) => {
-      setCategoryData([
-        {
-          description: "All Category",
-          id: 0,
-          name: "전체",
-          thumbnail: null,
-          order: null,
-        },
-        ...res.data,
-      ]);
+      if (res.data)
+        setCategoryData([
+          {
+            description: "All Category",
+            id: 0,
+            name: "전체",
+            thumbnail: null,
+            order: null,
+          },
+          ...res.data,
+        ]);
     },
-    onError: (err) => {
-      console.log(err);
+    onError: (error) => {
+      console.log(`API ERROR | getCategories ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, {
+        type: "warning",
+      });
     },
   });
 

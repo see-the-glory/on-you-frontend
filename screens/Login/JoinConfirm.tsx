@@ -152,7 +152,6 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
     };
 
     const requestData: SignUp = data;
-
     mutation.mutate(requestData);
   };
 

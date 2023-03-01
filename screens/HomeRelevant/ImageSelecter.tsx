@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
-import { ActivityIndicator, Alert, DeviceEventEmitter, Keyboard, KeyboardAvoidingView, Platform, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Alert, DeviceEventEmitter, Keyboard, KeyboardAvoidingView, Platform, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
@@ -10,6 +10,7 @@ import { FeedCreateScreenProps } from "../../types/feed";
 import { useNavigation } from "@react-navigation/native";
 import { RootState } from "../../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
+// import DraggableFlatList, { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -67,11 +68,19 @@ const SelectImageView = styled.View`
   width: 100%;
   flex-direction: column;
   justify-content: space-around;
-  padding: 10px 20px 10px 20px;
+  padding: 15px 20px 10px 20px;
 `;
 
 const MyImage = styled.View`
   align-items: center;
+  flex-direction: row;
+  justify-content: center;
+`;
+
+const ImageUnderArea = styled.View`
+  justify-content: space-between;
+  flex-direction: row;
+  padding-top: 20px;
 `;
 
 const MoveImageText = styled.Text`
@@ -80,6 +89,7 @@ const MoveImageText = styled.Text`
   padding: 5px 0 5px 0;
 `;
 
+const SelectImageArea = styled.TouchableOpacity``;
 const SelectImage = styled.Image`
   width: 55px;
   height: 55px;
@@ -133,8 +143,6 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
       width: 1080,
       minFiles: 1,
       maxFiles: 5,
-      cropperCancelText: "Cancle",
-      cropperChooseText: "Check",
     });
 
     if (images.length > 5) {
@@ -151,6 +159,9 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
         path: images[i].path,
         width: 1080,
         height: 1080,
+        cropperCancelText: "Cancle",
+        cropperChooseText: "Check",
+        cropperToolbarTitle: "이미지를 크롭하세요",
       });
       url.push(croped.path);
     }
@@ -218,28 +229,46 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     }
   };
 
-  /*  const cancleCreate = () => {
+  const moreImageFix = async (imageURL: any) => {
+    let url = [];
+    for (let i = 0; i < imageURL.length; i++) {
+      let croped = await ImagePicker.openCropper({
+        mediaType: "photo",
+        path: imageURL[i],
+        width: 1080,
+        height: 1080,
+        cropperCancelText: "Cancle",
+        cropperChooseText: "Check",
+        cropperToolbarTitle: "이미지를 크롭하세요",
+      });
+      url.push(croped.path);
+    }
+    setSelectIndex(url?.length > 0 ? 0 : undefined);
+    setImageURL(url);
+  };
+
+  const cancleCreate = () => {
     Alert.alert(
-        "게시글을 생성을 취소하시겠어요?",
-        "",
-        // "30일 이내에 내 활동의 최근 삭제 항목에서 이 게시물을 복원할 수 있습니다." + "30일이 지나면 영구 삭제 됩니다. ",
-        [
-          {
-            text: "아니요",
-            onPress: () => console.log(""),
-            style: "cancel",
-          },
-          { text: "네", onPress: () => navigate("Tabs", { screen: "Home" }) },
-        ],
-        { cancelable: false }
+      "게시글을 생성을 취소하시겠어요?",
+      "",
+      // "30일 이내에 내 활동의 최근 삭제 항목에서 이 게시물을 복원할 수 있습니다." + "30일이 지나면 영구 삭제 됩니다. ",
+      [
+        {
+          text: "아니요",
+          onPress: () => console.log(""),
+          style: "cancel",
+        },
+        { text: "네", onPress: () => navigate("Tabs", { screen: "Home" }) },
+      ],
+      { cancelable: false }
     );
-  };*/
+  };
 
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={pickImage}>
-          <Entypo name="chevron-thin-left" size={20} color="black" />
+        <TouchableOpacity onPress={cancleCreate}>
+          <Entypo name="cross" size={20} color="black" />
         </TouchableOpacity>
       ),
       headerRight: () => (
@@ -254,45 +283,38 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     });
   }, [imageURL, content, isSubmitShow]);
 
-  /**
-   * 이미지 리스트 선택하면 사진 크게보는쪽 사진뜨게
-   */
-  const ImageFIx = (i: any) => {
-    setSelectIndex(i);
-  };
-
   /** X선택시 사진 없어지는 태그 */
   const ImageCancle = (q: any) => {
     setImageURL((prev: string[]) => prev.filter((_, index) => index != q));
     if (selectIndex == q) setSelectIndex(0);
   };
 
-  // const renderItem = useCallback(
-  //   ({ drag, isActive, item }: RenderItemParams<any> & { item: string }) => {
-  //     return (
-  //       <ScaleDecorator>
-  //         <TouchableOpacity
-  //           activeOpacity={1}
-  //           onLongPress={drag}
-  //           disabled={isActive}
-  //           style={[
-  //             {
-  //               opacity: isActive ? 0.5 : 1,
-  //             },
-  //           ]}
-  //         >
-  //           <SelectImage source={{ uri: item }} />
-  //           <ImageCancleBtn onPress={() => ImageCancle(imageURL.indexOf(item))}>
-  //             <CancleIcon>
-  //               <AntDesign name="close" size={15} color="white" />
-  //             </CancleIcon>
-  //           </ImageCancleBtn>
-  //         </TouchableOpacity>
-  //       </ScaleDecorator>
-  //     );
-  //   },
-  //   [imageURL]
-  // );
+  /*  const renderItem = useCallback(
+        ({ drag, isActive, item }: RenderItemParams<any> & { item: string }) => {
+          return (
+              <ScaleDecorator>
+                <TouchableOpacity
+                    activeOpacity={1}
+                    onLongPress={drag}
+                    disabled={isActive}
+                    style={[
+                      {
+                        opacity: isActive ? 0.5 : 1,
+                      },
+                    ]}
+                >
+                  <SelectImage source={{ uri: item }} />
+                  <ImageCancleBtn onPress={() => ImageCancle(imageURL.indexOf(item))}>
+                    <CancleIcon>
+                      <AntDesign name="close" size={15} color="white" />
+                    </CancleIcon>
+                  </ImageCancleBtn>
+                </TouchableOpacity>
+              </ScaleDecorator>
+          );
+        },
+        [imageURL]
+    );*/
 
   return (
     <Container>
@@ -301,9 +323,30 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
           <>
             <SelectImageView>
               <MyImage>
-                {/* <DraggableFlatList horizontal data={imageURL} onDragEnd={({ data }) => setImageURL(data)} keyExtractor={(item) => item} renderItem={(props) => renderItem({ ...props })} /> */}
+                {imageURL?.map((image, index) => (
+                  <SelectImageArea onPress={() => moreImageFix(imageURL)} key={index}>
+                    <SelectImage source={{ uri: imageURL[index] }} />
+                    <ImageCancleBtn onPress={() => ImageCancle(index)}>
+                      <CancleIcon>
+                        <AntDesign name="close" size={15} color="white" />
+                      </CancleIcon>
+                    </ImageCancleBtn>
+                  </SelectImageArea>
+                ))}
               </MyImage>
-              {imageURL.length !== 0 ? <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText> : null}
+              {/*<MyImage>
+                  <DraggableFlatList horizontal data={imageURL} onDragEnd={({ data }) => setImageURL(data)} keyExtractor={(item) => item} renderItem={(props) => renderItem({ ...props })} />
+                </MyImage>*/}
+              <ImageUnderArea>
+                {imageURL.length !== 0 ? (
+                  <>
+                    <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>
+                    <TouchableOpacity onPress={pickImage}>
+                      <MaterialIcons name="add-photo-alternate" size={23} color="black" />
+                    </TouchableOpacity>
+                  </>
+                ) : null}
+              </ImageUnderArea>
             </SelectImageView>
             <FeedText
               placeholder="사진과 함께 남길 게시글을 작성해 보세요."

@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { useMutation, useQuery } from "react-query";
-import { CommonApi, LoginRequest, UserApi, UserInfoResponse } from "../../api";
+import { CommonApi, LoginRequest, LoginResponse, UserApi, UserInfoResponse } from "../../api";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
@@ -50,13 +50,6 @@ const SubText = styled.Text`
   margin-top: 7px;
 `;
 
-const Input = styled.TextInput`
-  border-bottom-width: 1px;
-  border-bottom-color: #b3b3b3;
-  margin-top: 47px;
-  font-size: 18px;
-`;
-
 const Button = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: center;
@@ -64,7 +57,7 @@ const Button = styled.TouchableOpacity`
   width: 100%;
   height: 68px;
   padding-bottom: 8px;
-  background-color: #295AF5;
+  background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
 `;
 
 const ButtonTitle = styled(CustomText)`
@@ -72,13 +65,6 @@ const ButtonTitle = styled(CustomText)`
   font-size: 20px;
   line-height: 24px;
   color: #fff;
-`;
-
-const Error = styled.Text`
-  color: #ff6534;
-  font-size: 12px;
-  margin-top: 7px;
-  margin-bottom: 20px;
 `;
 
 const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
@@ -89,57 +75,26 @@ const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
 }) => {
   const dispatch = useAppDispatch();
   const toast = useToast();
-  const [userToken, setUserToken] = useState<string>(token ?? "");
-  const [go, setGo] = useState<boolean>(false);
-  useQuery<UserInfoResponse>(["getUserInfo", userToken], UserApi.getUserInfo, {
-    onSuccess: (res) => {
-      if (res.status === 200) {
-        dispatch(login({ user: res.data, token }));
-      } else {
-        console.log(`get user info query success but please check status code`);
-        console.log(res);
-        toast.show(`유저 정보를 불러오지 못했습니다. (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
-    },
-    onError: (error) => {
-      console.log("--- getUserInfo Error ---");
-      console.log(error);
-      toast.show(`유저 정보를 불러오지 못했습니다. (Error Code: ${error})`, {
-        type: "warning",
-      });
-    },
-    enabled: go,
-  });
 
-  const mutation = useMutation(CommonApi.getUserToken, {
-    onSuccess: (res) => {
+  const mutation = useMutation<LoginResponse, any, LoginRequest>(CommonApi.login, {
+    onSuccess: async (res) => {
       if (res.status === 200) {
-        setUserToken(res.token);
-        setGo(true);
-      } else {
-        console.log(`get user token mutation success but please check status code`);
-        console.log(res);
-        toast.show(`유저 토큰을 불러오지 못했습니다. (Error Code: ${res.status})`, {
-          type: "warning",
-        });
+        const token = res.token;
+        console.log(`Login: ${token}`);
+        if (token) await dispatch(login({ token }));
+      } else if (res.status === 400) {
+        toast.show(`아이디와 비밀번호가 잘못되었습니다.`, { type: "warning" });
+      } else if (res.status === 500) {
+        toast.show(`알 수 없는 오류`, { type: "warning" });
       }
     },
     onError: (error) => {
-      console.log("--- getUserToken Error ---");
       console.log(error);
-      toast.show(`유저 토큰을 불러오지 못했습니다. (Error Code: ${error})`, {
-        type: "warning",
-      });
+      toast.show(`네트워크를 확인해주세요.`, { type: "warning" });
     },
   });
 
   const onSubmit = () => {
-    if (userToken !== "") {
-      setGo(true);
-      return;
-    }
     const requestData: LoginRequest = {
       email,
       password,

@@ -5,7 +5,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, UserApi } from "../../api";
+import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, UserApi, UserBlockRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import FeedDetail from "../../components/FeedDetail";
 import { ClubFeedDetailScreenProps } from "../../Types/Club";
@@ -56,80 +56,40 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   const itemLength = SCREEN_WIDTH + feedDetailHeaderHeight + feedDetailInfoHeight + feedDetailContentHeight + itemSeparatorGap;
   const [selectFeedData, setSelectFeedData] = useState<Feed>();
 
-  const complainMutation = useMutation(FeedApi.reportFeed, {
+  const complainMutation = useMutation<BaseResponse, ErrorResponse, FeedReportRequest>(FeedApi.reportFeed, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        toast.show(`신고 요청이 완료 되었습니다.`, {
-          type: "success",
-        });
-        closeComplainOption();
-      } else {
-        console.log("--- feedReport Error ---");
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
-      }
+      toast.show(`신고 요청이 완료 되었습니다.`, { type: "success" });
+      closeComplainOption();
     },
     onError: (error) => {
-      console.log("--- feedReport Error ---");
-      console.log(error);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | reportFeed ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
-  const deleteFeedMutation = useMutation(FeedApi.deleteFeed, {
+  const deleteFeedMutation = useMutation<BaseResponse, ErrorResponse, FeedDeletionRequest>(FeedApi.deleteFeed, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        console.log(res);
-        toast.show(`게시글이 삭제되었습니다.`, {
-          type: "success",
-        });
-        DeviceEventEmitter.emit("ClubFeedRefetch");
-        closeMyFeedOption();
-      } else {
-        console.log("--- deleteFeed Error ---");
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
-      }
+      toast.show(`게시글이 삭제되었습니다.`, { type: "success" });
+      DeviceEventEmitter.emit("ClubFeedRefetch");
+      closeMyFeedOption();
     },
     onError: (error) => {
-      console.log("--- deleteFeed Error ---");
-      console.log(error);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | deleteFeed ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
-  const likeFeedMutation = useMutation(FeedApi.likeFeed);
+  const likeFeedMutation = useMutation<BaseResponse, ErrorResponse, FeedLikeRequest>(FeedApi.likeFeed);
 
-  const blockUserMutation = useMutation(UserApi.blockUser, {
+  const blockUserMutation = useMutation<BaseResponse, ErrorResponse, UserBlockRequest>(UserApi.blockUser, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        toast.show(`사용자를 차단했습니다.`, {
-          type: "success",
-        });
-        DeviceEventEmitter.emit("ClubFeedRefetch");
-        closeMyFeedOption();
-      } else {
-        console.log("--- blockUser Error ---");
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
-      }
+      toast.show(`사용자를 차단했습니다.`, { type: "success" });
+      DeviceEventEmitter.emit("ClubFeedRefetch");
+      closeOtherFeedOption();
     },
     onError: (error) => {
-      console.log("--- blockUser Error ---");
-      console.log(error);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | blockUser ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -162,10 +122,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     }
 
     const requestData: FeedDeletionRequest = {
-      token,
-      data: {
-        id: selectFeedData.id,
-      },
+      feedId: selectFeedData.id,
     };
 
     Alert.alert(
@@ -189,25 +146,15 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
 
   const likeFeed = useCallback((feedIndex: number, feedId: number) => {
     const requestData: FeedLikeRequest = {
-      data: { id: feedId },
-      token,
+      feedId,
     };
     likeFeedMutation.mutate(requestData, {
       onSuccess: (res) => {
-        if (res.status === 200) {
-          dispatch(clubSlice.actions.likeToggle(feedIndex));
-        } else {
-          console.log(res);
-          toast.show(`Like Feed Fail (Error Code: ${res.status}`, {
-            type: "warning",
-          });
-        }
+        dispatch(clubSlice.actions.likeToggle(feedIndex));
       },
       onError: (error) => {
-        console.log(error);
-        toast.show(`Error Code: ${error}`, {
-          type: "warning",
-        });
+        console.log(`API ERROR | likeFeed ${error.code} ${error.status}`);
+        toast.show(`${error.message ?? error.code}`, { type: "warning" });
       },
     });
   }, []);
@@ -221,10 +168,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     }
 
     const requestData: UserBlockRequest = {
-      token,
-      data: {
-        userId: selectFeedData.userId,
-      },
+      userId: selectFeedData.userId,
     };
 
     Alert.alert(
@@ -254,11 +198,8 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       return;
     }
     const requestData: FeedReportRequest = {
-      token,
-      data: {
-        id: selectFeedData.id,
-        reason: "SPAM",
-      },
+      feedId: selectFeedData.id,
+      reason: "SPAM",
     };
     complainMutation.mutate(requestData);
   };

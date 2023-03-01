@@ -10,7 +10,7 @@ import ClubTabBar from "../../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
 import { useMutation, useQuery } from "react-query";
-import { Club, ClubApi, ClubResponse, ClubRoleResponse, ClubSchedulesResponse, ClubWithdrawRequest } from "../../api";
+import { BaseResponse, Club, ClubApi, ClubResponse, ClubRoleResponse, ClubSchedulesResponse, ClubWithdrawRequest, ErrorResponse } from "../../api";
 import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 import { RefinedSchedule } from "../../Types/Club";
@@ -173,7 +173,6 @@ const ClubTopTabs = ({
         onPress: () => {
           let requestData: ClubWithdrawRequest = {
             clubId: data.id,
-            token,
           };
           withdrawClubMutation.mutate(requestData);
         },
@@ -183,51 +182,28 @@ const ClubTopTabs = ({
 
   // API Calling
 
-  const withdrawClubMutation = useMutation(ClubApi.withdrawClub, {
+  const withdrawClubMutation = useMutation<BaseResponse, ErrorResponse, ClubWithdrawRequest>(ClubApi.withdrawClub, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        toast.show(`모임에서 탈퇴하셨습니다.`, {
-          type: "success",
-        });
-        DeviceEventEmitter.emit("ClubRefetch");
-      } else if (res.status === 500) {
-        console.log("withdrawClub mutation success but please check status code");
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
-      } else {
-        console.log(res);
-        toast.show(`${res.message}`, {
-          type: "warning",
-        });
-      }
+      toast.show(`모임에서 탈퇴하셨습니다.`, {
+        type: "success",
+      });
+      DeviceEventEmitter.emit("ClubRefetch");
     },
     onError: (error) => {
-      console.log("--- Error withdrawClub ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
+      console.log(`API ERROR | withdrawClub ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, {
         type: "warning",
       });
     },
   });
 
-  const { isLoading: clubLoading, refetch: clubDataRefetch } = useQuery<ClubResponse>(["getClub", token, clubData.id], ClubApi.getClub, {
+  const { isLoading: clubLoading, refetch: clubDataRefetch } = useQuery<ClubResponse, ErrorResponse>(["getClub", clubData.id], ClubApi.getClub, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        setData(res.data);
-      } else {
-        console.log("--- getClub Error ---");
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
-      }
+      setData(res.data);
     },
     onError: (error) => {
-      console.log("--- Error getClub ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
+      console.log(`API ERROR | getClub ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, {
         type: "warning",
       });
     },
@@ -237,30 +213,20 @@ const ClubTopTabs = ({
     isLoading: clubRoleLoading,
     data: clubRole,
     refetch: clubRoleRefetch,
-  } = useQuery<ClubRoleResponse>(["getClubRole", token, data.id], ClubApi.getClubRole, {
+  } = useQuery<ClubRoleResponse, ErrorResponse>(["getClubRole", data.id], ClubApi.getClubRole, {
     onSuccess: (res) => {
-      if (res.status === 200) dispatch(clubSlice.actions.updateClubRole({ role: res.data.role, applyStatus: res.data.applyStatus }));
-      else {
-        toast.show(`멤버 등급 정보를 불러오지 못했습니다. (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
+      dispatch(clubSlice.actions.updateClubRole({ role: res.data.role, applyStatus: res.data.applyStatus }));
     },
     onError: (error) => {
-      toast.show(`Role Request Error: ${error}`, {
+      console.log(`API ERROR | getClubRole ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, {
         type: "warning",
       });
     },
   });
 
-  const { isLoading: schedulesLoading, refetch: schedulesRefetch } = useQuery<ClubSchedulesResponse>(["getClubSchedules", data.id], ClubApi.getClubSchedules, {
+  const { isLoading: schedulesLoading, refetch: schedulesRefetch } = useQuery<ClubSchedulesResponse, ErrorResponse>(["getClubSchedules", data.id], ClubApi.getClubSchedules, {
     onSuccess: (res) => {
-      if (res.status !== 200) {
-        return toast.show(`스케줄 정보를 불러오지 못했습니다.(Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
-
       const week = ["일", "월", "화", "수", "목", "금", "토"];
       const result: RefinedSchedule[] = [];
       for (let i = 0; i < res?.data?.length; ++i) {
@@ -290,7 +256,8 @@ const ClubTopTabs = ({
       setScheduleData(result);
     },
     onError: (error) => {
-      toast.show(`Schedule Request Error: ${error}`, {
+      console.log(`API ERROR | getClubSchedules ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, {
         type: "warning",
       });
     },

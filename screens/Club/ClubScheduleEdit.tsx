@@ -9,7 +9,7 @@ import DatePicker from "react-native-date-picker";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
-import { ClubApi, ClubScheduleUpdateRequest } from "../../api";
+import { BaseResponse, ClubApi, ClubScheduleUpdateRequest, ErrorResponse } from "../../api";
 import { useMutation } from "react-query";
 import { RootState } from "../../redux/store/reducers";
 import moment from "moment";
@@ -97,29 +97,15 @@ const ClubScheduleEdit = ({
     [selectedDate]: { selected: true },
   };
 
-  const scheduleMutation = useMutation(ClubApi.updateClubSchedule, {
+  const scheduleMutation = useMutation<BaseResponse, ErrorResponse, ClubScheduleUpdateRequest>(ClubApi.updateClubSchedule, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
-        toast.show("일정 수정이 완료되었습니다.", {
-          type: "success",
-        });
-        DeviceEventEmitter.emit("SchedulesRefetch");
-        goBack();
-      } else {
-        toast.show("일정 수정에 실패했습니다.", {
-          type: "warning",
-        });
-        console.log(`schedule update mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-      }
+      toast.show("일정 수정이 완료되었습니다.", { type: "success" });
+      DeviceEventEmitter.emit("SchedulesRefetch");
+      goBack();
     },
     onError: (error) => {
-      toast.show("일정 수정에 실패했습니다.", {
-        type: "warning",
-      });
-      console.log("--- Schedule Update Error ---");
-      console.log(`error: ${error}`);
+      console.log(`API ERROR | approveMutation ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -149,7 +135,6 @@ const ClubScheduleEdit = ({
     const endDate = `${startDate.split("T")[0]}T23:59:59`;
 
     const requestData: ClubScheduleUpdateRequest = {
-      token,
       clubId: clubData.id,
       scheduleId: scheduleData.id,
       body: {

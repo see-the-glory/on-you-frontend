@@ -109,7 +109,7 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
   const {
     isLoading: myClubInfoLoading, // true or false
     data: myClub,
-  } = useQuery<MyClubResponse>(["selectMyClubs", token], UserApi.selectMyClubs);
+  } = useQuery<MyClubResponse>(["selectMyClubs"], UserApi.getMyClubs);
 
   const goToImageSelect = (clubData: Club) => {
     return navigate("HomeStack", {

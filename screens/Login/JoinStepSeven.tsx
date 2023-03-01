@@ -79,6 +79,18 @@ const Error = styled.Text`
   margin-bottom: 20px;
 `;
 
+const FieldContentOptionLine = styled.View`
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 15px;
+`;
+
+const SkipButton = styled.TouchableOpacity``;
+
+const SkipText = styled(CustomText)`
+  color: #8e8e8e;
+`;
+
 const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   navigation: { navigate, setOptions },
   route: {
@@ -121,6 +133,18 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
     }
   };
 
+  const goToNext = () => {
+    navigate("LoginStack", {
+      screen: "JoinStepEight",
+      name,
+      email,
+      password,
+      sex,
+      birth,
+      phone: null,
+    });
+  };
+
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
@@ -156,6 +180,11 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
             blurOnSubmit={false}
           />
           {errortext === true || !phoneReg.test(phoneNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          <FieldContentOptionLine>
+            <SkipButton onPress={goToNext}>
+              <SkipText>선택하지 않고 넘어가기</SkipText>
+            </SkipButton>
+          </FieldContentOptionLine>
         </Wrap>
         <ButtonWrap>
           <Button onPress={validate} disabled={!phoneReg.test(phoneNumber)}>

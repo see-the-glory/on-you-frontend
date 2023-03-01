@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef, useLayoutEffect } from "react";
 import { Keyboard, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
 
@@ -79,35 +79,58 @@ const Error = styled.Text`
   margin-bottom: 20px;
 `;
 
+const FieldContentView = styled.View`
+  margin-top: 36px;
+`;
+
+const FieldContentLine = styled.View`
+  justify-content: center;
+  align-items: flex-start;
+  margin-bottom: 15px;
+`;
+
+const FieldContentOptionLine = styled.View`
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 15px;
+`;
+
+const ChoiceButton = styled.TouchableOpacity`
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+const FieldContentText = styled.Text`
+  font-size: 18px;
+  margin-right: 10px;
+`;
+
+const SkipButton = styled.TouchableOpacity``;
+
+const SkipText = styled(CustomText)`
+  color: #8e8e8e;
+`;
+
 const JoinStepEight: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   navigation: { navigate, setOptions },
   route: {
     params: { name, email, password, sex, birth, phone },
   },
 }) => {
-  const [church, setChurch] = useState("");
-  const [errortext, setErrortext] = useState(false);
-  const churchInputRef = createRef();
-
-  const churchReg = /^([가-힣]{1,8})(교회)$/;
+  const [check, setCheck] = useState(1);
 
   const validate = () => {
-    if (!churchReg.test(church)) {
-      setErrortext(true);
-      return;
-    } else {
-      setErrortext(false);
-      navigate("LoginStack", {
-        screen: "JoinConfirm",
-        name,
-        email,
-        password,
-        sex,
-        birth,
-        phone,
-        church,
-      });
-    }
+    navigate("LoginStack", {
+      screen: "JoinConfirm",
+      name,
+      email,
+      password,
+      sex,
+      birth,
+      phone,
+      church: "시광교회",
+    });
   };
 
   useLayoutEffect(() => {
@@ -133,20 +156,20 @@ const JoinStepEight: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
           </BorderWrap>
           <AskText>출석중인 교회를 알려주세요.</AskText>
           <SubText>멤버 관리와, 소모임 소속 기관을 알기 위함 입니다.</SubText>
-          <Input
-            placeholder="교회를 입력해주세요. ex)OO교회"
-            placeholderTextColor={"#B0B0B0"}
-            maxLength={10}
-            onChangeText={(church: string) => setChurch(church)}
-            value={church}
-            ref={churchInputRef}
-            returnKeyType="next"
-            blurOnSubmit={false}
-          />
-          {errortext === true || !churchReg.test(church) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          <FieldContentView>
+            <FieldContentLine>
+              <ChoiceButton onPress={() => setCheck(1)} activeOpacity={0.5}>
+                <FieldContentText>{`시광교회`}</FieldContentText>
+                {check === 1 ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
+              </ChoiceButton>
+            </FieldContentLine>
+            <FieldContentOptionLine>
+              <SkipText>{`지금은 시광교회 교인으로만 가입할 수 있습니다.`}</SkipText>
+            </FieldContentOptionLine>
+          </FieldContentView>
         </Wrap>
         <ButtonWrap>
-          <Button onPress={validate} disabled={!churchReg.test(church)}>
+          <Button onPress={validate}>
             <ButtonTitle>다음</ButtonTitle>
           </Button>
         </ButtonWrap>

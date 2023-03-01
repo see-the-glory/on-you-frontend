@@ -5,7 +5,7 @@ import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import { useSelector } from "react-redux";
-import { FeedComment, FeedApi, FeedCommentsResponse, User } from "../../api";
+import { FeedComment, FeedApi, FeedCommentsResponse, User, ErrorResponse, BaseResponse, FeedCommentCreationRequest, FeedCommentDeletionRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import Comment from "../../components/Comment";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -109,30 +109,19 @@ const FeedComments = ({
     data: comments,
     isLoading: commentsLoading,
     refetch: commentsRefetch,
-  } = useQuery<FeedCommentsResponse>(["getFeedComments", token, feedId], FeedApi.getFeedComments, {
+  } = useQuery<FeedCommentsResponse, ErrorResponse>(["getFeedComments", feedId], FeedApi.getFeedComments, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        if (clubId) dispatch(clubSlice.actions.updateCommentCount({ feedIndex, count: res.data.length }));
-        else dispatch(feedSlice.actions.updateCommentCount({ feedIndex, count: res.data.length }));
-      } else {
-        console.log("--- Error getFeedComments ---");
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
-      }
+      if (clubId) dispatch(clubSlice.actions.updateCommentCount({ feedIndex, count: res.data.length }));
+      else dispatch(feedSlice.actions.updateCommentCount({ feedIndex, count: res.data.length }));
     },
     onError: (error) => {
-      console.log("--- Error getFeedComments ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | getFeedComments ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
-  const createFeedCommentMutation = useMutation(FeedApi.createFeedComment);
-  const deleteFeedCommentMutation = useMutation(FeedApi.deleteFeedComment);
+  const createFeedCommentMutation = useMutation<BaseResponse, ErrorResponse, FeedCommentCreationRequest>(FeedApi.createFeedComment);
+  const deleteFeedCommentMutation = useMutation<BaseResponse, ErrorResponse, FeedCommentDeletionRequest>(FeedApi.deleteFeedComment);
 
   useLayoutEffect(() => {
     setOptions({
@@ -151,34 +140,20 @@ const FeedComments = ({
       });
     }
 
-    let requestData = {
-      token,
-      data: {
-        id: feedId,
-        content: comment.trim(),
-      },
+    let requestData: FeedCommentCreationRequest = {
+      feedId,
+      content: comment.trim(),
     };
 
     createFeedCommentMutation.mutate(requestData, {
       onSuccess: (res) => {
-        if (res.status === 200) {
-          setComment("");
-          setValidation(false);
-          commentsRefetch();
-        } else {
-          console.log("--- Error createFeedComment ---");
-          console.log(res);
-          toast.show(`Error Code: ${res.status}`, {
-            type: "warning",
-          });
-        }
+        setComment("");
+        setValidation(false);
+        commentsRefetch();
       },
       onError: (error) => {
-        console.log("--- Error createFeedComment ---");
-        console.log(error);
-        toast.show(`Error Code: ${error}`, {
-          type: "warning",
-        });
+        console.log(`API ERROR | createFeedComment ${error.code} ${error.status}`);
+        toast.show(`${error.message ?? error.code}`, { type: "warning" });
       },
     });
   };
@@ -189,34 +164,18 @@ const FeedComments = ({
         type: "warning",
       });
     }
-    let requestData = {
-      token,
-      data: {
-        id: commentId,
-      },
+    let requestData: FeedCommentDeletionRequest = {
+      commentId,
     };
 
     deleteFeedCommentMutation.mutate(requestData, {
       onSuccess: (res) => {
-        if (res.status === 200) {
-          commentsRefetch();
-          toast.show(`댓글을 삭제했습니다.`, {
-            type: "success",
-          });
-        } else {
-          console.log("--- Error deleteFeedComment ---");
-          console.log(res);
-          toast.show(`Error Code: ${res.status}`, {
-            type: "warning",
-          });
-        }
+        commentsRefetch();
+        toast.show(`댓글을 삭제했습니다.`, { type: "success" });
       },
       onError: (error) => {
-        console.log("--- Error deleteFeedComment ---");
-        console.log(error);
-        toast.show(`Error Code: ${error}`, {
-          type: "warning",
-        });
+        console.log(`API ERROR | deleteFeedComment ${error.code} ${error.status}`);
+        toast.show(`${error.message ?? error.code}`, { type: "warning" });
       },
     });
   };
