@@ -105,24 +105,6 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const toast = useToast();
   const imageSize = 85;
-  const [apnsToken, setAPNSToken] = useState<string | null>(null);
-  const [fcmToken, setFCMToken] = useState<string | null>(null);
-
-  const getFCMTokeen = async () => {
-    try {
-      const fcm = await messaging().getToken();
-      console.log(fcm);
-      setFCMToken(fcm);
-    } catch (error) {
-      toast.show(`${error}`, {
-        type: "warning",
-      });
-    }
-  };
-
-  useEffect(() => {
-    getFCMTokeen();
-  }, []);
 
   const mutation = useMutation(UserApi.updateUserInfo, {
     onSuccess: (res) => {
@@ -204,13 +186,13 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
   }, [name, birthday, phoneNumber, organizationName, imageURI]);
 
   useEffect(() => {
-    if (phoneNumber.length === 10) {
+    if (phoneNumber?.length === 10) {
       setPhoneNumber(phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3"));
     }
-    if (phoneNumber.length === 12) {
+    if (phoneNumber?.length === 12) {
       setPhoneNumber(phoneNumber.replace(/-/g, "").replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3"));
     }
-    if (phoneNumber.length === 13) {
+    if (phoneNumber?.length === 13) {
       setPhoneNumber(phoneNumber.replace(/-/g, "").replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3"));
     }
   }, [phoneNumber]);
@@ -273,10 +255,6 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
               onChangeText={(text: string) => setOrganizationName(text)}
               onEndEditing={() => setOrganizationName((prev) => prev.trim())}
             />
-          </Form>
-          <Form>
-            <Title>테스트</Title>
-            <Title>{fcmToken ?? "Null"}</Title>
           </Form>
           {/* <Form>
           <Title>관심사(3개 이상 택)</Title>

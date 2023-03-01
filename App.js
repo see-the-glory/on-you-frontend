@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider, useSelector } from "react-redux";
 import { ToastProvider } from "react-native-toast-notifications";
 import { Ionicons } from "@expo/vector-icons";
-import { Alert, LogBox, Platform, Text, TextInput, View } from "react-native";
+import { Alert, DeviceEventEmitter, LogBox, Platform, Text, TextInput, View } from "react-native";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import moment from "moment";
@@ -14,7 +14,7 @@ import "moment/locale/ko";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import store, { useAppDispatch } from "./redux/store";
 import messaging from "@react-native-firebase/messaging";
-import { init } from "./redux/slices/auth";
+import { init, updateFCMToken } from "./redux/slices/auth";
 import BackgroundColor from "react-native-background-color";
 
 LogBox.ignoreLogs(["Setting a timer"]);
@@ -83,12 +83,31 @@ const RootNavigation = () => {
     });
   };
 
+  const updateFCM = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    console.log(`FCM Enabled: ${enabled}`);
+    if (!enabled) {
+      console.log("FCM Authorization Fail");
+      return;
+    }
+    try {
+      if (Platform.OS === "android") await messaging().registerDeviceForRemoteMessages();
+      const fcmToken = await messaging().getToken();
+      console.log("FCM token:", fcmToken);
+      dispatch(updateFCMToken({ fcmToken }));
+    } catch (e) {
+      console.warn(e);
+    }
+  };
+
   const prepare = async () => {
     try {
       console.log(`App - Prepare!`);
       await dispatch(init());
       await fontSetting();
       timezoneSetting();
+      updateFCM();
       await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (e) {
       console.warn(e);

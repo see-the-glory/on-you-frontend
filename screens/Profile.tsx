@@ -3,7 +3,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
-import { UserApi, UserInfoResponse } from "../api";
+import { ErrorResponse, UserApi, UserInfoResponse } from "../api";
 import { MaterialCommunityIcons, Feather, MaterialIcons } from "@expo/vector-icons";
 import { DeviceEventEmitter } from "react-native";
 import { useToast } from "react-native-toast-notifications";
@@ -120,25 +120,14 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     isLoading: userInfoLoading, // true or false
     refetch: userInfoRefetch,
     data: userInfo,
-  } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo, {
+  } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        dispatch(updateUser({ user: res.data }));
-      } else {
-        console.log(`getUserInfo success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-        toast.show(`유저 정보를 불러오지 못했습니다. (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
+      console.log(res);
+      dispatch(updateUser({ user: res.data }));
     },
     onError: (error) => {
-      console.log("--- Error getUserInfo ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | getUserInfo ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -152,13 +141,6 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
 
   const goLogout = async () => {
     DeviceEventEmitter.emit("Logout", { fcmToken });
-    const res = await dispatch(logout());
-    if (res.meta.requestStatus === "fulfilled") {
-      dispatch(feedSlice.actions.deleteFeed());
-      toast.show(`로그아웃 되었습니다.`, { type: "success" });
-    } else {
-      toast.show(`로그아웃에 실패했습니다.`, { type: "warning" });
-    }
   };
 
   const goToScreen = (screen?: string) => {
