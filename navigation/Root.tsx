@@ -122,7 +122,7 @@ const Root = () => {
       if (res.meta.requestStatus === "fulfilled") {
         toast.show(`로그아웃 되었습니다.`, { type: "success" });
         try {
-          // queryClient.invalidateQueries(["feeds"]);
+          queryClient.clear();
           dispatch(feedSlice.actions.deleteFeed());
           if (fcmToken) {
             await messaging().deleteToken(fcmToken);

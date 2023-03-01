@@ -86,6 +86,8 @@ const Login: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation:
         if (token) await dispatch(login({ token }));
       } else if (res.status === 400) {
         toast.show(`아이디와 비밀번호가 잘못되었습니다.`, { type: "warning" });
+      } else if (res.status === 500) {
+        toast.show(`알 수 없는 오류`, { type: "warning" });
       }
     },
     onError: (error) => {
