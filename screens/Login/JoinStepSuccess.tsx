@@ -6,18 +6,22 @@ import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
 import { login } from "../../redux/slices/auth";
+import CustomText from "../../components/CustomText";
 
 const Container = styled.View`
   width: 100%;
-  height: 95%;
+  height: 100%;
   align-items: center;
   justify-content: space-between;
-  background-color: #fff;
-  padding-horizontal: 20px;
-  padding-top: 30px;
+  padding-top: 15px;
 `;
 
 const Wrap = styled.View`
+  width: 100%;
+  padding: 0 20px;
+`;
+
+const ButtonWrap = styled.View`
   width: 100%;
 `;
 
@@ -51,14 +55,16 @@ const Button = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 48px;
+  height: 68px;
+  padding-bottom: 8px;
   background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
 `;
 
-const ButtonTitle = styled.Text`
+const ButtonTitle = styled(CustomText)`
+  font-family: "NotoSansKR-Bold";
+  font-size: 20px;
+  line-height: 24px;
   color: #fff;
-  font-size: 18px;
-  font-weight: 700;
 `;
 
 const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
@@ -106,11 +112,11 @@ const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
         <AskText>가입이 완료되었습니다.</AskText>
         <SubText>온유에 오신 것을 환영합니다 :&#41;</SubText>
       </Wrap>
-      <Wrap>
+      <ButtonWrap>
         <Button onPress={onSubmit}>
           <ButtonTitle>시작하기</ButtonTitle>
         </Button>
-      </Wrap>
+      </ButtonWrap>
     </Container>
   );
 };
