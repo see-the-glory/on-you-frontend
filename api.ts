@@ -619,7 +619,10 @@ const deleteClubSchedule = (req: ClubScheduleDeletionRequest) => axios.delete<st
 const joinOrCancelClubSchedule = (req: ClubScheduleJoinOrCancelRequest) => axios.post<string, BaseResponse>(`/api/clubs/${req.clubId}/schedules/${req.scheduleId}/joinOrCancel`);
 
 // Profile API
-const getUserInfo = ({ queryKey }: any) => axios.get<string, UserInfoResponse>(`/api/user`);
+const getUserInfo = ({ queryKey }: any) => {
+  const [_key, token]: [string, string] = queryKey;
+  return axios.get<string, UserInfoResponse>(`/api/user`, { headers: { Authorization: token } });
+};
 const updateUserInfo = (req: UserInfoRequest) => {
   const body = new FormData();
 
@@ -664,12 +667,12 @@ const updateTargetToken = (req: TargetTokenUpdateRequest) => axios.post<string, 
 
 // Feed Option
 const reportFeed = (req: FeedReportRequest) => axios.put<string, BaseResponse>(`/api/feeds/${req.feedId}/report?reason=${req.reason}`);
-const likeFeed = (req: FeedLikeRequest) => axios.post<string, BaseResponse>(`/api/feeds/${req.feedId}`);
+const likeFeed = (req: FeedLikeRequest) => axios.post<string, BaseResponse>(`/api/feeds/${req.feedId}/likes`);
 const deleteFeed = (req: FeedDeletionRequest) => axios.delete<string, BaseResponse>(`/api/feeds/${req.feedId}`);
 
 // Feed Comment
 const getFeedComments = ({ queryKey }: any) => {
-  const [_key, feedId]: [string, string, number] = queryKey;
+  const [_key, feedId]: [string, number] = queryKey;
   return axios.get<string, FeedCommentsResponse>(`/api/feeds/${feedId}/comments`);
 };
 const createFeedComment = (req: FeedCommentCreationRequest) => axios.post<string, BaseResponse>(`/api/feeds/${req.feedId}/comment`, req);
