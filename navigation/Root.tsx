@@ -17,6 +17,7 @@ import { DeviceEventEmitter, Platform } from "react-native";
 import { BaseResponse, ErrorResponse, TargetTokenUpdateRequest, UserApi, UserInfoResponse } from "../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import messaging from "@react-native-firebase/messaging";
+import feedSlice from "../redux/slices/feed";
 
 const Nav = createNativeStackNavigator();
 
@@ -122,6 +123,7 @@ const Root = () => {
       if (res.meta.requestStatus === "fulfilled") {
         toast.show(`로그아웃 되었습니다.`, { type: "success" });
         try {
+          dispatch(feedSlice.actions.deleteFeed());
           queryClient.clear();
           if (fcmToken) {
             await messaging().deleteToken(fcmToken);
