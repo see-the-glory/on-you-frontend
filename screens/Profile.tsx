@@ -125,7 +125,6 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     data: userInfo,
   } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
-      console.log(res);
       dispatch(updateUser({ user: res.data }));
     },
     onError: (error) => {

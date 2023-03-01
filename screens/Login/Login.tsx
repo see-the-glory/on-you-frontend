@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "react-query";
 import { CommonApi, ErrorResponse, LoginRequest, LoginResponse, UserApi, UserInfoResponse } from "../../api";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { DeviceEventEmitter, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { DeviceEventEmitter, Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
@@ -72,7 +72,7 @@ const LoginTitle = styled.Text`
   font-weight: 700;
 `;
 
-const Login: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
+const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { navigate } }) => {
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -118,6 +118,7 @@ const Login: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation:
       }}
     >
       <Container>
+        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
         <Wrap>
           <Form>
             <Title>아이디</Title>

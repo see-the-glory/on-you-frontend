@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -21,7 +21,6 @@ const Wrap = styled.View`
 
 const ButtonWrap = styled.View`
   width: 100%;
-  padding: 0px 20px;
 `;
 
 const HeaderText = styled(CustomText)`
@@ -80,7 +79,7 @@ const ButtonTitle = styled(CustomText)`
   color: #fff;
 `;
 
-const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
+const JoinStepOne: React.FC<NativeStackScreenProps<any, "JoinStepOne">> = ({ navigation: { navigate } }) => {
   const [check, setCheck] = useState(false);
   const [check2, setCheck2] = useState(false);
 
@@ -89,7 +88,7 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
   };
 
   const goToNext = () => {
-    navigate("LoginStack", {
+    navigate("SignUpStack", {
       screen: "JoinStepTwo",
     });
   };
@@ -101,6 +100,7 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
       }}
     >
       <Container>
+        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
         <Wrap>
           <HeaderText>On You에 오신 것을 환영합니다.</HeaderText>
           <HeaderText>앱 사용을 위해서는 아래의 약관동의와</HeaderText>

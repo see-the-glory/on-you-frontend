@@ -1,10 +1,11 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, createRef, useLayoutEffect } from "react";
-import { Keyboard, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
+import React, { useState, useLayoutEffect } from "react";
+import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from "react-native";
 import styled from "styled-components/native";
-import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Container = styled.View`
   width: 100%;
@@ -16,7 +17,7 @@ const Container = styled.View`
 
 const Wrap = styled.View`
   width: 100%;
-  padding: 0 20px;
+  padding: 0px 20px;
 `;
 
 const ButtonWrap = styled.View`
@@ -30,7 +31,7 @@ const BorderWrap = styled.View`
 `;
 
 const Border = styled.View`
-  width: 80%;
+  width: 50%;
   height: 2px;
   background-color: #295af5;
 `;
@@ -55,14 +56,14 @@ const Input = styled.TextInput`
   font-size: 18px;
 `;
 
-const Button = styled.TouchableOpacity`
+const Button = styled.TouchableOpacity<{ disabled: boolean }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 68px;
   padding-bottom: 8px;
-  background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
+  background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : "#295af5")};
 `;
 
 const ButtonTitle = styled(CustomText)`
@@ -70,13 +71,6 @@ const ButtonTitle = styled(CustomText)`
   font-size: 20px;
   line-height: 24px;
   color: #fff;
-`;
-
-const Error = styled.Text`
-  color: #ff6534;
-  font-size: 12px;
-  margin-top: 7px;
-  margin-bottom: 20px;
 `;
 
 const FieldContentView = styled.View`
@@ -95,12 +89,6 @@ const FieldContentOptionLine = styled.View`
   margin-bottom: 15px;
 `;
 
-const ChoiceButton = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
 const FieldContentText = styled.Text`
   font-size: 18px;
   margin-right: 10px;
@@ -112,36 +100,42 @@ const SkipText = styled(CustomText)`
   color: #8e8e8e;
 `;
 
-const JoinStepEight: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
+const ChoiceButton = styled.TouchableOpacity`
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+const JoinStepFive: React.FC<NativeStackScreenProps<any, "JoinStepFive">> = ({
   navigation: { navigate, setOptions },
   route: {
-    params: { name, email, password, sex, birth, phone },
+    params: { name, email, password },
   },
 }) => {
-  const [check, setCheck] = useState(1);
+  const [approvalMethod, setApprovalMethod] = useState<number>(0);
 
-  const validate = () => {
-    navigate("LoginStack", {
-      screen: "JoinConfirm",
+  const goToNext = () => {
+    let sex = null;
+    if (approvalMethod === 1) sex = "남성";
+    if (approvalMethod === 2) sex = "여성";
+    navigate("SignUpStack", {
+      screen: "JoinStepSix",
       name,
       email,
       password,
       sex,
-      birth,
-      phone,
-      church: "시광교회",
     });
   };
 
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepSeven", name, email, password, sex, birth, phone })}>
+        <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinStepFour", name, email, password })}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),
     });
-  }, [name, email, password, sex, birth, phone]);
+  }, [name, email, password]);
 
   return (
     <TouchableWithoutFeedback
@@ -150,26 +144,35 @@ const JoinStepEight: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
       }}
     >
       <Container>
+        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
         <Wrap>
           <BorderWrap>
             <Border></Border>
           </BorderWrap>
-          <AskText>출석중인 교회를 알려주세요.</AskText>
-          <SubText>멤버 관리와, 소모임 소속 기관을 알기 위함 입니다.</SubText>
+          <AskText>성별이 어떻게 되시나요?</AskText>
+          <SubText>멤버 관리와, 동명이인 구분을 위함 입니다.</SubText>
           <FieldContentView>
             <FieldContentLine>
-              <ChoiceButton onPress={() => setCheck(1)} activeOpacity={0.5}>
-                <FieldContentText>{`시광교회`}</FieldContentText>
-                {check === 1 ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
+              <ChoiceButton onPress={() => setApprovalMethod((prev) => (prev === 1 ? 0 : 1))} activeOpacity={0.5}>
+                <FieldContentText> 남성</FieldContentText>
+                {approvalMethod === 1 ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
+              </ChoiceButton>
+            </FieldContentLine>
+            <FieldContentLine>
+              <ChoiceButton onPress={() => setApprovalMethod((prev) => (prev === 2 ? 0 : 2))} activeOpacity={0.5}>
+                <FieldContentText> 여성</FieldContentText>
+                {approvalMethod === 2 ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
               </ChoiceButton>
             </FieldContentLine>
             <FieldContentOptionLine>
-              <SkipText>{`지금은 시광교회 교인으로만 가입할 수 있습니다.`}</SkipText>
+              <SkipButton onPress={goToNext}>
+                <SkipText>선택하지 않고 넘어가기</SkipText>
+              </SkipButton>
             </FieldContentOptionLine>
           </FieldContentView>
         </Wrap>
         <ButtonWrap>
-          <Button onPress={validate}>
+          <Button onPress={goToNext} disabled={approvalMethod === 0}>
             <ButtonTitle>다음</ButtonTitle>
           </Button>
         </ButtonWrap>
@@ -178,4 +181,4 @@ const JoinStepEight: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   );
 };
 
-export default JoinStepEight;
+export default JoinStepFive;

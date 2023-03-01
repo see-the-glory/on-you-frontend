@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useLayoutEffect } from "react";
-import { TouchableOpacity } from "react-native";
+import { StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Entypo } from "@expo/vector-icons";
 import { useMutation } from "react-query";
@@ -88,7 +88,7 @@ const Button = styled.TouchableOpacity`
   width: 100%;
   height: 68px;
   padding-bottom: 8px;
-  background-color: #295AF5;
+  background-color: #295af5;
 `;
 
 const ButtonTitle = styled(CustomText)`
@@ -98,7 +98,7 @@ const ButtonTitle = styled(CustomText)`
   color: #fff;
 `;
 
-const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
+const JoinConfirm: React.FC<NativeStackScreenProps<any, "JoinConfirm">> = ({
   navigation: { navigate, setOptions },
   route: {
     params: { name, email, password, sex, birth, phone, church },
@@ -109,7 +109,7 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   const mutation = useMutation(UserApi.registerUserInfo, {
     onSuccess: (res) => {
       if (res.status === 200) {
-        navigate("LoginStack", {
+        navigate("SignUpStack", {
           screen: "JoinStepSuccess",
           email,
           password,
@@ -158,7 +158,7 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepEight", name, email, password, sex, birth, phone, church })}>
+        <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinStepEight", name, email, password, sex, birth, phone, church })}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),
@@ -167,6 +167,7 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
 
   return (
     <Container>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <Wrap>
         <AskText>입력 정보가 모두 일치한가요?</AskText>
         <SubText>잘못 입력된 정보는 뒤로가기로 수정할 수 있습니다.</SubText>

@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef, useEffect } from "react";
+import { StatusBar } from "react-native";
 import styled from "styled-components/native";
 
 const Container = styled.View`
@@ -75,6 +76,7 @@ const FindIdResult: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigati
 
   return (
     <Container>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <TextWrap>
         <NoticeText>해당 정보로 가입된 아이디입니다.</NoticeText>
         <EmailText>{userEmail.email}</EmailText>

@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, useEffect, createRef, useLayoutEffect } from "react";
-import { Keyboard, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
+import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from "react-native";
 import styled from "styled-components/native";
 import { Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
@@ -16,7 +16,7 @@ const Container = styled.View`
 
 const Wrap = styled.View`
   width: 100%;
-  padding: 0 20px;
+  padding: 0px 20px;
 `;
 
 const ButtonWrap = styled.View`
@@ -55,14 +55,14 @@ const Input = styled.TextInput`
   font-size: 18px;
 `;
 
-const Button = styled.TouchableOpacity`
+const Button = styled.TouchableOpacity<{ disabled: boolean }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 68px;
   padding-bottom: 8px;
-  background-color: #295AF5;
+  background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : "#295af5")};
 `;
 
 const ButtonTitle = styled(CustomText)`
@@ -91,7 +91,7 @@ const SkipText = styled(CustomText)`
   color: #8e8e8e;
 `;
 
-const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
+const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
   navigation: { navigate, setOptions },
   route: {
     params: { name, email, password, sex, birth },
@@ -121,7 +121,7 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
       return;
     } else {
       setErrortext(false);
-      navigate("LoginStack", {
+      navigate("SignUpStack", {
         screen: "JoinStepEight",
         name,
         email,
@@ -134,7 +134,7 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   };
 
   const goToNext = () => {
-    navigate("LoginStack", {
+    navigate("SignUpStack", {
       screen: "JoinStepEight",
       name,
       email,
@@ -148,7 +148,7 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepSix", name, email, password, sex, birth })}>
+        <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinStepSix", name, email, password, sex, birth })}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),
@@ -162,6 +162,7 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
       }}
     >
       <Container>
+        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
         <Wrap>
           <BorderWrap>
             <Border></Border>

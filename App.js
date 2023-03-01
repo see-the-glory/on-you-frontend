@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import Root from "./navigation/Root";
-import AuthStack from "./navigation/AuthStack";
+import Auth from "./navigation/Auth";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider, useSelector } from "react-redux";
 import { ToastProvider } from "react-native-toast-notifications";
 import { Ionicons } from "@expo/vector-icons";
-import { Alert, DeviceEventEmitter, LogBox, Platform, Text, TextInput, View } from "react-native";
+import { Alert, LogBox, Platform, Text, TextInput, View } from "react-native";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import moment from "moment";
@@ -133,7 +133,7 @@ const RootNavigation = () => {
 
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      {token === null ? <AuthStack /> : <Root />}
+      {token === null ? <Auth /> : <Root />}
     </View>
   );
 };

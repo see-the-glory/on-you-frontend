@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
+import { StatusBar } from "react-native";
 import { useMutation } from "react-query";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
@@ -47,7 +48,7 @@ const PwTitle = styled.Text`
   font-weight: 700;
 `;
 
-const FindLoginInfo: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
+const FindLoginInfo: React.FC<NativeStackScreenProps<any, "FindLoginInfo">> = ({ navigation: { navigate } }) => {
   const [active, setActive] = useState(false);
 
   const goToFindId = () => {
@@ -64,6 +65,7 @@ const FindLoginInfo: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ nav
 
   return (
     <Container>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <IdButton onPress={goToFindId} onPressIn={() => setActive(true)}>
         <IdTitle>아이디 찾기</IdTitle>
       </IdButton>

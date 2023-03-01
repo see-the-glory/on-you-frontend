@@ -154,7 +154,7 @@ const ClubTopTabs = ({
       });
       return;
     }
-    navigate("HomeStack", {
+    navigate("FeedStack", {
       screen: "ImageSelecter",
       userId: me?.id,
       clubId: data.id,

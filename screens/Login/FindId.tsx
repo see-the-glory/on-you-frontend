@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef, useEffect } from "react";
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
 import { useMutation, useQuery } from "react-query";
 import { UserApi, FindIdRequest } from "../../api";
 import styled from "styled-components/native";
@@ -113,6 +113,7 @@ const FindId: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
       }}
     >
       <Container>
+        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
         <Form>
           <Title>이름</Title>
           <Input

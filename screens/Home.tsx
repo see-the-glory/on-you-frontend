@@ -166,11 +166,11 @@ const Home: React.FC<HomeScreenProps> = () => {
 
   const goToUpdateFeed = () => {
     closeMyFeedOption();
-    navigation.navigate("HomeStack", { screen: "ModifiyFeed", feedData: selectFeedData });
+    navigation.navigate("FeedStack", { screen: "ModifiyFeed", feedData: selectFeedData });
   };
 
   const goToFeedCreation = useCallback(() => {
-    navigation.navigate("HomeStack", {
+    navigation.navigate("FeedStack", {
       screen: "MyClubSelector",
       userId: me?.id,
     });
