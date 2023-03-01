@@ -16,22 +16,25 @@ import { useAppDispatch } from "../redux/store";
 import { logout, updateFCMToken, updateUser } from "../redux/slices/auth";
 import { DeviceEventEmitter, Platform } from "react-native";
 import { BaseResponse, ErrorResponse, TargetTokenUpdateRequest, UserApi, UserInfoResponse } from "../api";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import messaging from "@react-native-firebase/messaging";
+import feedSlice from "../redux/slices/feed";
 
 const Nav = createNativeStackNavigator();
 
 const Root = () => {
   const token = useSelector((state: RootState) => state.auth.token);
+  const fcmToken = useSelector((state: RootState) => state.auth.fcmToken);
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const queryClient = useQueryClient();
 
   useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo"], UserApi.getUserInfo, {
     onSuccess: (res) => {
       if (res.data) dispatch(updateUser({ user: res.data }));
     },
     onError: (error) => {
-      console.log(`API ERROR | getClubs ${error.code} ${error.status}`);
+      console.log(`API ERROR | getUserInfo ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
     enabled: token ? true : false,
@@ -40,7 +43,6 @@ const Root = () => {
   const updateTargetTokenMutation = useMutation<BaseResponse, ErrorResponse, TargetTokenUpdateRequest>(UserApi.updateTargetToken);
 
   const updateFCM = async () => {
-    let fcmToken;
     const authStatus = await messaging().requestPermission();
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
     console.log(`FCM Enabled: ${enabled}`);
@@ -50,32 +52,18 @@ const Root = () => {
     }
     try {
       if (Platform.OS === "android") await messaging().registerDeviceForRemoteMessages();
-      fcmToken = await messaging().getToken();
+      const fcmToken = await messaging().getToken();
       console.log("FCM token:", fcmToken);
       dispatch(updateFCMToken({ fcmToken }));
     } catch (e) {
       console.warn(e);
     }
-
-    if (fcmToken) {
-      const requestData: TargetTokenUpdateRequest = {
-        targetToken: fcmToken,
-      };
-      updateTargetTokenMutation.mutate(requestData, {
-        onSuccess: (res) => {},
-        onError: (error) => {
-          console.log(`API ERROR | updateTargetToken ${error.code} ${error.status}`);
-          toast.show(`${error.message ?? error.code}`, { type: "warning" });
-        },
-      });
-    }
-
-    return fcmToken;
   };
 
   useEffect(() => {
     console.log(`Root - useEffect!`);
-    console.log(`Root - Axios Setting`);
+
+    // Axios Setting
     axios.defaults.baseURL = "http://3.39.190.23:8080";
     if (token) axios.defaults.headers.common["Authorization"] = token;
     axios.defaults.headers.common["Content-Type"] = "application/json";
@@ -101,37 +89,50 @@ const Root = () => {
               toast.show(`잘못된 요청입니다`, { type: "warning" });
             }
           } else if (status === 401) {
-            console.log(error);
-            const res = await dispatch(logout());
-            if (res.meta.requestStatus === "fulfilled") {
-              DeviceEventEmitter.emit("Logout", { fcmToken });
-              error.response.data.message = "중복 로그인이 감지되어\n로그아웃 합니다.";
-              toast.show(`중복 로그인이 감지되어\n로그아웃 합니다.`, { type: "warning" });
-            } else {
-              error.response.data.message = "로그아웃 실패";
-              toast.show(`로그아웃 실패`, { type: "warning" });
-            }
+            toast.show(`중복 로그인이 감지되어\n로그아웃 합니다.`, { type: "warning" });
+            DeviceEventEmitter.emit("Logout", { fcmToken });
           } else if (status === 500) {
-            error.response.data.message = "알 수 없는 오류";
+            // error.response.data.message = "알 수 없는 오류";
             toast.show(`알 수 없는 오류`, { type: "warning" });
           }
-          return { ...error.response?.data, status, code: error.code };
+          return Promise.reject({ ...error.response?.data, status, code: error.code });
         } else {
           toast.show(`요청시간이 만료되었습니다.`, { type: "warning" });
-          return { message: "요청시간이 만료되었습니다.", code: error.code };
+          return Promise.reject({ message: "요청시간이 만료되었습니다.", code: error.code });
         }
       }
     );
 
-    console.log(`Root - FCM Setting`);
-    updateFCM();
+    if (fcmToken) {
+      const requestData: TargetTokenUpdateRequest = {
+        targetToken: fcmToken,
+      };
+      updateTargetTokenMutation.mutate(requestData, {
+        onSuccess: (res) => {},
+        onError: (error) => {
+          console.log(`API ERROR | updateTargetToken ${error.code} ${error.status}`);
+          toast.show(`${error.message ?? error.code}`, { type: "warning" });
+        },
+      });
+    }
 
     const logoutSubScription = DeviceEventEmitter.addListener("Logout", async ({ fcmToken }) => {
       console.log(`Root - Logout`);
-      try {
-        if (fcmToken) await messaging().deleteToken(fcmToken);
-      } catch (e) {
-        console.warn(e);
+      const res = await dispatch(logout());
+      if (res.meta.requestStatus === "fulfilled") {
+        toast.show(`로그아웃 되었습니다.`, { type: "success" });
+        try {
+          // queryClient.invalidateQueries(["feeds"]);
+          dispatch(feedSlice.actions.deleteFeed());
+          if (fcmToken) {
+            await messaging().deleteToken(fcmToken);
+            await updateFCM();
+          } else console.log(`Root - Logout : FCM Token is Null`);
+        } catch (e) {
+          console.warn(e);
+        }
+      } else {
+        toast.show(`로그아웃 실패.`, { type: "warning" });
       }
     });
 
