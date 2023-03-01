@@ -3,7 +3,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
-import { UserApi, UserInfoResponse } from "../api";
+import { ErrorResponse, UserApi, UserInfoResponse } from "../api";
 import { MaterialCommunityIcons, Feather, MaterialIcons } from "@expo/vector-icons";
 import { DeviceEventEmitter } from "react-native";
 import { useToast } from "react-native-toast-notifications";
@@ -40,9 +40,10 @@ const Title = styled(CustomText)`
 `;
 
 const Email = styled(CustomText)`
-  font-size: 11px;
+  font-size: 14px;
   line-height: 18px;
   color: #878787;
+  margin-top: 3px;
   margin-bottom: 5px;
 `;
 
@@ -53,7 +54,7 @@ const MenuWrapper = styled.View`
 const MenuItem = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  padding: 10px 20px;
+  padding: 10px 17px 10px 20px;
   justify-content: center;
   align-items: center;
 `;
@@ -76,16 +77,17 @@ const TouchMenu = styled.View`
 const LogoutButton = styled.TouchableOpacity`
   justify-content: center;
   align-self: flex-end;
-  width: 80px;
-  height: 30px;
-  margin: 10px 25px 10px 0px;
+  width: 76px;
+  height: 27px;
+  padding-bottom: 2px;
+  margin: 13px 22px 10px 0px;
   border-radius: 15px;
   background-color: #000;
 `;
 
 const LogoutText = styled.Text`
   text-align: center;
-  font-size: 16px;
+  font-size: 15px;
   color: #fff;
 `;
 
@@ -98,6 +100,7 @@ const EditBox = styled.View`
   flex: 1;
   align-items: flex-end;
   justify-content: center;
+  margin-top: 3px;
 `;
 
 const EditButton = styled.TouchableWithoutFeedback``;
@@ -119,25 +122,14 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     isLoading: userInfoLoading, // true or false
     refetch: userInfoRefetch,
     data: userInfo,
-  } = useQuery<UserInfoResponse>(["getUserInfo", token], UserApi.getUserInfo, {
+  } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        dispatch(updateUser({ user: res.data }));
-      } else {
-        console.log(`getUserInfo success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-        toast.show(`유저 정보를 불러오지 못했습니다. (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
+      console.log(res);
+      dispatch(updateUser({ user: res.data }));
     },
     onError: (error) => {
-      console.log("--- Error getUserInfo ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | getUserInfo ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -224,7 +216,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
               {item.icon}
               <MenuItemText>{item.title}</MenuItemText>
               <ChevronBox>
-                <Feather name="chevron-right" color="#A0A0A0" size={20} />
+                <Feather name="chevron-right" color="#CCCCCC" size={22} />
               </ChevronBox>
             </MenuItem>
           </TouchMenu>

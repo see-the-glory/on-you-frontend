@@ -46,7 +46,7 @@ const Info: React.FC<NativeStackScreenProps<any, "Info">> = ({ navigation: { nav
         <MenuItem onPress={() => openWebView("https://thin-helium-f6d.notion.site/cc73961fd43141d5baab97d1003a4cb3")}>
           <MenuItemText>개인정보처리방침</MenuItemText>
           <ChevronBox>
-            <Feather name="chevron-right" color="#A0A0A0" size={20} />
+            <Feather name="chevron-right" color="#CCCCCC" size={22} />
           </ChevronBox>
         </MenuItem>
       </TouchMenu>
@@ -54,7 +54,7 @@ const Info: React.FC<NativeStackScreenProps<any, "Info">> = ({ navigation: { nav
         <MenuItem onPress={() => openWebView("https://thin-helium-f6d.notion.site/5b292059b0d04e31925af2fd14e8271b")}>
           <MenuItemText>약관</MenuItemText>
           <ChevronBox>
-            <Feather name="chevron-right" color="#A0A0A0" size={20} />
+            <Feather name="chevron-right" color="#CCCCCC" size={22} />
           </ChevronBox>
         </MenuItem>
       </TouchMenu>
