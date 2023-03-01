@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef, useLayoutEffect } from "react";
-import { Keyboard, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
+import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from "react-native";
 import styled from "styled-components/native";
 import { Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
@@ -16,7 +16,7 @@ const Container = styled.View`
 
 const Wrap = styled.View`
   width: 100%;
-  padding: 0 20px;
+  padding: 0px 20px;
 `;
 
 const ButtonWrap = styled.View`
@@ -30,7 +30,7 @@ const BorderWrap = styled.View`
 `;
 
 const Border = styled.View`
-  width: 30%;
+  width: 20%;
   height: 2px;
   background-color: #295af5;
 `;
@@ -62,7 +62,7 @@ const Button = styled.TouchableOpacity`
   width: 100%;
   height: 68px;
   padding-bottom: 8px;
-  background-color: ${(props) => (props.disabled ? "#d3d3d3" : "#295AF5")};
+  background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
 `;
 
 const ButtonTitle = styled(CustomText)`
@@ -76,33 +76,28 @@ const Error = styled.Text`
   color: #ff6534;
   font-size: 12px;
   margin-top: 7px;
-  margin-bottom: 20px;
 `;
 
-const JoinStepFour: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
+const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
   navigation: { navigate, setOptions },
   route: {
-    params: { name, email },
+    params: { name },
   },
 }) => {
-  const [userPw, setUserPw] = useState("");
-  const [userPw2, setUserPw2] = useState("");
-  const [errortext, setErrortext] = useState(false);
-
-  const pwInputRef = createRef();
-  const pwReg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
-
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState(false);
+  const emailInputRef = createRef();
+  const emailReg = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
   const validate = () => {
-    if (!pwReg.test(userPw) || !pwReg.test(userPw2) || userPw !== userPw2 || userPw.length < 8 || userPw2.length < 8) {
-      setErrortext(true);
+    if (!emailReg.test(email)) {
+      setError(true);
       return;
     } else {
-      setErrortext(false);
-      navigate("LoginStack", {
-        screen: "JoinStepFive",
+      setError(false);
+      navigate("SignUpStack", {
+        screen: "JoinStepFour",
         name,
         email,
-        password: userPw,
       });
     }
   };
@@ -110,12 +105,12 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepThree", name, email })}>
+        <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinStepTwo", name })}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),
     });
-  }, [name, email]);
+  }, [name]);
 
   return (
     <TouchableWithoutFeedback
@@ -124,39 +119,26 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
       }}
     >
       <Container>
+        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
         <Wrap>
           <BorderWrap>
             <Border></Border>
           </BorderWrap>
-          <AskText>비밀번호를 설정해주세요.</AskText>
-          <SubText>로그인 정보로 활용됩니다.</SubText>
+          <AskText>이메일을 적어주세요.</AskText>
+          <SubText>로그인 ID로 활용됩니다.</SubText>
           <Input
-            placeholder="영문, 숫자, 특수문자 포함 8자 이상"
+            placeholder="example@gmail.com"
             placeholderTextColor={"#B0B0B0"}
-            secureTextEntry={true}
             autoCorrect={false}
-            onChangeText={(pw: string) => setUserPw(pw)}
-            ref={pwInputRef}
+            onChangeText={(email: string) => setEmail(email)}
+            ref={emailInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
           />
-          {errortext === true || !pwReg.test(userPw) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
-          <AskText>비밀번호를 다시 입력해주세요.</AskText>
-          <Input
-            placeholder="영문, 숫자, 특수문자 포함 8자 이상"
-            placeholderTextColor={"#B0B0B0"}
-            secureTextEntry={true}
-            autoCorrect={false}
-            onChangeText={(pw: string) => setUserPw2(pw)}
-            ref={pwInputRef}
-            returnKeyType="next"
-            blurOnSubmit={false}
-          />
-          {/* {errortext === true || !pwReg.test(userPw2) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null} */}
-          {userPw !== userPw2 ? <Error>비밀번호가 일치하지 않습니다.</Error> : null}
+          {error === true || !emailReg.test(email) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
         </Wrap>
         <ButtonWrap>
-          <Button onPress={validate} disabled={!pwReg.test(userPw) || !pwReg.test(userPw2) || userPw !== userPw2 || userPw.length < 8 || userPw2.length < 8}>
+          <Button onPress={validate} disabled={!emailReg.test(email)}>
             <ButtonTitle>다음</ButtonTitle>
           </Button>
         </ButtonWrap>
@@ -165,4 +147,4 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   );
 };
 
-export default JoinStepFour;
+export default JoinStepThree;

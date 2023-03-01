@@ -1,10 +1,8 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, createRef, useLayoutEffect } from "react";
-import { Keyboard, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
+import React, { useState, createRef } from "react";
+import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
-import { Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
-import CustomTextInput from "../../components/CustomTextInput";
 
 const Container = styled.View`
   width: 100%;
@@ -16,7 +14,7 @@ const Container = styled.View`
 
 const Wrap = styled.View`
   width: 100%;
-  padding: 0 20px;
+  padding: 0px 20px;
 `;
 
 const ButtonWrap = styled.View`
@@ -30,7 +28,7 @@ const BorderWrap = styled.View`
 `;
 
 const Border = styled.View`
-  width: 20%;
+  width: 10%;
   height: 2px;
   background-color: #295af5;
 `;
@@ -62,7 +60,7 @@ const Button = styled.TouchableOpacity`
   width: 100%;
   height: 68px;
   padding-bottom: 8px;
-  background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
+  background-color: ${(props) => (props.disabled ? "#d3d3d3" : "#295AF5")};
 `;
 
 const ButtonTitle = styled(CustomText)`
@@ -78,39 +76,25 @@ const Error = styled.Text`
   margin-top: 7px;
 `;
 
-const JoinStepThree: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
-  navigation: { navigate, setOptions },
-  route: {
-    params: { name },
-  },
-}) => {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState(false);
-  const emailInputRef = createRef();
-  const emailReg = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
+const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ navigation: { navigate } }) => {
+  const [userName, setUserName] = useState("");
+  const [errortext, setErrortext] = useState(false);
+
+  const nameInputRef = createRef();
+  const nameReg = /^[가-힣]+$/;
+
   const validate = () => {
-    if (!emailReg.test(email)) {
-      setError(true);
+    if (!nameReg.test(userName)) {
+      setErrortext(true);
       return;
     } else {
-      setError(false);
-      navigate("LoginStack", {
-        screen: "JoinStepFour",
-        name,
-        email,
+      setErrortext(false);
+      navigate("SignUpStack", {
+        screen: "JoinStepThree",
+        name: userName,
       });
     }
   };
-
-  useLayoutEffect(() => {
-    setOptions({
-      headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepTwo", name })}>
-          <Entypo name="chevron-thin-left" size={20} color="black" />
-        </TouchableOpacity>
-      ),
-    });
-  }, [name]);
 
   return (
     <TouchableWithoutFeedback
@@ -119,25 +103,28 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
       }}
     >
       <Container>
+        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
         <Wrap>
           <BorderWrap>
             <Border></Border>
           </BorderWrap>
-          <AskText>이메일을 적어주세요.</AskText>
-          <SubText>로그인 ID로 활용됩니다.</SubText>
+          <AskText>성함이 어떻게 되시나요?</AskText>
+          <SubText>정확한 성함을 입력해 주세요.</SubText>
           <Input
-            placeholder="example@gmail.com"
-            placeholderTextColor={"#B0B0B0"}
+            keyboardType={"name-phone-pad"}
+            placeholder="홍길동"
+            maxLength={10}
             autoCorrect={false}
-            onChangeText={(email: string) => setEmail(email)}
-            ref={emailInputRef}
+            onChangeText={(UserName: string) => setUserName(UserName)}
+            ref={nameInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
+            placeholderTextColor={"#B0B0B0"}
           />
-          {error === true || !emailReg.test(email) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          {errortext === true || !nameReg.test(userName) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
         </Wrap>
         <ButtonWrap>
-          <Button onPress={validate} disabled={!emailReg.test(email)}>
+          <Button onPress={validate} disabled={!nameReg.test(userName)}>
             <ButtonTitle>다음</ButtonTitle>
           </Button>
         </ButtonWrap>
@@ -146,4 +133,4 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   );
 };
 
-export default JoinStepThree;
+export default JoinStepTwo;

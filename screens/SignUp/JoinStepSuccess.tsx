@@ -7,6 +7,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
 import { login } from "../../redux/slices/auth";
 import CustomText from "../../components/CustomText";
+import { StatusBar } from "react-native";
 
 const Container = styled.View`
   width: 100%;
@@ -18,7 +19,7 @@ const Container = styled.View`
 
 const Wrap = styled.View`
   width: 100%;
-  padding: 0 20px;
+  padding: 0px 20px;
 `;
 
 const ButtonWrap = styled.View`
@@ -67,7 +68,7 @@ const ButtonTitle = styled(CustomText)`
   color: #fff;
 `;
 
-const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
+const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "JoinStepSuccess">> = ({
   navigation: { navigate },
   route: {
     params: { email, password, token },
@@ -105,6 +106,7 @@ const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
 
   return (
     <Container>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <Wrap>
         <BorderWrap>
           <Border></Border>

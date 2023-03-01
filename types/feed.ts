@@ -22,7 +22,6 @@ export type FeedStackParamList = {
   FeedUpdate: { feedData: Feed };
   FeedReport: { feedData: Feed };
   Tabs: {};
-  HomeStack: {};
 };
 
 export type HomeScreenProps = NativeStackScreenProps<FeedStackParamList, "Home">;

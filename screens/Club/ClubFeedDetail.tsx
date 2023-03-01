@@ -104,7 +104,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
 
   const goToUpdateFeed = () => {
     closeMyFeedOption();
-    navigate("HomeStack", { screen: "ModifiyFeed", feedData: selectFeedData });
+    navigate("FeedStack", { screen: "ModifiyFeed", feedData: selectFeedData });
   };
 
   const openFeedOption = (feedData: Feed) => {

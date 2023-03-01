@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
+import { StatusBar } from "react-native";
 import styled from "styled-components/native";
 
 const Container = styled.View`
@@ -56,7 +57,7 @@ const LoginTitle = styled.Text`
   font-weight: 700;
 `;
 
-const Main: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate } }) => {
+const Main: React.FC<NativeStackScreenProps<any, "Main">> = ({ navigation: { navigate } }) => {
   const goToLogin = () => {
     navigate("LoginStack", {
       screen: "Login",
@@ -64,13 +65,14 @@ const Main: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: 
   };
 
   const goToJoinStepOne = () => {
-    navigate("LoginStack", {
+    navigate("SignUpStack", {
       screen: "JoinStepOne",
     });
   };
 
   return (
     <Container>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <Logo source={require("../../assets/logo.png")} resizeMode="cover">
         <BtnWrap>
           <JoinButton onPress={goToJoinStepOne}>

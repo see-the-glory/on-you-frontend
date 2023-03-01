@@ -112,7 +112,7 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
   } = useQuery<MyClubResponse>(["selectMyClubs"], UserApi.getMyClubs);
 
   const goToImageSelect = (clubData: Club) => {
-    return navigate("HomeStack", {
+    return navigate("FeedStack", {
       screen: "ImageSelecter",
       userId: userId,
       clubId: clubData.id,

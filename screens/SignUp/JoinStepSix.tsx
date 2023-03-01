@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, useEffect, createRef, useLayoutEffect } from "react";
-import { Keyboard, TouchableWithoutFeedback, TouchableOpacity } from "react-native";
+import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from "react-native";
 import styled from "styled-components/native";
 import { Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
@@ -16,7 +16,7 @@ const Container = styled.View`
 
 const Wrap = styled.View`
   width: 100%;
-  padding: 0 20px;
+  padding: 0px 20px;
 `;
 
 const ButtonWrap = styled.View`
@@ -91,7 +91,7 @@ const SkipText = styled(CustomText)`
   color: #8e8e8e;
 `;
 
-const JoinStepSix: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
+const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
   navigation: { navigate, setOptions },
   route: {
     params: { name, email, password, sex },
@@ -121,7 +121,7 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
       return;
     } else {
       setErrortext(false);
-      navigate("LoginStack", {
+      navigate("SignUpStack", {
         screen: "JoinStepSeven",
         name,
         email,
@@ -133,7 +133,7 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   };
 
   const goToNext = () => {
-    navigate("LoginStack", {
+    navigate("SignUpStack", {
       screen: "JoinStepSeven",
       name,
       email,
@@ -146,7 +146,7 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "JoinStepFive", name, email, password, sex })}>
+        <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinStepFive", name, email, password, sex })}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),
@@ -160,6 +160,7 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
       }}
     >
       <Container>
+        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
         <Wrap>
           <BorderWrap>
             <Border></Border>

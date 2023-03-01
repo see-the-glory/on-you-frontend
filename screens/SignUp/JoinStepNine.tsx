@@ -2,6 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import CustomText from "../../components/CustomText";
 import styled from "styled-components/native";
+import { StatusBar } from "react-native";
 
 const Container = styled.View`
   width: 100%;
@@ -83,9 +84,9 @@ const CategoryLabel = styled.TouchableOpacity<{ selected?: boolean }>`
   margin: 0px 5px;
 `;
 
-const JoinStepNine: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navigation: { navigate }, route: { params: name, email, password, sex, birth, phone, church } }) => {
+const JoinStepNine: React.FC<NativeStackScreenProps<any, "JoinStepNine">> = ({ navigation: { navigate }, route: { params: name, email, password, sex, birth, phone, church } }) => {
   const goToNext = () => {
-    navigate("LoginStack", {
+    navigate("SignUpStack", {
       screen: "JoinConfirm",
       name,
       email,
@@ -100,6 +101,7 @@ const JoinStepNine: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navi
 
   return (
     <Container>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <Wrap>
         <BorderWrap>
           <Border></Border>

@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef, useEffect } from "react";
+import { StatusBar } from "react-native";
 import styled from "styled-components/native";
 
 const Container = styled.View`
@@ -67,6 +68,7 @@ const FindPwResult: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigati
 
   return (
     <Container>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <TextWrap>
         <NoticeText>해당 ID의 이메일 주소로</NoticeText>
         <NoticeText>임시 비밀번호를 발급해 드렸습니다.</NoticeText>
