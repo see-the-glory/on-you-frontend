@@ -18,7 +18,7 @@ const Container = styled.View`
 
 const Wrap = styled.View`
   width: 100%;
-  padding: 0 20px;
+  padding: 0px 20px;
 `;
 
 const ButtonWrap = styled.View`
