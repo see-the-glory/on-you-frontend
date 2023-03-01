@@ -8,14 +8,18 @@ import * as WebBrowser from "expo-web-browser";
 
 const Container = styled.View`
   width: 100%;
-  height: 95%;
+  height: 100%;
   align-items: center;
   justify-content: space-between;
-  padding: 0px 20px;
   padding-top: 15px;
 `;
 
 const Wrap = styled.View`
+  width: 100%;
+  padding: 0 20px;
+`;
+
+const ButtonWrap = styled.View`
   width: 100%;
 `;
 
@@ -63,13 +67,14 @@ const Button = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 48px;
+  height: 68px;
+  padding-bottom: 8px;
   background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
 `;
 
 const ButtonTitle = styled(CustomText)`
   font-family: "NotoSansKR-Bold";
-  font-size: 18px;
+  font-size: 20px;
   line-height: 24px;
   color: #fff;
 `;
@@ -143,11 +148,11 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({ navig
             </RightBox>
           </Item>
         </Wrap>
-        <Wrap>
+        <ButtonWrap>
           <Button onPress={goToNext} disabled={!check || !check2}>
             <ButtonTitle>{`다음`}</ButtonTitle>
           </Button>
-        </Wrap>
+        </ButtonWrap>
       </Container>
     </TouchableWithoutFeedback>
   );

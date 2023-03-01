@@ -8,15 +8,18 @@ import CustomTextInput from "../../components/CustomTextInput";
 
 const Container = styled.View`
   width: 100%;
-  height: 95%;
+  height: 100%;
   align-items: center;
   justify-content: space-between;
-  background-color: #fff;
-  padding-horizontal: 20px;
-  padding-top: 30px;
+  padding-top: 15px;
 `;
 
 const Wrap = styled.View`
+  width: 100%;
+  padding: 0 20px;
+`;
+
+const ButtonWrap = styled.View`
   width: 100%;
 `;
 
@@ -57,14 +60,16 @@ const Button = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 48px;
-  background-color: ${(props) => (props.disabled ? "#d3d3d3" : "#295AF5")};
+  height: 68px;
+  padding-bottom: 8px;
+  background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
 `;
 
-const ButtonTitle = styled.Text`
+const ButtonTitle = styled(CustomText)`
+  font-family: "NotoSansKR-Bold";
+  font-size: 20px;
+  line-height: 24px;
   color: #fff;
-  font-size: 18px;
-  font-weight: 700;
 `;
 
 const Error = styled.Text`
@@ -151,11 +156,11 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
           />
           {errortext === true || !birthReg.test(birthNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
         </Wrap>
-        <Wrap>
+        <ButtonWrap>
           <Button onPress={validate} disabled={!birthReg.test(birthNumber)}>
             <ButtonTitle>다음</ButtonTitle>
           </Button>
-        </Wrap>
+        </ButtonWrap>
       </Container>
     </TouchableWithoutFeedback>
   );

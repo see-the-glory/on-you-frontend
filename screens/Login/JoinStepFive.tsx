@@ -9,15 +9,18 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Container = styled.View`
   width: 100%;
-  height: 95%;
+  height: 100%;
   align-items: center;
   justify-content: space-between;
-  background-color: #fff;
-  padding-horizontal: 20px;
-  padding-top: 30px;
+  padding-top: 15px;
 `;
 
 const Wrap = styled.View`
+  width: 100%;
+  padding: 0 20px;
+`;
+
+const ButtonWrap = styled.View`
   width: 100%;
 `;
 
@@ -58,14 +61,16 @@ const Button = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 48px;
-  background-color: #295af5;
+  height: 68px;
+  padding-bottom: 8px;
+  background-color: #295AF5;
 `;
 
-const ButtonTitle = styled.Text`
+const ButtonTitle = styled(CustomText)`
+  font-family: "NotoSansKR-Bold";
+  font-size: 20px;
+  line-height: 24px;
   color: #fff;
-  font-size: 18px;
-  font-weight: 700;
 `;
 
 const FieldContentView = styled.View`
@@ -145,11 +150,11 @@ const JoinStepFive: React.FC<NativeStackScreenProps<any, "AuthStack">> = ({
             </FieldContentLine>
           </FieldContentView>
         </Wrap>
-        <Wrap>
+        <ButtonWrap>
           <Button onPress={goToNext}>
             <ButtonTitle>다음</ButtonTitle>
           </Button>
-        </Wrap>
+        </ButtonWrap>
       </Container>
     </TouchableWithoutFeedback>
   );
