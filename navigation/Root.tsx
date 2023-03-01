@@ -103,6 +103,7 @@ const Root = () => {
     );
 
     userInfoRefecth();
+    queryClient.resetQueries(["feeds"]);
 
     if (fcmToken) {
       const requestData: TargetTokenUpdateRequest = {
@@ -123,12 +124,11 @@ const Root = () => {
       if (res.meta.requestStatus === "fulfilled") {
         toast.show(`로그아웃 되었습니다.`, { type: "success" });
         try {
-          dispatch(feedSlice.actions.deleteFeed());
-          queryClient.clear();
           if (fcmToken) {
             await messaging().deleteToken(fcmToken);
             await updateFCM();
           } else console.log(`Root - Logout : FCM Token is Null`);
+          dispatch(feedSlice.actions.deleteFeed());
         } catch (e) {
           console.warn(e);
         }
