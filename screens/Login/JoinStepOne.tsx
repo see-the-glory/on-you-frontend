@@ -8,15 +8,15 @@ import * as WebBrowser from "expo-web-browser";
 
 const Container = styled.View`
   width: 100%;
-  height: 95%;
+  height: 100%;
   align-items: center;
   justify-content: space-between;
-  padding: 0px 20px;
   padding-top: 15px;
 `;
 
 const Wrap = styled.View`
   width: 100%;
+  padding: 0px 20px;
 `;
 
 const HeaderText = styled(CustomText)`
