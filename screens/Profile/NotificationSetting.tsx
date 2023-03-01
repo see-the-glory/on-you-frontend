@@ -13,22 +13,26 @@ const Container = styled.ScrollView`
 `;
 const Header = styled.View`
   padding: 10px 20px;
+  margin-top: 3px;
 `;
 const HeaderTitle = styled(CustomText)`
   font-family: "NotoSansKR-Bold";
-  font-size: 16px;
+  font-size: 18px;
   line-height: 22px;
   color: #2b2b2b;
   margin-bottom: 5px;
 `;
 
 const HeaderText = styled(CustomText)`
-  font-size: 11px;
+  font-size: 12px;
+  line-height: 16px;
   color: #b0b0b0;
+  margin-top: 1px;
 `;
 
 const Main = styled.View`
   padding: 0px 20px;
+  margin-top: 5px;
 `;
 
 const Item = styled.View`
@@ -39,17 +43,18 @@ const ItemSub = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  height: 30px;
 `;
 
 const ItemTitle = styled(CustomText)`
-  font-size: 16px;
-  line-height: 22px;
+  font-size: 18px;
+  line-height: 28px;
   color: #2b2b2b;
   margin-bottom: 5px;
 `;
 
 const ItemText = styled(CustomText)`
-  font-size: 11px;
+  font-size: 12px;
   color: #b0b0b0;
 `;
 

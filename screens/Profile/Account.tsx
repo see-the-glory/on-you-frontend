@@ -77,8 +77,8 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
 
   const handleAlert = () => {
     Alert.alert(
-      "정말 탈퇴하시겠습니까?",
-      "",
+      "탈퇴",
+      "탈퇴 후 계정 복구는 불가합니다. 정말로 탈퇴하시겠습니까?",
       [
         {
           text: "네",
@@ -113,7 +113,7 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
           <MenuItem onPress={item.onPress}>
             <MenuItemText>{item.title}</MenuItemText>
             <ChevronBox>
-              <Feather name="chevron-right" color="#A0A0A0" size={20} />
+              <Feather name="chevron-right" color="#CCCCCC" size={22} />
             </ChevronBox>
           </MenuItem>
         </TouchMenu>

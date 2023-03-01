@@ -41,9 +41,10 @@ const Title = styled(CustomText)`
 `;
 
 const Email = styled(CustomText)`
-  font-size: 11px;
+  font-size: 14px;
   line-height: 18px;
   color: #878787;
+  margin-top: 3px;
   margin-bottom: 5px;
 `;
 
@@ -54,7 +55,7 @@ const MenuWrapper = styled.View`
 const MenuItem = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  padding: 10px 20px;
+  padding: 10px 17px 10px 20px;
   justify-content: center;
   align-items: center;
 `;
@@ -77,16 +78,17 @@ const TouchMenu = styled.View`
 const LogoutButton = styled.TouchableOpacity`
   justify-content: center;
   align-self: flex-end;
-  width: 80px;
-  height: 30px;
-  margin: 10px 25px 10px 0px;
+  width: 76px;
+  height: 27px;
+  padding-bottom: 2px;
+  margin: 13px 22px 10px 0px;
   border-radius: 15px;
   background-color: #000;
 `;
 
 const LogoutText = styled.Text`
   text-align: center;
-  font-size: 16px;
+  font-size: 15px;
   color: #fff;
 `;
 
@@ -99,6 +101,7 @@ const EditBox = styled.View`
   flex: 1;
   align-items: flex-end;
   justify-content: center;
+  margin-top: 3px;
 `;
 
 const EditButton = styled.TouchableWithoutFeedback``;
@@ -203,7 +206,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
               {item.icon}
               <MenuItemText>{item.title}</MenuItemText>
               <ChevronBox>
-                <Feather name="chevron-right" color="#A0A0A0" size={20} />
+                <Feather name="chevron-right" color="#CCCCCC" size={22} />
               </ChevronBox>
             </MenuItem>
           </TouchMenu>
