@@ -29,7 +29,7 @@ const Root = () => {
   const toast = useToast();
   const queryClient = useQueryClient();
 
-  useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo"], UserApi.getUserInfo, {
+  const { refetch: userInfoRefecth } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
       if (res.data) dispatch(updateUser({ user: res.data }));
     },
@@ -37,7 +37,7 @@ const Root = () => {
       console.log(`API ERROR | getUserInfo ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
-    enabled: token ? true : false,
+    enabled: false,
   });
 
   const updateTargetTokenMutation = useMutation<BaseResponse, ErrorResponse, TargetTokenUpdateRequest>(UserApi.updateTargetToken);
@@ -103,6 +103,8 @@ const Root = () => {
       }
     );
 
+    userInfoRefecth();
+
     if (fcmToken) {
       const requestData: TargetTokenUpdateRequest = {
         targetToken: fcmToken,
@@ -123,7 +125,6 @@ const Root = () => {
         toast.show(`로그아웃 되었습니다.`, { type: "success" });
         try {
           queryClient.clear();
-          dispatch(feedSlice.actions.deleteFeed());
           if (fcmToken) {
             await messaging().deleteToken(fcmToken);
             await updateFCM();

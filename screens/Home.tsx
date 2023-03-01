@@ -294,7 +294,7 @@ const Home: React.FC<HomeScreenProps> = () => {
         likeFeed={likeFeed}
       />
     ),
-    []
+    [me]
   );
 
   return feedsLoading ? (
