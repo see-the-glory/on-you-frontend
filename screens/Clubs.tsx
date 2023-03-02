@@ -183,11 +183,9 @@ interface ClubSortItem {
 }
 
 const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
-    token,
     categoryId: 0,
     minMember: null,
     maxMember: null,

@@ -219,7 +219,6 @@ export interface ReportResponse extends BaseResponse {
   data: Report[];
 }
 export interface ClubsParams {
-  token: string | null;
   categoryId: number | null;
   minMember: number | null;
   maxMember: number | null;
