@@ -184,16 +184,12 @@ const ClubTopTabs = ({
 
   const withdrawClubMutation = useMutation<BaseResponse, ErrorResponse, ClubWithdrawRequest>(ClubApi.withdrawClub, {
     onSuccess: (res) => {
-      toast.show(`모임에서 탈퇴하셨습니다.`, {
-        type: "success",
-      });
+      toast.show(`모임에서 탈퇴하셨습니다.`, { type: "success" });
       DeviceEventEmitter.emit("ClubRefetch");
     },
     onError: (error) => {
       console.log(`API ERROR | withdrawClub ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, {
-        type: "warning",
-      });
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -203,9 +199,7 @@ const ClubTopTabs = ({
     },
     onError: (error) => {
       console.log(`API ERROR | getClub ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, {
-        type: "warning",
-      });
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -219,9 +213,7 @@ const ClubTopTabs = ({
     },
     onError: (error) => {
       console.log(`API ERROR | getClubRole ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, {
-        type: "warning",
-      });
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -257,9 +249,7 @@ const ClubTopTabs = ({
     },
     onError: (error) => {
       console.log(`API ERROR | getClubSchedules ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, {
-        type: "warning",
-      });
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -359,9 +349,7 @@ const ClubTopTabs = ({
       >
         <TopTab.Navigator
           initialRouteName="ClubHome"
-          screenOptions={{
-            swipeEnabled: false,
-          }}
+          screenOptions={{ swipeEnabled: false }}
           tabBar={(props) => <ClubTabBar {...props} height={TAB_BUTTON_HEIGHT} />}
           sceneContainerStyle={{ position: "absolute", zIndex: 1 }}
         >

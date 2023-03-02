@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
+import ImagePicker from "react-native-image-crop-picker";
 import { ClubCreationStepTwoScreenProps } from "../../Types/Club";
 import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
@@ -145,15 +145,15 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   let specialChar = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
-      aspect: [16, 9],
-      quality: 1,
+    let image = await ImagePicker.openPicker({
+      mediaType: "photo",
+      height: 1080,
+      width: 1080,
+      forceJpg: true,
     });
 
-    if (result.canceled === false) {
-      setImageURI(result.assets[0].uri);
+    if (image) {
+      setImageURI(image.path);
     }
   };
 
