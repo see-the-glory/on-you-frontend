@@ -1,14 +1,12 @@
-import { useMutation, useQuery } from "react-query";
-import { CommonApi, ErrorResponse, LoginRequest, LoginResponse, UserApi, UserInfoResponse } from "../../api";
+import { useMutation } from "react-query";
+import { CommonApi, LoginRequest, LoginResponse } from "../../api";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { DeviceEventEmitter, Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
 import { login } from "../../redux/slices/auth";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.View`
   width: 100%;

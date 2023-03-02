@@ -1,8 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { StatusBar } from "react-native";
-import { useMutation } from "react-query";
-import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 
 const Container = styled.View`

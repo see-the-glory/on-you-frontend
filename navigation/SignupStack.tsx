@@ -11,7 +11,7 @@ import JoinStepEight from "../screens/SignUp/JoinStepEight";
 import JoinStepNine from "../screens/SignUp/JoinStepNine";
 import JoinConfirm from "../screens/SignUp/JoinConfirm";
 import JoinStepSuccess from "../screens/SignUp/JoinStepSuccess";
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 
 const NativeStack = createNativeStackNavigator();

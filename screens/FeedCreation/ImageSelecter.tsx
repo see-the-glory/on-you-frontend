@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
-import { ActivityIndicator, Alert, DeviceEventEmitter, Keyboard, KeyboardAvoidingView, Platform, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, Alert, DeviceEventEmitter, Keyboard, KeyboardAvoidingView, Platform, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
-import { FeedApi, FeedCreationRequest } from "../../api";
+import { BaseResponse, ErrorResponse, FeedApi, FeedCreationRequest } from "../../api";
 import { FeedCreateScreenProps } from "../../types/feed";
 import { useNavigation } from "@react-navigation/native";
 import { RootState } from "../../redux/store/reducers";
@@ -169,31 +169,17 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     setImageURL(url);
   };
 
-  const mutation = useMutation(FeedApi.createFeed, {
+  const mutation = useMutation<BaseResponse, ErrorResponse, FeedCreationRequest>(FeedApi.createFeed, {
     onSuccess: (res) => {
       setSubmitShow(true);
-      if (res.status === 200) {
-        DeviceEventEmitter.emit("HomeFeedRefetch");
-        navigate("Tabs", {
-          screen: "Home",
-        });
-      } else {
-        console.log(`createFeed mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        toast.show(`createFeed Error (Code): ${res.status}`, {
-          type: "warning",
-        });
-      }
+      DeviceEventEmitter.emit("HomeFeedRefetch");
+      navigate("Tabs", { screen: "Home" });
     },
     onError: (error) => {
       setSubmitShow(true);
-      console.log("--- Error ---");
-      console.log(`error: ${error}`);
-      toast.show(`createFeed Error (Code): ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | createFeed ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
-    onSettled: (res, error) => {},
   });
 
   const onSubmit = () => {
@@ -211,7 +197,6 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
       let requestData: FeedCreationRequest = {
         image: [],
         data,
-        token,
       };
       if (imageURL.length == 0) requestData.image = null;
 

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TouchableOpacity, Text, Platform, KeyboardAvoidingView, DeviceEventEmitter } from "react-native";
-import { Keyboard, TouchableWithoutFeedback, useWindowDimensions } from "react-native";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import * as ImagePicker from "expo-image-picker";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
-import { UserApi, UserInfoRequest } from "../../api";
+import { BaseResponse, ErrorResponse, UserApi, UserUpdateRequest } from "../../api";
 import Collapsible from "react-native-collapsible";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import DatePicker from "react-native-date-picker";
@@ -14,9 +14,7 @@ import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import CustomTextInput from "../../components/CustomTextInput";
 import { RootState } from "../../redux/store/reducers";
-import FastImage from "react-native-fast-image";
 import CircleIcon from "../../components/CircleIcon";
-import messaging from "@react-native-firebase/messaging";
 
 const Container = styled.ScrollView`
   padding-left: 15px;
@@ -106,27 +104,16 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
   const toast = useToast();
   const imageSize = 85;
 
-  const mutation = useMutation(UserApi.updateUserInfo, {
+  const mutation = useMutation<BaseResponse, ErrorResponse, UserUpdateRequest>(UserApi.updateUserInfo, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
-        console.log(res);
-        toast.show("저장에 성공하였습니다.", {
-          type: "success",
-        });
-        navigate("Tabs", {
-          screen: "Profile",
-        });
-      } else {
-        console.log(`mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        toast.show(`저장에 실패하였습니다. (Error Code: ${res.status})`, {
-          type: "warning",
-        });
-      }
+      toast.show("저장에 성공하였습니다.", { type: "success" });
+      navigate("Tabs", {
+        screen: "Profile",
+      });
     },
     onError: (error) => {
-      console.log("--- Error ---");
-      console.log(`error: ${error}`);
+      console.log(`API ERROR | updateUserInfo ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -140,12 +127,9 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
 
     const splitedURI = new String(imageURI).split("/");
 
-    const updateData: UserInfoRequest =
+    const updateData: UserUpdateRequest =
       imageURI === null
-        ? {
-            data,
-            token,
-          }
+        ? { data }
         : {
             image: {
               uri: Platform.OS === "android" ? imageURI : imageURI.replace("file://", ""),
@@ -153,7 +137,6 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
               name: splitedURI[splitedURI.length - 1],
             },
             data,
-            token,
           };
     mutation.mutate(updateData);
   };
@@ -182,6 +165,7 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
 
     return () => {
       DeviceEventEmitter.emit("ProfileRefresh");
+      DeviceEventEmitter.emit("HomeFeedRefetch");
     };
   }, [name, birthday, phoneNumber, organizationName, imageURI]);
 
@@ -256,23 +240,6 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
               onEndEditing={() => setOrganizationName((prev) => prev.trim())}
             />
           </Form>
-          {/* <Form>
-          <Title>관심사(3개 이상 택)</Title>
-          <CategoryView>
-            {interestsKor.map((category, index) => (
-              <CategoryItem
-                key={index}
-                activeOpacity={0.8}
-                selected={categoryItem}
-                onPress={() => {
-                  onClick();
-                }}
-              >
-                <CategoryText selected={categoryItem}>{category}</CategoryText>
-              </CategoryItem>
-            ))}
-          </CategoryView>
-        </Form> */}
         </Container>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>

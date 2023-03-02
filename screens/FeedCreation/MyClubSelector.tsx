@@ -1,9 +1,9 @@
 import React, { useLayoutEffect } from "react";
-import { ActivityIndicator, FlatList, View, Text, TouchableOpacity, DeviceEventEmitter } from "react-native";
+import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Club, MyClub, MyClubResponse, UserApi } from "../../api";
+import { Club, MyClub, UserApi } from "../../api";
 import { MyClubSelectorScreenProps } from "../../types/feed";
 import CustomText from "../../components/CustomText";
 import { Entypo } from "@expo/vector-icons";

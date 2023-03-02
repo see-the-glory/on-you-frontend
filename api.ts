@@ -171,6 +171,10 @@ export interface ClubUpdateResponse extends BaseResponse {
   data: Club;
 }
 
+export interface ClubCreationResponse extends BaseResponse {
+  data: Club;
+}
+
 export interface ClubsResponse extends BaseResponse {
   hasNext: boolean;
   responses: {
@@ -257,8 +261,8 @@ export interface ImageType {
 export interface ClubCreationRequest {
   image?: ImageType | null;
   data: ClubCreationData;
-  token: string | null;
 }
+
 export interface ClubDeletionRequest {
   clubId: number;
 }
@@ -269,7 +273,6 @@ export interface FeedCreationRequest {
     userId?: number;
     content?: string;
   };
-  token: string | null;
 }
 
 export interface FeedUpdateRequest {
@@ -279,7 +282,6 @@ export interface FeedUpdateRequest {
     // access: string
     content: string;
   };
-  token: string | null;
 }
 
 export interface FeedReportRequest {
@@ -300,7 +302,6 @@ export interface ClubUpdateRequest {
     category1Id?: number;
     category2Id?: number;
   };
-  token: string | null;
   clubId: number;
 }
 
@@ -385,24 +386,6 @@ export interface FindPwRequest {
   username?: string;
 }
 
-export interface UserInfoRequest {
-  token: string | null;
-  image?: {
-    uri: string;
-    type: string;
-    name: string | undefined;
-  } | null;
-  data: {
-    birthday?: string;
-    name?: string;
-    organizationName?: string;
-    thumbnail?: string;
-    sex?: string;
-    phoneNumber?: string;
-    interests?: [];
-  };
-}
-
 export interface UserUpdateRequest {
   image?: ImageType | null;
   data?: {
@@ -412,7 +395,6 @@ export interface UserUpdateRequest {
     sex?: string;
     phoneNumber?: string;
   };
-  token: string | null;
 }
 
 export interface SignUp {
@@ -466,11 +448,11 @@ export interface FeedDeletionRequest {
 // Categories
 const getCategories = ({ queryKey }: any) => axios.get<string, CategoryResponse>(`/api/categories`);
 
+// Club
 const getClub = ({ queryKey }: any) => {
   const [_key, clubId]: [string, number] = queryKey;
   return axios.get<string, ClubResponse>(`/api/clubs/${clubId}`);
 };
-
 const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
   let params = `categoryId=${clubsParams.categoryId ?? 0}&showMy=${clubsParams.showMy}&showRecruitingOnly=${clubsParams.showRecruiting}`;
@@ -481,37 +463,74 @@ const getClubs = ({ queryKey, pageParam }: any) => {
 
   return axios.get<string, ClubsResponse>(`/api/clubs?${params}`);
 };
-
 const getClubRole = ({ queryKey }: any) => {
   const [_key, clubId]: [string, number] = queryKey;
   return axios.get<string, ClubRoleResponse>(`/api/clubs/${clubId}/role`);
 };
-
-const withdrawClub = async (req: ClubWithdrawRequest) => axios.post<string, BaseResponse>(`/api/clubs/${req.clubId}/withdraw`);
+const withdrawClub = (req: ClubWithdrawRequest) => axios.post<string, BaseResponse>(`/api/clubs/${req.clubId}/withdraw`);
 const applyClub = (req: ClubApplyRequest) => axios.post<string, BaseResponse>(`/api/clubs/apply`, req);
-
 const getClubSchedules = ({ queryKey }: any) => {
   const [_key, clubId]: [string, number] = queryKey;
   return axios.get<string, ClubSchedulesResponse>(`/api/clubs/${clubId}/schedules`);
 };
-
-const getFeed = ({ queryKey }: any) => {
-  const [_key, feedId]: [string, number] = queryKey;
-  return axios.get<string, FeedResponse>(`/api/feeds/${feedId}`);
-};
-
-const getFeeds = ({ pageParam }: any) => {
-  let params = pageParam ? `cursor=${pageParam}` : "";
-  return axios.get<string, FeedsResponse>(`/api/feeds?${params}`);
-};
-
 const getClubFeeds = ({ queryKey, pageParam }: any) => {
   const [_key, clubId]: [string, number] = queryKey;
   let params = pageParam ? `cursor=${pageParam}` : "";
   return axios.get<string, FeedsResponse>(`/api/clubs/${clubId}/feeds?${params}`);
 };
+const createClub = (req: ClubCreationRequest) => {
+  const body = new FormData();
+  if (req.image !== null) body.append("file", req.image);
+  body.append("clubCreateRequest", {
+    string: JSON.stringify(req.data),
+    type: "application/json",
+  });
 
-const createFeed = async (req: FeedCreationRequest) => {
+  return axios.post<string, ClubCreationResponse>(`/api/clubs`, body, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+const updateClub = (req: ClubUpdateRequest) => {
+  const body = new FormData();
+  if (req.image) body.append("file", req.image);
+  if (req.data) {
+    body.append("clubUpdateRequest", {
+      string: JSON.stringify(req.data),
+      type: "application/json",
+    });
+  }
+  return axios.put<string, ClubUpdateResponse>(`api/clubs/${req.clubId}`, body, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+const deleteClub = (req: ClubDeletionRequest) => axios.delete<string, BaseResponse>(`/api/clubs/${req.clubId}`);
+
+// Club Management
+const getClubNotifications = ({ queryKey }: any) => {
+  const [_key, clubId]: [string, number] = queryKey;
+  return axios.get<string, ClubNotificationsResponse>(`/api/notifications/club/${clubId}`);
+};
+const approveToClubJoin = (req: ClubApproveRequest) => axios.post<string, BaseResponse>(`/api/clubs/approve`, req);
+const rejectToClubJoin = (req: ClubRejectRequest) => axios.post<string, BaseResponse>(`/api/clubs/reject`, req);
+
+const changeRole = (req: ChangeRoleRequest) => axios.post<string, BaseResponse>(`/api/clubs/${req.clubId}/changeRole`, req.data);
+
+// Club Schedule
+const createClubSchedule = (req: ClubScheduleCreationRequest) => axios.post<string, BaseResponse>(`/api/clubs/schedules`, req);
+const updateClubSchedule = (req: ClubScheduleUpdateRequest) => axios.put<string, BaseResponse>(`api/clubs/${req.clubId}/schedules/${req.scheduleId}`, req.body);
+const deleteClubSchedule = (req: ClubScheduleDeletionRequest) => axios.delete<string, BaseResponse>(`api/clubs/${req.clubId}/schedules/${req.scheduleId}`);
+const joinOrCancelClubSchedule = (req: ClubScheduleJoinOrCancelRequest) => axios.post<string, BaseResponse>(`/api/clubs/${req.clubId}/schedules/${req.scheduleId}/joinOrCancel`);
+
+// Feed
+const getFeed = ({ queryKey }: any) => {
+  const [_key, feedId]: [string, number] = queryKey;
+  return axios.get<string, FeedResponse>(`/api/feeds/${feedId}`);
+};
+const getFeeds = ({ pageParam }: any) => {
+  let params = pageParam ? `cursor=${pageParam}` : "";
+  return axios.get<string, FeedsResponse>(`/api/feeds?${params}`);
+};
+const createFeed = (req: FeedCreationRequest) => {
   const body = new FormData();
 
   if (req.image) {
@@ -522,132 +541,42 @@ const createFeed = async (req: FeedCreationRequest) => {
     string: JSON.stringify(req.data),
     type: "application/json",
   });
-  return fetch(`${BASE_URL}/api/feeds`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "multipart/form-data",
-      authorization: `${req.token}`,
-      Accept: "*/*",
-    },
-    body,
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
+
+  return axios.post<string, BaseResponse>(`/api/feeds`, body, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
 };
+const updateFeed = (req: FeedUpdateRequest) => axios.put<string, BaseResponse>(`/api/feeds/${req.data.id}`, req.data);
 
-const updateFeed = async (req: FeedUpdateRequest) => {
-  return fetch(`${BASE_URL}/api/feeds/${req.data.id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `${req.token}`,
-    },
-    body: JSON.stringify(req.data),
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
-  });
+// Feed Option
+const reportFeed = (req: FeedReportRequest) => axios.put<string, BaseResponse>(`/api/feeds/${req.feedId}/report?reason=${req.reason}`);
+const likeFeed = (req: FeedLikeRequest) => axios.post<string, BaseResponse>(`/api/feeds/${req.feedId}/likes`);
+const deleteFeed = (req: FeedDeletionRequest) => axios.delete<string, BaseResponse>(`/api/feeds/${req.feedId}`);
+
+// Feed Comment
+const getFeedComments = ({ queryKey }: any) => {
+  const [_key, feedId]: [string, number] = queryKey;
+  return axios.get<string, FeedCommentsResponse>(`/api/feeds/${feedId}/comments`);
 };
+const createFeedComment = (req: FeedCommentCreationRequest) => axios.post<string, BaseResponse>(`/api/feeds/${req.feedId}/comment`, req);
+const deleteFeedComment = (req: FeedCommentDeletionRequest) => axios.delete<string, BaseResponse>(`/api/comments/${req.commentId}`);
 
-const createClub = async (req: ClubCreationRequest) => {
-  const body = new FormData();
-
-  if (req.image !== null) {
-    body.append("file", req.image);
-  }
-
-  body.append("clubCreateRequest", {
-    string: JSON.stringify(req.data),
-    type: "application/json",
-  });
-
-  return fetch(`${BASE_URL}/api/clubs`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "multipart/form-data",
-      authorization: `${req.token}`,
-      Accept: "*/*",
-    },
-    body,
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
-  });
-};
-
-const deleteClub = async (req: ClubDeletionRequest) => axios.delete<string, BaseResponse>(`/api/clubs/${req.clubId}`);
-const updateClub = async (req: ClubUpdateRequest) => {
-  const body = new FormData();
-
-  if (req.image) {
-    body.append("file", req.image);
-  }
-
-  if (req.data) {
-    body.append("clubUpdateRequest", {
-      string: JSON.stringify(req.data),
-      type: "application/json",
-    });
-  }
-
-  return fetch(`${BASE_URL}/api/clubs/${req.clubId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "multipart/form-data",
-      authorization: `${req.token}`,
-      Accept: "*/*",
-    },
-    body,
-  }).then(async (res) => {
-    return { status: res.status, ...(await res.json()) };
-  });
-};
-const approveToClubJoin = (req: ClubApproveRequest) => axios.post<string, BaseResponse>(`/api/clubs/approve`, req);
-const rejectToClubJoin = (req: ClubRejectRequest) => axios.post<string, BaseResponse>(`/api/clubs/reject`, req);
-const getClubNotifications = ({ queryKey }: any) => {
-  const [_key, clubId]: [string, number] = queryKey;
-  return axios.get<string, ClubNotificationsResponse>(`/api/notifications/club/${clubId}`);
-};
-
-const changeRole = (req: ChangeRoleRequest) => axios.post<string, BaseResponse>(`/api/clubs/${req.clubId}/changeRole`, req.data);
-
-// Club Schedule API
-const createClubSchedule = (req: ClubScheduleCreationRequest) => axios.post<string, BaseResponse>(`/api/clubs/schedules`, req);
-const updateClubSchedule = (req: ClubScheduleUpdateRequest) => axios.put<string, BaseResponse>(`api/clubs/${req.clubId}/schedules/${req.scheduleId}`, req.body);
-const deleteClubSchedule = (req: ClubScheduleDeletionRequest) => axios.delete<string, BaseResponse>(`api/clubs/${req.clubId}/schedules/${req.scheduleId}`);
-const joinOrCancelClubSchedule = (req: ClubScheduleJoinOrCancelRequest) => axios.post<string, BaseResponse>(`/api/clubs/${req.clubId}/schedules/${req.scheduleId}/joinOrCancel`);
-
-// Profile API
+// Profile
 const getUserInfo = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
   return axios.get<string, UserInfoResponse>(`/api/user`, { headers: { Authorization: token } });
 };
-const updateUserInfo = (req: UserInfoRequest) => {
+const updateUserInfo = (req: UserUpdateRequest) => {
   const body = new FormData();
-
-  if (req.image) {
-    body.append("file", req.image);
-  }
-
+  if (req.image) body.append("file", req.image);
   if (req.data) {
     body.append("userUpdateRequest", {
       string: JSON.stringify(req.data),
       type: "application/json",
     });
   }
-
-  return fetch(`${BASE_URL}/api/user`, {
-    method: "PUT",
-    headers: {
-      "content-type": "multipart/form-data",
-      authorization: `${req.token}`,
-      Accept: "*/*",
-    },
-    body,
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
+  return axios.put<string, BaseResponse>(`/api/user`, body, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
 };
 
@@ -665,71 +594,54 @@ const submitSuggestion = (req: SuggestionSubmitRequest) => axios.post<string, Ba
 // FCM
 const updateTargetToken = (req: TargetTokenUpdateRequest) => axios.post<string, BaseResponse>(`/api/user/updateTargetToken`, req);
 
-// Feed Option
-const reportFeed = (req: FeedReportRequest) => axios.put<string, BaseResponse>(`/api/feeds/${req.feedId}/report?reason=${req.reason}`);
-const likeFeed = (req: FeedLikeRequest) => axios.post<string, BaseResponse>(`/api/feeds/${req.feedId}/likes`);
-const deleteFeed = (req: FeedDeletionRequest) => axios.delete<string, BaseResponse>(`/api/feeds/${req.feedId}`);
-
-// Feed Comment
-const getFeedComments = ({ queryKey }: any) => {
-  const [_key, feedId]: [string, number] = queryKey;
-  return axios.get<string, FeedCommentsResponse>(`/api/feeds/${feedId}/comments`);
-};
-const createFeedComment = (req: FeedCommentCreationRequest) => axios.post<string, BaseResponse>(`/api/feeds/${req.feedId}/comment`, req);
-const deleteFeedComment = (req: FeedCommentDeletionRequest) => axios.delete<string, BaseResponse>(`/api/comments/${req.commentId}`);
-
 // Login
-const login = (req: LoginRequest) => {
-  return fetch(`${BASE_URL}/api/user/login`, {
+const login = async (req: LoginRequest) => {
+  const res = await fetch(`${BASE_URL}/api/user/login`, {
     method: "POST",
     headers: {
       "Content-Type": "Application/json",
     },
     body: JSON.stringify(req),
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
   });
+  if (res.status === 200) return { status: res.status, ...(await res.json()) };
+  else return { status: res.status };
 };
 
 // Sign Up
-const registerUserInfo = (req: SignUp) => {
-  return fetch(`${BASE_URL}/api/user/signup`, {
+const registerUserInfo = async (req: SignUp) => {
+  const res = await fetch(`${BASE_URL}/api/user/signup`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
     },
     body: JSON.stringify(req),
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
   });
+  if (res.status === 200) return { status: res.status, ...(await res.json()) };
+  else return { status: res.status };
 };
 
-const FindUserId = (req: FindIdRequest) => {
-  return fetch(`${BASE_URL}/api/user/findId`, {
+const FindUserId = async (req: FindIdRequest) => {
+  const res = await fetch(`${BASE_URL}/api/user/findId`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
     },
     body: JSON.stringify(req),
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
   });
+  if (res.status === 200) return { status: res.status, ...(await res.json()) };
+  else return { status: res.status };
 };
 
-const FindUserPw = (req: FindPwRequest) => {
-  return fetch(`${BASE_URL}/api/mail/findPw`, {
+const FindUserPw = async (req: FindPwRequest) => {
+  const res = await fetch(`${BASE_URL}/api/mail/findPw`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
     },
     body: JSON.stringify(req),
-  }).then(async (res) => {
-    if (res.status === 200) return { status: res.status, ...(await res.json()) };
-    else return { status: res.status };
   });
+  if (res.status === 200) return { status: res.status, ...(await res.json()) };
+  else return { status: res.status };
 };
 
 export const ClubApi = {

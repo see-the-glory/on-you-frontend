@@ -1,11 +1,11 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { DeviceEventEmitter, KeyboardAvoidingView, Platform, TouchableOpacity, useWindowDimensions } from "react-native";
+import { KeyboardAvoidingView, Platform, TouchableOpacity, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { ClubEditBasicsProps } from "../../Types/Club";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery, useMutation } from "react-query";
-import { Category, CategoryResponse, ClubApi, ClubUpdateRequest, ErrorResponse } from "../../api";
+import { Category, CategoryResponse, ClubApi, ClubUpdateRequest, ClubUpdateResponse, ErrorResponse } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -134,7 +134,6 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
     params: { clubData },
   },
 }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [clubName, setClubName] = useState<string>(clubData.name ?? "");
   const [maxNumber, setMaxNumber] = useState<string>(clubData.maxNumber === 0 ? "무제한 정원" : `${String(clubData.maxNumber)} 명`);
@@ -161,30 +160,15 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
-  const mutation = useMutation(ClubApi.updateClub, {
+  const mutation = useMutation<ClubUpdateResponse, ErrorResponse, ClubUpdateRequest>(ClubApi.updateClub, {
     onSuccess: (res) => {
-      if (res.status === 200 && res.resultCode === "OK") {
-        toast.show(`저장이 완료되었습니다.`, {
-          type: "success",
-        });
-        navigate("ClubManagementMain", { clubData: res.data, refresh: true });
-      } else {
-        console.log(`updateClub mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
-      }
+      toast.show(`저장이 완료되었습니다.`, { type: "success" });
+      navigate("ClubManagementMain", { clubData: res.data, refresh: true });
     },
     onError: (error) => {
-      console.log("--- Error updateClub ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | updateClub ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
-    onSettled: (res, error) => {},
   });
 
   useLayoutEffect(() => {
@@ -239,7 +223,6 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
       imageURI === null
         ? {
             data,
-            token,
             clubId: clubData.id,
           }
         : {
@@ -249,11 +232,8 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
               name: splitedURI[splitedURI.length - 1],
             },
             data,
-            token,
             clubId: clubData.id,
           };
-
-    console.log(data);
 
     mutation.mutate(updateData);
   };

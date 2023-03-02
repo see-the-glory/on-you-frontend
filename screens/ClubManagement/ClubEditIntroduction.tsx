@@ -4,7 +4,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { ClubApi, ClubUpdateRequest, ClubUpdateResponse } from "../../api";
+import { ClubApi, ClubUpdateRequest, ClubUpdateResponse, ErrorResponse } from "../../api";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
 import { RootState } from "../../redux/store/reducers";
@@ -71,34 +71,18 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
     params: { clubData },
   },
 }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [clubShortDesc, setClubShortDesc] = useState(clubData.clubShortDesc ?? "");
   const [clubLongDesc, setClubLongDesc] = useState(clubData.clubLongDesc ?? "");
-  const mutation = useMutation(ClubApi.updateClub, {
+  const mutation = useMutation<ClubUpdateResponse, ErrorResponse, ClubUpdateRequest>(ClubApi.updateClub, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        toast.show(`저장이 완료되었습니다.`, {
-          type: "success",
-        });
-        navigate("ClubManagementMain", { clubData: res.data, refresh: true });
-      } else {
-        console.log(`updateClub mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, {
-          type: "warning",
-        });
-      }
+      toast.show(`저장이 완료되었습니다.`, { type: "success" });
+      navigate("ClubManagementMain", { clubData: res.data, refresh: true });
     },
     onError: (error) => {
-      console.log("--- updateClub Error ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | updateClub ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
-    onSettled: (res, error) => {},
   });
 
   useEffect(() => {
@@ -119,7 +103,6 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
         category1Id: clubData?.categories ? clubData.categories[0]?.id ?? -1 : -1,
         category2Id: clubData?.categories ? clubData.categories[1]?.id ?? -1 : -1,
       },
-      token,
       clubId: clubData.id,
     };
 

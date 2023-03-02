@@ -53,7 +53,7 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
     isLoading: myClubInfoLoading, // true or false
     data: myClubs,
     refetch: myClubRefetch,
-  } = useQuery<MyClubsResponse, ErrorResponse>(["selectMyClubs"], UserApi.getMyClubs, {
+  } = useQuery<MyClubsResponse, ErrorResponse>(["getMyClubs"], UserApi.getMyClubs, {
     onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getMyClubs ${error.code} ${error.status}`);

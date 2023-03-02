@@ -11,8 +11,7 @@ import CustomText from "../components/CustomText";
 import CircleIcon from "../components/CircleIcon";
 import { RootState } from "../redux/store/reducers";
 import { useAppDispatch } from "../redux/store";
-import { logout, updateUser } from "../redux/slices/auth";
-import feedSlice from "../redux/slices/feed";
+import { updateUser } from "../redux/slices/auth";
 
 const Container = styled.SafeAreaView`
   flex: 1;

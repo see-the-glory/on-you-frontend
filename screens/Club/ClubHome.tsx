@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter, View } from "react-native";
+import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
 import { ClubHomeScreenProps, ClubHomeParamList, RefinedSchedule } from "../../Types/Club";
