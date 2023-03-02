@@ -7,7 +7,7 @@ import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { Shadow } from "react-native-shadow-2";
 import { useMutation, useQuery } from "react-query";
-import { BaseResponse, Club, ClubApi, ClubDeletionRequest, ClubResponse, ClubUpdateRequest, ErrorResponse } from "../../api";
+import { BaseResponse, Club, ClubApi, ClubDeletionRequest, ClubResponse, ClubUpdateRequest, ClubUpdateResponse, ErrorResponse } from "../../api";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useToast } from "react-native-toast-notifications";
@@ -137,7 +137,6 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
     params: { clubData, refresh },
   },
 }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const myRole = useSelector((state: RootState) => state.club.role);
   const toast = useToast();
   const [data, setData] = useState<Club>(clubData);
@@ -155,28 +154,20 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
     },
   });
 
-  const updateClubMutation = useMutation(ClubApi.updateClub, {
+  const updateClubMutation = useMutation<ClubUpdateResponse, ErrorResponse, ClubUpdateRequest>(ClubApi.updateClub, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-        if (res.data.recruitStatus === "OPEN") {
-          setIsToggle(true);
-          toast.show(`멤버 모집이 활성화되었습니다.`, { type: "success" });
-        } else if (res.data.recruitStatus === "CLOSE") {
-          setIsToggle(false);
-          toast.show(`멤버 모집이 비활성화되었습니다.`, { type: "success" });
-        }
-        DeviceEventEmitter.emit("ClubRefetch");
-      } else {
-        console.log(`updateClub mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res);
-        toast.show(`Error Code: ${res.status}`, { type: "warning" });
+      if (res.data.recruitStatus === "OPEN") {
+        setIsToggle(true);
+        toast.show(`멤버 모집이 활성화되었습니다.`, { type: "success" });
+      } else if (res.data.recruitStatus === "CLOSE") {
+        setIsToggle(false);
+        toast.show(`멤버 모집이 비활성화되었습니다.`, { type: "success" });
       }
+      DeviceEventEmitter.emit("ClubRefetch");
     },
     onError: (error) => {
-      console.log("--- updateClub Error ---");
-      console.log(`error: ${error}`);
-      toast.show(`Error Code: ${error}`, { type: "warning" });
+      console.log(`API ERROR | updateClub ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
   const deleteClubMutation = useMutation<BaseResponse, ErrorResponse, ClubDeletionRequest>(ClubApi.deleteClub, {
@@ -236,7 +227,6 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   const onPressToggle = () => {
     let updateData: ClubUpdateRequest = {
       data: { recruitStatus: isToggle ? "CLOSE" : "OPEN", category1Id: data.categories.length > 0 ? data.categories[0].id : -1, category2Id: data.categories.length > 1 ? data.categories[1].id : -1 },
-      token,
       clubId: clubData.id,
     };
 

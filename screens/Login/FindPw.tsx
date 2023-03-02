@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef, useEffect } from "react";
 import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 import { UserApi, FindPwRequest } from "../../api";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";

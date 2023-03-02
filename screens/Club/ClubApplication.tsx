@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Entypo } from "@expo/vector-icons";
 import { useLayoutEffect } from "react";
 import { Alert, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";

@@ -18,7 +18,7 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Feed, FeedApi, FeedUpdateRequest, UserApi, UserInfoResponse, Club, ClubResponse, ClubApi, MyClub, ErrorResponse, FeedResponse, MyClubsResponse } from "../../api";
+import { Feed, FeedApi, FeedUpdateRequest, UserApi, UserInfoResponse, Club, ClubResponse, ClubApi, MyClub, ErrorResponse, FeedResponse, MyClubsResponse, BaseResponse } from "../../api";
 import { ModifiyFeedScreenProps } from "../../types/feed";
 import { ClubStackParamList } from "../../types/Club";
 import { useNavigation } from "@react-navigation/native";
@@ -30,6 +30,7 @@ import Carousel from "../../components/Carousel";
 import FastImage from "react-native-fast-image";
 import { Portal } from "react-native-portalize";
 import { useToast } from "react-native-toast-notifications";
+import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -204,14 +205,10 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
   },
 }) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const queryClient = useQueryClient();
-  const token = useSelector((state: any) => state.auth.token);
-  const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
+  const me = useSelector((state: RootState) => state.auth.user);
   const [content, setContent] = useState(feedData.content);
-  const [data, setData] = useState<Feed>(feedData);
   const navigation = useNavigation();
   const modalizeRef = useRef<Modalize>(null);
-  const [loading, setLoading] = useState(false);
   const [isSummitShow, setSummitShow] = useState(true); //저장버튼 로딩
   const [clubId, setClubId] = useState(feedData.clubId);
   const [clubName, setClubName] = useState(feedData.clubName);
@@ -222,46 +219,17 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
     console.log("Before Modal Passed FeedId");
     modalizeRef.current?.open();
   };
-  //피드호출
-  const {
-    isLoading: feedsLoading,
-    data: feeds,
-    isRefetching: isRefetchingFeeds,
-  } = useQuery<FeedResponse, ErrorResponse>(["getFeed", feedData.id], FeedApi.getFeed, {
+
+  const mutation = useMutation<BaseResponse, ErrorResponse, FeedUpdateRequest>(FeedApi.updateFeed, {
     onSuccess: (res) => {
-      setIsPageTransition(false);
+      toast.show(`피드가 수정되었습니다.`, { type: "success" });
+      DeviceEventEmitter.emit("HomeFeedRefetch");
+      navigate("Tabs", { screen: "Home" });
     },
     onError: (error) => {
-      console.log(`API ERROR | getFeed ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, {
-        type: "warning",
-      });
+      console.log(`API ERROR | updateFeed ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
-  });
-
-  const {
-    isLoading: userInfoLoading, // true or false
-    data: userInfo,
-  } = useQuery<UserInfoResponse>(["userInfo", token], UserApi.getUserInfo);
-
-  const mutation = useMutation(FeedApi.updateFeed, {
-    onSuccess: (res) => {
-      if (res.status === 200) {
-        DeviceEventEmitter.emit("HomeFeedRefetch");
-        return navigate("Tabs", {
-          screen: "Home",
-        });
-      } else {
-        console.log(`mutation success but please check status code`);
-        console.log(`status: ${res.status}`);
-        console.log(res.json);
-      }
-    },
-    onError: (error) => {
-      console.log("--- Error ---");
-      console.log(`error: ${error}`);
-    },
-    onSettled: (res, error) => {},
   });
 
   //피드업데이트
@@ -278,10 +246,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
       };
       console.log("fixed Data:", data);
 
-      const requestData: FeedUpdateRequest = {
-        data,
-        token,
-      };
+      const requestData: FeedUpdateRequest = { data };
 
       mutation.mutate(requestData);
     }
@@ -300,7 +265,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
   const {
     isLoading: clubInfoLoading, // true or false
     data: club,
-  } = useQuery<MyClubsResponse, ErrorResponse>(["myClub"], UserApi.getMyClubs);
+  } = useQuery<MyClubsResponse, ErrorResponse>(["getMyClubs"], UserApi.getMyClubs);
 
   const ChangeClub = (id: any, name: any) => {
     console.log(id, name);
@@ -313,7 +278,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
     <Container>
       <KeyboardAvoidingView behavior={Platform.select({ ios: "position", android: "position" })} style={{ flex: 1 }}>
         <FeedUser>
-          <UserImage source={{ uri: userInfo?.data?.thumbnail }} />
+          <UserImage source={{ uri: me?.thumbnail }} />
           <UserInfo>
             <UserId>{feedData.userName}</UserId>
             <View style={{ display: "flex", flexDirection: "row" }}>

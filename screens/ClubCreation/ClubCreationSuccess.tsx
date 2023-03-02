@@ -3,7 +3,6 @@ import styled from "styled-components/native";
 import { ClubCreationSuccessScreenProps } from "../../Types/Club";
 import { Feather } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
-import { Platform } from "react-native";
 
 const Container = styled.SafeAreaView`
   justify-content: center;
@@ -71,9 +70,7 @@ const ClubCreationSuccess: React.FC<ClubCreationSuccessScreenProps> = ({
   const goClubHome = () => {
     return navigate("ClubStack", {
       screen: "ClubTopTabs",
-      params: {
-        clubData: clubData,
-      },
+      params: { clubData: clubData },
     });
   };
 

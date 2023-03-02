@@ -5,9 +5,7 @@ import styled from "styled-components/native";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useMutation } from "react-query";
 import { BaseResponse, ClubApi, ClubApplyRequest, ErrorResponse } from "../../api";
-import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
-import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.SafeAreaView`
   flex: 1;

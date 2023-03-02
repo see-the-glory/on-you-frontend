@@ -1,13 +1,11 @@
 import { Entypo } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { BlockUserListResponse, ErrorResponse, UserApi } from "../../api";
-import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.SafeAreaView`
   flex: 1;

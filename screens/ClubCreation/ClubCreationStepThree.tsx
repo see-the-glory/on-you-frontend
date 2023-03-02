@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import { DeviceEventEmitter, KeyboardAvoidingView, Platform, ScrollView, useWindowDimensions } from "react-native";
+import { DeviceEventEmitter, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
-import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { ClubApi, ClubCreationData, ClubCreationRequest } from "../../api";
+import { ClubApi, ClubCreationData, ClubCreationRequest, ClubCreationResponse, ErrorResponse } from "../../api";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
-import { RootState } from "../../redux/store/reducers";
 import { ClubCreationStepThreeScreenProps } from "../../Types/Club";
 
 const MainView = styled.View`
@@ -96,48 +94,27 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   },
   navigation: { navigate },
 }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [clubShortDesc, setClubShortDesc] = useState<string>("");
   const [clubLongDesc, setClubLongDesc] = useState<string>("");
   const [disableSubmit, setDisableSubmit] = useState<boolean>(false);
-  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
 
-  const mutation = useMutation(ClubApi.createClub, {
+  const mutation = useMutation<ClubCreationResponse, ErrorResponse, ClubCreationRequest>(ClubApi.createClub, {
     onSuccess: (res) => {
-      console.log(res);
       setDisableSubmit(false);
-      if (res.status === 200) {
-        DeviceEventEmitter.emit("ClubListRefetch");
-        return navigate("ClubCreationSuccess", {
-          clubData: res.data,
-        });
-      } else {
-        console.log(`createClub mutation success but please check status code`);
-        console.log(res);
-        toast.show(`${res.message} (status: ${res.status})`, {
-          type: "warning",
-        });
-        return navigate("ClubCreationFail", {});
-      }
+      DeviceEventEmitter.emit("ClubListRefetch");
+      navigate("ClubCreationSuccess", { clubData: res.data });
     },
     onError: (error) => {
-      console.log("--- createClub Error ---");
-      console.log(`error: ${error}`);
-      setDisableSubmit(false);
-      toast.show(`${error}`, {
-        type: "warning",
-      });
-      return navigate("ClubCreationFail", {});
+      console.log(`API ERROR | createClub ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+      navigate("ClubCreationFail", {});
     },
-    onSettled: (res, error) => {},
   });
 
   const onSubmit = () => {
     if (category1 === -1 && category2 === -1) {
-      toast.show(`카테고리가 설정되어있지 않습니다.`, {
-        type: "warning",
-      });
+      toast.show(`카테고리가 설정되어있지 않습니다.`, { type: "warning" });
       return;
     } else if (category1 === -1 && category2 !== -1) {
       category1 = category2;
@@ -161,11 +138,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
 
     const requestData: ClubCreationRequest =
       imageURI === null
-        ? {
-            image: null,
-            data,
-            token,
-          }
+        ? { image: null, data }
         : {
             image: {
               uri: Platform.OS === "android" ? imageURI : imageURI.replace("file://", ""),
@@ -173,7 +146,6 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
               name: splitedURI[splitedURI.length - 1],
             },
             data,
-            token,
           };
 
     console.log(requestData);

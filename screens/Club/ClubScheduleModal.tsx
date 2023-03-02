@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, FlatList, Modal, NativeTouchEvent, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Animated, FlatList, Modal, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { RefinedSchedule } from "../../Types/Club";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import styled from "styled-components/native";
@@ -14,7 +14,6 @@ import CircleIconBundle from "../../components/CircleIconBundle";
 import { Menu, MenuDivider, MenuItem } from "react-native-material-menu";
 import { useNavigation } from "@react-navigation/native";
 import Collapsible from "react-native-collapsible";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 const ModalContainer = styled.View`
   height: 500px;
