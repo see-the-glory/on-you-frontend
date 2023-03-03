@@ -98,7 +98,7 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
   const {
     isLoading: myClubInfoLoading, // true or false
     data: myClub,
-  } = useQuery<MyClubsResponse>(["selectMyClubs"], UserApi.getMyClubs);
+  } = useQuery<MyClubsResponse>(["getMyClubs"], UserApi.getMyClubs);
 
   const goToImageSelect = (clubData: Club) => {
     return navigate("FeedStack", {
