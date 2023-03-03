@@ -48,12 +48,12 @@ const ClubJoin = ({
 }) => {
   const [memo, setMemo] = useState<string>("");
   const toast = useToast();
+  console.log(clubData);
 
   const clubApplyMutation = useMutation<BaseResponse, ErrorResponse, ClubApplyRequest>(ClubApi.applyClub, {
     onSuccess: (res) => {
-      toast.show(`가입 신청이 완료되었습니다.`, {
-        type: "success",
-      });
+      if (clubData.isApprovedRequired === "Y") toast.show(`가입 신청이 완료되었습니다.`, { type: "success" });
+      else if (clubData.isApprovedRequired === "N") toast.show(`가입이 완료되었습니다.`, { type: "success" });
       goBack();
     },
     onError: (error) => {
