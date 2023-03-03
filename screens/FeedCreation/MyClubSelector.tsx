@@ -3,10 +3,11 @@ import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Club, MyClub, UserApi } from "../../api";
+import { Club, MyClub, UserApi,MyClubsResponse } from "../../api";
 import { MyClubSelectorScreenProps } from "../../types/feed";
 import CustomText from "../../components/CustomText";
 import { Entypo } from "@expo/vector-icons";
+import Tag from "../../components/Tag";
 const Container = styled.SafeAreaView`
   flex: 1;
 `;
@@ -59,30 +60,6 @@ const CommentRemainder = styled.View`
   flex-direction: row;
 `;
 
-const CtrgArea = styled.View`
-  width: auto;
-  height: auto;
-  margin: 5px 2px;
-  bottom: 6px;
-  border-radius: 7px;
-  display: flex;
-  flex-direction: row;
-  background-color: #c4c4c4;
-`;
-
-const CtgrText = styled.View`
-  margin: 0 4px 1px 4px;
-`;
-
-const ClubCtrgList = styled(CustomText)`
-  width: auto;
-  height: auto;
-  font-size: 12px;
-  font-weight: 500;
-  text-align: center;
-  color: #fff;
-`;
-
 const HeaderNameView = styled.View`
   justify-content: center;
   align-items: flex-start;
@@ -90,26 +67,38 @@ const HeaderNameView = styled.View`
   bottom: 1px;
 `;
 
-const HeaderText = styled(CustomText)`
-  font-size: 16px;
-  font-family: "NotoSansKR-Medium";
-  color: #2b2b2b;
-  line-height: 25px;
-  bottom: 1px;
+const CategoryView = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 5px;
+`;
+
+const CategoryBox = styled.View`
+  background-color: #c4c4c4;
+  padding: 1px 3px;
+  border-radius: 3px;
+  margin-left: 3px;
+  margin-right: 3px;
+`;
+
+const CategoryNameText = styled(CustomText)`
+  font-size: 12px;
+  line-height: 16px;
+  color: white;
 `;
 
 const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
-  navigation: { setOptions, navigate, goBack },
-  route: {
-    params: { userId },
-  },
-}) => {
+                                                               navigation: { setOptions, navigate, goBack },
+                                                               route: {
+                                                                 params: { userId },
+                                                               },
+                                                             }) => {
   const token = useSelector((state: any) => state.auth.token);
 
   const {
     isLoading: myClubInfoLoading, // true or false
     data: myClub,
-  } = useQuery<MyClubResponse>(["selectMyClubs"], UserApi.getMyClubs);
+  } = useQuery<MyClubsResponse>(["selectMyClubs"], UserApi.getMyClubs);
 
   const goToImageSelect = (clubData: Club) => {
     return navigate("FeedStack", {
@@ -122,52 +111,52 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => goBack()}>
-          <Entypo name="chevron-thin-left" size={20} color="black" />
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => goBack()}>
+            <Entypo name="chevron-thin-left" size={20} color="black" />
+          </TouchableOpacity>
       ),
     });
   }, []);
 
   return (
-    <Container>
-      <IntroText>가입한 모임 List</IntroText>
-      <ReplyContainer>
-        {myClubInfoLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <FlatList
-            keyExtractor={(item: MyClub, index: number) => String(index)}
-            data={myClub?.data}
-            renderItem={({ item, index }: { item: MyClub; index: number }) => (
-              <>
-                {item.applyStatus === "APPROVED" ? (
-                  <ClubArea key={index} onPress={() => goToImageSelect(item)}>
-                    <ClubImg source={{ uri: item.thumbnail }} />
-                    <HeaderNameView>
-                      <CommentMent>
-                        <ClubName>{item.name}</ClubName>
-                      </CommentMent>
-                      <CommentRemainder>
-                        {item.categories?.map((name) => {
-                          return (
-                            <CtrgArea>
-                              <CtgrText>
-                                <ClubCtrgList>{name.name}</ClubCtrgList>
-                              </CtgrText>
-                            </CtrgArea>
-                          );
-                        })}
-                      </CommentRemainder>
-                    </HeaderNameView>
-                  </ClubArea>
-                ) : null}
-              </>
-            )}
-          />
-        )}
-      </ReplyContainer>
-    </Container>
+      <Container>
+        <IntroText>가입한 모임 List</IntroText>
+        <ReplyContainer>
+          {myClubInfoLoading ? (
+              <ActivityIndicator />
+          ) : (
+              <FlatList
+                  keyExtractor={(item: MyClub, index: number) => String(index)}
+                  data={myClub?.data}
+                  renderItem={({ item, index }: { item: MyClub; index: number }) => (
+                      <>
+                        {item.applyStatus === "APPROVED" ? (
+                            <ClubArea key={index} onPress={() => goToImageSelect(item)}>
+                              <ClubImg source={{ uri: item.thumbnail }} />
+                              <HeaderNameView>
+                                <CommentMent>
+                                  <ClubName>{item.name}</ClubName>
+                                </CommentMent>
+                                <CommentRemainder>
+                                  {item.categories?.map((name) => {
+                                    return (
+                                        <CategoryView>
+                                          <CategoryBox>
+                                            <CategoryNameText>{name.name}</CategoryNameText>
+                                          </CategoryBox>
+                                        </CategoryView>
+                                    );
+                                  })}
+                                </CommentRemainder>
+                              </HeaderNameView>
+                            </ClubArea>
+                        ) : null}
+                      </>
+                  )}
+              />
+          )}
+        </ReplyContainer>
+      </Container>
   );
 };
 export default MyClubSelector;
