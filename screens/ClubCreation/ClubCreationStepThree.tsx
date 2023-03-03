@@ -116,6 +116,9 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
     if (category1 === -1 && category2 === -1) {
       toast.show(`카테고리가 설정되어있지 않습니다.`, { type: "warning" });
       return;
+    } else if (!imageURI) {
+      toast.show(`모임 프로필 이미지가 설정되지 않았습니다.`, { type: "warning" });
+      return;
     } else if (category1 === -1 && category2 !== -1) {
       category1 = category2;
       category2 = -1;
@@ -135,20 +138,14 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
     if (category2 !== -1) data.category2Id = category2;
 
     const splitedURI = new String(imageURI).split("/");
-
-    const requestData: ClubCreationRequest =
-      imageURI === null
-        ? { image: null, data }
-        : {
-            image: {
-              uri: Platform.OS === "android" ? imageURI : imageURI.replace("file://", ""),
-              type: "image/jpeg",
-              name: splitedURI[splitedURI.length - 1],
-            },
-            data,
-          };
-
-    console.log(requestData);
+    const requestData: ClubCreationRequest = {
+      image: {
+        uri: Platform.OS === "android" ? imageURI : imageURI.replace("file://", ""),
+        type: "image/jpeg",
+        name: splitedURI[splitedURI.length - 1],
+      },
+      data,
+    };
     setDisableSubmit(true);
     mutation.mutate(requestData);
   };

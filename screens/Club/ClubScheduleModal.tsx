@@ -56,7 +56,7 @@ const ContentItemView = styled.View<{ height: number }>`
   height: ${(props: any) => (props.height ? props.height : 35)}px;
   width: 100%;
   flex-direction: row;
-  padding: 8px 8px;
+  padding: 1px 8px;
   align-items: center;
   justify-content: flex-start;
 `;

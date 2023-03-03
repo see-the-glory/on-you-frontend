@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { TouchableOpacity, Text, Platform, KeyboardAvoidingView, DeviceEventEmitter } from "react-native";
+import { TouchableOpacity, Text, Platform, KeyboardAvoidingView, DeviceEventEmitter, ActivityIndicator } from "react-native";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
-import * as ImagePicker from "expo-image-picker";
+import ImagePicker from "react-native-image-crop-picker";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import { BaseResponse, ErrorResponse, UserApi, UserUpdateRequest } from "../../api";
@@ -142,32 +142,34 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
   };
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
-      aspect: [1, 1],
-      quality: 1,
+    let image = await ImagePicker.openPicker({
+      mediaType: "photo",
     });
 
-    if (result.canceled === false) {
-      setImageURI(result.assets[0].uri);
-    }
+    let croped = await ImagePicker.openCropper({
+      mediaType: "photo",
+      path: image.path,
+      width: 1080,
+      height: 1080,
+      cropperCancelText: "Cancle",
+      cropperChooseText: "Check",
+      cropperToolbarTitle: "이미지를 크롭하세요",
+      forceJpg: true,
+    });
+
+    if (croped) setImageURI(croped.path);
   };
 
   useEffect(() => {
     setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={onSubmit}>
-          <Text style={{ color: "#2995FA" }}>저장</Text>
-        </TouchableOpacity>
-      ),
+      headerRight: () => <TouchableOpacity onPress={onSubmit}>{mutation.isLoading ? <ActivityIndicator /> : <Text style={{ color: "#2995FA" }}>저장</Text>}</TouchableOpacity>,
     });
 
     return () => {
       DeviceEventEmitter.emit("ProfileRefresh");
       DeviceEventEmitter.emit("HomeFeedRefetch");
     };
-  }, [name, birthday, phoneNumber, organizationName, imageURI]);
+  }, [name, birthday, phoneNumber, organizationName, imageURI, mutation]);
 
   useEffect(() => {
     if (phoneNumber?.length === 10) {
@@ -180,12 +182,6 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
       setPhoneNumber(phoneNumber.replace(/-/g, "").replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3"));
     }
   }, [phoneNumber]);
-
-  const [categoryItem, setCategoryItem] = useState(false);
-
-  const onClick = () => {
-    categoryItem === true ? setCategoryItem(false) : setCategoryItem(true);
-  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
