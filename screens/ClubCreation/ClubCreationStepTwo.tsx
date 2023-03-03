@@ -147,14 +147,20 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   const pickImage = async () => {
     let image = await ImagePicker.openPicker({
       mediaType: "photo",
-      height: 1080,
+    });
+
+    let croped = await ImagePicker.openCropper({
+      mediaType: "photo",
+      path: image.path,
       width: 1080,
+      height: 1080,
+      cropperCancelText: "Cancle",
+      cropperChooseText: "Check",
+      cropperToolbarTitle: "이미지를 크롭하세요",
       forceJpg: true,
     });
 
-    if (image) {
-      setImageURI(image.path);
-    }
+    if (croped) setImageURI(croped.path);
   };
 
   useEffect(() => {
@@ -332,7 +338,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
                 imageURI,
               });
             }}
-            disabled={clubName === "" || maxNumber === "" || phoneNumber === "" || organizationName === ""}
+            disabled={clubName === "" || maxNumber === "" || phoneNumber === "" || organizationName === "" || !imageURI}
           >
             <ButtonText>다음 2/3</ButtonText>
           </NextButton>

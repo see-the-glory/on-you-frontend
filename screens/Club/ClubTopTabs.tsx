@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Alert, Animated, DeviceEventEmitter, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
+import { Alert, Animated, BackHandler, DeviceEventEmitter, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
@@ -134,14 +134,10 @@ const ClubTopTabs = ({
 
   const goToClubJoin = () => {
     if (clubRole?.data?.applyStatus === "APPLIED") {
-      return toast.show("가입신청서가 이미 전달되었습니다.", {
-        type: "warning",
-      });
+      return toast.show("가입신청서가 이미 전달되었습니다.", { type: "warning" });
     }
     if (data?.recruitStatus === "CLOSE") {
-      return toast.show("멤버 모집 기간이 아닙니다.", {
-        type: "warning",
-      });
+      return toast.show("멤버 모집 기간이 아닙니다.", { type: "warning" });
     }
 
     navigate("ClubJoin", { clubData: data });
@@ -149,9 +145,7 @@ const ClubTopTabs = ({
 
   const goToFeedCreation = () => {
     if (me === undefined) {
-      toast.show("유저 정보를 알 수 없습니다.", {
-        type: "warning",
-      });
+      toast.show("유저 정보를 알 수 없습니다.", { type: "warning" });
       return;
     }
     navigate("FeedStack", {
@@ -254,23 +248,28 @@ const ClubTopTabs = ({
   });
 
   useEffect(() => {
-    scrollY.addListener(({ value }) => {});
+    const scrollListener = scrollY.addListener(({ value }) => {});
 
     console.log("ClubTopTabs - add listner");
-    let scheduleSubscription = DeviceEventEmitter.addListener("SchedulesRefetch", () => {
+    const scheduleSubscription = DeviceEventEmitter.addListener("SchedulesRefetch", () => {
       console.log("ClubTopTabs - Schedule Refetch Event");
       schedulesRefetch();
     });
-    let clubSubscription = DeviceEventEmitter.addListener("ClubRefetch", () => {
+    const clubSubscription = DeviceEventEmitter.addListener("ClubRefetch", () => {
       console.log("ClubTopTabs - ClubData, ClubRole Refetch Event");
       clubDataRefetch();
       clubRoleRefetch();
     });
+    const backHandelr = BackHandler.addEventListener("hardwareBackPress", () => {
+      popToTop();
+      return true;
+    });
 
     return () => {
-      scrollY.removeListener();
+      scrollY.removeListener(scrollListener);
       scheduleSubscription.remove();
       clubSubscription.remove();
+      backHandelr.remove();
       dispatch(clubSlice.actions.deleteClub());
       console.log("ClubTopTabs - remove listner & delete clubslice");
     };
