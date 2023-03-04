@@ -34,6 +34,7 @@
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = onyoufrontend/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		DA314CFE7F0F72A7E84753F6 /* Pods_onyoufrontend.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_onyoufrontend.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4F151ED0FB64A6770A649F6 /* Pods-onyoufrontend.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-onyoufrontend.staging.xcconfig"; path = "Target Support Files/Pods-onyoufrontend/Pods-onyoufrontend.staging.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-onyoufrontend/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -129,6 +130,7 @@
 			children = (
 				60EAE1CFF58CAD57BA2E3AFD /* Pods-onyoufrontend.debug.xcconfig */,
 				868B1BE218428AB94C1BC0C8 /* Pods-onyoufrontend.release.xcconfig */,
+				E4F151ED0FB64A6770A649F6 /* Pods-onyoufrontend.staging.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -332,7 +334,7 @@
 				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2023022401;
+				CURRENT_PROJECT_VERSION = 2023030302;
 				DEVELOPMENT_TEAM = P83ZS7XR97;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -344,7 +346,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				MODULE_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -355,6 +357,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.onyou.project;
 				PRODUCT_NAME = onyou;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -370,14 +373,14 @@
 				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2023022401;
+				CURRENT_PROJECT_VERSION = 2023030302;
 				DEVELOPMENT_TEAM = P83ZS7XR97;
 				INFOPLIST_FILE = onyoufrontend/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OnYou;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				MODULE_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -388,6 +391,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.onyou.project;
 				PRODUCT_NAME = onyou;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = NO;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -421,6 +425,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODEPUSH_KEY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -445,6 +450,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
+				MULTI_DEPLOYMENT_CONFIG = "";
 				ONLY_ACTIVE_ARCH = YES;
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -479,6 +485,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODEPUSH_KEY = "wZMyC8v154v6REandESiUDFTO-ha1wzm3aToh";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -496,11 +503,98 @@
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				MULTI_DEPLOYMENT_CONFIG = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
+		};
+		A7DDBC1A29B335EF0088E266 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODEPUSH_KEY = "tA5mubP-FoZqgUB9O9UZg4ePCaQsBO00HCxTk";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
+				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MULTI_DEPLOYMENT_CONFIG = "$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Staging;
+		};
+		A7DDBC1B29B335EF0088E266 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E4F151ED0FB64A6770A649F6 /* Pods-onyoufrontend.staging.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2023030302;
+				DEVELOPMENT_TEAM = P83ZS7XR97;
+				INFOPLIST_FILE = onyoufrontend/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = OnYou;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0.1;
+				MODULE_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = com.onyou.project;
+				PRODUCT_NAME = onyou;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = NO;
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Staging;
 		};
 /* End XCBuildConfiguration section */
 
@@ -510,6 +604,7 @@
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
 				13B07F951A680F5B00A75B9A /* Release */,
+				A7DDBC1B29B335EF0088E266 /* Staging */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -519,6 +614,7 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+				A7DDBC1A29B335EF0088E266 /* Staging */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
