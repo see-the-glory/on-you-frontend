@@ -48,7 +48,6 @@ const ClubJoin = ({
 }) => {
   const [memo, setMemo] = useState<string>("");
   const toast = useToast();
-  console.log(clubData);
 
   const clubApplyMutation = useMutation<BaseResponse, ErrorResponse, ClubApplyRequest>(ClubApi.applyClub, {
     onSuccess: (res) => {
