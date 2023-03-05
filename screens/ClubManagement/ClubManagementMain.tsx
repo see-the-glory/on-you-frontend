@@ -140,7 +140,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   const myRole = useSelector((state: RootState) => state.club.role);
   const toast = useToast();
   const [data, setData] = useState<Club>(clubData);
-  const [isToggle, setIsToggle] = useState(false);
+  const [isToggle, setIsToggle] = useState(clubData?.recruitStatus === "OPEN" ? true : false);
   const iconSize = 14;
 
   const X = useRef(new Animated.Value(0)).current;
