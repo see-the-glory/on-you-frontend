@@ -179,8 +179,11 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
             ref={phoneInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
+            clearButtonMode="always"
+            onFocus={() => setErrortext(true)}
+            onBlur={() => setErrortext(false)}
           />
-          {errortext === true || !phoneReg.test(phoneNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          {errortext === true && !phoneReg.test(phoneNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
           <FieldContentOptionLine>
             <SkipButton onPress={goToNext}>
               <SkipText>선택하지 않고 넘어가기</SkipText>

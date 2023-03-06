@@ -140,8 +140,11 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
             ref={pwInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
+            clearButtonMode="always"
+            onFocus={() => setErrortext(true)}
+            onBlur={() => setErrortext(false)}
           />
-          {errortext === true || !pwReg.test(userPw) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          {errortext === true && !pwReg.test(userPw) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
           <AskText>비밀번호를 다시 입력해주세요.</AskText>
           <Input
             placeholder="영문, 숫자, 특수문자 포함 8자 이상"
@@ -152,6 +155,7 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
             ref={pwInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
+            clearButtonMode="always"
           />
           {/* {errortext === true || !pwReg.test(userPw2) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null} */}
           {userPw !== userPw2 ? <Error>비밀번호가 일치하지 않습니다.</Error> : null}

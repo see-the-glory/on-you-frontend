@@ -134,8 +134,11 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
             ref={emailInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
+            clearButtonMode="always"
+            onFocus={() => setError(true)}
+            onBlur={() => setError(false)}
           />
-          {error === true || !emailReg.test(email) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          {error === true && !emailReg.test(email) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
         </Wrap>
         <ButtonWrap>
           <Button onPress={validate} disabled={!emailReg.test(email)}>

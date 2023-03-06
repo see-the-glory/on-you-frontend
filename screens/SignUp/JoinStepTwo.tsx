@@ -120,8 +120,11 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ nav
             returnKeyType="next"
             blurOnSubmit={false}
             placeholderTextColor={"#B0B0B0"}
+            clearButtonMode="always"
+            onFocus={() => setErrortext(true)}
+            onBlur={() => setErrortext(false)}
           />
-          {errortext === true || !nameReg.test(userName) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          {errortext === true && !nameReg.test(userName) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
         </Wrap>
         <ButtonWrap>
           <Button onPress={validate} disabled={!nameReg.test(userName)}>

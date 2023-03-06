@@ -101,7 +101,8 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
   const [errortext, setErrortext] = useState(false);
   const birthInputRef = createRef();
 
-  const birthReg = /^(19[0-9][0-9]|20\d{2})-(0[0-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
+  const birthReg =
+    /^(((?:(?:1[6-9]|[2-9]\d)?\d{2})(-)(?:(?:(?:0?[13578]|1[02])(-)31)|(?:(?:0?[1,3-9]|1[0-2])(-)(?:29|30))))|(((?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))(-)(?:0?2(-)29))|((?:(?:(?:1[6-9]|[2-9]\d)?\d{2})(-)(?:(?:0?[1-9])|(?:1[0-2]))(-)(?:0[1-9]|1\d|2[0-8]))))$/;
 
   useEffect(() => {
     if (birthNumber.length === 5) {
@@ -177,8 +178,11 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
             ref={birthInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
+            clearButtonMode="always"
+            onFocus={() => setErrortext(true)}
+            onBlur={() => setErrortext(false)}
           />
-          {errortext === true || !birthReg.test(birthNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          {errortext === true && !birthReg.test(birthNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
           <FieldContentOptionLine>
             <SkipButton onPress={goToNext}>
               <SkipText>선택하지 않고 넘어가기</SkipText>

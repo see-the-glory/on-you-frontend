@@ -11,7 +11,7 @@ const Container = styled.View`
   padding-horizontal: 20px;
 `;
 
-const IdButton = styled.TouchableOpacity`
+const IdButton = styled.TouchableHighlight`
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -19,16 +19,16 @@ const IdButton = styled.TouchableOpacity`
   height: 53px;
   border-width: 1px;
   border-color: #ff6534;
-  background-color: ${(props) => (props.disabled ? "#ffffff" : "#ff6534")};
+  background-color: #fff;
 `;
 
 const IdTitle = styled.Text`
-  color: white;
+  color: #000;
   font-size: 18px;
   font-weight: 700;
 `;
 
-const PwButton = styled.TouchableOpacity`
+const PwButton = styled.TouchableHighlight`
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -47,8 +47,6 @@ const PwTitle = styled.Text`
 `;
 
 const FindLoginInfo: React.FC<NativeStackScreenProps<any, "FindLoginInfo">> = ({ navigation: { navigate } }) => {
-  const [active, setActive] = useState(false);
-
   const goToFindId = () => {
     navigate("LoginStack", {
       screen: "FindId",
@@ -64,10 +62,10 @@ const FindLoginInfo: React.FC<NativeStackScreenProps<any, "FindLoginInfo">> = ({
   return (
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
-      <IdButton onPress={goToFindId} onPressIn={() => setActive(true)}>
+      <IdButton onPress={goToFindId} underlayColor="#ff6534">
         <IdTitle>아이디 찾기</IdTitle>
       </IdButton>
-      <PwButton onPress={goToFindPw}>
+      <PwButton onPress={goToFindPw} underlayColor="#ff6534">
         <PwTitle>비밀번호 찾기</PwTitle>
       </PwButton>
     </Container>

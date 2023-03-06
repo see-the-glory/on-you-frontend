@@ -144,6 +144,7 @@ const FindPw: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
             ref={nameInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
+            clearButtonMode="always"
           />
         </Form>
         <Form>
@@ -156,6 +157,7 @@ const FindPw: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
             ref={emailInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
+            clearButtonMode="always"
           />
         </Form>
         <Form>
@@ -170,6 +172,7 @@ const FindPw: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
             ref={phoneInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
+            clearButtonMode="always"
           />
         </Form>
         <Form>
@@ -184,6 +187,7 @@ const FindPw: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
             ref={birthInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
+            clearButtonMode="always"
           />
         </Form>
         <Button onPress={onSubmit}>
