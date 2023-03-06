@@ -23,7 +23,7 @@ const IdButton = styled.TouchableOpacity`
 `;
 
 const IdTitle = styled.Text`
-  color: #000;
+  color: white;
   font-size: 18px;
   font-weight: 700;
 `;
