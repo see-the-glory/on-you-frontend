@@ -16,6 +16,7 @@ import store, { useAppDispatch } from "./redux/store";
 import messaging from "@react-native-firebase/messaging";
 import { init, updateFCMToken } from "./redux/slices/auth";
 import BackgroundColor from "react-native-background-color";
+import CodePush from "react-native-code-push";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -138,7 +139,7 @@ const RootNavigation = () => {
   );
 };
 
-export default function App() {
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView style={{ flex: 1 }}>
@@ -164,3 +165,16 @@ export default function App() {
     </QueryClientProvider>
   );
 }
+
+const codePushOptions = {
+  checkFrequency: CodePush.CheckFrequency.ON_APP_START,
+  updateDialog: {
+    title: "...",
+    optionalUpdateMessage: "...",
+    optionalInstallButtonLabel: "업데이트",
+    optionalIgnoreButtonLabel: "아니요.",
+  },
+  installMode: CodePush.InstallMode.IMMEDIATE,
+};
+
+export default CodePush(codePushOptions)(App);
