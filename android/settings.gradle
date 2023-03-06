@@ -6,7 +6,7 @@ useExpoModules()
 apply from: new File(["node", "--print", "require.resolve('@react-native-community/cli-platform-android/package.json')"].execute(null, rootDir).text.trim(), "../native_modules.gradle");
 applyNativeModulesSettingsGradle(settings)
 
-include ':app'
+include ':app', ':react-native-code-push'
 includeBuild(new File(["node", "--print", "require.resolve('react-native-gradle-plugin/package.json')"].execute(null, rootDir).text.trim()).getParentFile())
 
 if (settings.hasProperty("newArchEnabled") && settings.newArchEnabled == "true") {
@@ -15,3 +15,5 @@ if (settings.hasProperty("newArchEnabled") && settings.newArchEnabled == "true")
   include(":ReactAndroid:hermes-engine")
   project(":ReactAndroid:hermes-engine").projectDir = new File(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim(), "../ReactAndroid/hermes-engine");
 }
+
+project(':react-native-code-push').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-code-push/android/app')

@@ -12,6 +12,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
+import com.microsoft.codepush.react.CodePush;
 import com.onyoufrontend.newarchitecture.MainApplicationReactNativeHost;
 
 import expo.modules.ApplicationLifecycleDispatcher;
@@ -42,6 +43,11 @@ public class MainApplication extends Application implements ReactApplication {
     protected String getJSMainModuleName() {
       return "index";
     }
+    
+    @Override
+    protected String getJSBundleFile() {
+    return CodePush.getJSBundleFile();
+}
   });
 
   private final ReactNativeHost mNewArchitectureNativeHost =
