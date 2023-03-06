@@ -41,6 +41,22 @@ const Root = () => {
 
   const updateTargetTokenMutation = useMutation<BaseResponse, ErrorResponse, TargetTokenUpdateRequest>(UserApi.updateTargetToken);
 
+  const updateTargetToken = (fcmToken: string | null) => {
+    const requestData: TargetTokenUpdateRequest = {
+      targetToken: fcmToken,
+    };
+    updateTargetTokenMutation.mutate(requestData, {
+      onSuccess: (res) => {
+        console.log(res);
+        console.log(`API CALL | updateTargetToken : ${fcmToken}`);
+      },
+      onError: (error) => {
+        console.log(`API ERROR | updateTargetToken ${error.code} ${error.status}`);
+        toast.show(`${error.message ?? error.code}`, { type: "warning" });
+      },
+    });
+  };
+
   const updateFCM = async () => {
     const authStatus = await messaging().requestPermission();
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
@@ -51,9 +67,12 @@ const Root = () => {
     }
     try {
       if (Platform.OS === "android") await messaging().registerDeviceForRemoteMessages();
-      const fcmToken = await messaging().getToken();
+      const newFCMToken = await messaging().getToken();
       console.log("FCM token:", fcmToken);
-      dispatch(updateFCMToken({ fcmToken }));
+      if (fcmToken !== newFCMToken) {
+        console.log("FCM token is refreshed:", newFCMToken);
+        dispatch(updateFCMToken({ fcmToken: newFCMToken }));
+      }
     } catch (e) {
       console.warn(e);
     }
@@ -105,18 +124,7 @@ const Root = () => {
     userInfoRefecth();
     queryClient.resetQueries(["feeds"]);
 
-    if (fcmToken) {
-      const requestData: TargetTokenUpdateRequest = {
-        targetToken: fcmToken,
-      };
-      updateTargetTokenMutation.mutate(requestData, {
-        onSuccess: (res) => {},
-        onError: (error) => {
-          console.log(`API ERROR | updateTargetToken ${error.code} ${error.status}`);
-          toast.show(`${error.message ?? error.code}`, { type: "warning" });
-        },
-      });
-    }
+    if (fcmToken) updateTargetToken(fcmToken);
 
     const logoutSubScription = DeviceEventEmitter.addListener("Logout", async ({ fcmToken }) => {
       console.log(`Root - Logout`);
@@ -125,9 +133,10 @@ const Root = () => {
         toast.show(`로그아웃 되었습니다.`, { type: "success" });
         try {
           if (fcmToken) {
-            await messaging().deleteToken(fcmToken);
-            await updateFCM();
-          } else console.log(`Root - Logout : FCM Token is Null`);
+            updateTargetToken(null);
+            // await messaging().deleteToken(fcmToken);
+            // await updateFCM();
+          } else console.log(`Root - Logout : FCM Token 이 없습니다.`);
           dispatch(feedSlice.actions.deleteFeed());
         } catch (e) {
           console.warn(e);

@@ -127,7 +127,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
     };
     return (
       <Container>
-        <HeaderView padding={20} height={this.props.headerHeight}>
+        <HeaderView padding={10} height={this.props.headerHeight}>
           <HeaderLeftView>
             <CircleIcon uri={this.props.feedData?.thumbnail} size={46} kerning={6} />
             <HeaderNameView>
@@ -143,7 +143,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           </HeaderLeftView>
           <HeaderRightView>
             <TouchableOpacity onPress={() => this.props.openFeedOption(this.props.feedData)} style={{ paddingLeft: 10 }}>
-              <Ionicons name="ellipsis-vertical" size={15} color="black" />
+              <Ionicons name="ellipsis-vertical" size={15} color="black" style={{ marginRight: -5 }} />
             </TouchableOpacity>
           </HeaderRightView>
         </HeaderView>
@@ -165,7 +165,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           )}
           ListEmptyComponent={<FastImage source={require("../assets/basic.jpg")} style={{ width: this.props.feedSize, height: this.props.feedSize }} />}
         />
-        <ContentView padding={20}>
+        <ContentView padding={10}>
           <InformationView height={this.props.infoHeight}>
             <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "flex-start" }}>
               <InformationLeftView>

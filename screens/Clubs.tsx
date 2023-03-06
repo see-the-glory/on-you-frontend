@@ -59,7 +59,7 @@ const HeaderSection = styled.View`
 
 const HeaderItem = styled.View`
   flex: 1;
-  padding: 0px 20px;
+  padding: 0px 10px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -371,8 +371,8 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             renderItem={({ item, index }: { item: Category; index: number }) => (
               <CategoryButton
                 style={{
-                  paddingLeft: index === 0 ? 20 : 0,
-                  paddingRight: index === Number(category?.data.length) ? 20 : 0,
+                  paddingLeft: index === 0 ? 10 : 0,
+                  paddingRight: index === Number(category?.data.length) ? 10 : 0,
                 }}
                 onPress={() => {
                   if (selectedCategory !== item.id) setClubsCategoryParams(item.id);
