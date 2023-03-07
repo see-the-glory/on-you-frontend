@@ -127,7 +127,7 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
           </BorderWrap>
           <AskText>이메일을 적어주세요.</AskText>
           <SubText>로그인 ID로 활용됩니다.</SubText>
-          <Input placeholder="example@gmail.com" placeholderTextColor={"#B0B0B0"} autoCorrect={false} onChangeText={(email: string) => setEmail(email)} error={email !== "" && !emailReg.test(email)} />
+          <Input placeholder="example@gmail.com" placeholderTextColor={"#B0B0B0"} autoCorrect={false} onChangeText={(email: string) => setEmail(email)} error={email !== "" && !emailReg.test(email)} clearButtonMode="always" />
           {email !== "" && !emailReg.test(email) ? (
             <ValidationView>
               <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />

@@ -120,6 +120,7 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ nav
             onChangeText={(name: string) => setUserName(name)}
             placeholderTextColor={"#B0B0B0"}
             error={userName !== "" && !nameReg.test(userName)}
+            clearButtonMode="always"
           />
           {userName !== "" && !nameReg.test(userName) ? (
             <ValidationView>

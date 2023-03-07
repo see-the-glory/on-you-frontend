@@ -126,6 +126,7 @@ const FindId: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
             ref={nameInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
+            clearButtonMode="always"
           />
         </Form>
         <Form>
@@ -140,6 +141,7 @@ const FindId: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
             ref={phoneInputRef}
             returnKeyType="next"
             blurOnSubmit={false}
+            clearButtonMode="always"
           />
         </Form>
         <Button onPress={onSubmit}>

@@ -176,6 +176,7 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
             onChangeText={(phone: string) => setPhoneNumber(phone)}
             value={phoneNumber}
             error={phoneNumber !== "" && !phoneReg.test(phoneNumber)}
+            clearButtonMode="always"
           />
           <ErrorView>{phoneNumber !== "" && !phoneReg.test(phoneNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : <></>}</ErrorView>
           <FieldContentOptionLine>

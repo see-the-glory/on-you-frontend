@@ -164,7 +164,6 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
               <ValidationText>{` 8자리 이상`}</ValidationText>
             </ValidationItem>
           </ValidationView>
-
           <AskText>비밀번호를 다시 입력해주세요.</AskText>
           <Input
             placeholder="영문, 숫자, 특수문자 포함 8자 이상"
@@ -172,6 +171,7 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
             secureTextEntry={true}
             autoCorrect={false}
             onChangeText={(value: string) => setCheckPassword(value)}
+            clearButtonMode="always"
           />
           {password !== checkPassword && password !== "" && checkPassword !== "" ? (
             <ValidationView>

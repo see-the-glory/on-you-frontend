@@ -4,20 +4,25 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
+import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
 import { login } from "../../redux/slices/auth";
 
 const Container = styled.View`
   width: 100%;
-  height: 95%;
+  height: 100%;
   align-items: center;
   justify-content: space-between;
-  padding-horizontal: 20px;
   padding-top: 30px;
 `;
 
 const Wrap = styled.View`
+  width: 100%;
+  padding: 0px 20px;
+`;
+
+const ButtonWrap = styled.View`
   width: 100%;
 `;
 
@@ -60,14 +65,16 @@ const LoginButton = styled.TouchableOpacity<{ disabled: boolean }>`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 48px;
+  height: 68px;
+  padding-bottom: 8px;
   background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : "#ff6534")};
 `;
 
-const LoginTitle = styled.Text`
+const LoginTitle = styled(CustomText)`
+  font-family: "NotoSansKR-Bold";
   color: #fff;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
 `;
 
 const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { navigate } }) => {
@@ -120,21 +127,21 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
         <Wrap>
           <Form>
             <Title>아이디</Title>
-            <Input placeholder="example@email.com" placeholderTextColor={"#B0B0B0"} onChangeText={(text: string) => setEmail(text)} />
+            <Input clearButtonMode="always" placeholder="example@email.com" placeholderTextColor={"#B0B0B0"} onChangeText={(text: string) => setEmail(text)} />
           </Form>
           <Form>
             <Title>비밀번호</Title>
-            <Input secureTextEntry={true} placeholder="비밀번호를 입력해주세요." placeholderTextColor={"#B0B0B0"} onChangeText={(text: string) => setPassword(text)} />
+            <Input clearButtonMode="always" secureTextEntry={true} placeholder="비밀번호를 입력해주세요." placeholderTextColor={"#B0B0B0"} onChangeText={(text: string) => setPassword(text)} />
             <View onPress={goToFindLoginInfo}>
               <ForgetText>로그인 정보가 기억나지 않을때</ForgetText>
             </View>
           </Form>
         </Wrap>
-        <Wrap>
+        <ButtonWrap>
           <LoginButton onPress={onSubmit} disabled={!(email.trim() && password)}>
             <LoginTitle>로그인</LoginTitle>
           </LoginButton>
-        </Wrap>
+        </ButtonWrap>
       </Container>
     </TouchableWithoutFeedback>
   );
