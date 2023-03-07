@@ -47,7 +47,6 @@ const Root = () => {
     };
     updateTargetTokenMutation.mutate(requestData, {
       onSuccess: (res) => {
-        console.log(res);
         console.log(`API CALL | updateTargetToken : ${fcmToken}`);
       },
       onError: (error) => {

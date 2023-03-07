@@ -46,7 +46,6 @@ export const logout = createAsyncThunk("auth/logout", async (payload, thunkAPI) 
   try {
     await AsyncStorage.removeItem("token");
     await AsyncStorage.removeItem("user");
-    await AsyncStorage.removeItem("fcmToken");
   } catch (err) {
     console.log(err);
     return thunkAPI.rejectWithValue(payload);
@@ -93,7 +92,6 @@ const authSlice = createSlice({
       builder.addCase(logout.fulfilled, (state, action) => {
         state.user = null;
         state.token = null;
-        state.fcmToken = null;
       }),
       builder.addCase(updateUser.fulfilled, (state, action) => {
         state.user = action.payload.user;
