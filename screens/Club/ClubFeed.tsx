@@ -25,8 +25,10 @@ const FeedImage = styled(FastImage)<{ size: number }>`
 
 const EmptyView = styled.View`
   flex: 1;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  padding-top: 200px;
+  background-color: white;
 `;
 
 const EmptyText = styled(CustomText)`
@@ -48,8 +50,8 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   syncScrollOffset,
   screenScrollRefs,
 }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const feeds = useSelector((state: RootState) => state.club.feeds);
+  const myRole = useSelector((state: RootState) => state.club.role);
   const toast = useToast();
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
@@ -77,6 +79,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       console.log(`API ERROR | getClubFeeds ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
+    enabled: ["MASTER", "MANAGER", "MEMBER"].includes(myRole ?? ""),
   });
 
   const loadMore = () => {
@@ -117,7 +120,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     <Loader>
       <ActivityIndicator />
     </Loader>
-  ) : (
+  ) : ["MASTER", "MANAGER", "MEMBER"].includes(myRole ?? "") ? (
     <Animated.FlatList
       ref={(ref) => {
         screenScrollRefs.current[screenName] = ref;
@@ -160,10 +163,14 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       )}
       renderItem={({ item, index }: { item: Feed; index: number }) => (
         <TouchableOpacity key={String(index)} onPress={() => goToClubFeedDetail(index)} style={index % 3 === 1 ? { marginHorizontal: 1 } : {}}>
-          <FeedImage size={feedSize} source={item?.imageUrls[0] ? { uri: item.imageUrls[0] } : require("../../assets/basic.jpg")} />
+          <FeedImage size={feedSize} source={item?.imageUrls && item?.imageUrls[0] ? { uri: item.imageUrls[0] } : require("../../assets/basic.jpg")} />
         </TouchableOpacity>
       )}
     />
+  ) : (
+    <EmptyView>
+      <EmptyText>{`모임의 멤버만 게시물을 볼 수 있습니다.`}</EmptyText>
+    </EmptyView>
   );
 };
 

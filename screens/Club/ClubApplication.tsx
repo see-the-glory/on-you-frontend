@@ -81,11 +81,11 @@ const ClubApplication = ({
   },
   navigation: { navigate, goBack, setOptions },
 }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const rejectMutation = useMutation<BaseResponse, ErrorResponse, ClubRejectRequest>(ClubApi.rejectToClubJoin, {
     onSuccess: (res) => {
       toast.show(`가입신청을 거절했습니다.`, { type: "warning" });
+      DeviceEventEmitter.emit("ClubRefetch");
       goBack();
     },
     onError: (error) => {
@@ -116,7 +116,8 @@ const ClubApplication = ({
     });
 
     return () => {
-      DeviceEventEmitter.emit("NotificationRefresh");
+      DeviceEventEmitter.emit("ClubNotificationRefresh");
+      DeviceEventEmitter.emit("UserNotificationRefresh");
     };
   }, []);
 
@@ -130,7 +131,6 @@ const ClubApplication = ({
             clubId: clubData.id,
             actionId: actionId,
             userId: actionerId,
-            token,
           };
           rejectMutation.mutate(data);
         },
@@ -148,7 +148,6 @@ const ClubApplication = ({
             clubId: clubData.id,
             actionId: actionId,
             userId: actionerId,
-            token,
           };
           approveMutation.mutate(data);
         },

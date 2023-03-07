@@ -51,6 +51,32 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, c
         </TextView>
       </Item>
     );
+  } else if (notificationData?.actionType === "APPROVE") {
+    return (
+      <Item>
+        <Header>
+          <ItemTitle>가입수락</ItemTitle>
+          <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
+        </Header>
+        <TextView>
+          <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionClubName}</ItemBoldText>
+          <ItemText processDone={notificationData?.processDone}>{` 모임에 가입되셨습니다!`}</ItemText>
+        </TextView>
+      </Item>
+    );
+  } else if (notificationData?.actionType === "REJECT") {
+    return (
+      <Item>
+        <Header>
+          <ItemTitle>가입거절</ItemTitle>
+          <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
+        </Header>
+        <TextView>
+          <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionClubName}</ItemBoldText>
+          <ItemText processDone={notificationData?.processDone}>{` 모임에서 메시지가 도착했습니다.`}</ItemText>
+        </TextView>
+      </Item>
+    );
   } else {
     return <></>;
   }
