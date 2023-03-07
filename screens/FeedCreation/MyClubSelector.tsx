@@ -127,10 +127,8 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
           ) : (
               <FlatList
                   keyExtractor={(item: MyClub, index: number) => String(index)}
-                  data={myClub?.data}
+                  data={myClub?.data?.filter(item=>item.applyStatus === "APPROVED")}
                   renderItem={({ item, index }: { item: MyClub; index: number }) => (
-                      <>
-                        {item.applyStatus === "APPROVED" ? (
                             <ClubArea key={index} onPress={() => goToImageSelect(item)}>
                               <ClubImg source={{ uri: item.thumbnail }} />
                               <HeaderNameView>
@@ -150,8 +148,6 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
                                 </CommentRemainder>
                               </HeaderNameView>
                             </ClubArea>
-                        ) : null}
-                      </>
                   )}
               />
           )}
