@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
 import {
@@ -21,7 +21,7 @@ import { FeedCreateScreenProps } from "../../types/feed";
 import { useNavigation } from "@react-navigation/native";
 import { RootState } from "../../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
-// import DraggableFlatList, { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
+import DraggableFlatList, { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -89,10 +89,9 @@ const MyImage = styled.View`
 `;
 
 const ImageUnderArea = styled.View`
-  //justify-content: space-between;
+  justify-content: space-between;
   flex-direction: row;
   padding-top: 15px;
-  justify-content: flex-end;
 `;
 
 const MoveImageText = styled.Text`
@@ -286,40 +285,42 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     if (selectIndex == q) setSelectIndex(0);
   };
 
-  /*  const renderItem = useCallback(
-        ({ drag, isActive, item }: RenderItemParams<any> & { item: string }) => {
-          return (
-              <ScaleDecorator>
-                <TouchableOpacity
-                    activeOpacity={1}
-                    onLongPress={drag}
-                    disabled={isActive}
-                    style={[
-                      {
-                        opacity: isActive ? 0.5 : 1,
-                      },
-                    ]}
-                >
+  const renderItem = useCallback(
+      ({ drag, isActive, item }: RenderItemParams<any> & { item: string }) => {
+        return (
+            <ScaleDecorator>
+              <TouchableOpacity
+                  activeOpacity={1}
+                  onLongPress={drag}
+                  disabled={isActive}
+                  style={[
+                    {
+                      opacity: isActive ? 0.5 : 1,
+                    },
+                  ]}
+              >
+                <SelectImageArea onPress={() => moreImageFix(imageURL)} key={item}>
                   <SelectImage source={{ uri: item }} />
                   <ImageCancleBtn onPress={() => ImageCancle(imageURL.indexOf(item))}>
                     <CancleIcon>
                       <AntDesign name="close" size={15} color="white" />
                     </CancleIcon>
                   </ImageCancleBtn>
-                </TouchableOpacity>
-              </ScaleDecorator>
-          );
-        },
-        [imageURL]
-    );*/
+                </SelectImageArea>
+              </TouchableOpacity>
+            </ScaleDecorator>
+        );
+      },
+      [imageURL]
+  );
 
   return (
       <Container>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
-            <>
-              <SelectImageView>
-                <MyImage>
+        {/*<TouchableWithoutFeedback onPress={Keyboard.dismiss}>*/}
+        <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
+          <>
+            <SelectImageView>
+              {/*<MyImage>
                   {imageURL?.map((image, index) => (
                       <SelectImageArea onPress={() => moreImageFix(imageURL)} key={index}>
                         <SelectImage source={{ uri: imageURL[index] }} />
@@ -330,34 +331,34 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
                         </ImageCancleBtn>
                       </SelectImageArea>
                   ))}
-                </MyImage>
-                {/*<MyImage>
-                  <DraggableFlatList horizontal data={imageURL} onDragEnd={({ data }) => setImageURL(data)} keyExtractor={(item) => item} renderItem={(props) => renderItem({ ...props })} />
                 </MyImage>*/}
-                <ImageUnderArea>
-                  {imageURL.length !== 0 ? (
-                      <>
-                        {/*<MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>*/}
-                        <TouchableOpacity onPress={pickImage}>
-                          <MaterialIcons name="add-photo-alternate" size={23} color="black" />
-                        </TouchableOpacity>
-                      </>
-                  ) : null}
-                </ImageUnderArea>
-              </SelectImageView>
-              <FeedText
-                  placeholder="사진과 함께 남길 게시글을 작성해 보세요."
-                  onChangeText={(content: string) => setContent(content)}
-                  onEndEditing={() => setContent((prev) => prev.trim())}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  multiline={true}
-                  returnKeyType="done"
-                  returnKeyLabel="done"
-              ></FeedText>
-            </>
-          </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
+              <MyImage>
+                <DraggableFlatList horizontal data={imageURL} onDragEnd={({ data }) => setImageURL(data)} keyExtractor={(item) => item} renderItem={(props) => renderItem({ ...props })} />
+              </MyImage>
+              <ImageUnderArea>
+                {imageURL.length !== 0 ? (
+                    <>
+                      <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>
+                      <TouchableOpacity onPress={pickImage}>
+                        <MaterialIcons name="add-photo-alternate" size={23} color="black" />
+                      </TouchableOpacity>
+                    </>
+                ) : null}
+              </ImageUnderArea>
+            </SelectImageView>
+            <FeedText
+                placeholder="사진과 함께 남길 게시글을 작성해 보세요."
+                onChangeText={(content: string) => setContent(content)}
+                onEndEditing={() => setContent((prev) => prev.trim())}
+                autoCapitalize="none"
+                autoCorrect={false}
+                multiline={true}
+                returnKeyType="done"
+                returnKeyLabel="done"
+            ></FeedText>
+          </>
+        </KeyboardAvoidingView>
+        {/*</TouchableWithoutFeedback>*/}
       </Container>
   );
 };
