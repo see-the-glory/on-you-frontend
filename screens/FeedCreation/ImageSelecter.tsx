@@ -186,6 +186,48 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     setImageURL(url);
   };
 
+  const morePickImage = async () => {
+    let newImages = await ImagePicker.openPicker({
+      mediaType: "photo",
+      multiple: true,
+      height: 1080,
+      width: 1080,
+      minFiles: 1,
+      maxFiles: 5,
+    });
+
+    if (imageURL.length + newImages.length> 5) {
+      toast.show(`이미지는 5개까지 선택할 수 있습니다.`, {
+        type: "warning",
+      });
+      return;
+    }
+
+    let url: any[] = [];
+    for (let i = 0; i < newImages.length; i++) {
+      let croped = await ImagePicker.openCropper({
+        mediaType: "photo",
+        path: newImages[i].path,
+        width: 1080,
+        height: 1080,
+        cropperCancelText: "Cancle",
+        cropperChooseText: "Check",
+        cropperToolbarTitle: "이미지를 크롭하세요",
+      });
+
+      if(imageURL.length > 5){
+        toast.show(`이미지는 5개까지 선택할 수 있습니다.`, {
+          type: "warning",
+        });
+        return;
+      }
+      url.push(croped.path);
+    }
+    setSelectIndex(url?.length > 0 ? 0 : undefined);
+    setImageURL(prev=>[...prev, ...url]);
+
+  };
+
   const mutation = useMutation<BaseResponse, ErrorResponse, FeedCreationRequest>(FeedApi.createFeed, {
     onSuccess: (res) => {
       setSubmitShow(true);
@@ -334,17 +376,21 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
                 />
               </MyImage>
               <ImageUnderArea>
-                {imageURL.length !== 0 ? (
+                <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>
+                <TouchableOpacity onPress={morePickImage}>
+                  <MaterialIcons name="add-photo-alternate" size={23} color="black" />
+                </TouchableOpacity>
+                {/*{imageURL.length !== 0 ? (
                         <>
                           <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>
-                          <TouchableOpacity onPress={pickImage}>
+                          <TouchableOpacity onPress={morePickImage}>
                             <MaterialIcons name="add-photo-alternate" size={23} color="black" />
                           </TouchableOpacity>
                         </>
                     ) :
-                    <TouchableOpacity onPress={pickImage}>
+                    <TouchableOpacity onPress={morePickImage}>
                       <MaterialIcons name="add-photo-alternate" size={23} color="black" />
-                    </TouchableOpacity>}
+                    </TouchableOpacity>}*/}
               </ImageUnderArea>
             </SelectImageView>
             <FeedText
