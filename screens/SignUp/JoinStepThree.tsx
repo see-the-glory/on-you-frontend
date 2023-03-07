@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef, useLayoutEffect } from "react";
 import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from "react-native";
 import styled from "styled-components/native";
-import { Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
 
@@ -50,7 +50,7 @@ const SubText = styled.Text`
 
 const Input = styled.TextInput`
   border-bottom-width: 1px;
-  border-bottom-color: #b3b3b3;
+  border-bottom-color: ${(props: any) => (props.error ? "#ff6534" : "#b3b3b3")};
   margin-top: 47px;
   font-size: 18px;
 `;
@@ -75,6 +75,11 @@ const ButtonTitle = styled(CustomText)`
 const Error = styled.Text`
   color: #ff6534;
   font-size: 12px;
+`;
+
+const ValidationView = styled.View`
+  flex-direction: row;
+  align-items: center;
   margin-top: 7px;
 `;
 
@@ -85,21 +90,17 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
   },
 }) => {
   const [email, setEmail] = useState("");
-  const [error, setError] = useState(false);
-  const emailInputRef = createRef();
   const emailReg = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
-  const validate = () => {
+
+  const goToNext = () => {
     if (!emailReg.test(email)) {
-      setError(true);
       return;
-    } else {
-      setError(false);
-      navigate("SignUpStack", {
-        screen: "JoinStepFour",
-        name,
-        email,
-      });
     }
+    navigate("SignUpStack", {
+      screen: "JoinStepFour",
+      name,
+      email,
+    });
   };
 
   useLayoutEffect(() => {
@@ -110,7 +111,7 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
         </TouchableOpacity>
       ),
     });
-  }, [name]);
+  }, []);
 
   return (
     <TouchableWithoutFeedback
@@ -126,19 +127,18 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
           </BorderWrap>
           <AskText>이메일을 적어주세요.</AskText>
           <SubText>로그인 ID로 활용됩니다.</SubText>
-          <Input
-            placeholder="example@gmail.com"
-            placeholderTextColor={"#B0B0B0"}
-            autoCorrect={false}
-            onChangeText={(email: string) => setEmail(email)}
-            ref={emailInputRef}
-            returnKeyType="next"
-            blurOnSubmit={false}
-          />
-          {error === true || !emailReg.test(email) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          <Input placeholder="example@gmail.com" placeholderTextColor={"#B0B0B0"} autoCorrect={false} onChangeText={(email: string) => setEmail(email)} error={email !== "" && !emailReg.test(email)} />
+          {email !== "" && !emailReg.test(email) ? (
+            <ValidationView>
+              <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />
+              <Error>{` 입력을 다시 한번 확인해주세요.`}</Error>
+            </ValidationView>
+          ) : (
+            <></>
+          )}
         </Wrap>
         <ButtonWrap>
-          <Button onPress={validate} disabled={!emailReg.test(email)}>
+          <Button onPress={goToNext} disabled={!emailReg.test(email)}>
             <ButtonTitle>다음</ButtonTitle>
           </Button>
         </ButtonWrap>

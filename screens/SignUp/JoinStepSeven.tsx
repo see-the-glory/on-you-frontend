@@ -50,7 +50,7 @@ const SubText = styled.Text`
 
 const Input = styled.TextInput`
   border-bottom-width: 1px;
-  border-bottom-color: #b3b3b3;
+  border-bottom-color: ${(props: any) => (props.error ? "#ff6534" : "#b3b3b3")};
   margin-top: 47px;
   font-size: 18px;
 `;
@@ -70,6 +70,10 @@ const ButtonTitle = styled(CustomText)`
   font-size: 20px;
   line-height: 24px;
   color: #fff;
+`;
+
+const ErrorView = styled.View`
+  height: 25px;
 `;
 
 const Error = styled.Text`
@@ -98,8 +102,6 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
   },
 }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [errortext, setErrortext] = useState(false);
-  const phoneInputRef = createRef();
 
   const phoneReg = /^(01[0|1|6|7|8|9]?)-([0-9]{4})-([0-9]{4})$/;
 
@@ -117,20 +119,17 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
 
   const validate = () => {
     if (!phoneReg.test(phoneNumber)) {
-      setErrortext(true);
       return;
-    } else {
-      setErrortext(false);
-      navigate("SignUpStack", {
-        screen: "JoinStepEight",
-        name,
-        email,
-        password,
-        sex,
-        birth,
-        phone: phoneNumber,
-      });
     }
+    navigate("SignUpStack", {
+      screen: "JoinStepEight",
+      name,
+      email,
+      password,
+      sex,
+      birth,
+      phone: phoneNumber,
+    });
   };
 
   const goToNext = () => {
@@ -176,11 +175,9 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
             maxLength={13}
             onChangeText={(phone: string) => setPhoneNumber(phone)}
             value={phoneNumber}
-            ref={phoneInputRef}
-            returnKeyType="next"
-            blurOnSubmit={false}
+            error={phoneNumber !== "" && !phoneReg.test(phoneNumber)}
           />
-          {errortext === true || !phoneReg.test(phoneNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          <ErrorView>{phoneNumber !== "" && !phoneReg.test(phoneNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : <></>}</ErrorView>
           <FieldContentOptionLine>
             <SkipButton onPress={goToNext}>
               <SkipText>선택하지 않고 넘어가기</SkipText>
