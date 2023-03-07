@@ -41,6 +41,10 @@ const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigatio
   const [pw2, setPw2] = useState<string>("");
   const toast = useToast();
 
+  const numReg = /[0-9]+/;
+  const engReg = /[a-zA-Z]+/;
+  const specialReg = /[!@#$%^*+=-]+/;
+
   useEffect(() => {
     setOptions({
       headerLeft: () => (
@@ -74,10 +78,10 @@ const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigatio
       password: pw,
     };
 
-    if (pw === pw2) {
-      mutation.mutate(requestData);
-    } else {
+    if (!numReg.test(pw) || !engReg.test(pw) || !specialReg.test(pw) || pw.length < 8 || pw !== pw2) {
       toast.show(`입력을 다시 확인해주세요.`, { type: "warning" });
+    } else {
+      mutation.mutate(requestData);
     }
   };
 
@@ -92,7 +96,7 @@ const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigatio
               secureTextEntry={true}
               placeholderTextColor={"#B0B0B0"}
               autoCorrect={false}
-              placeholder="재설정할 비밀번호를 입력해주세요."
+              placeholder="영문, 숫자, 특수문자 포함 8자 이상"
               onChangeText={(pw: string) => setPw(pw)}
             />
           </Form>
@@ -103,7 +107,7 @@ const ChangePw: React.FC<NativeStackScreenProps<any, "ChangePw">> = ({ navigatio
               secureTextEntry={true}
               placeholderTextColor={"#B0B0B0"}
               autoCorrect={false}
-              placeholder="비밀번호를 한번 더 입력해주세요."
+              placeholder="재설정 비밀번호를 한번 더 입력해주세요."
               onChangeText={(pw: string) => setPw2(pw)}
             />
           </Form>
