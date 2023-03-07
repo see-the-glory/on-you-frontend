@@ -48,6 +48,8 @@ export interface MyClub extends Club {
 }
 
 export interface Notification {
+  actionClubId: number;
+  actionClubName: string;
   actionId: number;
   actionerId?: number | null;
   actionerName?: string | null;
@@ -183,7 +185,7 @@ export interface ClubsResponse extends BaseResponse {
   size: number;
 }
 
-export interface ClubNotificationsResponse extends BaseResponse {
+export interface NotificationsResponse extends BaseResponse {
   data: Notification[];
 }
 
@@ -355,7 +357,6 @@ export interface ClubApproveRequest {
   clubId: number;
   actionId: number;
   userId: number;
-  token: string | null;
 }
 
 export interface ClubRejectRequest {
@@ -523,7 +524,7 @@ const duplicateClubNameCheck = (req: DuplicateClubNameCheckRequest) => axios.pos
 // Club Management
 const getClubNotifications = ({ queryKey }: any) => {
   const [_key, clubId]: [string, number] = queryKey;
-  return axios.get<string, ClubNotificationsResponse>(`/api/notifications/club/${clubId}`);
+  return axios.get<string, NotificationsResponse>(`/api/notifications/club/${clubId}`);
 };
 const approveToClubJoin = (req: ClubApproveRequest) => axios.post<string, BaseResponse>(`/api/clubs/approve`, req);
 const rejectToClubJoin = (req: ClubRejectRequest) => axios.post<string, BaseResponse>(`/api/clubs/reject`, req);
@@ -605,6 +606,9 @@ const setPushAlarm = (req: UserPushAlarmRequest) => axios.put<string, BaseRespon
 const withdrawAccount = () => axios.post<string, BaseResponse>(`/api/user/withdraw`);
 const getMyClubs = ({ queryKey }: any) => axios.get<string, MyClubsResponse>(`/api/clubs/my`);
 const submitSuggestion = (req: SuggestionSubmitRequest) => axios.post<string, BaseResponse>(`/api/user/suggestion`, req);
+
+// User
+const getUserNotifications = () => axios.get<string, NotificationsResponse>(`/api/notifications/user`);
 
 // FCM
 const updateTargetToken = (req: TargetTokenUpdateRequest) => axios.post<string, BaseResponse>(`/api/user/updateTargetToken`, req);
@@ -708,6 +712,7 @@ export const UserApi = {
   setPushAlarm,
   updateTargetToken,
   submitSuggestion,
+  getUserNotifications,
 };
 
 export const FeedApi = {

@@ -3,7 +3,7 @@ import { ActivityIndicator, DeviceEventEmitter, FlatList, StatusBar, TouchableOp
 import { useToast } from "react-native-toast-notifications";
 import { useQuery } from "react-query";
 import styled from "styled-components/native";
-import { ClubApi, ErrorResponse, Notification, NotificationsResponse } from "../../api";
+import { ClubApi, ErrorResponse, Notification, NotificationsResponse, UserApi } from "../../api";
 import CustomText from "../../components/CustomText";
 import NotificationItem from "../../components/NotificationItem";
 
@@ -32,22 +32,17 @@ const EmptyText = styled(CustomText)`
   align-items: center;
 `;
 
-const ClubNotification = ({
-  navigation: { navigate },
-  route: {
-    params: { clubData, clubRole },
-  },
-}) => {
+const UserNotification = ({ navigation: { navigate } }) => {
   const toast = useToast();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const {
     data: notifications,
     isLoading: notiLoading,
     refetch: notiRefetch,
-  } = useQuery<NotificationsResponse, ErrorResponse>(["getClubNotifications", clubData.id], ClubApi.getClubNotifications, {
+  } = useQuery<NotificationsResponse, ErrorResponse>(["getUserNotifications"], UserApi.getUserNotifications, {
     onSuccess: (res) => {},
     onError: (error) => {
-      console.log(`API ERROR | getClubNotifications ${error.code} ${error.status}`);
+      console.log(`API ERROR | getUserNotifications ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
@@ -59,30 +54,32 @@ const ClubNotification = ({
   };
 
   useEffect(() => {
-    let clubNotiSubs = DeviceEventEmitter.addListener("ClubNotificationRefresh", () => {
-      console.log("ClubNotification - Refresh Event");
+    let userNotifSubs = DeviceEventEmitter.addListener("UserNotificationRefresh", () => {
+      console.log("UserNotification - Refresh Event");
       onRefresh();
     });
-    return () => clubNotiSubs.remove();
+    return () => userNotifSubs.remove();
   }, []);
 
   const onPressItem = (item: Notification) => {
-    if (clubRole && ["MASTER", "MANAGER"].includes(clubRole?.role)) {
-      if (item.actionType === "APPLY") {
-        return navigate("ClubApplication", {
-          clubData,
-          actionId: item.actionId,
-          actionerName: item.actionerName,
-          actionerId: item.actionerId,
-          applyMessage: item.applyMessage,
-          createdTime: item.created,
-          processDone: item.processDone,
-        });
-      }
-    } else {
-      toast.show("가입신청서를 볼 수 있는 권한이 없습니다.", {
-        type: "warning",
+    if (item.actionType === "APPLY") {
+      return navigate("ClubStack", {
+        screen: "ClubApplication",
+        clubData: {
+          id: item.actionClubId,
+          name: item.actionClubName,
+        },
+        actionId: item.actionId,
+        actionerName: item.actionerName,
+        actionerId: item.actionerId,
+        applyMessage: item.applyMessage,
+        createdTime: item.created,
+        processDone: item.processDone,
       });
+    } else if (item.actionType === "APPROVE") {
+      return navigate("ClubStack", { screen: "ClubTopTabs", clubData: { id: item.actionClubId } });
+    } else if (item.actionType === "REJECT") {
+      // 거절 메시지 보여주기
     }
   };
 
@@ -102,7 +99,7 @@ const ClubNotification = ({
         keyExtractor={(item: Notification, index: number) => String(index)}
         renderItem={({ item, index }: { item: Notification; index: number }) => (
           <TouchableOpacity onPress={() => onPressItem(item)}>
-            <NotificationItem notificationData={item} clubData={clubData} />
+            <NotificationItem notificationData={item} clubData={{ id: item.actionClubId, name: item.actionClubName }} />
           </TouchableOpacity>
         )}
         ListEmptyComponent={() => (
@@ -115,4 +112,4 @@ const ClubNotification = ({
   );
 };
 
-export default ClubNotification;
+export default UserNotification;

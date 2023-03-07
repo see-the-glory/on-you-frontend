@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Alert, Animated, BackHandler, DeviceEventEmitter, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
+import { Alert, Animated, BackHandler, DeviceEventEmitter, StatusBar, Text, TouchableOpacity, useWindowDimensions } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
@@ -10,7 +10,7 @@ import ClubTabBar from "../../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
 import { useMutation, useQuery } from "react-query";
-import { BaseResponse, Club, ClubApi, ClubResponse, ClubRoleResponse, ClubSchedulesResponse, ClubWithdrawRequest, ErrorResponse } from "../../api";
+import { BaseResponse, Club, ClubApi, ClubResponse, ClubRoleResponse, ClubSchedulesResponse, ClubWithdrawRequest, ErrorResponse, NotificationsResponse } from "../../api";
 import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 import { RefinedSchedule } from "../../Types/Club";
@@ -18,6 +18,7 @@ import moment from "moment-timezone";
 import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
 import clubSlice from "../../redux/slices/club";
+import CustomText from "../../components/CustomText";
 
 const Container = styled.View`
   flex: 1;
@@ -42,6 +43,24 @@ const RightNavigationView = styled.View`
   padding-right: 10px;
 `;
 
+const NotiView = styled.View``;
+const NotiBadge = styled.View`
+  position: absolute;
+  top: 0px;
+  right: -4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 5px;
+  z-index: 1;
+  background-color: #ff6534;
+  justify-content: center;
+  align-items: center;
+`;
+const NotiBadgeText = styled.Text`
+  color: white;
+  font-size: 6px;
+`;
+
 const TopTab = createMaterialTopTabNavigator();
 
 const HEADER_EXPANDED_HEIGHT = 270;
@@ -54,13 +73,12 @@ const ClubTopTabs = ({
   },
   navigation: { navigate, popToTop },
 }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const me = useSelector((state: RootState) => state.auth.user);
   const toast = useToast();
   const dispatch = useAppDispatch();
   const [data, setData] = useState<Club>(clubData);
   const [scheduleData, setScheduleData] = useState<RefinedSchedule[]>();
-  const [heartSelected, setHeartSelected] = useState<boolean>(false);
+  const [notiCount, setNotiCount] = useState<number>(0);
   // Header Height Definition
   const { top } = useSafeAreaInsets();
   const { height: SCREEN_HEIGHT } = useWindowDimensions();
@@ -247,6 +265,16 @@ const ClubTopTabs = ({
     },
   });
 
+  const { isLoading: notiLoading, refetch: clubNotiRefetch } = useQuery<NotificationsResponse, ErrorResponse>(["getClubNotifications", data.id], ClubApi.getClubNotifications, {
+    onSuccess: (res) => {
+      setNotiCount(res.data.filter((item) => !item.processDone).length);
+    },
+    onError: (error) => {
+      console.log(`API ERROR | getClubNotifications ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
   useEffect(() => {
     const scrollListener = scrollY.addListener(({ value }) => {});
 
@@ -259,6 +287,7 @@ const ClubTopTabs = ({
       console.log("ClubTopTabs - ClubData, ClubRole Refetch Event");
       clubDataRefetch();
       clubRoleRefetch();
+      clubNotiRefetch();
     });
     const backHandelr = BackHandler.addEventListener("hardwareBackPress", () => {
       popToTop();
@@ -310,7 +339,10 @@ const ClubTopTabs = ({
         <RightNavigationView>
           {clubRole?.data?.role && clubRole.data.role !== "PENDING" ? (
             <TouchableOpacity onPress={goClubNotification} style={{ marginRight: 10 }}>
-              <Ionicons name="mail-outline" size={24} color="white" />
+              <NotiView>
+                {notiCount > 0 && !notiLoading ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
+                <Ionicons name="mail-outline" size={24} color="white" />
+              </NotiView>
             </TouchableOpacity>
           ) : (
             <></>

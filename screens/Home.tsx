@@ -5,10 +5,10 @@ import { ActivityIndicator, Alert, Animated, DeviceEventEmitter, Platform, Statu
 import FastImage from "react-native-fast-image";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
-import { useInfiniteQuery, useMutation } from "react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, UserApi, UserBlockRequest } from "../api";
+import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, NotificationsResponse, UserApi, UserBlockRequest } from "../api";
 import FeedDetail from "../components/FeedDetail";
 import feedSlice from "../redux/slices/feed";
 import { useAppDispatch } from "../redux/store";
@@ -50,13 +50,31 @@ const HeaderButton = styled.TouchableOpacity`
   padding: 0px 10px;
 `;
 
+const NotiView = styled.View``;
+const NotiBadge = styled.View`
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 5px;
+  height: 5px;
+  border-radius: 5px;
+  z-index: 1;
+  background-color: #ff6534;
+  justify-content: center;
+  align-items: center;
+`;
+const NotiBadgeText = styled.Text`
+  color: white;
+  font-size: 3px;
+`;
+
 const Home: React.FC<HomeScreenProps> = () => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const me = useSelector((state: RootState) => state.auth.user);
   const feeds = useSelector((state: RootState) => state.feed.data);
   const dispatch = useAppDispatch();
   const toast = useToast();
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [notiCount, setNotiCount] = useState<number>(0);
   const { ref: myFeedOptionRef, open: openMyFeedOption, close: closeMyFeedOption } = useModalize();
   const { ref: otherFeedOptionRef, open: openOtherFeedOption, close: closeOtherFeedOption } = useModalize();
   const { ref: complainOptionRef, open: openComplainOption, close: closeComplainOption } = useModalize();
@@ -98,6 +116,20 @@ const Home: React.FC<HomeScreenProps> = () => {
     },
   });
 
+  const {
+    data: userNotifications,
+    isLoading: notiLoading,
+    refetch: notiRefetch,
+  } = useQuery<NotificationsResponse, ErrorResponse>(["getUserNotifications"], UserApi.getUserNotifications, {
+    onSuccess: (res) => {
+      setNotiCount(res?.data.filter((item) => !item.processDone).length);
+    },
+    onError: (error) => {
+      console.log(`API ERROR | getUserNotifications ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
   useEffect(() => {
     console.log("Home - add listner");
     let homeFeedSubscription = DeviceEventEmitter.addListener("HomeFeedRefetch", () => {
@@ -112,6 +144,7 @@ const Home: React.FC<HomeScreenProps> = () => {
 
   const onRefresh = async () => {
     setRefreshing(true);
+    await notiRefetch();
     const result = await feedsRefetch();
     dispatch(feedSlice.actions.refreshFeed(result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? []));
     setRefreshing(false);
@@ -169,11 +202,12 @@ const Home: React.FC<HomeScreenProps> = () => {
     navigation.navigate("FeedStack", { screen: "ModifiyFeed", feedData: selectFeedData });
   };
 
+  const goToUserNotification = useCallback(() => {
+    navigation.navigate("ProfileStack", { screen: "UserNotification" });
+  }, []);
+
   const goToFeedCreation = useCallback(() => {
-    navigation.navigate("FeedStack", {
-      screen: "MyClubSelector",
-      userId: me?.id,
-    });
+    navigation.navigate("FeedStack", { screen: "MyClubSelector", userId: me?.id });
   }, [me]);
 
   const openFeedOption = (feedData: Feed) => {
@@ -307,9 +341,13 @@ const Home: React.FC<HomeScreenProps> = () => {
       <HeaderView height={homeHeaderHeight}>
         <FastImage source={require("../assets/home_logo.png")} style={{ width: 100, height: 30 }} />
         <HeaderRightView>
-          <HeaderButton>
-            <MaterialIcons name="notifications" size={23} color="black" />
+          <HeaderButton onPress={goToUserNotification}>
+            <NotiView>
+              {notiCount > 0 && !notiLoading ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
+              <MaterialIcons name="notifications" size={23} color="black" />
+            </NotiView>
           </HeaderButton>
+
           <HeaderButton onPress={goToFeedCreation}>
             <MaterialIcons name="add-photo-alternate" size={23} color="black" />
           </HeaderButton>

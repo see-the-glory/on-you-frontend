@@ -14,7 +14,7 @@ const NativeStack = createNativeStackNavigator();
 
 const ClubStack = ({
   route: {
-    params: { clubData, scheduleData, clubRole, targetIndex },
+    params: { clubData, scheduleData, clubRole, targetIndex, actionId, actionerName, actionerId, applyMessage, createdTime, processDone },
   },
   navigation: { navigate, goBack },
 }) => {
@@ -82,7 +82,7 @@ const ClubStack = ({
         component={ClubNotification}
         initialParams={{ clubData, clubRole }}
         options={{
-          title: "소식",
+          title: "모임 소식",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
               <Entypo name="chevron-thin-left" size={20} color="black"></Entypo>
@@ -94,6 +94,7 @@ const ClubStack = ({
       <NativeStack.Screen
         name="ClubApplication"
         component={ClubApplication}
+        initialParams={{ clubData, actionId, actionerName, actionerId, applyMessage, createdTime, processDone }}
         options={{
           title: "가입요청",
         }}

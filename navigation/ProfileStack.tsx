@@ -11,6 +11,7 @@ import NotificationSetting from "../screens/Profile/NotificationSetting";
 import Suggestion from "../screens/Profile/Suggestion";
 import Info from "../screens/Profile/Info";
 import BlockUserList from "../screens/Profile/BlockUserList";
+import UserNotification from "../screens/Profile/UserNotification";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -126,6 +127,19 @@ const ProfileStack = ({
           title: "정보",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Profile" })}>
+              <Entypo name="chevron-thin-left" size={20} color="black" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+
+      <NativeStack.Screen
+        name="UserNotification"
+        component={UserNotification}
+        options={{
+          title: "개인 소식",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Home" })}>
               <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),

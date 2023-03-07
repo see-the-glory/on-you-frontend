@@ -73,7 +73,6 @@ const ClubJoin = ({
   };
 
   useLayoutEffect(() => {
-    console.log(`ClubJoin useLayoutEffect`);
     setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={save}>
