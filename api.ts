@@ -239,6 +239,13 @@ export interface ClubSchedulesResponse extends BaseResponse {
 export interface ClubRoleResponse extends BaseResponse {
   data: ClubRole;
 }
+
+export interface DuplicateCheckResponse extends BaseResponse {
+  data: {
+    isDuplicated: "Y" | "N";
+  };
+}
+
 export interface ClubCreationData {
   category1Id: number;
   category2Id?: number | null;
@@ -373,6 +380,14 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface DuplicateEmailCheckRequest {
+  email: string;
+}
+
+export interface DuplicateClubNameCheckRequest {
+  clubName: string;
+}
+
 export interface FindIdRequest {
   phoneNumber?: string;
   username?: string;
@@ -503,6 +518,7 @@ const updateClub = (req: ClubUpdateRequest) => {
   });
 };
 const deleteClub = (req: ClubDeletionRequest) => axios.delete<string, BaseResponse>(`/api/clubs/${req.clubId}`);
+const duplicateClubNameCheck = (req: DuplicateClubNameCheckRequest) => axios.post<string, DuplicateCheckResponse>(`/api/clubs/duplicateCheck`, req);
 
 // Club Management
 const getClubNotifications = ({ queryKey }: any) => {
@@ -606,6 +622,18 @@ const login = async (req: LoginRequest) => {
   else return { status: res.status };
 };
 
+const duplicateEmailCheck = async (req: DuplicateEmailCheckRequest) => {
+  const res = await fetch(`${BASE_URL}/api/user/duplicateEmailCheck`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "Application/json",
+    },
+    body: JSON.stringify(req),
+  });
+  if (res.status === 200) return { status: res.status, ...(await res.json()) };
+  else return { status: res.status };
+};
+
 // Sign Up
 const registerUserInfo = async (req: SignUp) => {
   const res = await fetch(`${BASE_URL}/api/user/signup`, {
@@ -662,6 +690,7 @@ export const ClubApi = {
   getClubNotifications,
   approveToClubJoin,
   rejectToClubJoin,
+  duplicateClubNameCheck,
 };
 
 export const UserApi = {
@@ -695,4 +724,4 @@ export const FeedApi = {
   likeFeed,
 };
 
-export const CommonApi = { login };
+export const CommonApi = { login, duplicateEmailCheck };
