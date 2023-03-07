@@ -156,8 +156,6 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     let images = await ImagePicker.openPicker({
       mediaType: "photo",
       multiple: true,
-      height: 1080,
-      width: 1080,
       minFiles: 1,
       maxFiles: 5,
     });
@@ -179,6 +177,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
         cropperCancelText: "Cancle",
         cropperChooseText: "Check",
         cropperToolbarTitle: "이미지를 크롭하세요",
+        forceJpg: true,
       });
       url.push(croped.path);
     }
@@ -190,8 +189,6 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     let newImages = await ImagePicker.openPicker({
       mediaType: "photo",
       multiple: true,
-      height: 1080,
-      width: 1080,
       minFiles: 1,
       maxFiles: 5,
     });
@@ -213,6 +210,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
         cropperCancelText: "Cancle",
         cropperChooseText: "Check",
         cropperToolbarTitle: "이미지를 크롭하세요",
+        forceJpg: true,
       });
 
       if(imageURL.length > 5){
