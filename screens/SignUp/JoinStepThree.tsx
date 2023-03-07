@@ -1,10 +1,13 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, createRef, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from "react-native";
 import styled from "styled-components/native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
+import { useMutation } from "react-query";
+import { CommonApi, DuplicateCheckResponse, DuplicateEmailCheckRequest } from "../../api";
+import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.View`
   width: 100%;
@@ -89,17 +92,40 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
     params: { name },
   },
 }) => {
+  const toast = useToast();
   const [email, setEmail] = useState("");
   const emailReg = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
+  const emailMuation = useMutation<DuplicateCheckResponse, any, DuplicateEmailCheckRequest>(CommonApi.duplicateEmailCheck);
 
   const goToNext = () => {
     if (!emailReg.test(email)) {
       return;
     }
-    navigate("SignUpStack", {
-      screen: "JoinStepFour",
-      name,
-      email,
+
+    const requestData: DuplicateEmailCheckRequest = { email };
+
+    emailMuation.mutate(requestData, {
+      onSuccess: (res) => {
+        if (res.status === 200) {
+          if (res.data?.isDuplicated === "Y") {
+            toast.show(`이미 가입된 이메일입니다.`, { type: "warning" });
+          } else {
+            navigate("SignUpStack", {
+              screen: "JoinStepFour",
+              name,
+              email,
+            });
+          }
+        } else if (res.status === 400) {
+          toast.show(`잘못된 이메일 형식입니다.`, { type: "warning" });
+        } else if (res.status === 500) {
+          toast.show(`알 수 없는 오류`, { type: "danger" });
+        }
+      },
+      onError: (error) => {
+        console.log(error);
+        toast.show(`네트워크를 확인해주세요.`, { type: "danger" });
+      },
     });
   };
 
@@ -127,7 +153,14 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
           </BorderWrap>
           <AskText>이메일을 적어주세요.</AskText>
           <SubText>로그인 ID로 활용됩니다.</SubText>
-          <Input placeholder="example@gmail.com" placeholderTextColor={"#B0B0B0"} autoCorrect={false} onChangeText={(email: string) => setEmail(email)} error={email !== "" && !emailReg.test(email)} clearButtonMode="always" />
+          <Input
+            placeholder="example@gmail.com"
+            placeholderTextColor={"#B0B0B0"}
+            autoCorrect={false}
+            onChangeText={(email: string) => setEmail(email)}
+            error={email !== "" && !emailReg.test(email)}
+            clearButtonMode="always"
+          />
           {email !== "" && !emailReg.test(email) ? (
             <ValidationView>
               <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />

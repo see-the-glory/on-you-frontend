@@ -7,6 +7,8 @@ import { ClubCreationStepTwoScreenProps } from "../../Types/Club";
 import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import CustomTextInput from "../../components/CustomTextInput";
+import { useMutation } from "react-query";
+import { ClubApi, DuplicateCheckResponse, DuplicateClubNameCheckRequest, ErrorResponse } from "../../api";
 
 const HeaderView = styled.View`
   align-items: center;
@@ -144,6 +146,8 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 5) * 3);
   let specialChar = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
 
+  const clubNameMutation = useMutation<DuplicateCheckResponse, ErrorResponse, DuplicateClubNameCheckRequest>(ClubApi.duplicateClubNameCheck);
+
   const pickImage = async () => {
     let image = await ImagePicker.openPicker({
       mediaType: "photo",
@@ -161,6 +165,41 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
     });
 
     if (croped) setImageURI(croped.path);
+  };
+
+  const goToNext = () => {
+    /** Validation */
+    if (clubName === "") {
+      return toast.show("모임 이름은 공백으로 설정할 수 없습니다.", { type: "warning" });
+    } else if (specialChar.test(clubName)) {
+      return toast.show("모임 이름에 특수문자가 포함되어 있습니다.", { type: "warning" });
+    }
+
+    const reqeustData: DuplicateClubNameCheckRequest = {
+      clubName,
+    };
+    clubNameMutation.mutate(reqeustData, {
+      onSuccess: (res) => {
+        if (res?.data?.isDuplicated === "Y") {
+          toast.show(`모임 이름이 이미 존재합니다.`, { type: "warning" });
+        } else {
+          navigate("ClubCreationStepThree", {
+            category1,
+            category2,
+            clubName,
+            maxNumber: maxNumber === "무제한 정원" ? 0 : Number(maxNumber.split(" ")[0]),
+            isApproveRequired,
+            phoneNumber,
+            organizationName,
+            imageURI,
+          });
+        }
+      },
+      onError: (error) => {
+        console.log(`API ERROR | duplicateClubNameCheck ${error.code} ${error.status}`);
+        toast.show(`${error.message ?? error.code}`, { type: "warning" });
+      },
+    });
   };
 
   useEffect(() => {
@@ -315,31 +354,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
         </View>
 
         <FooterView>
-          <NextButton
-            onPress={() => {
-              /** Validation */
-              if (clubName === "") {
-                return toast.show("모임 이름은 공백으로 설정할 수 없습니다.", {
-                  type: "warning",
-                });
-              } else if (specialChar.test(clubName)) {
-                return toast.show("모임 이름에 특수문자가 포함되어 있습니다.", {
-                  type: "warning",
-                });
-              }
-              navigate("ClubCreationStepThree", {
-                category1,
-                category2,
-                clubName,
-                maxNumber: maxNumber === "무제한 정원" ? 0 : Number(maxNumber.split(" ")[0]),
-                isApproveRequired,
-                phoneNumber,
-                organizationName,
-                imageURI,
-              });
-            }}
-            disabled={clubName === "" || maxNumber === "" || phoneNumber === "" || organizationName === "" || !imageURI}
-          >
+          <NextButton onPress={() => goToNext()} disabled={clubName === "" || maxNumber === "" || phoneNumber === "" || organizationName === "" || !imageURI}>
             <ButtonText>다음 2/3</ButtonText>
           </NextButton>
         </FooterView>
