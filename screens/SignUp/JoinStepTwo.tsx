@@ -1,3 +1,4 @@
+import { AntDesign } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef } from "react";
 import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
@@ -46,9 +47,9 @@ const SubText = styled.Text`
   margin-top: 7px;
 `;
 
-const Input = styled.TextInput`
+const Input = styled.TextInput<{ error: boolean }>`
   border-bottom-width: 1px;
-  border-bottom-color: #b3b3b3;
+  border-bottom-color: ${(props: any) => (props.error ? "#ff6534" : "#b3b3b3")};
   margin-top: 47px;
   font-size: 18px;
 `;
@@ -73,27 +74,28 @@ const ButtonTitle = styled(CustomText)`
 const Error = styled.Text`
   color: #ff6534;
   font-size: 12px;
+`;
+
+const ValidationView = styled.View`
+  flex-direction: row;
+  align-items: center;
   margin-top: 7px;
 `;
 
 const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ navigation: { navigate } }) => {
   const [userName, setUserName] = useState("");
-  const [errortext, setErrortext] = useState(false);
+  const [error, setError] = useState<boolean>(false);
 
-  const nameInputRef = createRef();
   const nameReg = /^[가-힣]+$/;
 
-  const validate = () => {
+  const goToNext = () => {
     if (!nameReg.test(userName)) {
-      setErrortext(true);
       return;
-    } else {
-      setErrortext(false);
-      navigate("SignUpStack", {
-        screen: "JoinStepThree",
-        name: userName,
-      });
     }
+    navigate("SignUpStack", {
+      screen: "JoinStepThree",
+      name: userName,
+    });
   };
 
   return (
@@ -106,7 +108,7 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ nav
         <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
         <Wrap>
           <BorderWrap>
-            <Border></Border>
+            <Border />
           </BorderWrap>
           <AskText>성함이 어떻게 되시나요?</AskText>
           <SubText>정확한 성함을 입력해 주세요.</SubText>
@@ -115,19 +117,22 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ nav
             placeholder="홍길동"
             maxLength={10}
             autoCorrect={false}
-            onChangeText={(UserName: string) => setUserName(UserName)}
-            ref={nameInputRef}
-            returnKeyType="next"
-            blurOnSubmit={false}
+            onChangeText={(name: string) => setUserName(name)}
             placeholderTextColor={"#B0B0B0"}
+            error={userName !== "" && !nameReg.test(userName)}
             clearButtonMode="always"
-            onFocus={() => setErrortext(true)}
-            onBlur={() => setErrortext(false)}
           />
-          {errortext === true && !nameReg.test(userName) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          {userName !== "" && !nameReg.test(userName) ? (
+            <ValidationView>
+              <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />
+              <Error>{` 입력을 다시 한번 확인해주세요.`}</Error>
+            </ValidationView>
+          ) : (
+            <></>
+          )}
         </Wrap>
         <ButtonWrap>
-          <Button onPress={validate} disabled={!nameReg.test(userName)}>
+          <Button onPress={goToNext} disabled={!nameReg.test(userName)}>
             <ButtonTitle>다음</ButtonTitle>
           </Button>
         </ButtonWrap>

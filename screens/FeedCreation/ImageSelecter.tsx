@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState
+} from "react";
 import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
 import {
@@ -21,7 +25,7 @@ import { FeedCreateScreenProps } from "../../types/feed";
 import { useNavigation } from "@react-navigation/native";
 import { RootState } from "../../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
-// import DraggableFlatList, { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
+import DraggableFlatList, { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -86,13 +90,14 @@ const MyImage = styled.View`
   align-items: center;
   flex-direction: row;
   justify-content: center;
+  z-index: 100;
 `;
 
 const ImageUnderArea = styled.View`
-  //justify-content: space-between;
+  justify-content: space-between;
   flex-direction: row;
   padding-top: 15px;
-  justify-content: flex-end;
+  //justify-content: flex-end;
 `;
 
 const MoveImageText = styled.Text`
@@ -110,7 +115,7 @@ const SelectImage = styled.Image`
 `;
 
 const ImageCancleBtn = styled.TouchableOpacity``;
-const CancleIcon = styled.View`
+const CancleIcon = styled.TouchableOpacity`
   width: 20%;
   position: absolute;
   right: 12%;
@@ -158,7 +163,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     });
 
     if (images.length > 5) {
-      toast.show(`이미지는 3개까지 선택할 수 있습니다.`, {
+      toast.show(`이미지는 5개까지 선택할 수 있습니다.`, {
         type: "warning",
       });
       return;
@@ -226,24 +231,6 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     }
   };
 
-  const moreImageFix = async (imageURL: any) => {
-    let url = [];
-    for (let i = 0; i < imageURL.length; i++) {
-      let croped = await ImagePicker.openCropper({
-        mediaType: "photo",
-        path: imageURL[i],
-        width: 1080,
-        height: 1080,
-        cropperCancelText: "Cancle",
-        cropperChooseText: "Check",
-        cropperToolbarTitle: "이미지를 크롭하세요",
-      });
-      url.push(croped.path);
-    }
-    setSelectIndex(url?.length > 0 ? 0 : undefined);
-    setImageURL(url);
-  };
-
   const cancleCreate = () => {
     Alert.alert(
         "게시글을 생성을 취소하시겠어요?",
@@ -280,84 +267,98 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     });
   }, [imageURL, content, isSubmitShow]);
 
+
   /** X선택시 사진 없어지는 태그 */
   const ImageCancle = (q: any) => {
     setImageURL((prev: string[]) => prev.filter((_, index) => index != q));
     if (selectIndex == q) setSelectIndex(0);
   };
 
-  /*  const renderItem = useCallback(
-        ({ drag, isActive, item }: RenderItemParams<any> & { item: string }) => {
-          return (
-              <ScaleDecorator>
-                <TouchableOpacity
-                    activeOpacity={1}
-                    onLongPress={drag}
-                    disabled={isActive}
-                    style={[
-                      {
-                        opacity: isActive ? 0.5 : 1,
-                      },
-                    ]}
-                >
-                  <SelectImage source={{ uri: item }} />
-                  <ImageCancleBtn onPress={() => ImageCancle(imageURL.indexOf(item))}>
-                    <CancleIcon>
-                      <AntDesign name="close" size={15} color="white" />
-                    </CancleIcon>
-                  </ImageCancleBtn>
-                </TouchableOpacity>
-              </ScaleDecorator>
-          );
-        },
-        [imageURL]
-    );*/
+  const moreImageFix = async (imageURL: any) => {
+    console.log(Number('123'))
+    let url = [];
+    for (let i = 0; i < imageURL.length; i++) {
+      let croped = await ImagePicker.openCropper({
+        mediaType: "photo",
+        path: imageURL[i],
+        width: 1080,
+        height: 1080,
+        cropperCancelText: "Cancle",
+        cropperChooseText: "Check",
+        cropperToolbarTitle: "이미지를 크롭하세요",
+      });
+      url.push(croped.path);
+    }
+    setSelectIndex(url?.length > 0 ? 0 : undefined);
+    setImageURL(url);
+  };
+
+  const renderItem = useCallback(
+      ({ drag, isActive, item }: RenderItemParams<any> & { item: string }) => {
+        return (
+            <ScaleDecorator>
+              <TouchableOpacity
+                  activeOpacity={1}
+                  onLongPress={drag}
+                  disabled={isActive}
+                  onPress={() => moreImageFix(imageURL)} key={item}
+                  style={[
+                    {
+                      opacity: isActive ? 0.5 : 1,
+                    },
+                  ]}
+              >
+                <SelectImage source={{ uri: item }} />
+                <CancleIcon onPress={() => ImageCancle(imageURL.indexOf(item))}>
+                  <AntDesign name="close" size={15} color="white" />
+                </CancleIcon>
+              </TouchableOpacity>
+            </ScaleDecorator>
+        );
+      },
+      [imageURL]
+  );
 
   return (
       <Container>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
-            <>
-              <SelectImageView>
-                <MyImage>
-                  {imageURL?.map((image, index) => (
-                      <SelectImageArea onPress={() => moreImageFix(imageURL)} key={index}>
-                        <SelectImage source={{ uri: imageURL[index] }} />
-                        <ImageCancleBtn onPress={() => ImageCancle(index)}>
-                          <CancleIcon>
-                            <AntDesign name="close" size={15} color="white" />
-                          </CancleIcon>
-                        </ImageCancleBtn>
-                      </SelectImageArea>
-                  ))}
-                </MyImage>
-                {/*<MyImage>
-                  <DraggableFlatList horizontal data={imageURL} onDragEnd={({ data }) => setImageURL(data)} keyExtractor={(item) => item} renderItem={(props) => renderItem({ ...props })} />
-                </MyImage>*/}
-                <ImageUnderArea>
-                  {imageURL.length !== 0 ? (
-                      <>
-                        {/*<MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>*/}
-                        <TouchableOpacity onPress={pickImage}>
-                          <MaterialIcons name="add-photo-alternate" size={23} color="black" />
-                        </TouchableOpacity>
-                      </>
-                  ) : null}
-                </ImageUnderArea>
-              </SelectImageView>
-              <FeedText
-                  placeholder="사진과 함께 남길 게시글을 작성해 보세요."
-                  onChangeText={(content: string) => setContent(content)}
-                  onEndEditing={() => setContent((prev) => prev.trim())}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  multiline={true}
-                  returnKeyType="done"
-                  returnKeyLabel="done"
-              ></FeedText>
-            </>
-          </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
+        <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
+          <>
+            <SelectImageView>
+              <MyImage>
+                <DraggableFlatList
+                    horizontal
+                    data={imageURL}
+                    onDragEnd={({ data }) => setImageURL(data)}
+                    keyExtractor={(item) => item}
+                    renderItem={(props) => renderItem({ ...props })}
+                />
+              </MyImage>
+              <ImageUnderArea>
+                {imageURL.length !== 0 ? (
+                        <>
+                          <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>
+                          <TouchableOpacity onPress={pickImage}>
+                            <MaterialIcons name="add-photo-alternate" size={23} color="black" />
+                          </TouchableOpacity>
+                        </>
+                    ) :
+                    <TouchableOpacity onPress={pickImage}>
+                      <MaterialIcons name="add-photo-alternate" size={23} color="black" />
+                    </TouchableOpacity>}
+              </ImageUnderArea>
+            </SelectImageView>
+            <FeedText
+                placeholder="사진과 함께 남길 게시글을 작성해 보세요."
+                onChangeText={(content: string) => setContent(content)}
+                onEndEditing={() => setContent((prev) => prev.trim())}
+                autoCapitalize="none"
+                autoCorrect={false}
+                multiline={true}
+                returnKeyType="done"
+                returnKeyLabel="done"
+            ></FeedText>
+          </>
+        </KeyboardAvoidingView>
       </Container>
   );
 };

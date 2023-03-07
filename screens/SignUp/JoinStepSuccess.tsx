@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { CommonApi, LoginRequest, LoginResponse, UserApi, UserInfoResponse } from "../../api";
 import styled from "styled-components/native";
@@ -7,42 +7,34 @@ import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
 import { login } from "../../redux/slices/auth";
 import CustomText from "../../components/CustomText";
-import { StatusBar } from "react-native";
+import { BackHandler, StatusBar, View } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
 const Container = styled.View`
   width: 100%;
   height: 100%;
   align-items: center;
   justify-content: space-between;
-  padding-top: 15px;
 `;
 
 const Wrap = styled.View`
   width: 100%;
-  padding: 0px 20px;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 68px;
 `;
 
 const ButtonWrap = styled.View`
+  position: absolute;
+  bottom: 0;
   width: 100%;
-`;
-
-const BorderWrap = styled.View`
-  width: 100%;
-  height: 2px;
-  background-color: #d0d0d0;
-`;
-
-const Border = styled.View`
-  width: 100%;
-  height: 2px;
-  background-color: #295af5;
 `;
 
 const AskText = styled.Text`
   color: #000000;
   font-size: 20px;
   font-weight: bold;
-  margin-top: 24px;
 `;
 
 const SubText = styled.Text`
@@ -69,7 +61,7 @@ const ButtonTitle = styled(CustomText)`
 `;
 
 const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "JoinStepSuccess">> = ({
-  navigation: { navigate },
+  navigation,
   route: {
     params: { email, password, token },
   },
@@ -104,13 +96,30 @@ const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "JoinStepSuccess">> 
     mutation.mutate(requestData);
   };
 
+  useEffect(() => {
+    const backHandelr = BackHandler.addEventListener("hardwareBackPress", () => {
+      navigation.navigate("LoginStack", {
+        screen: "Login",
+      });
+      return true;
+    });
+    const unsubscribe = navigation.addListener("gestureEnd", () => {
+      navigation.navigate("LoginStack", {
+        screen: "Login",
+      });
+    });
+
+    return () => {
+      backHandelr.remove();
+      unsubscribe();
+    };
+  }, [navigation]);
+
   return (
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <Wrap>
-        <BorderWrap>
-          <Border></Border>
-        </BorderWrap>
+        <Feather name="check" size={58} color="#CCCCCC" />
         <AskText>가입이 완료되었습니다.</AskText>
         <SubText>온유에 오신 것을 환영합니다 :&#41;</SubText>
       </Wrap>

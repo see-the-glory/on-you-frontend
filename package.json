@@ -1,6 +1,6 @@
 {
-  "name": "on-you-frontend",
-  "version": "1.0.0",
+  "name": "onyoufrontend",
+  "version": "1.0.1",
   "main": "index.js",
   "scripts": {
     "start": "expo start --dev-client",
@@ -41,6 +41,7 @@
     "react-native-code-push": "^7.1.0",
     "react-native-collapsible": "^1.6.0",
     "react-native-date-picker": "^4.2.6",
+    "react-native-draggable-flatlist": "^4.0.1",
     "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "^2.8.0",
     "react-native-image-crop-picker": "^0.38.0",

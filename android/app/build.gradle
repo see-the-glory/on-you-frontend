@@ -91,6 +91,7 @@ project.ext.react = [
 ]
 
 apply from: new File(reactNativeRoot, "react.gradle")
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -381,5 +382,3 @@ def isNewArchitectureEnabled() {
     // - Set an environment variable `ORG_GRADLE_PROJECT_newArchEnabled=true`
     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
 }
-
-apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"

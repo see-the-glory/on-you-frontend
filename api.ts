@@ -420,7 +420,7 @@ export interface UserPushAlarmRequest {
 }
 
 export interface TargetTokenUpdateRequest {
-  targetToken: string;
+  targetToken: string | null;
 }
 
 export interface SuggestionSubmitRequest {

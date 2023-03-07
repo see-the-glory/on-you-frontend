@@ -50,7 +50,7 @@ const SubText = styled.Text`
 
 const Input = styled.TextInput`
   border-bottom-width: 1px;
-  border-bottom-color: #b3b3b3;
+  border-bottom-color: ${(props: any) => (props.error ? "#ff6534" : "#b3b3b3")};
   margin-top: 47px;
   font-size: 18px;
 `;
@@ -72,17 +72,20 @@ const ButtonTitle = styled(CustomText)`
   color: #fff;
 `;
 
+const ErrorView = styled.View`
+  height: 25px;
+`;
+
 const Error = styled.Text`
   color: #ff6534;
   font-size: 12px;
   margin-top: 7px;
-  margin-bottom: 20px;
 `;
 
 const FieldContentOptionLine = styled.View`
+  margin-top: 15px;
   justify-content: center;
   align-items: flex-end;
-  margin-bottom: 15px;
 `;
 
 const SkipButton = styled.TouchableOpacity``;
@@ -98,8 +101,6 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
   },
 }) => {
   const [birthNumber, setBirthNumber] = useState("");
-  const [errortext, setErrortext] = useState(false);
-  const birthInputRef = createRef();
 
   const birthReg =
     /^(((?:(?:1[6-9]|[2-9]\d)?\d{2})(-)(?:(?:(?:0?[13578]|1[02])(-)31)|(?:(?:0?[1,3-9]|1[0-2])(-)(?:29|30))))|(((?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))(-)(?:0?2(-)29))|((?:(?:(?:1[6-9]|[2-9]\d)?\d{2})(-)(?:(?:0?[1-9])|(?:1[0-2]))(-)(?:0[1-9]|1\d|2[0-8]))))$/;
@@ -118,19 +119,16 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
 
   const validate = () => {
     if (!birthReg.test(birthNumber)) {
-      setErrortext(true);
       return;
-    } else {
-      setErrortext(false);
-      navigate("SignUpStack", {
-        screen: "JoinStepSeven",
-        name,
-        email,
-        password,
-        sex,
-        birth: birthNumber,
-      });
     }
+    navigate("SignUpStack", {
+      screen: "JoinStepSeven",
+      name,
+      email,
+      password,
+      sex,
+      birth: birthNumber,
+    });
   };
 
   const goToNext = () => {
@@ -175,14 +173,10 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
             maxLength={10}
             onChangeText={(birth: string) => setBirthNumber(birth)}
             value={birthNumber}
-            ref={birthInputRef}
-            returnKeyType="next"
-            blurOnSubmit={false}
+            error={birthNumber !== "" && !birthReg.test(birthNumber)}
             clearButtonMode="always"
-            onFocus={() => setErrortext(true)}
-            onBlur={() => setErrortext(false)}
           />
-          {errortext === true && !birthReg.test(birthNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          <ErrorView>{birthNumber !== "" && !birthReg.test(birthNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : <></>}</ErrorView>
           <FieldContentOptionLine>
             <SkipButton onPress={goToNext}>
               <SkipText>선택하지 않고 넘어가기</SkipText>
