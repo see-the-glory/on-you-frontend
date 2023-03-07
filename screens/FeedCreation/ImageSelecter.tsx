@@ -315,7 +315,6 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
   };
 
   const moreImageFix = async (imageURL: any) => {
-    console.log(Number('123'))
     let url = [];
     for (let i = 0; i < imageURL.length; i++) {
       let croped = await ImagePicker.openCropper({

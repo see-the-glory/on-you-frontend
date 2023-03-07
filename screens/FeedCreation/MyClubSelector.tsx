@@ -12,6 +12,12 @@ const Container = styled.SafeAreaView`
   flex: 1;
 `;
 
+const GuideText = styled(CustomText)`
+  padding: 10px 0px 0px 20px;
+  color: #A0A0A0;
+  font-size: 14px;
+`
+
 const IntroText = styled(CustomText)`
   padding: 10px 0px 0px 20px;
   color: #b0b0b0;
@@ -49,7 +55,6 @@ const CommentMent = styled.View`
 `;
 
 const ClubName = styled.Text`
-  padding-left: 1%;
   color: black;
   font-size: 17px;
   font-weight: 500;
@@ -61,21 +66,16 @@ const CommentRemainder = styled.View`
 `;
 
 const HeaderNameView = styled.View`
+  padding-left: 2%;
   justify-content: center;
   align-items: flex-start;
-  padding-left: 4px;
   bottom: 1px;
 `;
 
-const CategoryView = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  margin-bottom: 5px;
-`;
+const CategoryView = styled.View``;
 
 const CategoryBox = styled.View`
   background-color: #c4c4c4;
-  padding: 1px 3px;
   border-radius: 3px;
   margin-left: 3px;
   margin-right: 3px;
@@ -120,6 +120,7 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
 
   return (
       <Container>
+        <GuideText>게시글을 업로드 할 모임을 선택하세요.</GuideText>
         <IntroText>가입한 모임 List</IntroText>
         <ReplyContainer>
           {myClubInfoLoading ? (
@@ -139,9 +140,7 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
                                   {item.categories?.map((name) => {
                                     return (
                                         <CategoryView>
-                                          <CategoryBox>
-                                            <CategoryNameText>{name.name}</CategoryNameText>
-                                          </CategoryBox>
+                                            <Tag name={name.name} textColor="white" backgroundColor="#C4C4C4" />
                                         </CategoryView>
                                     );
                                   })}
