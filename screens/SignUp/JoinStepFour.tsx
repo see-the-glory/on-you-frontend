@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, createRef, useLayoutEffect } from "react";
 import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from "react-native";
 import styled from "styled-components/native";
-import { Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
 
@@ -75,8 +75,23 @@ const ButtonTitle = styled(CustomText)`
 const Error = styled.Text`
   color: #ff6534;
   font-size: 12px;
+`;
+
+const ValidationView = styled.View`
+  flex-direction: row;
+  align-items: center;
   margin-top: 7px;
   margin-bottom: 20px;
+`;
+const ValidationItem = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-right: 8px;
+`;
+
+const ValidationText = styled.Text`
+  color: #8e8e8e;
+  font-size: 12px;
 `;
 
 const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
@@ -85,26 +100,24 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
     params: { name, email },
   },
 }) => {
-  const [userPw, setUserPw] = useState("");
-  const [userPw2, setUserPw2] = useState("");
-  const [errortext, setErrortext] = useState(false);
+  const [password, setPassword] = useState("");
+  const [checkPassword, setCheckPassword] = useState("");
 
-  const pwInputRef = createRef();
-  const pwReg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+  // const passwordReg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+  const numReg = /[0-9]+/;
+  const engReg = /[a-zA-Z]+/;
+  const specialReg = /[!@#$%^*+=-]+/;
 
   const validate = () => {
-    if (!pwReg.test(userPw) || !pwReg.test(userPw2) || userPw !== userPw2 || userPw.length < 8 || userPw2.length < 8) {
-      setErrortext(true);
+    if (!numReg.test(password) || !engReg.test(password) || !specialReg.test(password) || password.length < 8 || password !== checkPassword) {
       return;
-    } else {
-      setErrortext(false);
-      navigate("SignUpStack", {
-        screen: "JoinStepFive",
-        name,
-        email,
-        password: userPw,
-      });
     }
+    navigate("SignUpStack", {
+      screen: "JoinStepFive",
+      name,
+      email,
+      password,
+    });
   };
 
   useLayoutEffect(() => {
@@ -115,7 +128,7 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
         </TouchableOpacity>
       ),
     });
-  }, [name, email]);
+  }, []);
 
   return (
     <TouchableWithoutFeedback
@@ -131,33 +144,46 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
           </BorderWrap>
           <AskText>비밀번호를 설정해주세요.</AskText>
           <SubText>로그인 정보로 활용됩니다.</SubText>
-          <Input
-            placeholder="영문, 숫자, 특수문자 포함 8자 이상"
-            placeholderTextColor={"#B0B0B0"}
-            secureTextEntry={true}
-            autoCorrect={false}
-            onChangeText={(pw: string) => setUserPw(pw)}
-            ref={pwInputRef}
-            returnKeyType="next"
-            blurOnSubmit={false}
-          />
-          {errortext === true || !pwReg.test(userPw) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null}
+          <Input placeholder="영문, 숫자, 특수문자 포함 8자 이상" placeholderTextColor={"#B0B0B0"} secureTextEntry={true} autoCorrect={false} onChangeText={(value: string) => setPassword(value)} />
+
+          <ValidationView>
+            <ValidationItem>
+              <AntDesign name="check" size={12} color={engReg.test(password) ? "#295AF5" : "#ff6534"} />
+              <ValidationText>{` 영문 포함`}</ValidationText>
+            </ValidationItem>
+            <ValidationItem>
+              <AntDesign name="check" size={12} color={numReg.test(password) ? "#295AF5" : "#ff6534"} />
+              <ValidationText>{` 숫자 포함`}</ValidationText>
+            </ValidationItem>
+            <ValidationItem>
+              <AntDesign name="check" size={12} color={specialReg.test(password) ? "#295AF5" : "#ff6534"} />
+              <ValidationText>{` 특수문자 포함`}</ValidationText>
+            </ValidationItem>
+            <ValidationItem>
+              <AntDesign name="check" size={12} color={password.length > 7 ? "#295AF5" : "#ff6534"} />
+              <ValidationText>{` 8자리 이상`}</ValidationText>
+            </ValidationItem>
+          </ValidationView>
+
           <AskText>비밀번호를 다시 입력해주세요.</AskText>
           <Input
             placeholder="영문, 숫자, 특수문자 포함 8자 이상"
             placeholderTextColor={"#B0B0B0"}
             secureTextEntry={true}
             autoCorrect={false}
-            onChangeText={(pw: string) => setUserPw2(pw)}
-            ref={pwInputRef}
-            returnKeyType="next"
-            blurOnSubmit={false}
+            onChangeText={(value: string) => setCheckPassword(value)}
           />
-          {/* {errortext === true || !pwReg.test(userPw2) ? <Error>입력을 다시 한번 확인해주세요.</Error> : null} */}
-          {userPw !== userPw2 ? <Error>비밀번호가 일치하지 않습니다.</Error> : null}
+          {password !== checkPassword && password !== "" && checkPassword !== "" ? (
+            <ValidationView>
+              <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />
+              <Error>{` 입력을 다시 한번 확인해주세요.`}</Error>
+            </ValidationView>
+          ) : (
+            <></>
+          )}
         </Wrap>
         <ButtonWrap>
-          <Button onPress={validate} disabled={!pwReg.test(userPw) || !pwReg.test(userPw2) || userPw !== userPw2 || userPw.length < 8 || userPw2.length < 8}>
+          <Button onPress={validate} disabled={!numReg.test(password) || !engReg.test(password) || !specialReg.test(password) || password.length < 8 || password !== checkPassword}>
             <ButtonTitle>다음</ButtonTitle>
           </Button>
         </ButtonWrap>

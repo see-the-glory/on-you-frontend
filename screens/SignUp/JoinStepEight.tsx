@@ -5,6 +5,7 @@ import styled from "styled-components/native";
 import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
+import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.View`
   width: 100%;
@@ -96,8 +97,9 @@ const FieldContentOptionLine = styled.View`
 `;
 
 const ChoiceButton = styled.TouchableOpacity`
+  width: 100%;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
 `;
 
@@ -118,9 +120,12 @@ const JoinStepEight: React.FC<NativeStackScreenProps<any, "JoinStepEight">> = ({
     params: { name, email, password, sex, birth, phone },
   },
 }) => {
+  const toast = useToast();
   const [check, setCheck] = useState(1);
 
   const validate = () => {
+    if (check !== 1) return;
+
     navigate("SignUpStack", {
       screen: "JoinConfirm",
       name,
@@ -164,13 +169,25 @@ const JoinStepEight: React.FC<NativeStackScreenProps<any, "JoinStepEight">> = ({
                 {check === 1 ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
               </ChoiceButton>
             </FieldContentLine>
+            <FieldContentLine>
+              <ChoiceButton
+                onPress={() => {
+                  setCheck(2);
+                  toast.show(`타교인은 가입이 불가합니다.`, { type: "danger" });
+                }}
+                activeOpacity={0.5}
+              >
+                <FieldContentText>{`타교회`}</FieldContentText>
+                {check === 2 ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
+              </ChoiceButton>
+            </FieldContentLine>
             <FieldContentOptionLine>
               <SkipText>{`지금은 시광교회 교인으로만 가입할 수 있습니다.`}</SkipText>
             </FieldContentOptionLine>
           </FieldContentView>
         </Wrap>
         <ButtonWrap>
-          <Button onPress={validate}>
+          <Button onPress={validate} disabled={check !== 1}>
             <ButtonTitle>다음</ButtonTitle>
           </Button>
         </ButtonWrap>

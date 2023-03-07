@@ -130,11 +130,7 @@ const SignUpStack = ({
         initialParams={{ name, email, password, token }}
         options={{
           title: "회원가입",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinConfirm" })}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
+          headerLeft: () => <></>,
         }}
       />
     </NativeStack.Navigator>
