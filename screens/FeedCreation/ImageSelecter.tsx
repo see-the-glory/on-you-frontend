@@ -174,7 +174,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
         path: images[i].path,
         width: 1080,
         height: 1080,
-        cropperCancelText: "Cancle",
+        cropperCancelText: "Cancel",
         cropperChooseText: "Check",
         cropperToolbarTitle: "이미지를 크롭하세요",
         forceJpg: true,
@@ -207,7 +207,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
         path: newImages[i].path,
         width: 1080,
         height: 1080,
-        cropperCancelText: "Cancle",
+        cropperCancelText: "Cancel",
         cropperChooseText: "Check",
         cropperToolbarTitle: "이미지를 크롭하세요",
         forceJpg: true,
@@ -314,21 +314,20 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     if (selectIndex == q) setSelectIndex(0);
   };
 
-  const moreImageFix = async (imageURL: any) => {
-    let url = [];
-    for (let i = 0; i < imageURL.length; i++) {
-      let croped = await ImagePicker.openCropper({
-        mediaType: "photo",
-        path: imageURL[i],
-        width: 1080,
-        height: 1080,
-        cropperCancelText: "Cancle",
-        cropperChooseText: "Check",
-        cropperToolbarTitle: "이미지를 크롭하세요",
-      });
-      url.push(croped.path);
-    }
-    setSelectIndex(url?.length > 0 ? 0 : undefined);
+  const moreImageFix = async (imageURL: any, index: number) => {
+    console.log(index)
+    let croped = await ImagePicker.openCropper({
+      mediaType: "photo",
+      path: imageURL[index],
+      width: 1080,
+      height: 1080,
+      cropperCancelText: "cancel",
+      cropperChooseText: "Check",
+      cropperToolbarTitle: "이미지를 크롭하세요",
+    });
+    let url = [...imageURL];
+    url[index] = croped.path;
+    setSelectIndex(0);
     setImageURL(url);
   };
 
@@ -340,7 +339,8 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
                   activeOpacity={1}
                   onLongPress={drag}
                   disabled={isActive}
-                  onPress={() => moreImageFix(imageURL)} key={item}
+                  onPress={() => moreImageFix(imageURL, imageURL.indexOf(item))}
+                  key={item}
                   style={[
                     {
                       opacity: isActive ? 0.5 : 1,
@@ -397,8 +397,6 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
                 autoCapitalize="none"
                 autoCorrect={false}
                 multiline={true}
-                returnKeyType="done"
-                returnKeyLabel="done"
             ></FeedText>
           </>
         </KeyboardAvoidingView>
