@@ -97,7 +97,6 @@ const ImageUnderArea = styled.View`
   justify-content: space-between;
   flex-direction: row;
   padding-top: 15px;
-  //justify-content: flex-end;
 `;
 
 const MoveImageText = styled.Text`
@@ -114,8 +113,7 @@ const SelectImage = styled.Image`
   background-color: lightgray;
 `;
 
-const ImageCancleBtn = styled.TouchableOpacity``;
-const CancleIcon = styled.TouchableOpacity`
+const CancelIcon = styled.TouchableOpacity`
   width: 20%;
   position: absolute;
   right: 12%;
@@ -223,7 +221,6 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     }
     setSelectIndex(url?.length > 0 ? 0 : undefined);
     setImageURL(prev=>[...prev, ...url]);
-
   };
 
   const mutation = useMutation<BaseResponse, ErrorResponse, FeedCreationRequest>(FeedApi.createFeed, {
@@ -271,7 +268,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     }
   };
 
-  const cancleCreate = () => {
+  const cancelCreate = () => {
     Alert.alert(
         "게시글을 생성을 취소하시겠어요?",
         "",
@@ -291,7 +288,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-          <TouchableOpacity onPress={cancleCreate}>
+          <TouchableOpacity onPress={cancelCreate}>
             <Entypo name="cross" size={20} color="black" />
           </TouchableOpacity>
       ),
@@ -309,37 +306,37 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
 
 
   /** X선택시 사진 없어지는 태그 */
-  const ImageCancle = (q: any) => {
+  const ImageCancel = (q: any) => {
     setImageURL((prev: string[]) => prev.filter((_, index) => index != q));
     if (selectIndex == q) setSelectIndex(0);
   };
 
-  const moreImageFix = async (imageURL: any, index: number) => {
-    console.log(index)
+  const moreImageFix = async (imageURL: string[], index?: number) => {
+    if(index === undefined) return;
     let croped = await ImagePicker.openCropper({
       mediaType: "photo",
       path: imageURL[index],
       width: 1080,
       height: 1080,
-      cropperCancelText: "cancel",
+      cropperCancelText: "Cancel",
       cropperChooseText: "Check",
       cropperToolbarTitle: "이미지를 크롭하세요",
     });
-    let url = [...imageURL];
-    url[index] = croped.path;
-    setSelectIndex(0);
-    setImageURL(url);
+    setImageURL((prev) => {
+      prev[index] = croped.path;
+      return prev;
+    });
   };
 
   const renderItem = useCallback(
-      ({ drag, isActive, item }: RenderItemParams<any> & { item: string }) => {
+      ({ drag, isActive, item, getIndex }: RenderItemParams<string>) => {
         return (
             <ScaleDecorator>
               <TouchableOpacity
                   activeOpacity={1}
                   onLongPress={drag}
                   disabled={isActive}
-                  onPress={() => moreImageFix(imageURL, imageURL.indexOf(item))}
+                  onPress={() => moreImageFix(imageURL, getIndex())}
                   key={item}
                   style={[
                     {
@@ -348,9 +345,9 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
                   ]}
               >
                 <SelectImage source={{ uri: item }} />
-                <CancleIcon onPress={() => ImageCancle(imageURL.indexOf(item))}>
+                <CancelIcon onPress={() => ImageCancel(imageURL.indexOf(item))}>
                   <AntDesign name="close" size={15} color="white" />
-                </CancleIcon>
+                </CancelIcon>
               </TouchableOpacity>
             </ScaleDecorator>
         );
@@ -377,17 +374,6 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
                 <TouchableOpacity onPress={morePickImage}>
                   <MaterialIcons name="add-photo-alternate" size={23} color="black" />
                 </TouchableOpacity>
-                {/*{imageURL.length !== 0 ? (
-                        <>
-                          <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>
-                          <TouchableOpacity onPress={morePickImage}>
-                            <MaterialIcons name="add-photo-alternate" size={23} color="black" />
-                          </TouchableOpacity>
-                        </>
-                    ) :
-                    <TouchableOpacity onPress={morePickImage}>
-                      <MaterialIcons name="add-photo-alternate" size={23} color="black" />
-                    </TouchableOpacity>}*/}
               </ImageUnderArea>
             </SelectImageView>
             <FeedText
