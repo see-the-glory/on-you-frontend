@@ -100,7 +100,7 @@ const ClubArea = styled.TouchableOpacity`
   flex-direction: row;
   width: 100%;
   height: auto;
-  padding: 5px 15px 0 0;
+  padding: 0 15px 0 0;
   border-style: solid;
   border-bottom-color: #e9e9e9;
   border-bottom-width: 1px;
@@ -181,7 +181,7 @@ const ModalView = styled.View`
   background-color: white;
   opacity: 1;
   width: 100%;
-  padding: 10px 20px 0 20px;
+  padding: 10px 20px 20px 20px;
   height: auto;
 `;
 
@@ -302,7 +302,6 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
                   <IntroTextRight>가입한 모임 List</IntroTextRight>
                 </View>
                 <ModalView>
-                  <ScrollView>
                     <FlatList
                         refreshing={refreshing}
                         keyExtractor={(item: MyClub, index: number) => String(index)}
@@ -333,7 +332,6 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
                             </>
                         )}
                     />
-                  </ScrollView>
                 </ModalView>
               </ModalContainer>
             </Modalize>

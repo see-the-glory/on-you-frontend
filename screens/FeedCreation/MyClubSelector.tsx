@@ -1,5 +1,5 @@
 import React, { useLayoutEffect } from "react";
-import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
+import {ActivityIndicator, FlatList, ScrollView, TouchableOpacity} from "react-native";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
@@ -25,6 +25,7 @@ const IntroText = styled(CustomText)`
 
 const ReplyContainer = styled.View`
   height: 100%;
+  padding-bottom: 60px;
 `;
 
 const ClubArea = styled.TouchableOpacity`
@@ -130,23 +131,23 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
                   keyExtractor={(item: MyClub, index: number) => String(index)}
                   data={myClub?.data?.filter(item=>item.applyStatus === "APPROVED")}
                   renderItem={({ item, index }: { item: MyClub; index: number }) => (
-                            <ClubArea key={index} onPress={() => goToImageSelect(item)}>
+                          <ClubArea key={index} onPress={() => goToImageSelect(item)}>
                               <ClubImg source={{ uri: item.thumbnail }} />
                               <HeaderNameView>
-                                <CommentMent>
-                                  <ClubName>{item.name}</ClubName>
-                                </CommentMent>
-                                <CommentRemainder>
-                                  {item.categories?.map((name) => {
-                                    return (
-                                        <CategoryView>
-                                            <Tag name={name.name} textColor="white" backgroundColor="#C4C4C4" />
-                                        </CategoryView>
-                                    );
-                                  })}
-                                </CommentRemainder>
+                                  <CommentMent>
+                                      <ClubName>{item.name}</ClubName>
+                                  </CommentMent>
+                                  <CommentRemainder>
+                                      {item.categories?.map((name) => {
+                                          return (
+                                              <CategoryView>
+                                                  <Tag name={name.name} textColor="white" backgroundColor="#C4C4C4" />
+                                              </CategoryView>
+                                          );
+                                      })}
+                                  </CommentRemainder>
                               </HeaderNameView>
-                            </ClubArea>
+                          </ClubArea>
                   )}
               />
           )}
