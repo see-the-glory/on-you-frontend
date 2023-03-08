@@ -122,7 +122,7 @@ const Home: React.FC<HomeScreenProps> = () => {
     refetch: notiRefetch,
   } = useQuery<NotificationsResponse, ErrorResponse>(["getUserNotifications"], UserApi.getUserNotifications, {
     onSuccess: (res) => {
-      setNotiCount(res?.data.filter((item) => !item.processDone).length);
+      if (Array.isArray(res?.data)) setNotiCount(res?.data.filter((item) => !item?.processDone).length);
     },
     onError: (error) => {
       console.log(`API ERROR | getUserNotifications ${error.code} ${error.status}`);
@@ -290,8 +290,8 @@ const Home: React.FC<HomeScreenProps> = () => {
     };
 
     Alert.alert(
-      "사용자 차단",
-      "정말로 이 사용자를 차단하시겠습니까?",
+      `${selectFeedData.userName}님을 차단하시곘어요?`,
+      `${selectFeedData.userName}님의 게시글을 볼 수 없게 됩니다. 상대방에게는 회원님이 차단했다는 정보를 알리지 않습니다.`,
       [
         {
           text: "아니요",
@@ -331,7 +331,7 @@ const Home: React.FC<HomeScreenProps> = () => {
     [me]
   );
 
-  return feedsLoading ? (
+  return feedsLoading || notiLoading ? (
     <Loader>
       <ActivityIndicator />
     </Loader>
@@ -343,7 +343,7 @@ const Home: React.FC<HomeScreenProps> = () => {
         <HeaderRightView>
           <HeaderButton onPress={goToUserNotification}>
             <NotiView>
-              {notiCount > 0 && !notiLoading ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
+              {notiCount > 0 ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
               <MaterialIcons name="notifications" size={23} color="black" />
             </NotiView>
           </HeaderButton>

@@ -1,10 +1,11 @@
 import React from "react";
 import styled from "styled-components/native";
-import { Feather, FontAwesome5 } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Category } from "../api";
 import CustomText from "./CustomText";
 import FastImage from "react-native-fast-image";
+import Tag from "./Tag";
 
 const Club = styled.View`
   align-items: flex-start;
@@ -78,15 +79,6 @@ const TagView = styled.View`
   justify-content: flex-start;
   align-items: center;
 `;
-const Tag = styled.View<{ color: string }>`
-  flex-direction: row;
-  align-items: center;
-  background-color: ${(props: any) => props.color};
-  padding: 1px 3px;
-  border-radius: 5px;
-  margin-right: 5px;
-  border: 1px solid ${(props: any) => (props.color === "white" ? "#A5A5A5" : "#B4B4B4")};
-`;
 
 const TagText = styled(CustomText)`
   font-family: "NotoSansKR-Medium";
@@ -148,15 +140,27 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
           <></>
         )}
         <TagView>
-          <Tag color={"white"}>
-            <FontAwesome5 name="cross" size={7} color="#A5A5A5" />
-            <TagText style={{ color: "#A5A5A5", marginLeft: 1 }}>{organizationName}</TagText>
-          </Tag>
+          <Tag
+            name={organizationName ?? ""}
+            iconName="cross"
+            backgroundColor="white"
+            textColor="#A5A5A5"
+            borderColor="#A5A5A5"
+            iconSize={7}
+            contentContainerStyle={{ paddingTop: 1, paddingBottom: 1, paddingRight: 3, paddingLeft: 3 }}
+            textStyle={{ fontSize: 10, lineHeight: 14 }}
+          />
 
           {categories?.map((category, index) => (
-            <Tag key={index} color={"#B4B4B4"}>
-              <TagText style={{ color: "white" }}>{category.name}</TagText>
-            </Tag>
+            <Tag
+              key={`Category_${index}`}
+              name={category?.name ?? ""}
+              backgroundColor="#B4B4B4"
+              textColor="white"
+              borderColor="#B4B4B4"
+              contentContainerStyle={{ paddingTop: 1, paddingBottom: 1, paddingRight: 3, paddingLeft: 3 }}
+              textStyle={{ fontSize: 10, lineHeight: 14 }}
+            />
           ))}
         </TagView>
       </ClubInfo>
