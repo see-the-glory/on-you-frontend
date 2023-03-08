@@ -11,6 +11,7 @@ import { useAppDispatch } from "../../redux/store";
 import clubSlice from "../../redux/slices/club";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store/reducers";
+import { useToast } from "react-native-toast-notifications";
 
 const MEMBER_ICON_KERNING = 25;
 const MEMBER_ICON_SIZE = 50;
@@ -180,6 +181,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const memberCountPerLine = Math.floor((SCREEN_WIDTH - SCREEN_PADDING_SIZE) / (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING));
   const dispatch = useAppDispatch();
   const myRole = useSelector((state: RootState) => state.club.role);
+  const toast = useToast();
 
   useLayoutEffect(() => {
     getData();
@@ -225,7 +227,11 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   };
 
   const goToScheduleAdd = () => {
-    return navigate("ClubStack", { screen: "ClubScheduleAdd", clubData });
+    if (myRole && ["MASTER", "MANAGER"].includes(myRole)) {
+      return navigate("ClubStack", { screen: "ClubScheduleAdd", clubData });
+    } else {
+      toast.show(`권한이 없습니다.`, { type: "warning" });
+    }
   };
 
   const loading = memberLoading;
