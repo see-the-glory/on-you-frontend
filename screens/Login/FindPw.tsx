@@ -5,47 +5,73 @@ import { useMutation } from "react-query";
 import { UserApi, FindPwRequest } from "../../api";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
+import CustomText from "../../components/CustomText";
+import { FontAwesome } from "@expo/vector-icons";
 
 const Container = styled.View`
   width: 100%;
   height: 100%;
   align-items: center;
-  padding-horizontal: 20px;
+  justify-content: space-between;
   padding-top: 30px;
+`;
+
+const Wrap = styled.View`
+  width: 100%;
+  padding: 0px 20px;
+`;
+
+const ButtonWrap = styled.View`
+  width: 100%;
 `;
 
 const Form = styled.View`
   width: 100%;
-  margin-top: 35px;
+  margin-bottom: 30px;
 `;
 
-const Title = styled.Text`
+const FormTitleView = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 12px;
+`;
+
+const IconWrap = styled.View`
+  width: 20px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Title = styled(CustomText)`
   color: #1b1717;
   font-size: 16px;
-  margin-bottom: 8px;
+  font-family: "NotoSansKR-Bold";
+  line-height: 22px;
+  padding-left: 5px;
 `;
 
 const Input = styled.TextInput`
-  border-bottom-width: 1px;
+  border-bottom-width: 0.5px;
   border-bottom-color: #000000;
   padding-bottom: 5px;
-  font-size: 18px;
+  font-size: 16px;
 `;
 
-const Button = styled.TouchableOpacity`
+const LoginButton = styled.TouchableOpacity<{ disabled: boolean }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 48px;
-  background-color: #ff6534;
-  margin-top: 10%;
+  height: 68px;
+  padding-bottom: 8px;
+  background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : "#ff6534")};
 `;
 
-const ButtonTitle = styled.Text`
+const LoginTitle = styled(CustomText)`
+  font-family: "NotoSansKR-Bold";
   color: #fff;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
 `;
 
 const FindPw: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { navigate } }) => {
@@ -53,10 +79,6 @@ const FindPw: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
   const [userEmail, setUserEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [birthNumber, setBirthNumber] = useState("");
-  const nameInputRef = createRef();
-  const emailInputRef = createRef();
-  const phoneInputRef = createRef();
-  const birthInputRef = createRef();
   const [errortext, setErrortext] = useState(false);
   const nameReg = /^[가-힣]+$/;
   const phoneReg = /^(01[0|1|6|7|8|9]?)-([0-9]{4})-([0-9]{4})$/;
@@ -99,9 +121,7 @@ const FindPw: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
       } else {
         console.log(`mutation success but please check status code`);
         console.log(res);
-        toast.show("일치하는 회원정보가 없습니다.", {
-          type: "warning",
-        });
+        toast.show("일치하는 회원정보가 없습니다.", { type: "danger" });
       }
     },
     onError: (error) => {
@@ -120,7 +140,6 @@ const FindPw: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
     };
 
     const requestData: FindPwRequest = data;
-
     mutation.mutate(requestData);
   };
 
@@ -132,67 +151,73 @@ const FindPw: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
     >
       <Container>
         <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
-        <Form>
-          <Title>이름</Title>
-          <Input
-            keyboardType={"name-phone-pad"}
-            placeholder="홍길동"
-            placeholderTextColor={"#B0B0B0"}
-            maxLength={10}
-            autoCorrect={false}
-            onChangeText={(UserName) => setUserName(UserName)}
-            ref={nameInputRef}
-            returnKeyType="next"
-            blurOnSubmit={false}
-            clearButtonMode="always"
-          />
-        </Form>
-        <Form>
-          <Title>이메일</Title>
-          <Input
-            placeholder="example@email.com"
-            placeholderTextColor={"#B0B0B0"}
-            autoCorrect={false}
-            onChangeText={(email) => setUserEmail(email)}
-            ref={emailInputRef}
-            returnKeyType="next"
-            blurOnSubmit={false}
-            clearButtonMode="always"
-          />
-        </Form>
-        <Form>
-          <Title>등록된 전화번호</Title>
-          <Input
-            placeholder="010-1234-1234"
-            placeholderTextColor={"#B0B0B0"}
-            keyboardType="numeric"
-            maxLength={13}
-            onChangeText={(phone) => setPhoneNumber(phone)}
-            value={phoneNumber}
-            ref={phoneInputRef}
-            returnKeyType="next"
-            blurOnSubmit={false}
-            clearButtonMode="always"
-          />
-        </Form>
-        <Form>
-          <Title>생년월일</Title>
-          <Input
-            placeholder="yyyy-MM-dd"
-            placeholderTextColor={"#B0B0B0"}
-            keyboardType="numeric"
-            maxLength={10}
-            onChangeText={(birth) => setBirthNumber(birth)}
-            value={birthNumber}
-            ref={birthInputRef}
-            returnKeyType="next"
-            blurOnSubmit={false}
-            clearButtonMode="always"
-          />
-        </Form>
-        <Button onPress={onSubmit}>
-          <ButtonTitle>확인</ButtonTitle>
-        </Button>
+        <Wrap>
+          <Form>
+            <FormTitleView>
+              <IconWrap>
+                <FontAwesome name="id-badge" size={17} color="black" />
+              </IconWrap>
+              <Title>이름</Title>
+            </FormTitleView>
+            <Input
+              keyboardType={"name-phone-pad"}
+              placeholder="홍길동"
+              placeholderTextColor={"#B0B0B0"}
+              maxLength={10}
+              autoCorrect={false}
+              onChangeText={(UserName: string) => setUserName(UserName)}
+              clearButtonMode="always"
+            />
+          </Form>
+          <Form>
+            <FormTitleView>
+              <IconWrap>
+                <FontAwesome name="user-circle-o" size={15} color="black" />
+              </IconWrap>
+              <Title>이메일</Title>
+            </FormTitleView>
+            <Input placeholder="example@email.com" placeholderTextColor={"#B0B0B0"} autoCorrect={false} onChangeText={(email: string) => setUserEmail(email)} clearButtonMode="always" />
+          </Form>
+          <Form>
+            <FormTitleView>
+              <IconWrap>
+                <FontAwesome name="mobile-phone" size={24} color="black" />
+              </IconWrap>
+              <Title>등록된 전화번호</Title>
+            </FormTitleView>
+            <Input
+              placeholder="010-1234-1234"
+              placeholderTextColor={"#B0B0B0"}
+              keyboardType="numeric"
+              maxLength={13}
+              onChangeText={(phone: string) => setPhoneNumber(phone)}
+              value={phoneNumber}
+              clearButtonMode="always"
+            />
+          </Form>
+          <Form>
+            <FormTitleView>
+              <IconWrap>
+                <FontAwesome name="calendar-o" size={16} color="black" />
+              </IconWrap>
+              <Title>생년월일</Title>
+            </FormTitleView>
+            <Input
+              placeholder="yyyy-mm-dd"
+              placeholderTextColor={"#B0B0B0"}
+              keyboardType="numeric"
+              maxLength={10}
+              onChangeText={(birth: string) => setBirthNumber(birth)}
+              value={birthNumber}
+              clearButtonMode="always"
+            />
+          </Form>
+        </Wrap>
+        <ButtonWrap>
+          <LoginButton onPress={onSubmit}>
+            <LoginTitle>확인</LoginTitle>
+          </LoginButton>
+        </ButtonWrap>
       </Container>
     </TouchableWithoutFeedback>
   );

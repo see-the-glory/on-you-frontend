@@ -41,7 +41,7 @@ const RecruitText = styled(CustomText)`
 
 const TitleView = styled.View`
   width: 100%;
-  padding: 5px 0px;
+  padding-bottom: 5px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;

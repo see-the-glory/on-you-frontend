@@ -4,15 +4,12 @@ import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from 
 import styled from "styled-components/native";
 import { Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
-import CustomTextInput from "../../components/CustomTextInput";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Container = styled.View`
   width: 100%;
   height: 100%;
   align-items: center;
-  justify-content: space-between;
-  padding-top: 15px;
 `;
 
 const Wrap = styled.View`
@@ -21,6 +18,8 @@ const Wrap = styled.View`
 `;
 
 const ButtonWrap = styled.View`
+  position: absolute;
+  bottom: 0px;
   width: 100%;
 `;
 
@@ -45,7 +44,7 @@ const AskText = styled.Text`
 
 const SubText = styled.Text`
   color: #a0a0a0;
-  font-size: 12px;
+  font-size: 13px;
   margin-top: 7px;
 `;
 
@@ -70,7 +69,7 @@ const ButtonTitle = styled(CustomText)`
   font-family: "NotoSansKR-Bold";
   font-size: 20px;
   line-height: 24px;
-  color: #fff;
+  color: white;
 `;
 
 const FieldContentView = styled.View`
@@ -146,28 +145,28 @@ const JoinStepFive: React.FC<NativeStackScreenProps<any, "JoinStepFive">> = ({
     >
       <Container>
         <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <BorderWrap>
+          <Border />
+        </BorderWrap>
         <Wrap>
-          <BorderWrap>
-            <Border></Border>
-          </BorderWrap>
           <AskText>성별이 어떻게 되시나요?</AskText>
           <SubText>멤버 관리와, 동명이인 구분을 위함 입니다.</SubText>
           <FieldContentView>
             <FieldContentLine>
               <ChoiceButton onPress={() => setApprovalMethod((prev) => (prev === 1 ? 0 : 1))} activeOpacity={0.5}>
                 <FieldContentText> 남성</FieldContentText>
-                {approvalMethod === 1 ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
+                {approvalMethod === 1 ? <MaterialCommunityIcons name="radiobox-marked" size={22} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={22} color="#ABABAB" />}
               </ChoiceButton>
             </FieldContentLine>
             <FieldContentLine>
               <ChoiceButton onPress={() => setApprovalMethod((prev) => (prev === 2 ? 0 : 2))} activeOpacity={0.5}>
                 <FieldContentText> 여성</FieldContentText>
-                {approvalMethod === 2 ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
+                {approvalMethod === 2 ? <MaterialCommunityIcons name="radiobox-marked" size={22} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={22} color="#ABABAB" />}
               </ChoiceButton>
             </FieldContentLine>
             <FieldContentOptionLine>
               <SkipButton onPress={goToNext}>
-                <SkipText>선택하지 않고 넘어가기</SkipText>
+                <SkipText>{`선택하지 않고 넘어가기 >`}</SkipText>
               </SkipButton>
             </FieldContentOptionLine>
           </FieldContentView>

@@ -4,7 +4,6 @@ import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from 
 import styled from "styled-components/native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
-import CustomTextInput from "../../components/CustomTextInput";
 import { useMutation } from "react-query";
 import { CommonApi, DuplicateCheckResponse, DuplicateEmailCheckRequest } from "../../api";
 import { useToast } from "react-native-toast-notifications";
@@ -13,8 +12,6 @@ const Container = styled.View`
   width: 100%;
   height: 100%;
   align-items: center;
-  justify-content: space-between;
-  padding-top: 15px;
 `;
 
 const Wrap = styled.View`
@@ -23,6 +20,8 @@ const Wrap = styled.View`
 `;
 
 const ButtonWrap = styled.View`
+  position: absolute;
+  bottom: 0px;
   width: 100%;
 `;
 
@@ -47,7 +46,7 @@ const AskText = styled.Text`
 
 const SubText = styled.Text`
   color: #a0a0a0;
-  font-size: 12px;
+  font-size: 13px;
   margin-top: 7px;
 `;
 
@@ -147,20 +146,13 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
     >
       <Container>
         <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <BorderWrap>
+          <Border />
+        </BorderWrap>
         <Wrap>
-          <BorderWrap>
-            <Border></Border>
-          </BorderWrap>
           <AskText>이메일을 적어주세요.</AskText>
           <SubText>로그인 ID로 활용됩니다.</SubText>
-          <Input
-            placeholder="example@gmail.com"
-            placeholderTextColor={"#B0B0B0"}
-            autoCorrect={false}
-            onChangeText={(email: string) => setEmail(email)}
-            error={email !== "" && !emailReg.test(email)}
-            clearButtonMode="always"
-          />
+          <Input placeholder="example@gmail.com" placeholderTextColor={"#B0B0B0"} autoCorrect={false} onChangeText={(email: string) => setEmail(email)} error={email !== "" && !emailReg.test(email)} />
           {email !== "" && !emailReg.test(email) ? (
             <ValidationView>
               <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />

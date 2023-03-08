@@ -28,6 +28,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = onyoufrontend/main.m; sourceTree = "<group>"; };
 		60EAE1CFF58CAD57BA2E3AFD /* Pods-onyoufrontend.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-onyoufrontend.debug.xcconfig"; path = "Target Support Files/Pods-onyoufrontend/Pods-onyoufrontend.debug.xcconfig"; sourceTree = "<group>"; };
 		868B1BE218428AB94C1BC0C8 /* Pods-onyoufrontend.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-onyoufrontend.release.xcconfig"; path = "Target Support Files/Pods-onyoufrontend/Pods-onyoufrontend.release.xcconfig"; sourceTree = "<group>"; };
+		A77E7A6929B87B1D00066757 /* onyoufrontend.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = onyoufrontend.xcodeproj; sourceTree = "<group>"; };
 		A7B81822296D772600AB1088 /* onyoufrontend.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = onyoufrontend.entitlements; path = onyoufrontend/onyoufrontend.entitlements; sourceTree = "<group>"; };
 		A7D6A96629A4BA37002E796D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A7D6A96829A88FDF002E796D /* onyoufrontend.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; path = onyoufrontend.xcworkspace; sourceTree = "<group>"; };
@@ -116,6 +117,13 @@
 			name = onyoufrontend;
 			sourceTree = "<group>";
 		};
+		A77E7A6A29B87B1D00066757 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -138,6 +146,7 @@
 		D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
+				A77E7A6929B87B1D00066757 /* onyoufrontend.xcodeproj */,
 				92DBD88DE9BF7D494EA9DA96 /* onyoufrontend */,
 			);
 			name = ExpoModulesProviders;
@@ -194,6 +203,12 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = A77E7A6A29B87B1D00066757 /* Products */;
+					ProjectRef = A77E7A6929B87B1D00066757 /* onyoufrontend.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* onyoufrontend */,
@@ -334,7 +349,7 @@
 				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2023030302;
+				CURRENT_PROJECT_VERSION = 2023030801;
 				DEVELOPMENT_TEAM = P83ZS7XR97;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -373,7 +388,7 @@
 				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2023030302;
+				CURRENT_PROJECT_VERSION = 2023030801;
 				DEVELOPMENT_TEAM = P83ZS7XR97;
 				INFOPLIST_FILE = onyoufrontend/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OnYou;
@@ -431,6 +446,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -491,6 +507,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -544,6 +561,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -572,7 +590,7 @@
 				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2023030302;
+				CURRENT_PROJECT_VERSION = 2023030801;
 				DEVELOPMENT_TEAM = P83ZS7XR97;
 				INFOPLIST_FILE = onyoufrontend/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OnYou;

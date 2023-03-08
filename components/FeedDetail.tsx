@@ -154,7 +154,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           offset={0}
           initialScrollIndex={0}
           keyExtractor={(item: string, index: number) => String(index)}
-          showIndicator={true}
+          showIndicator={this.props.feedData?.imageUrls?.length > 1}
           renderItem={({ item, index }: { item: string; index: number }) => (
             <FastImage
               key={String(index)}

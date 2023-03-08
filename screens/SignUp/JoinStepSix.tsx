@@ -1,17 +1,14 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, useEffect, createRef, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from "react-native";
 import styled from "styled-components/native";
 import { Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
-import CustomTextInput from "../../components/CustomTextInput";
 
 const Container = styled.View`
   width: 100%;
   height: 100%;
   align-items: center;
-  justify-content: space-between;
-  padding-top: 15px;
 `;
 
 const Wrap = styled.View`
@@ -20,6 +17,8 @@ const Wrap = styled.View`
 `;
 
 const ButtonWrap = styled.View`
+  position: absolute;
+  bottom: 0px;
   width: 100%;
 `;
 
@@ -44,7 +43,7 @@ const AskText = styled.Text`
 
 const SubText = styled.Text`
   color: #a0a0a0;
-  font-size: 12px;
+  font-size: 13px;
   margin-top: 7px;
 `;
 
@@ -160,10 +159,10 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
     >
       <Container>
         <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <BorderWrap>
+          <Border />
+        </BorderWrap>
         <Wrap>
-          <BorderWrap>
-            <Border></Border>
-          </BorderWrap>
           <AskText>생년월일을 입력해주세요.</AskText>
           <SubText>정확한 생년월일을 입력해주세요.</SubText>
           <Input
@@ -179,7 +178,7 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
           <ErrorView>{birthNumber !== "" && !birthReg.test(birthNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : <></>}</ErrorView>
           <FieldContentOptionLine>
             <SkipButton onPress={goToNext}>
-              <SkipText>선택하지 않고 넘어가기</SkipText>
+              <SkipText>{`선택하지 않고 넘어가기 >`}</SkipText>
             </SkipButton>
           </FieldContentOptionLine>
         </Wrap>
