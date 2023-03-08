@@ -97,7 +97,7 @@ const ClubNotification = ({
         contentContainerStyle={{ flexGrow: 1, paddingVertical: 10, paddingHorizontal: SCREEN_PADDING_SIZE }}
         refreshing={refreshing}
         onRefresh={onRefresh}
-        data={notifications ? [...notifications?.data].reverse() : []}
+        data={notifications && Array.isArray(notifications?.data) ? [...notifications?.data].reverse() : []}
         ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
         keyExtractor={(item: Notification, index: number) => String(index)}
         renderItem={({ item, index }: { item: Notification; index: number }) => (

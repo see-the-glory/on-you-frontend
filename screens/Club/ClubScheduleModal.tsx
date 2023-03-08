@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, FlatList, Modal, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Alert, Animated, FlatList, Modal, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { RefinedSchedule } from "../../Types/Club";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import styled from "styled-components/native";
@@ -14,6 +14,7 @@ import CircleIconBundle from "../../components/CircleIconBundle";
 import { Menu, MenuDivider, MenuItem } from "react-native-material-menu";
 import { useNavigation } from "@react-navigation/native";
 import Collapsible from "react-native-collapsible";
+import { RootState } from "../../redux/store/reducers";
 
 const ModalContainer = styled.View`
   height: 500px;
@@ -158,9 +159,9 @@ interface ScheduleModalProps {
 
 const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, scheduleData, selectIndex, closeModal, children }) => {
   const toast = useToast();
-  const token = useSelector((state: any) => state.auth.token);
   const navigation = useNavigation();
-  const me = useSelector((state: any) => state.auth.user);
+  const me = useSelector((state: RootState) => state.auth.user);
+  const myRole = useSelector((state: RootState) => state.club.role);
   const [showModal, setShowModal] = useState<boolean>(visible);
   const [showMember, setShowMember] = useState<boolean>(false);
   const [menuVisibleMap, setMenuVisibleMap] = useState(new Map(scheduleData?.slice(0, -1).map((schedule) => [schedule.id, false])));
@@ -168,7 +169,6 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
   const gap = 32;
   const offset = 12;
   const pageWidth = SCREEN_WIDTH - (gap + offset) * 2;
-  const opacity = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     toggleModal();
   }, [visible]);
@@ -222,28 +222,45 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
     if (scheduleId === undefined) {
       return toast.show(`Schedule ID Error`, { type: "warning" });
     }
+
     let requestData: ClubScheduleDeletionRequest = {
       clubId,
       scheduleId,
     };
 
-    deleteScheduleMutation.mutate(requestData, {
-      onSuccess: (res) => {
-        toast.show(`일정을 삭제했습니다.`, { type: "success" });
-      },
-      onError: (error) => {
-        console.log(`API ERROR | deleteClubSchedule ${error.code} ${error.status}`);
-        toast.show(`${error.message ?? error.code}`, { type: "warning" });
-      },
-      onSettled: () => {
-        closeModal(true);
-      },
-    });
+    Alert.alert(
+      "일정 삭제",
+      "일정을 삭제하시겠습니까?",
+      [
+        {
+          text: "아니요",
+          style: "cancel",
+        },
+        {
+          text: "네",
+          onPress: () => {
+            deleteScheduleMutation.mutate(requestData, {
+              onSuccess: (res) => {
+                toast.show(`일정을 삭제했습니다.`, { type: "success" });
+              },
+              onError: (error) => {
+                console.log(`API ERROR | deleteClubSchedule ${error.code} ${error.status}`);
+                toast.show(`${error.message ?? error.code}`, { type: "warning" });
+              },
+              onSettled: () => {
+                closeModal(true);
+              },
+            });
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const goToScheduleEdit = (item: Schedule) => {
     hideMenu(item.id ?? -1);
-    closeModal(false);
+    closeModal(true);
     return navigation.navigate("ClubStack", { screen: "ClubScheduleEdit", clubData: { id: clubId }, scheduleData: item });
   };
 
@@ -267,27 +284,31 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
                     </TouchableOpacity>
                   </ModalHeaderLeft>
                   <ModalHeaderRight>
-                    <Menu
-                      visible={menuVisibleMap.get(item.id ?? -1)}
-                      style={{ justifyContent: "center", alignItems: "center", marginTop: 20, borderRadius: 0, width: 70, marginLeft: -10 }}
-                      anchor={
-                        <TouchableOpacity onPress={() => showMenu(item.id ?? -1)}>
-                          <Ionicons name="ellipsis-vertical" size={18} color="white" />
-                        </TouchableOpacity>
-                      }
-                      onRequestClose={() => hideMenu(item.id ?? -1)}
-                      animationDuration={100}
-                    >
-                      <MenuItem onPress={() => goToScheduleEdit(item)} style={{ margin: -8, paddingLeft: 7 }}>
-                        <MaterialCommunityIcons name={"pencil-outline"} size={12} color="black" />
-                        <MenuText>{` 수정`}</MenuText>
-                      </MenuItem>
-                      <MenuDivider />
-                      <MenuItem onPress={() => deleteSchedule(item.id)} style={{ margin: -8, paddingLeft: 7 }}>
-                        <Feather name="trash-2" size={12} color="#FF6534" />
-                        <MenuText color={"#FF6534"}>{` 삭제`}</MenuText>
-                      </MenuItem>
-                    </Menu>
+                    {myRole && ["MASTER", "MANAGER"].includes(myRole) ? (
+                      <Menu
+                        visible={menuVisibleMap.get(item.id ?? -1)}
+                        style={{ justifyContent: "center", alignItems: "center", marginTop: 20, borderRadius: 0, width: 70, marginLeft: -10 }}
+                        anchor={
+                          <TouchableOpacity onPress={() => showMenu(item.id ?? -1)}>
+                            <Ionicons name="ellipsis-vertical" size={18} color="white" />
+                          </TouchableOpacity>
+                        }
+                        onRequestClose={() => hideMenu(item.id ?? -1)}
+                        animationDuration={100}
+                      >
+                        <MenuItem onPress={() => goToScheduleEdit(item)} style={{ margin: -8, paddingLeft: 7 }}>
+                          <MaterialCommunityIcons name={"pencil-outline"} size={12} color="black" />
+                          <MenuText>{` 수정`}</MenuText>
+                        </MenuItem>
+                        <MenuDivider />
+                        <MenuItem onPress={() => deleteSchedule(item.id)} style={{ margin: -8, paddingLeft: 7 }}>
+                          <Feather name="trash-2" size={12} color="#FF6534" />
+                          <MenuText color={"#FF6534"}>{` 삭제`}</MenuText>
+                        </MenuItem>
+                      </Menu>
+                    ) : (
+                      <></>
+                    )}
                   </ModalHeaderRight>
                   <ScheduleText index={index}>{item.year}</ScheduleText>
                   <ScheduleTitle index={index}>

@@ -82,10 +82,17 @@ const ClubApplication = ({
   navigation: { navigate, goBack, setOptions },
 }) => {
   const toast = useToast();
+
+  const refetchEmit = () => {
+    DeviceEventEmitter.emit("ClubRefetch");
+    DeviceEventEmitter.emit("ClubNotificationRefresh");
+    DeviceEventEmitter.emit("UserNotificationRefresh");
+  };
+
   const rejectMutation = useMutation<BaseResponse, ErrorResponse, ClubRejectRequest>(ClubApi.rejectToClubJoin, {
     onSuccess: (res) => {
       toast.show(`가입신청을 거절했습니다.`, { type: "warning" });
-      DeviceEventEmitter.emit("ClubRefetch");
+      refetchEmit();
       goBack();
     },
     onError: (error) => {
@@ -98,7 +105,7 @@ const ClubApplication = ({
       toast.show(`가입신청을 수락했습니다.`, {
         type: "success",
       });
-      DeviceEventEmitter.emit("ClubRefetch");
+      refetchEmit();
       goBack();
     },
     onError: (error) => {
@@ -114,11 +121,6 @@ const ClubApplication = ({
         </TouchableOpacity>
       ),
     });
-
-    return () => {
-      DeviceEventEmitter.emit("ClubNotificationRefresh");
-      DeviceEventEmitter.emit("UserNotificationRefresh");
-    };
   }, []);
 
   const reject = () => {
