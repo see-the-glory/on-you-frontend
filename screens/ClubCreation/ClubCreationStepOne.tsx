@@ -55,7 +55,7 @@ const CategoryView = styled.View`
 
 const CategoryItem = styled.TouchableOpacity<{ selected: boolean }>`
   width: 105px;
-  height: 35px;
+  height: 45px;
   align-items: center;
   justify-content: center;
   background-color: ${(props: any) => (props.selected ? "#295AF5" : "white")};

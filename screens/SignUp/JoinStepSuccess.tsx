@@ -39,7 +39,7 @@ const AskText = styled.Text`
 
 const SubText = styled.Text`
   color: #a0a0a0;
-  font-size: 12px;
+  font-size: 13px;
   margin-top: 7px;
 `;
 

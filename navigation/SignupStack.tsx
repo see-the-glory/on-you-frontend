@@ -104,19 +104,6 @@ const SignUpStack = ({
         }}
       />
       <NativeStack.Screen
-        name="JoinStepNine"
-        component={JoinStepNine}
-        initialParams={{ name, email, password, sex, birth, phone, church }}
-        options={{
-          title: "회원가입",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinStepEight" })}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <NativeStack.Screen
         name="JoinConfirm"
         component={JoinConfirm}
         initialParams={{ name, email, password, sex, birth, phone, church }}

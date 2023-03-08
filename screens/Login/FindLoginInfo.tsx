@@ -1,14 +1,29 @@
+import { FontAwesome } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { StatusBar } from "react-native";
+import { StatusBar, View } from "react-native";
 import styled from "styled-components/native";
 
-const Container = styled.View`
-  width: 100%;
-  height: 100%;
-  align-items: center;
+const Container = styled.SafeAreaView`
+  flex: 1;
+`;
+
+const TopView = styled.View`
+  flex: 1;
+  padding: 0px 20px;
+  justify-content: flex-end;
+  margin-bottom: 30px;
+`;
+
+const BottomView = styled.View`
+  flex: 1;
+  padding: 0px 20px;
+`;
+
+const TitleView = styled.View`
+  flex-direction: row;
   justify-content: center;
-  padding-horizontal: 20px;
+  align-items: center;
 `;
 
 const IdButton = styled.TouchableHighlight`
@@ -16,16 +31,17 @@ const IdButton = styled.TouchableHighlight`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 53px;
+  height: 55px;
   border-width: 1px;
-  border-color: #ff6534;
+  border-color: black;
   background-color: #fff;
 `;
 
-const IdTitle = styled.Text`
+const Title = styled.Text`
   color: #000;
   font-size: 18px;
   font-weight: 700;
+  padding-left: 5px;
 `;
 
 const PwButton = styled.TouchableHighlight`
@@ -33,17 +49,11 @@ const PwButton = styled.TouchableHighlight`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 53px;
+  height: 55px;
   border-width: 1px;
-  border-color: #ff6534;
+  border-color: black;
   background-color: #fff;
-  margin-top: 10%;
-`;
-
-const PwTitle = styled.Text`
-  color: #000;
-  font-size: 18px;
-  font-weight: 700;
+  margin-top: 25px;
 `;
 
 const FindLoginInfo: React.FC<NativeStackScreenProps<any, "FindLoginInfo">> = ({ navigation: { navigate } }) => {
@@ -62,12 +72,21 @@ const FindLoginInfo: React.FC<NativeStackScreenProps<any, "FindLoginInfo">> = ({
   return (
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
-      <IdButton onPress={goToFindId} underlayColor="#ff6534">
-        <IdTitle>아이디 찾기</IdTitle>
-      </IdButton>
-      <PwButton onPress={goToFindPw} underlayColor="#ff6534">
-        <PwTitle>비밀번호 찾기</PwTitle>
-      </PwButton>
+      <TopView>
+        <IdButton onPress={goToFindId} underlayColor="#ff6534">
+          <TitleView>
+            <FontAwesome name="user-circle-o" size={15} color="black" />
+            <Title>아이디 찾기</Title>
+          </TitleView>
+        </IdButton>
+        <PwButton onPress={goToFindPw} underlayColor="#ff6534">
+          <TitleView>
+            <FontAwesome name="lock" size={17} color="black" />
+            <Title>비밀번호 찾기</Title>
+          </TitleView>
+        </PwButton>
+      </TopView>
+      <BottomView></BottomView>
     </Container>
   );
 };

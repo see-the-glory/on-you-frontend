@@ -1,18 +1,15 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, createRef, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from "react-native";
 import styled from "styled-components/native";
 import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
-import CustomTextInput from "../../components/CustomTextInput";
 import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.View`
   width: 100%;
   height: 100%;
   align-items: center;
-  justify-content: space-between;
-  padding-top: 15px;
 `;
 
 const Wrap = styled.View`
@@ -21,6 +18,8 @@ const Wrap = styled.View`
 `;
 
 const ButtonWrap = styled.View`
+  position: absolute;
+  bottom: 0px;
   width: 100%;
 `;
 
@@ -45,7 +44,7 @@ const AskText = styled.Text`
 
 const SubText = styled.Text`
   color: #a0a0a0;
-  font-size: 12px;
+  font-size: 13px;
   margin-top: 7px;
 `;
 
@@ -108,12 +107,6 @@ const FieldContentText = styled.Text`
   margin-right: 10px;
 `;
 
-const SkipButton = styled.TouchableOpacity``;
-
-const SkipText = styled(CustomText)`
-  color: #8e8e8e;
-`;
-
 const JoinStepEight: React.FC<NativeStackScreenProps<any, "JoinStepEight">> = ({
   navigation: { navigate, setOptions },
   route: {
@@ -156,17 +149,17 @@ const JoinStepEight: React.FC<NativeStackScreenProps<any, "JoinStepEight">> = ({
     >
       <Container>
         <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <BorderWrap>
+          <Border />
+        </BorderWrap>
         <Wrap>
-          <BorderWrap>
-            <Border></Border>
-          </BorderWrap>
           <AskText>출석중인 교회를 알려주세요.</AskText>
-          <SubText>멤버 관리와, 소모임 소속 기관을 알기 위함 입니다.</SubText>
+          <SubText>{`시광교회 교인을 대상으로 사용되는 앱입니다.\n시광교회 교인만 가입 가능합니다.`}</SubText>
           <FieldContentView>
             <FieldContentLine>
               <ChoiceButton onPress={() => setCheck(1)} activeOpacity={0.5}>
                 <FieldContentText>{`시광교회`}</FieldContentText>
-                {check === 1 ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
+                {check === 1 ? <MaterialCommunityIcons name="radiobox-marked" size={22} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={22} color="#ABABAB" />}
               </ChoiceButton>
             </FieldContentLine>
             <FieldContentLine>
@@ -178,12 +171,9 @@ const JoinStepEight: React.FC<NativeStackScreenProps<any, "JoinStepEight">> = ({
                 activeOpacity={0.5}
               >
                 <FieldContentText>{`타교회`}</FieldContentText>
-                {check === 2 ? <MaterialCommunityIcons name="radiobox-marked" size={20} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={20} color="#ABABAB" />}
+                {check === 2 ? <MaterialCommunityIcons name="radiobox-marked" size={22} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={22} color="#ABABAB" />}
               </ChoiceButton>
             </FieldContentLine>
-            <FieldContentOptionLine>
-              <SkipText>{`지금은 시광교회 교인으로만 가입할 수 있습니다.`}</SkipText>
-            </FieldContentOptionLine>
           </FieldContentView>
         </Wrap>
         <ButtonWrap>

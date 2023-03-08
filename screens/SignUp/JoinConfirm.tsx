@@ -34,7 +34,7 @@ const AskText = styled.Text`
 
 const SubText = styled.Text`
   color: #a0a0a0;
-  font-size: 12px;
+  font-size: 13px;
   margin-top: 7px;
   margin-bottom: 15px;
 `;
@@ -47,6 +47,7 @@ const Form = styled.View`
 const TitleBorder = styled.View`
   width: 100%;
   padding-bottom: 5px;
+  margin-bottom: 5px;
   border-bottom-width: 1px;
   border-bottom-color: #b3b3b3;
 `;

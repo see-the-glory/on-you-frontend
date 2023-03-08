@@ -4,14 +4,11 @@ import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from 
 import styled from "styled-components/native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
-import CustomTextInput from "../../components/CustomTextInput";
 
 const Container = styled.View`
   width: 100%;
   height: 100%;
   align-items: center;
-  justify-content: space-between;
-  padding-top: 15px;
 `;
 
 const Wrap = styled.View`
@@ -19,7 +16,13 @@ const Wrap = styled.View`
   padding: 0px 20px;
 `;
 
+const Item = styled.View`
+  margin-top: 24px;
+`;
+
 const ButtonWrap = styled.View`
+  position: absolute;
+  bottom: 0px;
   width: 100%;
 `;
 
@@ -39,19 +42,18 @@ const AskText = styled.Text`
   color: #000000;
   font-size: 20px;
   font-weight: bold;
-  margin-top: 24px;
 `;
 
 const SubText = styled.Text`
   color: #a0a0a0;
-  font-size: 12px;
+  font-size: 13px;
   margin-top: 7px;
 `;
 
 const Input = styled.TextInput`
   border-bottom-width: 1px;
   border-bottom-color: #b3b3b3;
-  margin-top: 47px;
+  margin-top: 35px;
   font-size: 18px;
 `;
 
@@ -62,14 +64,14 @@ const Button = styled.TouchableOpacity`
   width: 100%;
   height: 68px;
   padding-bottom: 8px;
-  background-color: ${(props) => (props.disabled ? "#d3d3d3" : "#295AF5")};
+  background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
 `;
 
 const ButtonTitle = styled(CustomText)`
   font-family: "NotoSansKR-Bold";
   font-size: 20px;
   line-height: 24px;
-  color: #fff;
+  color: white;
 `;
 
 const Error = styled.Text`
@@ -81,7 +83,7 @@ const ValidationView = styled.View`
   flex-direction: row;
   align-items: center;
   margin-top: 7px;
-  margin-bottom: 20px;
+  margin-bottom: 80px;
 `;
 const ValidationItem = styled.View`
   flex-direction: row;
@@ -138,32 +140,34 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
     >
       <Container>
         <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <BorderWrap>
+          <Border />
+        </BorderWrap>
         <Wrap>
-          <BorderWrap>
-            <Border></Border>
-          </BorderWrap>
-          <AskText>비밀번호를 설정해주세요.</AskText>
-          <SubText>로그인 정보로 활용됩니다.</SubText>
-          <Input placeholder="영문, 숫자, 특수문자 포함 8자 이상" placeholderTextColor={"#B0B0B0"} secureTextEntry={true} autoCorrect={false} onChangeText={(value: string) => setPassword(value)} />
+          <Item>
+            <AskText>비밀번호를 설정해주세요.</AskText>
+            <SubText>로그인 정보로 활용됩니다.</SubText>
+            <Input placeholder="영문, 숫자, 특수문자 포함 8자 이상" placeholderTextColor={"#B0B0B0"} secureTextEntry={true} autoCorrect={false} onChangeText={(value: string) => setPassword(value)} />
 
-          <ValidationView>
-            <ValidationItem>
-              <AntDesign name="check" size={12} color={engReg.test(password) ? "#295AF5" : "#ff6534"} />
-              <ValidationText>{` 영문 포함`}</ValidationText>
-            </ValidationItem>
-            <ValidationItem>
-              <AntDesign name="check" size={12} color={numReg.test(password) ? "#295AF5" : "#ff6534"} />
-              <ValidationText>{` 숫자 포함`}</ValidationText>
-            </ValidationItem>
-            <ValidationItem>
-              <AntDesign name="check" size={12} color={specialReg.test(password) ? "#295AF5" : "#ff6534"} />
-              <ValidationText>{` 특수문자 포함`}</ValidationText>
-            </ValidationItem>
-            <ValidationItem>
-              <AntDesign name="check" size={12} color={password.length > 7 ? "#295AF5" : "#ff6534"} />
-              <ValidationText>{` 8자리 이상`}</ValidationText>
-            </ValidationItem>
-          </ValidationView>
+            <ValidationView>
+              <ValidationItem>
+                <AntDesign name="check" size={12} color={engReg.test(password) ? "#295AF5" : "#8e8e8e"} />
+                <ValidationText>{` 영문 포함`}</ValidationText>
+              </ValidationItem>
+              <ValidationItem>
+                <AntDesign name="check" size={12} color={numReg.test(password) ? "#295AF5" : "#8e8e8e"} />
+                <ValidationText>{` 숫자 포함`}</ValidationText>
+              </ValidationItem>
+              <ValidationItem>
+                <AntDesign name="check" size={12} color={specialReg.test(password) ? "#295AF5" : "#8e8e8e"} />
+                <ValidationText>{` 특수문자 포함`}</ValidationText>
+              </ValidationItem>
+              <ValidationItem>
+                <AntDesign name="check" size={12} color={password.length > 7 ? "#295AF5" : "#8e8e8e"} />
+                <ValidationText>{` 8자리 이상`}</ValidationText>
+              </ValidationItem>
+            </ValidationView>
+          </Item>
           <AskText>비밀번호를 다시 입력해주세요.</AskText>
           <Input
             placeholder="영문, 숫자, 특수문자 포함 8자 이상"

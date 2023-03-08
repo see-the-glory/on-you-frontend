@@ -150,7 +150,7 @@ function App() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Provider store={store}>
           <ToastProvider
-            offset={50}
+            offset={70}
             successColor="#295AF5"
             warningColor="#8E8E8E"
             dangerColor="#FF6534"

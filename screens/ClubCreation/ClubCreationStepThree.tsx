@@ -183,7 +183,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
                 onEndEditing={() => setClubShortDesc((prev) => prev.trim())}
                 includeFontPadding={false}
               />
-              <ItemText>ex) 매일 묵상훈련과 책모임을 함께하는 '경청'입니다!</ItemText>
+              <ItemText>{`ex) 묵상훈련을 하는 책모임입니다.`}</ItemText>
             </ContentItem>
             <ContentItem>
               <ItemTitle>상세 소개</ItemTitle>

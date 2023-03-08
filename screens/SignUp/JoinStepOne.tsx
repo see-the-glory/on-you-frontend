@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
-import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 
 const Container = styled.View`
@@ -27,6 +27,7 @@ const HeaderText = styled(CustomText)`
   color: #2b2b2b;
   font-size: 16px;
   line-height: 21px;
+  margin-bottom: 30px;
 `;
 
 const Item = styled.TouchableOpacity`
@@ -34,13 +35,13 @@ const Item = styled.TouchableOpacity`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-top: 20px;
+  margin-bottom: 10px;
 `;
 
 const RedText = styled(CustomText)`
   font-family: "NotoSansKR-Medium";
   margin-right: 5px;
-  color: #ff714b;
+  color: #ff6534;
   font-size: 16px;
   line-height: 21px;
 `;
@@ -76,7 +77,7 @@ const ButtonTitle = styled(CustomText)`
   font-family: "NotoSansKR-Bold";
   font-size: 20px;
   line-height: 24px;
-  color: #fff;
+  color: white;
 `;
 
 const JoinStepOne: React.FC<NativeStackScreenProps<any, "JoinStepOne">> = ({ navigation: { navigate } }) => {
@@ -102,9 +103,7 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "JoinStepOne">> = ({ nav
       <Container>
         <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
         <Wrap>
-          <HeaderText>On You에 오신 것을 환영합니다.</HeaderText>
-          <HeaderText>앱 사용을 위해서는 아래의 약관동의와</HeaderText>
-          <HeaderText>회원가입이 필요합니다.</HeaderText>
+          <HeaderText>{`On You에 오신 것을 환영합니다.\n앱 사용을 위해서는 아래의 약관동의와\n회원가입이 필요합니다.`}</HeaderText>
 
           <Item
             onPress={() => {
@@ -151,7 +150,7 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "JoinStepOne">> = ({ nav
         </Wrap>
         <ButtonWrap>
           <Button onPress={goToNext} disabled={!check || !check2}>
-            <ButtonTitle>{`다음`}</ButtonTitle>
+            <ButtonTitle>{`동의`}</ButtonTitle>
           </Button>
         </ButtonWrap>
       </Container>

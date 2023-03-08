@@ -1,6 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, createRef } from "react";
+import React, { useState } from "react";
 import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
@@ -9,8 +9,6 @@ const Container = styled.View`
   width: 100%;
   height: 100%;
   align-items: center;
-  justify-content: space-between;
-  padding-top: 15px;
 `;
 
 const Wrap = styled.View`
@@ -19,6 +17,8 @@ const Wrap = styled.View`
 `;
 
 const ButtonWrap = styled.View`
+  position: absolute;
+  bottom: 0px;
   width: 100%;
 `;
 
@@ -43,7 +43,7 @@ const AskText = styled.Text`
 
 const SubText = styled.Text`
   color: #a0a0a0;
-  font-size: 12px;
+  font-size: 13px;
   margin-top: 7px;
 `;
 
@@ -61,7 +61,7 @@ const Button = styled.TouchableOpacity`
   width: 100%;
   height: 68px;
   padding-bottom: 8px;
-  background-color: ${(props) => (props.disabled ? "#d3d3d3" : "#295AF5")};
+  background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
 `;
 
 const ButtonTitle = styled(CustomText)`
@@ -106,10 +106,10 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ nav
     >
       <Container>
         <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <BorderWrap>
+          <Border />
+        </BorderWrap>
         <Wrap>
-          <BorderWrap>
-            <Border />
-          </BorderWrap>
           <AskText>성함이 어떻게 되시나요?</AskText>
           <SubText>정확한 성함을 입력해 주세요.</SubText>
           <Input
@@ -120,7 +120,6 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ nav
             onChangeText={(name: string) => setUserName(name)}
             placeholderTextColor={"#B0B0B0"}
             error={userName !== "" && !nameReg.test(userName)}
-            clearButtonMode="always"
           />
           {userName !== "" && !nameReg.test(userName) ? (
             <ValidationView>

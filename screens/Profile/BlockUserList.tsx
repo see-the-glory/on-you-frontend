@@ -36,9 +36,10 @@ const ItemLeftDetail = styled.View`
 `;
 
 const ItemText = styled(CustomText)`
-  font-size: 14px;
+  font-size: 16px;
+  line-height: 21px;
   font-family: "NotoSansKR-Medium";
-  margin-bottom: 2px;
+  /* margin-bottom: 2px; */
 `;
 
 const UnblockButton = styled.TouchableOpacity`
@@ -134,7 +135,7 @@ const BlockUserList: React.FC<NativeStackScreenProps<any, "BlockUserList">> = ({
           <CircleIcon size={46} uri={item.thumbnail} />
           <ItemLeftDetail>
             <ItemText>{item.userName}</ItemText>
-            <Tag
+            {/* <Tag
               name={item.organizationName ?? ""}
               iconName="cross"
               backgroundColor="white"
@@ -143,7 +144,7 @@ const BlockUserList: React.FC<NativeStackScreenProps<any, "BlockUserList">> = ({
               iconSize={7}
               contentContainerStyle={{ paddingTop: 1, paddingBottom: 1, paddingRight: 3, paddingLeft: 3 }}
               textStyle={{ fontSize: 10, lineHeight: 14 }}
-            />
+            /> */}
           </ItemLeftDetail>
         </ItemLeft>
         <ItemRight>
@@ -177,7 +178,7 @@ const BlockUserList: React.FC<NativeStackScreenProps<any, "BlockUserList">> = ({
       keyExtractor={(item: BlockUser, index: number) => String(index)}
       data={blockUserList?.data}
       ItemSeparatorComponent={itemSeparatorComponent}
-      stickyHeaderIndices={[0]}
+      ListFooterComponent={itemSeparatorComponent}
       renderItem={renderItem}
       ListEmptyComponent={listEmptyComponent}
     />
