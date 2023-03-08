@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider, useSelector } from "react-redux";
 import { ToastProvider } from "react-native-toast-notifications";
 import { Ionicons } from "@expo/vector-icons";
-import { Alert, LogBox, Platform, Text, TextInput, View } from "react-native";
+import { LogBox, Platform, Text, TextInput, View } from "react-native";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import moment from "moment";
@@ -17,26 +17,12 @@ import messaging from "@react-native-firebase/messaging";
 import { init, updateFCMToken } from "./redux/slices/auth";
 import BackgroundColor from "react-native-background-color";
 import CodePush from "react-native-code-push";
+import notifee, { AndroidImportance } from "@notifee/react-native";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
 const queryClient = new QueryClient();
 SplashScreen.preventAutoHideAsync();
-
-//백그라운드에서 푸시를 받으면 호출됨
-messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-  console.log("Message handled in the background!", remoteMessage);
-});
-
-//푸시를 받으면 호출됨
-messaging().onMessage(async (remoteMessage) => {
-  Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
-});
-
-//알림창을 클릭한 경우 호출됨
-messaging().onNotificationOpenedApp((remoteMessage) => {
-  console.log("Notification caused app to open from background state:", remoteMessage.notification);
-});
 
 const RootNavigation = () => {
   const token = useSelector((state) => state.auth.token);
@@ -102,6 +88,22 @@ const RootNavigation = () => {
     }
   };
 
+  const notificationChannelSetting = async () => {
+    await notifee.createChannel({
+      id: "club",
+      name: "Club Alarms",
+      vibration: true,
+      importance: AndroidImportance.HIGH,
+    });
+
+    await notifee.createChannel({
+      id: "user",
+      name: "User Alarms",
+      vibration: true,
+      importance: AndroidImportance.HIGH,
+    });
+  };
+
   const prepare = async () => {
     try {
       console.log(`App - Prepare!`);
@@ -119,7 +121,10 @@ const RootNavigation = () => {
 
   useEffect(() => {
     prepare();
-    if (Platform.OS === "android") BackgroundColor.setColor("#FFFFFF");
+    if (Platform.OS === "android") {
+      notificationChannelSetting();
+      BackgroundColor.setColor("#FFFFFF");
+    }
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
