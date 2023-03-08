@@ -12,12 +12,14 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store/reducers";
 import axios from "axios";
 import { useAppDispatch } from "../redux/store";
-import { logout, updateFCMToken, updateUser } from "../redux/slices/auth";
-import { DeviceEventEmitter, Platform } from "react-native";
+import { logout, updateUser } from "../redux/slices/auth";
+import { DeviceEventEmitter } from "react-native";
 import { BaseResponse, ErrorResponse, TargetTokenUpdateRequest, UserApi, UserInfoResponse } from "../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import messaging from "@react-native-firebase/messaging";
 import feedSlice from "../redux/slices/feed";
+import messaging from "@react-native-firebase/messaging";
+import notifee, { EventType } from "@notifee/react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const Nav = createNativeStackNavigator();
 
@@ -27,6 +29,7 @@ const Root = () => {
   const dispatch = useAppDispatch();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const navigation = useNavigation();
 
   const { refetch: userInfoRefecth } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
@@ -54,27 +57,6 @@ const Root = () => {
         toast.show(`${error.message ?? error.code}`, { type: "warning" });
       },
     });
-  };
-
-  const updateFCM = async () => {
-    const authStatus = await messaging().requestPermission();
-    const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    console.log(`FCM Enabled: ${enabled}`);
-    if (!enabled) {
-      console.log("FCM Authorization Fail");
-      return;
-    }
-    try {
-      if (Platform.OS === "android") await messaging().registerDeviceForRemoteMessages();
-      const newFCMToken = await messaging().getToken();
-      console.log("FCM token:", fcmToken);
-      if (fcmToken !== newFCMToken) {
-        console.log("FCM token is refreshed:", newFCMToken);
-        dispatch(updateFCMToken({ fcmToken: newFCMToken }));
-      }
-    } catch (e) {
-      console.warn(e);
-    }
   };
 
   useEffect(() => {
@@ -125,24 +107,48 @@ const Root = () => {
 
     if (fcmToken) updateTargetToken(fcmToken);
 
+    //푸시를 받으면 호출됨
+    const fcmUnsubscribe = messaging().onMessage(async (remoteMessage) => {
+      try {
+        await notifee.displayNotification({
+          title: remoteMessage?.notification?.title,
+          body: remoteMessage?.notification?.body,
+          android: {
+            channelId: "club",
+          },
+        });
+      } catch (e) {
+        console.warn(e);
+      }
+    });
+
+    const notiUnsubscribe = notifee.onForegroundEvent(({ type, detail }) => {
+      switch (type) {
+        case EventType.DISMISSED:
+          console.log("User dismissed notification", detail.notification);
+          break;
+        case EventType.PRESS:
+          console.log("User pressed notification", detail.notification);
+          break;
+        case EventType.ACTION_PRESS:
+          console.log(`Action Press: ${detail.pressAction?.id}`);
+          break;
+      }
+    });
+
     const logoutSubScription = DeviceEventEmitter.addListener("Logout", async ({ fcmToken }) => {
       console.log(`Root - Logout`);
       const res = await dispatch(logout());
       if (res.meta.requestStatus === "fulfilled") {
         toast.show(`로그아웃 되었습니다.`, { type: "success" });
         try {
-          if (fcmToken) {
-            updateTargetToken(null);
-            // await messaging().deleteToken(fcmToken);
-            // await updateFCM();
-          } else console.log(`Root - Logout : FCM Token 이 없습니다.`);
+          if (fcmToken) updateTargetToken(null);
+          else console.log(`Root - Logout : FCM Token 이 없습니다.`);
           dispatch(feedSlice.actions.deleteFeed());
         } catch (e) {
           console.warn(e);
         }
-      } else {
-        toast.show(`로그아웃 실패.`, { type: "warning" });
-      }
+      } else toast.show(`로그아웃 실패.`, { type: "warning" });
     });
 
     return () => {
@@ -150,6 +156,8 @@ const Root = () => {
       axios.interceptors.request.eject(requestInterceptor);
       axios.interceptors.response.eject(responseInterceptor);
       logoutSubScription.remove();
+      fcmUnsubscribe();
+      notiUnsubscribe();
     };
   }, []);
 

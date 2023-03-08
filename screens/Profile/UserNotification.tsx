@@ -3,9 +3,10 @@ import { ActivityIndicator, DeviceEventEmitter, FlatList, StatusBar, TouchableOp
 import { useToast } from "react-native-toast-notifications";
 import { useQuery } from "react-query";
 import styled from "styled-components/native";
-import { ClubApi, ErrorResponse, Notification, NotificationsResponse, UserApi } from "../../api";
+import { ErrorResponse, Notification, NotificationsResponse, UserApi } from "../../api";
 import CustomText from "../../components/CustomText";
 import NotificationItem from "../../components/NotificationItem";
+import notifee from "@notifee/react-native";
 
 const SCREEN_PADDING_SIZE = 20;
 
@@ -61,7 +62,7 @@ const UserNotification = ({ navigation: { navigate } }) => {
     return () => userNotifSubs.remove();
   }, []);
 
-  const onPressItem = (item: Notification) => {
+  const onPressItem = async (item: Notification) => {
     if (item.actionType === "APPLY") {
       return navigate("ClubStack", {
         screen: "ClubApplication",
@@ -80,6 +81,16 @@ const UserNotification = ({ navigation: { navigate } }) => {
       return navigate("ClubStack", { screen: "ClubTopTabs", clubData: { id: item.actionClubId } });
     } else if (item.actionType === "REJECT") {
       // 거절 메시지 보여주기
+      await notifee.displayNotification({
+        title: "TITLE TEST",
+        body: "body test",
+        android: {
+          channelId: "club",
+          pressAction: {
+            id: "action!",
+          },
+        },
+      });
     }
   };
 
