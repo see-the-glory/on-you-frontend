@@ -102,9 +102,7 @@ const ClubApplication = ({
   });
   const approveMutation = useMutation<BaseResponse, ErrorResponse, ClubApproveRequest>(ClubApi.approveToClubJoin, {
     onSuccess: (res) => {
-      toast.show(`가입신청을 수락했습니다.`, {
-        type: "success",
-      });
+      toast.show(`가입신청을 수락했습니다.`, { type: "success" });
       refetchEmit();
       goBack();
     },
@@ -176,10 +174,10 @@ const ClubApplication = ({
       </Content>
       {processDone !== true ? (
         <Footer>
-          <RejectButton onPress={reject}>
+          <RejectButton onPress={reject} disabled={rejectMutation.isLoading || approveMutation.isLoading}>
             <ButtonText>거절</ButtonText>
           </RejectButton>
-          <AcceptButton onPress={approve}>
+          <AcceptButton onPress={approve} disabled={rejectMutation.isLoading || approveMutation.isLoading}>
             <ButtonText>수락</ButtonText>
           </AcceptButton>
         </Footer>

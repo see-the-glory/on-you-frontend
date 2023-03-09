@@ -1,5 +1,5 @@
 import React, { useCallback, useLayoutEffect, useState } from "react";
-import { Alert, DeviceEventEmitter, FlatList, StatusBar, useWindowDimensions, View } from "react-native";
+import { Alert, DeviceEventEmitter, EventSubscriptionVendor, FlatList, StatusBar, useWindowDimensions, View } from "react-native";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
@@ -59,7 +59,6 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   const complainMutation = useMutation<BaseResponse, ErrorResponse, FeedReportRequest>(FeedApi.reportFeed, {
     onSuccess: (res) => {
       toast.show(`신고 요청이 완료 되었습니다.`, { type: "success" });
-      closeComplainOption();
     },
     onError: (error) => {
       console.log(`API ERROR | reportFeed ${error.code} ${error.status}`);
@@ -202,6 +201,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       reason: "SPAM",
     };
     complainMutation.mutate(requestData);
+    closeComplainOption();
   };
 
   const loadMore = () => {

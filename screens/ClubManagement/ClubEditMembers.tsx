@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { DeviceEventEmitter, FlatList, SectionList, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, DeviceEventEmitter, FlatList, SectionList, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
 import { BaseResponse, ChangeRole, ChangeRoleRequest, ErrorResponse, Member } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
@@ -87,16 +87,12 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
   const [memberMap, setMemberMap] = useState(new Map(clubData.members?.map((member) => [member.id, { ...member }]))); // 깊은 복사를 위해서 Spread 구문 사용
   const mutation = useMutation<BaseResponse, ErrorResponse, ChangeRoleRequest>(ClubApi.changeRole, {
     onSuccess: (res) => {
-      toast.show(`저장이 완료되었습니다.`, {
-        type: "success",
-      });
+      toast.show(`저장이 완료되었습니다.`, { type: "success" });
       navigate("ClubManagementMain", { clubData, refresh: true });
     },
     onError: (error) => {
       console.log(`API ERROR | changeRole ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, {
-        type: "warning",
-      });
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
@@ -214,17 +210,18 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
   };
 
   useLayoutEffect(() => {
-    console.log("useLayoutEffect");
-    console.log(clubData.members);
     setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={save}>
-          <CustomText style={{ color: "#2995FA", fontSize: 14, lineHeight: 20 }}>저장</CustomText>
-        </TouchableOpacity>
-      ),
+      headerRight: () =>
+        mutation.isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <TouchableOpacity onPress={save}>
+            <CustomText style={{ color: "#2995FA", fontSize: 14, lineHeight: 20 }}>저장</CustomText>
+          </TouchableOpacity>
+        ),
     });
     setMemberData();
-  }, [kickOutMap]);
+  }, [kickOutMap, mutation.isLoading]);
 
   const loading = bundles && bundles?.length !== 0 ? false : true;
 
