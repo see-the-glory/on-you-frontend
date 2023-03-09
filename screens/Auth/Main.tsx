@@ -1,7 +1,9 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
-import { StatusBar } from "react-native";
+import { Image, StatusBar } from "react-native";
+import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
+import CustomText from "../../components/CustomText";
 
 const Container = styled.View`
   width: 100%;
@@ -10,20 +12,20 @@ const Container = styled.View`
   align-items: center;
 `;
 
-const Logo = styled.ImageBackground`
+const BackgroundView = styled.ImageBackground`
   width: 100%;
   height: 100%;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
 `;
 
-const BtnWrap = styled.View`
+const ButtonView = styled.View`
+  position: absolute;
+  bottom: 8%;
   width: 100%;
-  height: 48px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin-bottom: 15%;
 `;
 
 const JoinButton = styled.TouchableOpacity`
@@ -32,7 +34,7 @@ const JoinButton = styled.TouchableOpacity`
   align-items: center;
   width: 40%;
   height: 48px;
-  background-color: #fff;
+  background-color: white;
   margin-right: 25px;
 `;
 
@@ -45,16 +47,24 @@ const LoginButton = styled.TouchableOpacity`
   background-color: #ff6534;
 `;
 
-const JoinTitle = styled.Text`
+const JoinTitle = styled(CustomText)`
+  font-family: "NotoSansKR-Bold";
   color: #ff6534;
   font-size: 20px;
-  font-weight: 700;
+  line-height: 26px;
+  font-size: 20px;
 `;
 
-const LoginTitle = styled.Text`
-  color: #fff;
+const LoginTitle = styled(CustomText)`
+  font-family: "NotoSansKR-Bold";
+  color: white;
+  line-height: 26px;
   font-size: 20px;
-  font-weight: 700;
+`;
+
+const Logo = styled.Image`
+  height: 120px;
+  width: 120px;
 `;
 
 const Main: React.FC<NativeStackScreenProps<any, "Main">> = ({ navigation: { navigate } }) => {
@@ -73,16 +83,17 @@ const Main: React.FC<NativeStackScreenProps<any, "Main">> = ({ navigation: { nav
   return (
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
-      <Logo source={require("../../assets/logo.png")} resizeMode="cover">
-        <BtnWrap>
+      <BackgroundView source={require("../../assets/logo_background.jpg")} resizeMode="cover">
+        <Logo source={require("../../assets/logo_icon.png")} />
+        <ButtonView>
           <JoinButton onPress={goToJoinStepOne}>
             <JoinTitle>회원가입</JoinTitle>
           </JoinButton>
           <LoginButton onPress={goToLogin}>
             <LoginTitle>로그인</LoginTitle>
           </LoginButton>
-        </BtnWrap>
-      </Logo>
+        </ButtonView>
+      </BackgroundView>
     </Container>
   );
 };
