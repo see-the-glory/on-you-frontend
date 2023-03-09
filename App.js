@@ -173,13 +173,7 @@ function App() {
 
 const codePushOptions = {
   checkFrequency: CodePush.CheckFrequency.ON_APP_START,
-  updateDialog: {
-    title: "...",
-    optionalUpdateMessage: "...",
-    optionalInstallButtonLabel: "업데이트",
-    optionalIgnoreButtonLabel: "아니요.",
-  },
-  installMode: CodePush.InstallMode.IMMEDIATE,
+  installMode: CodePush.InstallMode.ON_NEXT_RESTART,
 };
 
 export default CodePush(codePushOptions)(App);

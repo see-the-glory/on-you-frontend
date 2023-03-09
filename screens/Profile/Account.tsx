@@ -53,7 +53,7 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   const fcmToken = useSelector((state: RootState) => state.auth.fcmToken);
   const dispatch = useAppDispatch();
 
-  const mutation = useMutation<BaseResponse, ErrorResponse>(UserApi.withdrawAccount, {
+  const withdrawMutation = useMutation<BaseResponse, ErrorResponse>(UserApi.withdrawAccount, {
     onSuccess: (res) => {
       toast.show("회원탈퇴 되었습니다.", { type: "success" });
       DeviceEventEmitter.emit("Logout", { fcmToken });
@@ -66,13 +66,11 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   });
 
   const onSubmit = () => {
-    mutation.mutate();
+    withdrawMutation.mutate();
   };
 
   const goToScreen = (screen: string) => {
-    navigate("ProfileStack", {
-      screen,
-    });
+    navigate("ProfileStack", { screen });
   };
 
   const handleAlert = () => {
@@ -82,10 +80,10 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
       [
         {
           text: "네",
-          onPress: () => onSubmit(),
+          onPress: onSubmit,
           style: "cancel",
         },
-        { text: "아니요", onPress: () => console.log("취소") },
+        { text: "아니요", onPress: () => {} },
       ],
       { cancelable: false }
     );
@@ -94,7 +92,7 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   const items: AccountItem[] = [
     {
       title: "비밀번호 변경",
-      onPress: () => goToScreen("ChangePw"),
+      onPress: () => goToScreen("ChangePassword"),
     },
     {
       title: "차단된 계정",

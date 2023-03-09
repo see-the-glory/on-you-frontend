@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
-import { Ionicons } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
 import { ClubCreationStepTwoScreenProps } from "../../Types/Club";
 import CustomText from "../../components/CustomText";
@@ -50,13 +50,45 @@ const PickedImage = styled.Image<{ height: number }>`
   height: ${(props: any) => props.height}px;
 `;
 
-const ContentItem = styled.View`
+const ContentItem = styled.View<{ error: boolean }>`
   width: 100%;
   flex: 1;
   border-bottom-width: 1px;
-  border-bottom-color: #cecece;
-  padding-bottom: 3px;
+  border-bottom-color: ${(props: any) => (props.error ? "#FF6534" : "#cecece")};
   margin: 10px 0px;
+`;
+
+const ValidationView = styled.View`
+  margin-top: 3px;
+  height: 15px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+`;
+const ValidationItem = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-right: 8px;
+`;
+
+const ValidationText = styled(CustomText)`
+  color: #ff6534;
+  font-size: 10px;
+  line-height: 15px;
+`;
+
+const ItemSubView = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const ErrorView = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+const ErrorText = styled(CustomText)`
+  color: #ff6534;
 `;
 
 const Item = styled.View`
@@ -82,7 +114,6 @@ const ItemText = styled(CustomText)`
 
 const ItemTextInput = styled(CustomTextInput)`
   font-size: 15px;
-  line-height: 20px;
   padding: 0px 5px;
   flex: 1;
 `;
@@ -136,6 +167,8 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
 }) => {
   const toast = useToast();
   const [clubName, setClubName] = useState<string>("");
+  const [nameErrorCheck, setNameErrorCheck] = useState<boolean>(false);
+  const [isDuplicatedName, setIsDuplicatedName] = useState<boolean>(false);
   const [maxNumber, setMaxNumber] = useState<string>("");
   const [maxNumberInfinity, setMaxNumberInfinity] = useState<boolean>(false);
   const [isApproveRequired, setIsApproveRequired] = useState("Y");
@@ -144,7 +177,8 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   const [organizationName, setOrganizationName] = useState<string>("");
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 5) * 3);
-  let specialChar = /[`~!@#$%^&*|\\\'\";:\/?]/gi;
+  let specialChar = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
+  const lengthLimit = 8;
 
   const clubNameMutation = useMutation<DuplicateCheckResponse, ErrorResponse, DuplicateClubNameCheckRequest>(ClubApi.duplicateClubNameCheck);
 
@@ -158,7 +192,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
       path: image.path,
       width: 1080,
       height: 1080,
-      cropperCancelText: "Cancle",
+      cropperCancelText: "Cancel",
       cropperChooseText: "Check",
       cropperToolbarTitle: "이미지를 크롭하세요",
       forceJpg: true,
@@ -169,19 +203,22 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
 
   const goToNext = () => {
     /** Validation */
-    if (clubName === "") {
-      return toast.show("모임 이름은 공백으로 설정할 수 없습니다.", { type: "warning" });
+    if (clubName.trim() === "") {
+      return toast.show(`모임 이름은 공백으로 설정할 수 없습니다.`, { type: "warning" });
     } else if (specialChar.test(clubName)) {
-      return toast.show("모임 이름에 특수문자가 포함되어 있습니다.", { type: "warning" });
+      return toast.show(`모임 이름에 특수문자가 포함되어 있습니다.`, { type: "warning" });
+    } else if (clubName.length > lengthLimit) {
+      return toast.show(`모임 이름은 ${lengthLimit}자 이하여야 합니다.`, { type: "warning" });
     }
 
     const reqeustData: DuplicateClubNameCheckRequest = {
-      clubName,
+      clubName: clubName.trim(),
     };
     clubNameMutation.mutate(reqeustData, {
       onSuccess: (res) => {
         if (res?.data?.isDuplicated === "Y") {
           toast.show(`모임 이름이 이미 존재합니다.`, { type: "warning" });
+          setIsDuplicatedName(true);
         } else {
           navigate("ClubCreationStepThree", {
             category1,
@@ -234,39 +271,57 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
             <ImagePickerButton height={imageHeight} onPress={pickImage} activeOpacity={0.8}>
               {imageURI ? <PickedImage height={imageHeight} source={{ uri: imageURI }} /> : <ImagePickerText>대표 사진 설정</ImagePickerText>}
             </ImagePickerButton>
-            <ContentItem>
+            <ContentItem error={nameErrorCheck || isDuplicatedName} style={{ marginBottom: 0 }}>
               <ItemTitle>모임 이름</ItemTitle>
-              <ItemTextInput
-                value={clubName}
-                placeholder="모임명 8자 이내 (특수문자 불가)"
-                placeholderTextColor="#B0B0B0"
-                maxLength={9}
-                onEndEditing={() => {
-                  if (clubName.trim() === "") {
-                    toast.show("모임 이름을 공백으로 설정할 수 없습니다.", {
-                      type: "warning",
-                    });
-                  }
-                  if (specialChar.test(clubName)) {
-                    toast.show("모임 이름에 특수문자가 있습니다.", {
-                      type: "warning",
-                    });
-                  }
-                  setClubName((prev) => prev.trim());
-                }}
-                onChangeText={(name: string) => {
-                  if (name.length > 8) {
-                    toast.show("모임 이름은 8자 제한입니다.", {
-                      type: "warning",
-                    });
-                  } else setClubName(name);
-                }}
-                returnKeyType="done"
-                returnKeyLabel="done"
-                includeFontPadding={false}
-              />
+              <ItemSubView>
+                <ItemTextInput
+                  value={clubName}
+                  placeholder={`모임명 ${lengthLimit}자 이내 (특문 불가)`}
+                  placeholderTextColor="#B0B0B0"
+                  maxLength={10}
+                  onEndEditing={() => {
+                    setClubName((prev) => prev.trim());
+                  }}
+                  onChangeText={(name: string) => {
+                    setClubName(name);
+                    if (isDuplicatedName) setIsDuplicatedName(false);
+                    if (!nameErrorCheck && (name.length > lengthLimit || specialChar.test(name))) setNameErrorCheck(true);
+                    if (nameErrorCheck && name.length <= lengthLimit && !specialChar.test(name)) setNameErrorCheck(false);
+                  }}
+                  returnKeyType="done"
+                  returnKeyLabel="done"
+                  includeFontPadding={false}
+                />
+                {isDuplicatedName ? (
+                  <ErrorView>
+                    <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />
+                    <ErrorText>{` 이미 사용 중인 이름입니다.`}</ErrorText>
+                  </ErrorView>
+                ) : (
+                  <></>
+                )}
+              </ItemSubView>
             </ContentItem>
-            <ContentItem>
+            <ValidationView>
+              {specialChar.test(clubName) ? (
+                <ValidationItem>
+                  <AntDesign name="check" size={12} color={"#ff6534"} />
+                  <ValidationText>{` 특수문자 불가능`}</ValidationText>
+                </ValidationItem>
+              ) : (
+                <></>
+              )}
+              {clubName.length > lengthLimit ? (
+                <ValidationItem>
+                  <AntDesign name="check" size={12} color={"#ff6534"} />
+                  <ValidationText>{` ${lengthLimit}자 초과`}</ValidationText>
+                </ValidationItem>
+              ) : (
+                <></>
+              )}
+            </ValidationView>
+
+            <ContentItem style={{ marginTop: 2 }}>
               <ItemTitle>모집 정원</ItemTitle>
               <Item>
                 <ItemTextInput
@@ -287,10 +342,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
                   maxLength={6}
                   onChangeText={(num: string) => {
                     if (num.length < 3) setMaxNumber(num);
-                    else
-                      toast.show("최대 99명까지 가능합니다.", {
-                        type: "warning",
-                      });
+                    else toast.show("최대 99명까지 가능합니다.", { type: "warning" });
                   }}
                   editable={!maxNumberInfinity}
                   includeFontPadding={false}
@@ -354,7 +406,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
         </View>
 
         <FooterView>
-          <NextButton onPress={() => goToNext()} disabled={clubName === "" || maxNumber === "" || phoneNumber === "" || organizationName === "" || !imageURI}>
+          <NextButton onPress={() => goToNext()} disabled={nameErrorCheck || clubName === "" || maxNumber === "" || phoneNumber === "" || organizationName === "" || !imageURI}>
             <ButtonText>다음 2/3</ButtonText>
           </NextButton>
         </FooterView>
