@@ -4,6 +4,7 @@ import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from 
 import styled from "styled-components/native";
 import { Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
+import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
   width: 100%;
@@ -14,12 +15,6 @@ const Container = styled.View`
 const Wrap = styled.View`
   width: 100%;
   padding: 0px 20px;
-`;
-
-const ButtonWrap = styled.View`
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
 `;
 
 const BorderWrap = styled.View`
@@ -52,23 +47,6 @@ const Input = styled.TextInput`
   border-bottom-color: ${(props: any) => (props.error ? "#ff6534" : "#b3b3b3")};
   margin-top: 47px;
   font-size: 18px;
-`;
-
-const Button = styled.TouchableOpacity<{ disabled: boolean }>`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 68px;
-  padding-bottom: 8px;
-  background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : "#295af5")};
-`;
-
-const ButtonTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  font-size: 20px;
-  line-height: 24px;
-  color: #fff;
 `;
 
 const ErrorView = styled.View`
@@ -175,7 +153,6 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
             onChangeText={(phone: string) => setPhoneNumber(phone)}
             value={phoneNumber}
             error={phoneNumber !== "" && !phoneReg.test(phoneNumber)}
-            clearButtonMode="always"
           />
           <ErrorView>{phoneNumber !== "" && !phoneReg.test(phoneNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : <></>}</ErrorView>
           <FieldContentOptionLine>
@@ -184,11 +161,7 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
             </SkipButton>
           </FieldContentOptionLine>
         </Wrap>
-        <ButtonWrap>
-          <Button onPress={validate} disabled={!phoneReg.test(phoneNumber)}>
-            <ButtonTitle>다음</ButtonTitle>
-          </Button>
-        </ButtonWrap>
+        <BottomButton onPress={validate} disabled={!phoneReg.test(phoneNumber)} title={"다음"} />
       </Container>
     </TouchableWithoutFeedback>
   );

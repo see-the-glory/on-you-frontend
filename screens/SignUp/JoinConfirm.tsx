@@ -7,6 +7,7 @@ import { useMutation } from "react-query";
 import { UserApi, SignUp } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
+import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
   width: 100%;
@@ -19,10 +20,6 @@ const Container = styled.View`
 const Wrap = styled.View`
   width: 100%;
   padding: 0px 20px;
-`;
-
-const ButtonWrap = styled.View`
-  width: 100%;
 `;
 
 const AskText = styled.Text`
@@ -73,30 +70,6 @@ const TextTitle = styled.Text`
 const TextInfo = styled.Text`
   color: #295af5;
   font-size: 14px;
-`;
-
-const Input = styled.TextInput`
-  border-bottom-width: 1px;
-  border-bottom-color: #b3b3b3;
-  margin-top: 47px;
-  font-size: 18px;
-`;
-
-const Button = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 68px;
-  padding-bottom: 8px;
-  background-color: #295af5;
-`;
-
-const ButtonTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  font-size: 20px;
-  line-height: 24px;
-  color: #fff;
 `;
 
 const JoinConfirm: React.FC<NativeStackScreenProps<any, "JoinConfirm">> = ({
@@ -208,11 +181,7 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "JoinConfirm">> = ({
           </TextWrap>
         </Form>
       </Wrap>
-      <ButtonWrap>
-        <Button onPress={onSubmit}>
-          <ButtonTitle>일치합니다</ButtonTitle>
-        </Button>
-      </ButtonWrap>
+      <BottomButton onPress={onSubmit} title={"일치합니다"} />
     </Container>
   );
 };

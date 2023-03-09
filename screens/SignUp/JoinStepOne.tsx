@@ -1,10 +1,11 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, Platform, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
+import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
   width: 100%;
@@ -17,10 +18,6 @@ const Container = styled.View`
 const Wrap = styled.View`
   width: 100%;
   padding: 0px 20px;
-`;
-
-const ButtonWrap = styled.View`
-  width: 100%;
 `;
 
 const HeaderText = styled(CustomText)`
@@ -61,23 +58,6 @@ const LeftBox = styled.View`
 const RightBox = styled.View`
   flex-direction: row;
   align-items: center;
-`;
-
-const Button = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 68px;
-  padding-bottom: 8px;
-  background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
-`;
-
-const ButtonTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  font-size: 20px;
-  line-height: 24px;
-  color: white;
 `;
 
 const JoinStepOne: React.FC<NativeStackScreenProps<any, "JoinStepOne">> = ({ navigation: { navigate } }) => {
@@ -148,11 +128,7 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "JoinStepOne">> = ({ nav
             </RightBox>
           </Item>
         </Wrap>
-        <ButtonWrap>
-          <Button onPress={goToNext} disabled={!check || !check2}>
-            <ButtonTitle>{`동의`}</ButtonTitle>
-          </Button>
-        </ButtonWrap>
+        <BottomButton onPress={goToNext} disabled={!check || !check2} title={"동의"} />
       </Container>
     </TouchableWithoutFeedback>
   );

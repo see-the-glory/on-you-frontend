@@ -1,8 +1,9 @@
 import { AntDesign } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, Platform, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
+import BottomButton from "../../components/BottomButton";
 import CustomText from "../../components/CustomText";
 
 const Container = styled.View`
@@ -15,13 +16,6 @@ const Wrap = styled.View`
   width: 100%;
   padding: 0px 20px;
 `;
-
-const ButtonWrap = styled.View`
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
-`;
-
 const BorderWrap = styled.View`
   width: 100%;
   height: 2px;
@@ -52,23 +46,6 @@ const Input = styled.TextInput<{ error: boolean }>`
   border-bottom-color: ${(props: any) => (props.error ? "#ff6534" : "#b3b3b3")};
   margin-top: 47px;
   font-size: 18px;
-`;
-
-const Button = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 68px;
-  padding-bottom: 8px;
-  background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
-`;
-
-const ButtonTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  font-size: 20px;
-  line-height: 24px;
-  color: #fff;
 `;
 
 const Error = styled.Text`
@@ -130,11 +107,7 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ nav
             <></>
           )}
         </Wrap>
-        <ButtonWrap>
-          <Button onPress={goToNext} disabled={!nameReg.test(userName)}>
-            <ButtonTitle>다음</ButtonTitle>
-          </Button>
-        </ButtonWrap>
+        <BottomButton onPress={goToNext} disabled={!nameReg.test(userName)} title={"다음"} />
       </Container>
     </TouchableWithoutFeedback>
   );

@@ -77,7 +77,7 @@ const ButtonText = styled(CustomText)`
 
 const ClubApplication = ({
   route: {
-    params: { clubData, actionId, actionerName, actionerId, applyMessage, createdTime, processDone },
+    params: { clubData, actionId, actionerName, actionerId, message, createdTime, processDone },
   },
   navigation: { navigate, goBack, setOptions },
 }) => {
@@ -166,7 +166,7 @@ const ClubApplication = ({
       </Header>
       <Content style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
         <MessageView>
-          <ContentText>{applyMessage}</ContentText>
+          <ContentText>{message}</ContentText>
         </MessageView>
         <CreatedTimeView>
           <CreatedTimeText>{moment(createdTime).tz("Asia/Seoul").format("YYYY-MM-DD  A h시 mm분")}</CreatedTimeText>

@@ -66,7 +66,7 @@ const ClubJoin = ({
   const save = () => {
     const requestData: ClubApplyRequest = {
       clubId: clubData.id,
-      memo,
+      message: memo,
     };
 
     clubApplyMutation.mutate(requestData);

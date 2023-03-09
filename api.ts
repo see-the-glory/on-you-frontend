@@ -56,7 +56,7 @@ export interface Notification {
   actioneeId?: number | null;
   actioneeName?: string | null;
   actionType?: string;
-  applyMessage?: string | null;
+  message?: string | null;
   created?: string;
   processDone?: boolean;
 }
@@ -350,7 +350,7 @@ export interface ClubScheduleJoinOrCancelRequest {
 
 export interface ClubApplyRequest {
   clubId: number;
-  memo: string;
+  message: string;
 }
 
 export interface ClubApproveRequest {
@@ -363,6 +363,7 @@ export interface ClubRejectRequest {
   clubId: number;
   actionId: number;
   userId: number;
+  message?: string;
 }
 
 export interface ChangeRoleRequest {

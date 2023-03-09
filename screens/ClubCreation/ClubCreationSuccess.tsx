@@ -3,6 +3,7 @@ import styled from "styled-components/native";
 import { ClubCreationSuccessScreenProps } from "../../Types/Club";
 import { Feather } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
+import BottomButton from "../../components/BottomButton";
 
 const Container = styled.SafeAreaView`
   justify-content: center;
@@ -38,29 +39,6 @@ const H2 = styled(CustomText)`
   text-align: center;
 `;
 
-const NextButtonView = styled.View`
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  margin: 30px 0px;
-  padding: 0px 20px;
-`;
-
-const NextButton = styled.TouchableOpacity`
-  width: 100%;
-  height: 50px;
-  background-color: #ff6534;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ButtonText = styled(CustomText)`
-  font-size: 18px;
-  line-height: 25px;
-  font-family: "NotoSansKR-Bold";
-  color: white;
-`;
-
 const ClubCreationSuccess: React.FC<ClubCreationSuccessScreenProps> = ({
   navigation: { navigate },
   route: {
@@ -83,11 +61,7 @@ const ClubCreationSuccess: React.FC<ClubCreationSuccessScreenProps> = ({
           <H2>{`개설된 모임의 홈화면으로 가셔서\n상세 설정을 하실 수 있습니다.`}</H2>
         </SectionView>
       </MainView>
-      <NextButtonView>
-        <NextButton onPress={goClubHome}>
-          <ButtonText>완료</ButtonText>
-        </NextButton>
-      </NextButtonView>
+      <BottomButton onPress={goClubHome} backgroundColor={"#FF6534"} title={"완료"} />
     </Container>
   );
 };

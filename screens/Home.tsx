@@ -331,7 +331,7 @@ const Home: React.FC<HomeScreenProps> = () => {
     [me]
   );
 
-  return feedsLoading || notiLoading ? (
+  return feedsLoading ? (
     <Loader>
       <ActivityIndicator />
     </Loader>
@@ -343,7 +343,7 @@ const Home: React.FC<HomeScreenProps> = () => {
         <HeaderRightView>
           <HeaderButton onPress={goToUserNotification}>
             <NotiView>
-              {notiCount > 0 ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
+              {!notiLoading && notiCount > 0 ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
               <MaterialIcons name="notifications" size={23} color="black" />
             </NotiView>
           </HeaderButton>
