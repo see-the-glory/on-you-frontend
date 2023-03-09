@@ -4,6 +4,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import styled from "styled-components/native";
 import { ClubApi, ClubCreationData, ClubCreationRequest, ClubCreationResponse, ErrorResponse } from "../../api";
+import BottomButton from "../../components/BottomButton";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
 import { ClubCreationStepThreeScreenProps } from "../../Types/Club";
@@ -64,28 +65,6 @@ const LongDescInput = styled(CustomTextInput)`
   line-height: 19px;
   padding: 12px;
   background-color: #f3f3f3;
-`;
-
-const FooterView = styled.View`
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  padding: 0px 20px;
-  margin: 30px 0px;
-`;
-const NextButton = styled.TouchableOpacity`
-  width: 100%;
-  height: 50px;
-  background-color: ${(props: any) => (props.disabled ? "#c4c4c4" : "#295AF5")};
-  justify-content: center;
-  align-items: center;
-`;
-
-const ButtonText = styled(CustomText)`
-  font-size: 18px;
-  line-height: 25px;
-  font-family: "NotoSansKR-Bold";
-  color: white;
 `;
 
 const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
@@ -210,11 +189,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
         </MainView>
       </ScrollView>
 
-      <FooterView>
-        <NextButton onPress={onSubmit} disabled={clubShortDesc === "" || clubLongDesc === "" || disableSubmit}>
-          <ButtonText>완료</ButtonText>
-        </NextButton>
-      </FooterView>
+      <BottomButton onPress={onSubmit} disabled={clubShortDesc === "" || clubLongDesc === "" || disableSubmit} backgroundColor={"#FF6534"} title={"완료"} />
     </KeyboardAvoidingView>
   );
 };

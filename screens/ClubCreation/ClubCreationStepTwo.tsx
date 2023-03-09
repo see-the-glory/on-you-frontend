@@ -9,6 +9,7 @@ import { useToast } from "react-native-toast-notifications";
 import CustomTextInput from "../../components/CustomTextInput";
 import { useMutation } from "react-query";
 import { ClubApi, DuplicateCheckResponse, DuplicateClubNameCheckRequest, ErrorResponse } from "../../api";
+import BottomButton from "../../components/BottomButton";
 
 const HeaderView = styled.View`
   align-items: center;
@@ -140,25 +141,6 @@ const CheckBox = styled.View<{ check: boolean }>`
   background-color: white;
 `;
 
-const FooterView = styled.View`
-  width: 100%;
-  margin: 30px 0px;
-`;
-const NextButton = styled.TouchableOpacity`
-  width: 100%;
-  height: 50px;
-  background-color: ${(props: any) => (props.disabled ? "#c4c4c4" : "#FF6534")};
-  justify-content: center;
-  align-items: center;
-`;
-
-const ButtonText = styled(CustomText)`
-  font-size: 18px;
-  line-height: 25px;
-  font-family: "NotoSansKR-Bold";
-  color: white;
-`;
-
 const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   route: {
     params: { category1, category2 },
@@ -252,7 +234,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   }, [phoneNumber]);
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={90} style={{ flex: 1 }}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={100} style={{ flex: 1 }}>
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
@@ -404,13 +386,14 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
             </ContentItem>
           </Content>
         </View>
-
-        <FooterView>
-          <NextButton onPress={() => goToNext()} disabled={nameErrorCheck || clubName === "" || maxNumber === "" || phoneNumber === "" || organizationName === "" || !imageURI}>
-            <ButtonText>다음 2/3</ButtonText>
-          </NextButton>
-        </FooterView>
       </ScrollView>
+
+      <BottomButton
+        onPress={goToNext}
+        disabled={nameErrorCheck || clubName === "" || maxNumber === "" || phoneNumber === "" || organizationName === "" || !imageURI}
+        backgroundColor={"#FF6534"}
+        title={"다음 2/3"}
+      />
     </KeyboardAvoidingView>
   );
 };

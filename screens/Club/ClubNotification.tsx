@@ -74,7 +74,7 @@ const ClubNotification = ({
           actionId: item.actionId,
           actionerName: item.actionerName,
           actionerId: item.actionerId,
-          applyMessage: item.applyMessage,
+          message: item.message,
           createdTime: item.created,
           processDone: item.processDone,
         });

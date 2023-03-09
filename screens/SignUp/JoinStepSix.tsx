@@ -4,6 +4,7 @@ import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from 
 import styled from "styled-components/native";
 import { Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
+import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
   width: 100%;
@@ -14,12 +15,6 @@ const Container = styled.View`
 const Wrap = styled.View`
   width: 100%;
   padding: 0px 20px;
-`;
-
-const ButtonWrap = styled.View`
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
 `;
 
 const BorderWrap = styled.View`
@@ -52,23 +47,6 @@ const Input = styled.TextInput`
   border-bottom-color: ${(props: any) => (props.error ? "#ff6534" : "#b3b3b3")};
   margin-top: 47px;
   font-size: 18px;
-`;
-
-const Button = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 68px;
-  padding-bottom: 8px;
-  background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
-`;
-
-const ButtonTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  font-size: 20px;
-  line-height: 24px;
-  color: #fff;
 `;
 
 const ErrorView = styled.View`
@@ -182,11 +160,7 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
             </SkipButton>
           </FieldContentOptionLine>
         </Wrap>
-        <ButtonWrap>
-          <Button onPress={validate} disabled={!birthReg.test(birthNumber)}>
-            <ButtonTitle>다음</ButtonTitle>
-          </Button>
-        </ButtonWrap>
+        <BottomButton onPress={validate} disabled={!birthReg.test(birthNumber)} title={"다음"} />
       </Container>
     </TouchableWithoutFeedback>
   );

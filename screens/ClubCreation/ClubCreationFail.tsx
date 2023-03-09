@@ -3,7 +3,7 @@ import styled from "styled-components/native";
 import { ClubCreationFailScreenProps } from "../../Types/Club";
 import { Ionicons } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
-import { Platform } from "react-native";
+import BottomButton from "../../components/BottomButton";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -39,29 +39,6 @@ const H2 = styled(CustomText)`
   margin-top: 12px;
 `;
 
-const NextButtonView = styled.View`
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  margin: 30px 0px;
-  padding: 0px 20px;
-`;
-
-const NextButton = styled.TouchableOpacity`
-  width: 100%;
-  height: 50px;
-  background-color: ${(props) => (props.disabled ? "#c4c4c4" : "#295AF5")};
-  justify-content: center;
-  align-items: center;
-`;
-
-const ButtonText = styled(CustomText)`
-  font-size: 18px;
-  line-height: 25px;
-  font-family: "NotoSansKR-Bold";
-  color: white;
-`;
-
 const ClubCreationFail: React.FC<ClubCreationFailScreenProps> = ({ navigation: { navigate } }) => {
   const goClubs = () => {
     return navigate("Tabs", {
@@ -78,11 +55,7 @@ const ClubCreationFail: React.FC<ClubCreationFailScreenProps> = ({ navigation: {
           <H2>다시 시도해주세요.</H2>
         </SectionView>
       </MainView>
-      <NextButtonView>
-        <NextButton onPress={goClubs}>
-          <ButtonText>완료</ButtonText>
-        </NextButton>
-      </NextButtonView>
+      <BottomButton onPress={goClubs} backgroundColor={"#295AF5"} title={"완료"} />
     </Container>
   );
 };

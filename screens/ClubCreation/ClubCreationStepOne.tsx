@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, Platform } from "react-native";
+import { ActivityIndicator, Alert, FlatList } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { ClubCreationStepOneScreenProps } from "../../Types/Club";
 import { Category } from "../../api";
 import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
+import BottomButton from "../../components/BottomButton";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -69,27 +70,6 @@ const CategoryText = styled(CustomText)<{ selected: boolean }>`
   color: ${(props: any) => (props.selected ? "white" : "black")};
 `;
 
-const FooterView = styled.View`
-  padding: 0px 20px;
-  margin: 30px 0px;
-  align-items: center;
-`;
-
-const NextButton = styled.TouchableOpacity`
-  width: 100%;
-  height: 50px;
-  background-color: ${(props: any) => (props.disabled ? "#c4c4c4" : "#FF6534")};
-  justify-content: center;
-  align-items: center;
-`;
-
-const ButtonText = styled(CustomText)`
-  font-size: 18px;
-  line-height: 25px;
-  font-family: "NotoSansKR-Bold";
-  color: white;
-`;
-
 const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
   navigation: { navigate },
   route: {
@@ -137,6 +117,17 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
     }
   };
 
+  const goToNext = () => {
+    if ((selectCategory1 === null && selectCategory2 === null) || (selectCategory1 === -1 && selectCategory2 === -1)) {
+      return Alert.alert("카테고리를 선택하세요!");
+    } else {
+      return navigate("ClubCreationStepTwo", {
+        category1: selectCategory1,
+        category2: selectCategory2,
+      });
+    }
+  };
+
   return loading ? (
     <Loader>
       <ActivityIndicator />
@@ -174,23 +165,7 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
           </CategoryView>
         )}
       />
-      <FooterView>
-        <NextButton
-          onPress={() => {
-            if ((selectCategory1 === null && selectCategory2 === null) || (selectCategory1 === -1 && selectCategory2 === -1)) {
-              return Alert.alert("카테고리를 선택하세요!");
-            } else {
-              return navigate("ClubCreationStepTwo", {
-                category1: selectCategory1,
-                category2: selectCategory2,
-              });
-            }
-          }}
-          disabled={selectCategory1 === -1 && selectCategory2 === -1}
-        >
-          <ButtonText>다음 1/3</ButtonText>
-        </NextButton>
-      </FooterView>
+      <BottomButton onPress={goToNext} disabled={selectCategory1 === -1 && selectCategory2 === -1} backgroundColor={"#FF6534"} title={"다음 1/3"} />
     </Container>
   );
 };

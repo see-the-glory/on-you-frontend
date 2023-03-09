@@ -5,6 +5,7 @@ import styled from "styled-components/native";
 import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
+import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
   width: 100%;
@@ -15,12 +16,6 @@ const Container = styled.View`
 const Wrap = styled.View`
   width: 100%;
   padding: 0px 20px;
-`;
-
-const ButtonWrap = styled.View`
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
 `;
 
 const BorderWrap = styled.View`
@@ -53,30 +48,6 @@ const Input = styled.TextInput`
   border-bottom-color: #b3b3b3;
   margin-top: 47px;
   font-size: 18px;
-`;
-
-const Button = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 68px;
-  padding-bottom: 8px;
-  background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
-`;
-
-const ButtonTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  font-size: 20px;
-  line-height: 24px;
-  color: #fff;
-`;
-
-const Error = styled.Text`
-  color: #ff6534;
-  font-size: 12px;
-  margin-top: 7px;
-  margin-bottom: 20px;
 `;
 
 const FieldContentView = styled.View`
@@ -176,11 +147,7 @@ const JoinStepEight: React.FC<NativeStackScreenProps<any, "JoinStepEight">> = ({
             </FieldContentLine>
           </FieldContentView>
         </Wrap>
-        <ButtonWrap>
-          <Button onPress={validate} disabled={check !== 1}>
-            <ButtonTitle>다음</ButtonTitle>
-          </Button>
-        </ButtonWrap>
+        <BottomButton onPress={validate} disabled={check !== 1} title={"다음"} />
       </Container>
     </TouchableWithoutFeedback>
   );

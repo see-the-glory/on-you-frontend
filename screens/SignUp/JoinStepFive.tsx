@@ -5,6 +5,7 @@ import styled from "styled-components/native";
 import { Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
   width: 100%;
@@ -15,12 +16,6 @@ const Container = styled.View`
 const Wrap = styled.View`
   width: 100%;
   padding: 0px 20px;
-`;
-
-const ButtonWrap = styled.View`
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
 `;
 
 const BorderWrap = styled.View`
@@ -46,30 +41,6 @@ const SubText = styled.Text`
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
-`;
-
-const Input = styled.TextInput`
-  border-bottom-width: 1px;
-  border-bottom-color: #b3b3b3;
-  margin-top: 47px;
-  font-size: 18px;
-`;
-
-const Button = styled.TouchableOpacity<{ disabled: boolean }>`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 68px;
-  padding-bottom: 8px;
-  background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : "#295af5")};
-`;
-
-const ButtonTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  font-size: 20px;
-  line-height: 24px;
-  color: white;
 `;
 
 const FieldContentView = styled.View`
@@ -171,11 +142,7 @@ const JoinStepFive: React.FC<NativeStackScreenProps<any, "JoinStepFive">> = ({
             </FieldContentOptionLine>
           </FieldContentView>
         </Wrap>
-        <ButtonWrap>
-          <Button onPress={goToNext} disabled={approvalMethod === 0}>
-            <ButtonTitle>다음</ButtonTitle>
-          </Button>
-        </ButtonWrap>
+        <BottomButton onPress={goToNext} disabled={approvalMethod === 0} title={"다음"} />
       </Container>
     </TouchableWithoutFeedback>
   );

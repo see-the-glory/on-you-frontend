@@ -1,9 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, createRef, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from "react-native";
 import styled from "styled-components/native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
+import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
   width: 100%;
@@ -18,12 +19,6 @@ const Wrap = styled.View`
 
 const Item = styled.View`
   margin-top: 24px;
-`;
-
-const ButtonWrap = styled.View`
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
 `;
 
 const BorderWrap = styled.View`
@@ -55,23 +50,6 @@ const Input = styled.TextInput`
   border-bottom-color: #b3b3b3;
   margin-top: 35px;
   font-size: 18px;
-`;
-
-const Button = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 68px;
-  padding-bottom: 8px;
-  background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
-`;
-
-const ButtonTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  font-size: 20px;
-  line-height: 24px;
-  color: white;
 `;
 
 const Error = styled.Text`
@@ -180,11 +158,11 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
             <></>
           )}
         </Wrap>
-        <ButtonWrap>
-          <Button onPress={validate} disabled={!numReg.test(password) || !engReg.test(password) || !specialReg.test(password) || password.length < 8 || password !== checkPassword}>
-            <ButtonTitle>다음</ButtonTitle>
-          </Button>
-        </ButtonWrap>
+        <BottomButton
+          onPress={validate}
+          disabled={!numReg.test(password) || !engReg.test(password) || !specialReg.test(password) || password.length < 8 || password !== checkPassword}
+          title={"다음"}
+        />
       </Container>
     </TouchableWithoutFeedback>
   );

@@ -1,14 +1,15 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
-import { useMutation, useQuery } from "react-query";
-import { CommonApi, LoginRequest, LoginResponse, UserApi, UserInfoResponse } from "../../api";
+import React, { useEffect } from "react";
+import { useMutation } from "react-query";
+import { CommonApi, LoginRequest, LoginResponse } from "../../api";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
 import { login } from "../../redux/slices/auth";
 import CustomText from "../../components/CustomText";
-import { BackHandler, StatusBar, View } from "react-native";
+import { BackHandler, StatusBar } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
   width: 100%;
@@ -25,12 +26,6 @@ const Wrap = styled.View`
   padding-bottom: 68px;
 `;
 
-const ButtonWrap = styled.View`
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-`;
-
 const AskText = styled.Text`
   color: #000000;
   font-size: 20px;
@@ -41,23 +36,6 @@ const SubText = styled.Text`
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
-`;
-
-const Button = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 68px;
-  padding-bottom: 8px;
-  background-color: ${(props: any) => (props.disabled ? "#d3d3d3" : "#295AF5")};
-`;
-
-const ButtonTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  font-size: 20px;
-  line-height: 24px;
-  color: #fff;
 `;
 
 const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "JoinStepSuccess">> = ({
@@ -123,11 +101,7 @@ const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "JoinStepSuccess">> 
         <AskText>가입이 완료되었습니다.</AskText>
         <SubText>온유에 오신 것을 환영합니다 :&#41;</SubText>
       </Wrap>
-      <ButtonWrap>
-        <Button onPress={onSubmit}>
-          <ButtonTitle>시작하기</ButtonTitle>
-        </Button>
-      </ButtonWrap>
+      <BottomButton onPress={onSubmit} title={"시작하기"} />
     </Container>
   );
 };

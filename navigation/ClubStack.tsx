@@ -14,7 +14,7 @@ const NativeStack = createNativeStackNavigator();
 
 const ClubStack = ({
   route: {
-    params: { clubData, scheduleData, clubRole, targetIndex, actionId, actionerName, actionerId, applyMessage, createdTime, processDone },
+    params: { clubData, scheduleData, clubRole, targetIndex, actionId, actionerName, actionerId, message, createdTime, processDone },
   },
   navigation: { navigate, goBack },
 }) => {
@@ -94,7 +94,7 @@ const ClubStack = ({
       <NativeStack.Screen
         name="ClubApplication"
         component={ClubApplication}
-        initialParams={{ clubData, actionId, actionerName, actionerId, applyMessage, createdTime, processDone }}
+        initialParams={{ clubData, actionId, actionerName, actionerId, message, createdTime, processDone }}
         options={{
           title: "가입요청",
         }}

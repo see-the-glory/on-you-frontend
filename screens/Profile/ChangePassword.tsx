@@ -21,6 +21,7 @@ const Item = styled.View`
 
 const ItemText = styled(CustomText)`
   color: #8e8e8e;
+  margin-bottom: 10px;
 `;
 
 const Input = styled(CustomTextInput)<{ error: boolean }>`
