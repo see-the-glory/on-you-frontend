@@ -1,16 +1,14 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, TouchableOpacity, useWindowDimensions } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, TouchableOpacity, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { ClubEditBasicsProps } from "../../Types/Club";
 import * as ImagePicker from "expo-image-picker";
-import { Ionicons } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { useQuery, useMutation } from "react-query";
 import { Category, CategoryResponse, ClubApi, ClubUpdateRequest, ClubUpdateResponse, ErrorResponse } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -51,9 +49,42 @@ const ContentItem = styled.View`
   width: 100%;
   flex: 1;
   border-bottom-width: 1px;
-  border-bottom-color: #cecece;
+  border-bottom-color: ${(props: any) => (props.error ? "#FF6534" : "#cecece")};
   padding-bottom: 3px;
   margin: 10px 0px;
+`;
+
+const ValidationView = styled.View`
+  margin-top: 5px;
+  height: 15px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+`;
+const ValidationItem = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-right: 8px;
+`;
+
+const ValidationText = styled(CustomText)`
+  color: #ff6534;
+  font-size: 10px;
+  line-height: 15px;
+`;
+
+const ItemSubView = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const ErrorView = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+const ErrorText = styled(CustomText)`
+  color: #ff6534;
 `;
 
 const Item = styled.View`
@@ -136,6 +167,8 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
 }) => {
   const toast = useToast();
   const [clubName, setClubName] = useState<string>(clubData.name ?? "");
+  const [nameErrorCheck, setNameErrorCheck] = useState<boolean>(false);
+  const [isDuplicatedName, setIsDuplicatedName] = useState<boolean>(false);
   const [maxNumber, setMaxNumber] = useState<string>(clubData.maxNumber === 0 ? "무제한 정원" : `${String(clubData.maxNumber)} 명`);
   const [maxNumberInfinity, setMaxNumberInfinity] = useState<boolean>(clubData.maxNumber ? false : true);
   const [phoneNumber, setPhoneNumber] = useState<string>(clubData.contactPhone ?? "");
@@ -147,6 +180,8 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   const [imageURI, setImageURI] = useState<string | null>(null);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 5) * 3);
+  const specialChar = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]+/;
+  const lengthLimit = 8;
 
   const { isLoading: categoryLoading, data: categories } = useQuery<CategoryResponse, ErrorResponse>(["getCategories"], ClubApi.getCategories, {
     onSuccess: (res) => {
@@ -173,13 +208,16 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
 
   useLayoutEffect(() => {
     setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={save}>
-          <CustomText style={{ color: "#2995FA", fontSize: 14, lineHeight: 20 }}>저장</CustomText>
-        </TouchableOpacity>
-      ),
+      headerRight: () =>
+        mutation.isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <TouchableOpacity onPress={save} disabled={nameErrorCheck}>
+            <CustomText style={{ color: "#2995FA", fontSize: 14, lineHeight: 20, opacity: nameErrorCheck ? 0.3 : 1 }}>저장</CustomText>
+          </TouchableOpacity>
+        ),
     });
-  }, [clubName, maxNumber, maxNumberInfinity, organizationName, isApproveRequired, phoneNumber, imageURI, selectCategory1, selectCategory2]);
+  }, [clubName, maxNumber, maxNumberInfinity, organizationName, isApproveRequired, phoneNumber, imageURI, selectCategory1, selectCategory2, mutation.isLoading, nameErrorCheck]);
 
   useEffect(() => {
     if (phoneNumber.length === 10) {
@@ -209,13 +247,13 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
     const contactPhone = phoneNumber.replace(/-/g, "");
     let data = {
       category1Id: category1,
-      clubName,
       clubMaxMember: maxNumberInfinity ? 0 : Number(maxNumber.split(" ")[0]),
       isApproveRequired,
       organizationName,
       contactPhone: contactPhone === "" ? null : contactPhone,
     };
     if (category2 !== -1) data.category2Id = category2;
+    if (nameErrorCheck === false && clubName.trim() !== "" && clubData.name !== clubName.trim()) data.clubName = clubName;
 
     const splitedURI = new String(imageURI).split("/");
 
@@ -278,34 +316,58 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
             </ImagePickerButton>
           </Header>
           <Content>
-            <ContentItem>
+            <ContentItem error={nameErrorCheck || isDuplicatedName} style={{ marginBottom: 0 }}>
               <ItemTitle>모임 이름</ItemTitle>
-              <ItemTextInput
-                value={clubName}
-                placeholder="모임명 8자 이내 (특수문자 불가)"
-                placeholderTextColor="#B0B0B0"
-                maxLength={9}
-                onEndEditing={() => {
-                  if (clubName === "") {
-                    toast.show("모임 이름을 공백으로 설정할 수 없습니다.", {
-                      type: "warning",
-                    });
-                    setClubName(clubData.name ?? "");
-                  } else setClubName((prev) => prev.trim());
-                }}
-                onChangeText={(name: string) => {
-                  if (name.length > 8) {
-                    toast.show("모임 이름은 8자 제한입니다.", {
-                      type: "warning",
-                    });
-                  } else setClubName(name);
-                }}
-                returnKeyType="done"
-                returnKeyLabel="done"
-                includeFontPadding={false}
-              />
+              <ItemSubView>
+                <ItemTextInput
+                  value={clubName}
+                  placeholder={`모임명 ${lengthLimit}자 이내 (특수문자 불가)`}
+                  placeholderTextColor="#B0B0B0"
+                  maxLength={10}
+                  onEndEditing={() => {
+                    setClubName((prev) => prev.trim());
+                  }}
+                  onChangeText={(name: string) => {
+                    setClubName(name);
+                    if (isDuplicatedName) setIsDuplicatedName(false);
+                    if (!nameErrorCheck && (name.length > lengthLimit || specialChar.test(name))) setNameErrorCheck(true);
+                    if (nameErrorCheck && name.length <= lengthLimit && !specialChar.test(name)) setNameErrorCheck(false);
+                  }}
+                  returnKeyType="done"
+                  returnKeyLabel="done"
+                  includeFontPadding={false}
+                />
+
+                {isDuplicatedName ? (
+                  <ErrorView>
+                    <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />
+                    <ErrorText>{` 이미 사용 중인 이름입니다.`}</ErrorText>
+                  </ErrorView>
+                ) : (
+                  <></>
+                )}
+              </ItemSubView>
             </ContentItem>
-            <ContentItem>
+
+            <ValidationView>
+              {specialChar.test(clubName) ? (
+                <ValidationItem>
+                  <AntDesign name="check" size={12} color={"#ff6534"} />
+                  <ValidationText>{` 특수문자 불가능`}</ValidationText>
+                </ValidationItem>
+              ) : (
+                <></>
+              )}
+              {clubName.length > lengthLimit ? (
+                <ValidationItem>
+                  <AntDesign name="check" size={12} color={"#ff6534"} />
+                  <ValidationText>{` ${lengthLimit}자 초과`}</ValidationText>
+                </ValidationItem>
+              ) : (
+                <></>
+              )}
+            </ValidationView>
+            <ContentItem style={{ marginTop: 0 }}>
               <ItemTitle>모집 정원</ItemTitle>
               <Item>
                 <ItemTextInput

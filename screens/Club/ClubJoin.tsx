@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { DeviceEventEmitter, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
+import { ActivityIndicator, DeviceEventEmitter, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
 import CustomText from "../../components/CustomText";
 import styled from "styled-components/native";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -74,13 +74,16 @@ const ClubJoin = ({
 
   useLayoutEffect(() => {
     setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={save}>
-          <CustomText style={{ color: "#2995FA", fontSize: 14, lineHeight: 20 }}>제출</CustomText>
-        </TouchableOpacity>
-      ),
+      headerRight: () =>
+        clubApplyMutation.isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <TouchableOpacity onPress={save}>
+            <CustomText style={{ color: "#2995FA", fontSize: 14, lineHeight: 20 }}>제출</CustomText>
+          </TouchableOpacity>
+        ),
     });
-  }, [memo]);
+  }, [memo, clubApplyMutation.isLoading]);
 
   useEffect(() => {
     return () => {

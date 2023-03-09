@@ -83,13 +83,20 @@ const ChangePassword: React.FC<NativeStackScreenProps<any, "ChangePassword">> = 
           <ActivityIndicator />
         ) : (
           <TouchableOpacity onPress={onSubmit} disabled={!numReg.test(password) || !engReg.test(password) || !specialReg.test(password) || password !== checkPassword || password.length < 8}>
-            <Text style={{ color: "#2995FA", opacity: !numReg.test(password) || !engReg.test(password) || !specialReg.test(password) || password !== checkPassword || password.length < 8 ? 0.3 : 1 }}>
+            <CustomText
+              style={{
+                color: "#2995FA",
+                fontSize: 14,
+                lineHeight: 20,
+                opacity: !numReg.test(password) || !engReg.test(password) || !specialReg.test(password) || password !== checkPassword || password.length < 8 ? 0.3 : 1,
+              }}
+            >
               저장
-            </Text>
+            </CustomText>
           </TouchableOpacity>
         ),
     });
-  }, [password, checkPassword]);
+  }, [password, checkPassword, mutation.isLoading]);
 
   const onSubmit = () => {
     if (password.length < 8) return toast.show(`변경불가: 8자리 이상이어야 합니다.`, { type: "danger" });

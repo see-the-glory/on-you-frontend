@@ -158,7 +158,6 @@ const Home: React.FC<HomeScreenProps> = () => {
     onSuccess: (res) => {
       toast.show(`신고 요청이 완료 되었습니다.`, { type: "success" });
       onRefresh();
-      closeComplainOption();
     },
     onError: (error) => {
       console.log(`API ERROR | reportFeed ${error.code} ${error.status}`);
@@ -275,6 +274,7 @@ const Home: React.FC<HomeScreenProps> = () => {
       reason: "SPAM",
     };
     complainMutation.mutate(requestData);
+    closeComplainOption();
   };
 
   const blockUser = () => {

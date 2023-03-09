@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
@@ -87,13 +87,16 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
 
   useEffect(() => {
     setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={save}>
-          <CustomText style={{ color: "#2995FA", fontSize: 14, lineHeight: 20 }}>저장</CustomText>
-        </TouchableOpacity>
-      ),
+      headerRight: () =>
+        mutation.isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <TouchableOpacity onPress={save}>
+            <CustomText style={{ color: "#2995FA", fontSize: 14, lineHeight: 20 }}>저장</CustomText>
+          </TouchableOpacity>
+        ),
     });
-  }, [clubShortDesc, clubLongDesc]);
+  }, [clubShortDesc, clubLongDesc, mutation.isLoading]);
 
   const save = () => {
     let updateData: ClubUpdateRequest = {

@@ -300,7 +300,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
             <ButtonView>
               <AntDesign name="user" size={12} color="#a7a7a7" style={{ marginRight: -3 }} />
               <HeaderText>멤버모집</HeaderText>
-              <ToggleButton onPress={onPressToggle} isToggle={isToggle} activeOpacity={1}>
+              <ToggleButton onPress={onPressToggle} disabled={updateClubMutation.isLoading} isToggle={isToggle} activeOpacity={1}>
                 <AnimatedDot style={{ transform: [{ translateX: X }] }} />
                 <AntDesign name="adduser" size={10} color="#FFFFFF" />
                 <AntDesign name="deleteuser" size={10} color="#FFFFFF" />

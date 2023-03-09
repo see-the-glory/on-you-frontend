@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { DeviceEventEmitter, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, DeviceEventEmitter, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import { Calendar } from "react-native-calendars";
@@ -86,7 +86,6 @@ const ClubScheduleAdd = ({
     params: { clubData },
   },
 }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [place, setPlace] = useState<string>("");
   const [memo, setMemo] = useState<string>("");
@@ -148,13 +147,16 @@ const ClubScheduleAdd = ({
 
   useLayoutEffect(() => {
     setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={save}>
-          <CustomText style={{ color: "#2995FA", fontSize: 14, lineHeight: 20 }}>저장</CustomText>
-        </TouchableOpacity>
-      ),
+      headerRight: () =>
+        scheduleMutation.isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <TouchableOpacity onPress={save}>
+            <CustomText style={{ color: "#2995FA", fontSize: 14, lineHeight: 20 }}>저장</CustomText>
+          </TouchableOpacity>
+        ),
     });
-  }, [selectedDate, dateTime, place, memo]);
+  }, [selectedDate, dateTime, place, memo, scheduleMutation.isLoading]);
 
   return (
     <Container>

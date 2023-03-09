@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
 import CustomText from "../../components/CustomText";
 import styled from "styled-components/native";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -65,13 +65,16 @@ const Suggestion = ({ navigation: { navigate, goBack, setOptions } }) => {
 
   useLayoutEffect(() => {
     setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={save}>
-          <CustomText style={{ color: "#2995FA", fontSize: 14, lineHeight: 20 }}>제출</CustomText>
-        </TouchableOpacity>
-      ),
+      headerRight: () =>
+        suggestionMutation.isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <TouchableOpacity onPress={save}>
+            <CustomText style={{ color: "#2995FA", fontSize: 14, lineHeight: 20 }}>제출</CustomText>
+          </TouchableOpacity>
+        ),
     });
-  }, [content]);
+  }, [content, suggestionMutation.isLoading]);
 
   return (
     <Container>
