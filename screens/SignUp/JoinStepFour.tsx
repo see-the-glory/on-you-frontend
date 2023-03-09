@@ -102,10 +102,9 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
     params: { name, email },
   },
 }) => {
-  const [password, setPassword] = useState("");
-  const [checkPassword, setCheckPassword] = useState("");
+  const [password, setPassword] = useState<string>("");
+  const [checkPassword, setCheckPassword] = useState<string>("");
 
-  // const passwordReg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
   const numReg = /[0-9]+/;
   const engReg = /[a-zA-Z]+/;
   const specialReg = /[!@#$%^*+=-]+/;
@@ -133,11 +132,7 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
   }, []);
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss}>
       <Container>
         <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
         <BorderWrap>
@@ -175,7 +170,6 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
             secureTextEntry={true}
             autoCorrect={false}
             onChangeText={(value: string) => setCheckPassword(value)}
-            clearButtonMode="always"
           />
           {password !== checkPassword && password !== "" && checkPassword !== "" ? (
             <ValidationView>

@@ -2,7 +2,6 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import EditProfile from "../screens/Profile/EditProfile";
 import MyClub from "../screens/Profile/MyClub";
-import ChangePw from "../screens/Profile/ChangePw";
 import Notice from "../screens/Profile/Notice";
 import Account from "../screens/Profile/Account";
 import { TouchableOpacity } from "react-native";
@@ -12,6 +11,7 @@ import Suggestion from "../screens/Profile/Suggestion";
 import Info from "../screens/Profile/Info";
 import BlockUserList from "../screens/Profile/BlockUserList";
 import UserNotification from "../screens/Profile/UserNotification";
+import ChangePassword from "../screens/Profile/ChangePassword";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -68,10 +68,10 @@ const ProfileStack = ({
         }}
       />
       <NativeStack.Screen
-        name="ChangePw"
-        component={ChangePw}
+        name="ChangePassword"
+        component={ChangePassword}
         options={{
-          title: "비밀번호 재설정",
+          title: "비밀번호 변경",
         }}
       />
 
