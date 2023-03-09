@@ -25,7 +25,7 @@ const IntroText = styled(CustomText)`
 
 const ReplyContainer = styled.View`
   height: 100%;
-  padding-bottom: 60px;
+  padding-bottom: 40px;
 `;
 
 const ClubArea = styled.TouchableOpacity`
