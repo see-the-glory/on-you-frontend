@@ -3,7 +3,12 @@ import React, {
   useEffect,
   useState
 } from "react";
-import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Entypo,
+  Ionicons,
+  MaterialIcons, Octicons
+} from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
 import {
   ActivityIndicator,
@@ -138,13 +143,13 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
   const toast = useToast();
   const [imageURL, setImageURL] = useState<string[]>([]);
   const [selectIndex, setSelectIndex] = useState<number>();
-  const [alert, alertSet] = useState(true);
   const [isSubmitShow, setSubmitShow] = useState(true);
 
   const { width: SCREEN_WIDTH } = useWindowDimensions();
-  const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 16) * 9);
   const [content, setContent] = useState("");
   const navigation = useNavigation();
+
+  const [buttonClicked, setButtonClicked] = useState(false);
 
   useEffect(() => {
     pickImage();
@@ -243,6 +248,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
       Alert.alert("글을 작성하세요");
     } else {
       setSubmitShow(false);
+      setButtonClicked(true);
       const data = {
         clubId: clubId,
         content: content.trim(),
@@ -289,11 +295,12 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     navigation.setOptions({
       headerLeft: () => (
           <TouchableOpacity onPress={cancelCreate}>
-            <Entypo name="cross" size={20} color="black" />
+            <Octicons name="x" size={24} style={{top: 5}} color="black" />
           </TouchableOpacity>
       ),
       headerRight: () => (
           <TouchableOpacity
+            disabled={buttonClicked}
               onPress={() => {
                 onSubmit();
               }}
@@ -371,9 +378,11 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
               </MyImage>
               <ImageUnderArea>
                 <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>
-                <TouchableOpacity onPress={morePickImage}>
-                  <MaterialIcons name="add-photo-alternate" size={23} color="black" />
-                </TouchableOpacity>
+                {imageURL.length <5 ? (
+                  <TouchableOpacity onPress={morePickImage}>
+                    <MaterialIcons name="add-photo-alternate" size={23} color="black" />
+                  </TouchableOpacity>
+                ):null}
               </ImageUnderArea>
             </SelectImageView>
             <FeedText

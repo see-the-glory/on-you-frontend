@@ -25,7 +25,12 @@ import { useNavigation } from "@react-navigation/native";
 import CustomTextInput from "../../components/CustomTextInput";
 import CustomText from "../../components/CustomText";
 import { Modalize, useModalize } from "react-native-modalize";
-import { MaterialIcons, Ionicons, Entypo } from "@expo/vector-icons";
+import {
+  MaterialIcons,
+  Ionicons,
+  Entypo,
+  MaterialCommunityIcons
+} from "@expo/vector-icons";
 import Carousel from "../../components/Carousel";
 import FastImage from "react-native-fast-image";
 import { Portal } from "react-native-portalize";
@@ -61,7 +66,7 @@ const UserId = styled(CustomText)`
   bottom: 1px;
 `;
 
-const ClubBox = styled.View`
+const ClubBox = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   background-color: #c4c4c4;
@@ -91,10 +96,6 @@ const Ment = styled(CustomTextInput)`
   font-size: 14px;
 `;
 
-const ModalArea = styled.View`
-  flex: 1;
-`;
-
 //모달
 const ClubArea = styled.TouchableOpacity`
   flex-direction: row;
@@ -118,6 +119,7 @@ const HeaderNameView = styled.View`
   align-items: flex-start;
   padding-left: 4px;
 `;
+
 const ModalClubName = styled.Text`
   padding-left: 1%;
   color: black;
@@ -160,19 +162,24 @@ const ClubCtrgList = styled(CustomText)`
 
 const ModalContainer = styled.View`
   flex: 1;
-  top: 2%;
 `;
+
+const ModalContainText = styled.View`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`
 
 const IntroTextLeft = styled(CustomText)`
   text-align: left;
   padding-left: 20px;
-  font-size: 10px;
+  font-size: 12px;
   color: #b0b0b0;
 `;
 
 const IntroTextRight = styled(CustomText)`
   text-align: right;
-  font-size: 10px;
+  font-size: 12px;
   padding-right: 20px;
   color: #b0b0b0;
 `;
@@ -181,7 +188,7 @@ const ModalView = styled.View`
   background-color: white;
   opacity: 1;
   width: 100%;
-  padding: 10px 20px 20px 20px;
+  padding: 10px 20px 10px 20px;
   height: auto;
 `;
 
@@ -282,26 +289,27 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
             <UserInfo>
               <UserId>{feedData.userName}</UserId>
               <View style={{ display: "flex", flexDirection: "row" }}>
-                <ClubBox>
+                <ClubBox onPress={onOpen}>
                   <ClubName>{clubName}</ClubName>
                 </ClubBox>
                 <TouchableOpacity onPress={onOpen}>
-                  <Ionicons name="pencil" size={18} style={{ top: 1 }} color="gray" />
+                  <MaterialCommunityIcons name="pencil-outline" size={20} style={{ top: 1 }} color="gray" />
                 </TouchableOpacity>
               </View>
             </UserInfo>
           </FeedUser>
           <Portal>
             <Modalize ref={modalizeRef} modalHeight={300}
-                      handleStyle={{ top: 14, height: 3, width: 35, backgroundColor: "#d4d4d4" }}
+                      handleStyle={{ top: 14, height: 3, width: 35, backgroundColor: "#d4d4d4"}}
                       handlePosition="inside"
-                      modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+                      modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, paddingTop: 30}}
+            >
               <ModalContainer>
-                <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                <ModalView>
+                  <ModalContainText>
                   <IntroTextLeft>모임 변경</IntroTextLeft>
                   <IntroTextRight>가입한 모임 List</IntroTextRight>
-                </View>
-                <ModalView>
+                </ModalContainText>
                     <FlatList
                         refreshing={refreshing}
                         keyExtractor={(item: MyClub, index: number) => String(index)}
