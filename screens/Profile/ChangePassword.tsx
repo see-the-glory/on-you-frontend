@@ -58,7 +58,7 @@ const ChangePassword: React.FC<NativeStackScreenProps<any, "ChangePassword">> = 
 
   const numReg = /[0-9]+/;
   const engReg = /[a-zA-Z]+/;
-  const specialReg = /[!@#$%^*+=-]+/;
+  const specialReg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]+/;
 
   const mutation = useMutation<BaseResponse, ErrorResponse, PasswordChangeRequest>(UserApi.changePassword, {
     onSuccess: (res) => {

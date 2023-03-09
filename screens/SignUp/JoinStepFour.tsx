@@ -107,7 +107,7 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
 
   const numReg = /[0-9]+/;
   const engReg = /[a-zA-Z]+/;
-  const specialReg = /[!@#$%^*+=-]+/;
+  const specialReg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]+/;
 
   const validate = () => {
     if (!numReg.test(password) || !engReg.test(password) || !specialReg.test(password) || password.length < 8 || password !== checkPassword) {
