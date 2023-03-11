@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Alert, Animated, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
+import { Alert, Animated, BackHandler, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Feather, AntDesign, FontAwesome5, Entypo, Ionicons } from "@expo/vector-icons";
 import { ClubManagementMainProps, ClubStackParamList } from "../../types/Club";
@@ -188,6 +188,17 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
       if (refresh) clubDataRefetch();
     }, [refresh])
   );
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+      goBack();
+      return true;
+    });
+    return () => {
+      backHandler.remove();
+    };
+  }, []);
+
   useLayoutEffect(() => {
     if (isToggle) {
       // CLOSE -> OPEN

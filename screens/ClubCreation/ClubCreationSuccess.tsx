@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components/native";
 import { ClubCreationSuccessScreenProps } from "../../Types/Club";
 import { Feather } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
 import BottomButton from "../../components/BottomButton";
+import { BackHandler } from "react-native";
 
 const Container = styled.SafeAreaView`
   justify-content: center;
@@ -51,6 +52,16 @@ const ClubCreationSuccess: React.FC<ClubCreationSuccessScreenProps> = ({
       params: { clubData },
     });
   };
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+      navigate("Tabs", { screen: "Clubs" });
+      return true;
+    });
+    return () => {
+      backHandler.remove();
+    };
+  }, []);
 
   return (
     <Container>

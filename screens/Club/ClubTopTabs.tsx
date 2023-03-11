@@ -18,7 +18,6 @@ import moment from "moment-timezone";
 import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
 import clubSlice from "../../redux/slices/club";
-import CustomText from "../../components/CustomText";
 
 const Container = styled.View`
   flex: 1;
@@ -132,7 +131,6 @@ const ClubTopTabs = ({
     refetch: clubRoleRefetch,
   } = useQuery<ClubRoleResponse, ErrorResponse>(["getClubRole", data.id], ClubApi.getClubRole, {
     onSuccess: (res) => {
-      console.log(res);
       dispatch(clubSlice.actions.updateClubRole({ role: res.data.role, applyStatus: res.data.applyStatus }));
     },
     onError: (error) => {
@@ -309,7 +307,7 @@ const ClubTopTabs = ({
       clubRoleRefetch();
       clubNotiRefetch();
     });
-    const backHandelr = BackHandler.addEventListener("hardwareBackPress", () => {
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
       popToTop();
       return true;
     });
@@ -318,7 +316,7 @@ const ClubTopTabs = ({
       scrollY.removeListener(scrollListener);
       scheduleSubscription.remove();
       clubSubscription.remove();
-      backHandelr.remove();
+      backHandler.remove();
       dispatch(clubSlice.actions.deleteClub());
       console.log("ClubTopTabs - remove listner & delete clubslice");
     };
