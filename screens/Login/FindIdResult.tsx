@@ -19,6 +19,7 @@ const TextWrap = styled.View`
 const NoticeText = styled(CustomText)`
   color: black;
   font-size: 14px;
+  line-height: 20px;
   text-align: center;
   margin-bottom: 11px;
 `;
@@ -36,6 +37,7 @@ const FindPasswordButton = styled.TouchableOpacity``;
 const PwSettingText = styled(CustomText)`
   color: #6f6f6f;
   font-size: 14px;
+  line-height: 20px;
   text-align: center;
   text-decoration: underline;
 `;

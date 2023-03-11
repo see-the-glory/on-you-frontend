@@ -82,6 +82,7 @@ const EmptyView = styled.View`
 
 const EmptyText = styled(CustomText)`
   font-size: 14px;
+  line-height: 20px;
   color: #bdbdbd;
   justify-content: center;
   align-items: center;
@@ -128,6 +129,7 @@ const ItemNameText = styled(CustomText)`
 const ItemContentView = styled.View``;
 const ItemContentText = styled(CustomText)`
   font-size: 14px;
+  line-height: 20px;
 `;
 const ItemContentSubText = styled(CustomText)`
   font-size: 13px;
@@ -171,7 +173,7 @@ const SortingItemButton = styled.TouchableOpacity`
 `;
 const SortingItemText = styled(CustomText)<{ selected: boolean }>`
   font-size: 15px;
-  line-height: 20px;
+  line-height: 22px;
   color: ${(props: any) => (props.selected ? "#FF6534" : "#b0b0b0")};
   font-family: ${(props: any) => (props.selected ? "NotoSansKR-Medium" : "NotoSansKR-Regular")};
 `;

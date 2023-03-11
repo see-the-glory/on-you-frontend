@@ -52,16 +52,17 @@ const InputItem = styled.View`
 
 const ItemTitle = styled(CustomText)`
   font-size: 14px;
+  line-height: 20px;
 `;
 const ItemText = styled(CustomText)`
   font-size: 16px;
-  line-height: 21px;
+  line-height: 23px;
   color: #6f6f6f;
 `;
 
 const ItemTextInput = styled(CustomTextInput)`
   font-size: 16px;
-  line-height: 21px;
+  line-height: 23px;
   color: #6f6f6f;
   flex: 1;
 `;
@@ -74,7 +75,7 @@ const MemoInput = styled(CustomTextInput)`
   margin-top: 15px;
   width: 100%;
   height: 300px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 20px;
   padding: 12px;
   background-color: #f3f3f3;

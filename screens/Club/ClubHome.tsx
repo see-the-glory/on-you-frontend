@@ -50,7 +50,7 @@ const SectionTitle = styled(CustomText)`
   font-family: "NotoSansKR-Bold";
   font-size: 15px;
   margin-left: 5px;
-  line-height: 20px;
+  line-height: 22px;
 `;
 
 const ContentView = styled.View<{ paddingSize?: number }>`

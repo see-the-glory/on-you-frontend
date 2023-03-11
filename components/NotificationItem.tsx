@@ -23,7 +23,7 @@ const TextView = styled.View`
 `;
 const ItemText = styled(CustomText)<{ processDone: boolean }>`
   font-size: 15px;
-  line-height: 21px;
+  line-height: 22px;
   ${(props: any) => (props.processDone ? "color: #8E8E8E" : "")};
 `;
 const ItemBoldText = styled(ItemText)`
