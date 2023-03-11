@@ -1,6 +1,19 @@
 import { AntDesign, Entypo } from "@expo/vector-icons";
-import React, { useLayoutEffect, useState } from "react";
-import { ActivityIndicator, DeviceEventEmitter, FlatList, KeyboardAvoidingView, LayoutChangeEvent, NativeSyntheticEvent, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  BackHandler,
+  DeviceEventEmitter,
+  FlatList,
+  KeyboardAvoidingView,
+  LayoutChangeEvent,
+  NativeSyntheticEvent,
+  Platform,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
@@ -132,6 +145,16 @@ const FeedComments = ({
         </TouchableOpacity>
       ),
     });
+  }, []);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+      goBack();
+      return true;
+    });
+    return () => {
+      backHandler.remove();
+    };
   }, []);
 
   const submit = () => {

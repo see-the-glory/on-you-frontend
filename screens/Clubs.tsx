@@ -337,11 +337,11 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
         sortType: "feedNum",
         orderBy: "DESC",
       },
-      {
-        title: "하트 많은 순",
-        sortType: "likesNum",
-        orderBy: "DESC",
-      },
+      // {
+      //   title: "하트 많은 순",
+      //   sortType: "likesNum",
+      //   orderBy: "DESC",
+      // },
     ]);
 
     const ClubListSubscription = DeviceEventEmitter.addListener("ClubListRefetch", () => {
@@ -574,7 +574,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
       <Portal>
         <Modalize
           ref={sortingSheetRef}
-          modalHeight={260}
+          modalHeight={220}
           handlePosition="inside"
           handleStyle={{ top: 14, height: 3, width: 35, backgroundColor: "#d4d4d4" }}
           modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}

@@ -9,6 +9,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
 import { login } from "../../redux/slices/auth";
 import { FontAwesome } from "@expo/vector-icons";
+import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
   width: 100%;
@@ -21,10 +22,6 @@ const Container = styled.View`
 const Wrap = styled.View`
   width: 100%;
   padding: 0px 20px;
-`;
-
-const ButtonWrap = styled.View`
-  width: 100%;
 `;
 
 const Form = styled.View`
@@ -63,8 +60,6 @@ const ForgetView = styled.TouchableOpacity`
   width: 100%;
   margin-top: 15px;
   padding: 0;
-  /* border-bottom-width: 1px;
-  border-bottom-color: #6f6f6f; */
 `;
 
 const ForgetText = styled(CustomText)`
@@ -73,23 +68,6 @@ const ForgetText = styled(CustomText)`
   font-size: 12px;
   line-height: 16px;
   text-decoration: underline;
-`;
-
-const LoginButton = styled.TouchableOpacity<{ disabled: boolean }>`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 68px;
-  padding-bottom: 8px;
-  background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : "#ff6534")};
-`;
-
-const LoginTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  color: #fff;
-  font-size: 20px;
-  line-height: 24px;
 `;
 
 const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { navigate } }) => {
@@ -162,11 +140,7 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
             </ForgetView>
           </Form>
         </Wrap>
-        <ButtonWrap>
-          <LoginButton onPress={onSubmit} disabled={!(email.trim() && password)}>
-            <LoginTitle>로그인</LoginTitle>
-          </LoginButton>
-        </ButtonWrap>
+        <BottomButton onPress={onSubmit} disabled={!(email.trim() && password)} backgroundColor="#FF6534" title={"로그인"} />
       </Container>
     </TouchableWithoutFeedback>
   );
