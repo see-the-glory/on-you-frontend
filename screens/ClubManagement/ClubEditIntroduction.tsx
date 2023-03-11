@@ -50,7 +50,7 @@ const ItemText = styled(CustomText)`
 const ShortDescInput = styled(CustomTextInput)`
   width: 100%;
   font-size: 14px;
-  line-height: 19px;
+  line-height: 20px;
   padding: 12px;
   background-color: #f3f3f3;
   text-align: center;
@@ -60,7 +60,7 @@ const LongDescInput = styled(CustomTextInput)`
   width: 100%;
   height: 250px;
   font-size: 14px;
-  line-height: 19px;
+  line-height: 20px;
   padding: 12px;
   background-color: #f3f3f3;
 `;

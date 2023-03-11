@@ -26,6 +26,7 @@ const ItemText = styled(CustomText)`
 
 const Input = styled(CustomTextInput)<{ error: boolean }>`
   font-size: 16px;
+  line-height: 21px;
   border-bottom-width: 1px;
   border-bottom-color: ${(props: any) => (props.error ? "#ff6534" : "#b3b3b3")};
 `;

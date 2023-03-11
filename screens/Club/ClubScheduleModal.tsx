@@ -92,7 +92,7 @@ const MemoScrollView = styled.ScrollView<{ showMember: boolean }>`
 const Memo = styled(CustomText)`
   color: #464646;
   font-size: 14px;
-  line-height: 19px;
+  line-height: 20px;
 `;
 
 const Footer = styled.View`
@@ -115,7 +115,7 @@ const ApplyButton = styled.TouchableOpacity<{ participation: boolean }>`
 
 const ButtonText = styled(CustomText)<{ participation: boolean }>`
   font-size: 14px;
-  line-height: 22px;
+  line-height: 20px;
   font-family: "NotoSansKR-Medium";
   color: ${(props: any) => (props.participation ? "#FF6534" : "white")};
 `;

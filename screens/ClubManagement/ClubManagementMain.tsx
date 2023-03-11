@@ -119,6 +119,7 @@ const ItemRight = styled.View`
 const ItemText = styled(CustomText)`
   margin-left: 10px;
   font-size: 14px;
+  line-height: 20px;
 `;
 
 const AnimatedDot = Animated.createAnimatedComponent(Dot);

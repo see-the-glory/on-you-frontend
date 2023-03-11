@@ -34,7 +34,7 @@ const H1 = styled(CustomText)`
 
 const H2 = styled(CustomText)`
   font-size: 14px;
-  line-height: 19px;
+  line-height: 20px;
   color: #5c5c5c;
   margin-top: 12px;
   text-align: center;

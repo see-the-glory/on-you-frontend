@@ -32,7 +32,7 @@ const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
 const ImagePickerText = styled(CustomText)`
   font-size: 15px;
   color: #2995fa;
-  line-height: 21px;
+  line-height: 22px;
 `;
 
 const PickedImage = styled.Image<{ height: number }>`
@@ -104,13 +104,13 @@ const ItemTitle = styled(CustomText)`
 
 const ItemText = styled(CustomText)`
   font-size: 14px;
-  line-height: 19px;
+  line-height: 20px;
   margin-right: 5px;
 `;
 
 const ItemTextInput = styled(CustomTextInput)`
   font-size: 15px;
-  line-height: 20px;
+  line-height: 22px;
   padding: 0px 5px;
   flex: 1;
 `;

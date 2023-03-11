@@ -8,6 +8,7 @@ import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import { FontAwesome } from "@expo/vector-icons";
 import BottomButton from "../../components/BottomButton";
+import CustomTextInput from "../../components/CustomTextInput";
 
 const Container = styled.View`
   width: 100%;
@@ -47,11 +48,12 @@ const Title = styled(CustomText)`
   padding-left: 5px;
 `;
 
-const Input = styled.TextInput`
+const Input = styled(CustomTextInput)`
   border-bottom-width: 0.5px;
   border-bottom-color: #000000;
   padding-bottom: 5px;
   font-size: 16px;
+  line-height: 23px;
 `;
 
 const FindId: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { navigate } }) => {

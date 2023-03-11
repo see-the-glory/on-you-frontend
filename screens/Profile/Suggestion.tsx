@@ -37,7 +37,7 @@ const MemoTextInput = styled(CustomTextInput)`
   height: 300px;
   background-color: #f3f3f3;
   font-size: 15px;
-  line-height: 20px;
+  line-height: 22px;
   padding: 10px;
 `;
 

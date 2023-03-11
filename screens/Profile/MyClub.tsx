@@ -43,6 +43,7 @@ const MyClubTextBox = styled.View`
 
 const MyClubText = styled(CustomText)`
   font-size: 14px;
+  line-height: 20px;
   font-family: "NotoSansKR-Medium";
 `;
 

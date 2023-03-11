@@ -83,6 +83,7 @@ const EmptyView = styled.View`
 
 const EmptyText = styled(CustomText)`
   font-size: 14px;
+  line-height: 20px;
   color: #bdbdbd;
   justify-content: center;
   align-items: center;

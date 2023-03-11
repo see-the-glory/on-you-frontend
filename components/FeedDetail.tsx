@@ -70,11 +70,13 @@ const ContentTextView = styled.Text<{ height: number }>`
 `;
 const ContentText = styled(CustomText)`
   font-size: 14px;
+  line-height: 20px;
   color: #2b2b2b;
 `;
 
 const ContentSubText = styled(CustomText)`
   font-size: 14px;
+  line-height: 20px;
   color: #9a9a9a;
 `;
 
