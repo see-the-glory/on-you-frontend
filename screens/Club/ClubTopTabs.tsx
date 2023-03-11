@@ -10,7 +10,7 @@ import ClubTabBar from "../../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
 import { useMutation, useQuery } from "react-query";
-import { BaseResponse, Club, ClubApi, ClubResponse, ClubRoleResponse, ClubSchedulesResponse, ClubWithdrawRequest, ErrorResponse, NotificationsResponse } from "../../api";
+import { BaseResponse, Club, ClubApi, ClubDeletionRequest, ClubResponse, ClubRoleResponse, ClubSchedulesResponse, ClubWithdrawRequest, ErrorResponse, NotificationsResponse } from "../../api";
 import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 import { RefinedSchedule } from "../../Types/Club";
@@ -91,6 +91,101 @@ const ClubTopTabs = ({
   );
   const { heightCollapsed, heightExpanded } = headerConfig;
   const headerDiff = heightExpanded - heightCollapsed;
+
+  // API Calling
+  const withdrawClubMutation = useMutation<BaseResponse, ErrorResponse, ClubWithdrawRequest>(ClubApi.withdrawClub, {
+    onSuccess: (res) => {
+      toast.show(`모임에서 탈퇴하셨습니다.`, { type: "success" });
+      DeviceEventEmitter.emit("ClubRefetch");
+    },
+    onError: (error) => {
+      console.log(`API ERROR | withdrawClub ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
+  const deleteClubMutation = useMutation<BaseResponse, ErrorResponse, ClubDeletionRequest>(ClubApi.deleteClub, {
+    onSuccess: (res) => {
+      toast.show(`모임이 삭제되었습니다.`, { type: "success" });
+      DeviceEventEmitter.emit("ClubListRefetch");
+      popToTop();
+    },
+    onError: (error) => {
+      console.log(`API ERROR | deleteClub ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
+  const { isLoading: clubLoading, refetch: clubDataRefetch } = useQuery<ClubResponse, ErrorResponse>(["getClub", clubData.id], ClubApi.getClub, {
+    onSuccess: (res) => {
+      setData(res.data);
+    },
+    onError: (error) => {
+      console.log(`API ERROR | getClub ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
+  const {
+    isLoading: clubRoleLoading,
+    data: clubRole,
+    refetch: clubRoleRefetch,
+  } = useQuery<ClubRoleResponse, ErrorResponse>(["getClubRole", data.id], ClubApi.getClubRole, {
+    onSuccess: (res) => {
+      console.log(res);
+      dispatch(clubSlice.actions.updateClubRole({ role: res.data.role, applyStatus: res.data.applyStatus }));
+    },
+    onError: (error) => {
+      console.log(`API ERROR | getClubRole ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
+  const { isLoading: schedulesLoading, refetch: schedulesRefetch } = useQuery<ClubSchedulesResponse, ErrorResponse>(["getClubSchedules", data.id], ClubApi.getClubSchedules, {
+    onSuccess: (res) => {
+      const week = ["일", "월", "화", "수", "목", "금", "토"];
+      const result: RefinedSchedule[] = [];
+      for (let i = 0; i < res?.data?.length; ++i) {
+        const date = moment(res.data[i].startDate).tz("Asia/Seoul");
+        const dayOfWeek = week[date.day()];
+        let refined: RefinedSchedule = {
+          id: res.data[i].id,
+          location: res.data[i].location,
+          name: res.data[i].name,
+          members: res.data[i].members,
+          startDate: res.data[i].startDate,
+          endDate: res.data[i].endDate,
+          content: res.data[i].content,
+          year: date.format("YYYY"),
+          month: date.format("MM"),
+          day: date.format("DD"),
+          hour: date.format("h"),
+          minute: date.format("m"),
+          ampm: date.format("A"),
+          dayOfWeek: dayOfWeek,
+          participation: res.data[i].members?.map((member) => member.id).includes(me?.id),
+          isEnd: false,
+        };
+        result.push(refined);
+      }
+      result.push({ isEnd: true });
+      setScheduleData(result);
+    },
+    onError: (error) => {
+      console.log(`API ERROR | getClubSchedules ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
+  const { isLoading: notiLoading, refetch: clubNotiRefetch } = useQuery<NotificationsResponse, ErrorResponse>(["getClubNotifications", data.id], ClubApi.getClubNotifications, {
+    onSuccess: (res) => {
+      setNotiCount(res?.data.filter((item) => !item.processDone).length);
+    },
+    onError: (error) => {
+      console.log(`API ERROR | getClubNotifications ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
 
   // Animated Variables
   const screenScrollRefs = useRef<any>({});
@@ -178,102 +273,27 @@ const ClubTopTabs = ({
   };
 
   const withdrawClub = () => {
+    const requestData = { clubId: data.id };
     Alert.alert("모임 탈퇴", "정말로 모임에서 탈퇴하시겠습니까?", [
-      { text: "아니요", onPress: () => {} },
+      { text: "아니요" },
       {
         text: "예",
         onPress: () => {
-          let requestData: ClubWithdrawRequest = {
-            clubId: data.id,
-          };
-          withdrawClubMutation.mutate(requestData);
+          if (data.members?.length === 1 && data.members[0].id === me?.id && data.members[0].role === "MASTER")
+            Alert.alert("모임 삭제 안내", "현재 모임의 리더입니다. 모임을 탈퇴할 시 이 모임은 삭제됩니다. 삭제하시겠습니까?", [
+              { text: "아니요" },
+              {
+                text: "예",
+                onPress: () => {
+                  deleteClubMutation.mutate(requestData);
+                },
+              },
+            ]);
+          else withdrawClubMutation.mutate(requestData);
         },
       },
     ]);
   };
-
-  // API Calling
-
-  const withdrawClubMutation = useMutation<BaseResponse, ErrorResponse, ClubWithdrawRequest>(ClubApi.withdrawClub, {
-    onSuccess: (res) => {
-      toast.show(`모임에서 탈퇴하셨습니다.`, { type: "success" });
-      DeviceEventEmitter.emit("ClubRefetch");
-    },
-    onError: (error) => {
-      console.log(`API ERROR | withdrawClub ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, { type: "warning" });
-    },
-  });
-
-  const { isLoading: clubLoading, refetch: clubDataRefetch } = useQuery<ClubResponse, ErrorResponse>(["getClub", clubData.id], ClubApi.getClub, {
-    onSuccess: (res) => {
-      setData(res.data);
-    },
-    onError: (error) => {
-      console.log(`API ERROR | getClub ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, { type: "warning" });
-    },
-  });
-
-  const {
-    isLoading: clubRoleLoading,
-    data: clubRole,
-    refetch: clubRoleRefetch,
-  } = useQuery<ClubRoleResponse, ErrorResponse>(["getClubRole", data.id], ClubApi.getClubRole, {
-    onSuccess: (res) => {
-      dispatch(clubSlice.actions.updateClubRole({ role: res.data.role, applyStatus: res.data.applyStatus }));
-    },
-    onError: (error) => {
-      console.log(`API ERROR | getClubRole ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, { type: "warning" });
-    },
-  });
-
-  const { isLoading: schedulesLoading, refetch: schedulesRefetch } = useQuery<ClubSchedulesResponse, ErrorResponse>(["getClubSchedules", data.id], ClubApi.getClubSchedules, {
-    onSuccess: (res) => {
-      const week = ["일", "월", "화", "수", "목", "금", "토"];
-      const result: RefinedSchedule[] = [];
-      for (let i = 0; i < res?.data?.length; ++i) {
-        const date = moment(res.data[i].startDate).tz("Asia/Seoul");
-        const dayOfWeek = week[date.day()];
-        let refined: RefinedSchedule = {
-          id: res.data[i].id,
-          location: res.data[i].location,
-          name: res.data[i].name,
-          members: res.data[i].members,
-          startDate: res.data[i].startDate,
-          endDate: res.data[i].endDate,
-          content: res.data[i].content,
-          year: date.format("YYYY"),
-          month: date.format("MM"),
-          day: date.format("DD"),
-          hour: date.format("h"),
-          minute: date.format("m"),
-          ampm: date.format("A"),
-          dayOfWeek: dayOfWeek,
-          participation: res.data[i].members?.map((member) => member.id).includes(me?.id),
-          isEnd: false,
-        };
-        result.push(refined);
-      }
-      result.push({ isEnd: true });
-      setScheduleData(result);
-    },
-    onError: (error) => {
-      console.log(`API ERROR | getClubSchedules ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, { type: "warning" });
-    },
-  });
-
-  const { isLoading: notiLoading, refetch: clubNotiRefetch } = useQuery<NotificationsResponse, ErrorResponse>(["getClubNotifications", data.id], ClubApi.getClubNotifications, {
-    onSuccess: (res) => {
-      setNotiCount(res?.data.filter((item) => !item.processDone).length);
-    },
-    onError: (error) => {
-      console.log(`API ERROR | getClubNotifications ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, { type: "warning" });
-    },
-  });
 
   useEffect(() => {
     const scrollListener = scrollY.addListener(({ value }) => {});

@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState, createRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
 import { useMutation } from "react-query";
 import { UserApi, FindPwRequest } from "../../api";
@@ -7,6 +7,7 @@ import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import { FontAwesome } from "@expo/vector-icons";
+import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
   width: 100%;
@@ -19,10 +20,6 @@ const Container = styled.View`
 const Wrap = styled.View`
   width: 100%;
   padding: 0px 20px;
-`;
-
-const ButtonWrap = styled.View`
-  width: 100%;
 `;
 
 const Form = styled.View`
@@ -55,23 +52,6 @@ const Input = styled.TextInput`
   border-bottom-color: #000000;
   padding-bottom: 5px;
   font-size: 16px;
-`;
-
-const LoginButton = styled.TouchableOpacity<{ disabled: boolean }>`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 68px;
-  padding-bottom: 8px;
-  background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : "#ff6534")};
-`;
-
-const LoginTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  color: #fff;
-  font-size: 20px;
-  line-height: 24px;
 `;
 
 const FindPw: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { navigate } }) => {
@@ -213,11 +193,7 @@ const FindPw: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { 
             />
           </Form>
         </Wrap>
-        <ButtonWrap>
-          <LoginButton onPress={onSubmit}>
-            <LoginTitle>확인</LoginTitle>
-          </LoginButton>
-        </ButtonWrap>
+        <BottomButton onPress={onSubmit} backgroundColor="#FF6534" title={"확인"} />
       </Container>
     </TouchableWithoutFeedback>
   );
