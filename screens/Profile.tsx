@@ -45,6 +45,7 @@ const Email = styled(CustomText)`
   color: #878787;
   margin-top: 3px;
   margin-bottom: 5px;
+  line-height: 20px;
 `;
 
 const MenuWrapper = styled.View`
@@ -85,9 +86,10 @@ const LogoutButton = styled.TouchableOpacity`
   background-color: #000;
 `;
 
-const LogoutText = styled.Text`
+const LogoutText = styled(CustomText)`
   text-align: center;
   font-size: 15px;
+  line-height: 22px;
   color: #fff;
 `;
 

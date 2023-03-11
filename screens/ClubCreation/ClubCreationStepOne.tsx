@@ -33,6 +33,7 @@ const H1 = styled(CustomText)`
 
 const H2 = styled(CustomText)`
   font-size: 14px;
+  line-height: 20px;
   color: #5c5c5c;
   margin-bottom: 18px;
 `;
@@ -66,7 +67,7 @@ const CategoryItem = styled.TouchableOpacity<{ selected: boolean }>`
 `;
 const CategoryText = styled(CustomText)<{ selected: boolean }>`
   font-size: 14px;
-  line-height: 21px;
+  line-height: 20px;
   color: ${(props: any) => (props.selected ? "white" : "black")};
 `;
 

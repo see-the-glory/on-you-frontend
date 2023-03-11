@@ -22,7 +22,7 @@ const Header = styled.View`
 
 const HeaderTitle = styled(CustomText)`
   font-size: 16px;
-  line-height: 21px;
+  line-height: 23px;
 `;
 
 const HeaderText = styled(CustomText)`
@@ -36,7 +36,7 @@ const MemoTextInput = styled(CustomTextInput)`
   height: 300px;
   background-color: #f3f3f3;
   font-size: 16px;
-  line-height: 21px;
+  line-height: 23px;
   padding: 10px;
 `;
 

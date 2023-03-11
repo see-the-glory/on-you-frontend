@@ -89,6 +89,7 @@ const Ment = styled(CustomTextInput)`
   height: 100px;
   color: black;
   font-size: 14px;
+  line-height: 20px;
 `;
 
 //모달

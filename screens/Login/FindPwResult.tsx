@@ -31,7 +31,7 @@ const NoticeText = styled(CustomText)`
 const NoticeSubText = styled(CustomText)`
   color: #8e8e8e;
   font-size: 14px;
-  line-height: 19px;
+  line-height: 20px;
   text-align: center;
   margin-bottom: 11px;
 `;

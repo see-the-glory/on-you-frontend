@@ -6,7 +6,6 @@ import styled from "styled-components/native";
 import { ErrorResponse, Notification, NotificationsResponse, UserApi } from "../../api";
 import CustomText from "../../components/CustomText";
 import NotificationItem from "../../components/NotificationItem";
-import notifee from "@notifee/react-native";
 
 const SCREEN_PADDING_SIZE = 20;
 
@@ -28,6 +27,7 @@ const EmptyView = styled.View`
 
 const EmptyText = styled(CustomText)`
   font-size: 14px;
+  line-height: 20px;
   color: #bdbdbd;
   justify-content: center;
   align-items: center;
@@ -81,16 +81,6 @@ const UserNotification = ({ navigation: { navigate } }) => {
       return navigate("ClubStack", { screen: "ClubTopTabs", clubData: { id: item.actionClubId } });
     } else if (item.actionType === "REJECT") {
       // 거절 메시지 보여주기
-      await notifee.displayNotification({
-        title: "TITLE TEST",
-        body: "body test",
-        android: {
-          channelId: "club",
-          pressAction: {
-            id: "action!",
-          },
-        },
-      });
     }
   };
 

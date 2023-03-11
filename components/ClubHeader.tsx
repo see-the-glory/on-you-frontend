@@ -64,7 +64,7 @@ const ClubShortDescView = styled.View`
 `;
 const ClubShortDescText = styled(CustomText)`
   font-size: 14px;
-  line-height: 19px;
+  line-height: 20px;
   color: white;
 `;
 
