@@ -57,8 +57,9 @@ const Suggestion = ({ navigation: { navigate, goBack, setOptions } }) => {
   });
 
   const save = () => {
+    if (content.trim() === "") return toast.show(`내용이 비어있습니다.`, { type: "danger" });
     const requestData: SuggestionSubmitRequest = {
-      content,
+      content: content.trim(),
     };
     suggestionMutation.mutate(requestData);
   };

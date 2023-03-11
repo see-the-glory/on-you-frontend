@@ -47,6 +47,21 @@ const MyClubText = styled(CustomText)`
   font-family: "NotoSansKR-Medium";
 `;
 
+const EmptyView = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+`;
+
+const EmptyText = styled(CustomText)`
+  font-size: 14px;
+  line-height: 20px;
+  color: #bdbdbd;
+  justify-content: center;
+  align-items: center;
+`;
+
 const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigation: { navigate } }, props) => {
   const [refreshing, setRefreshing] = useState(false);
   const toast = useToast();
@@ -95,6 +110,14 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
     ),
     []
   );
+  const listEmptyComponent = useCallback(
+    () => (
+      <EmptyView>
+        <EmptyText>{`가입한 모임이 없습니다.`}</EmptyText>
+      </EmptyView>
+    ),
+    []
+  );
 
   return myClubInfoLoading ? (
     <Loader>
@@ -109,6 +132,7 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
       data={myClubs?.data.filter((item) => item.applyStatus === "APPROVED")}
       ItemSeparatorComponent={itemSeparatorComponent}
       ListHeaderComponent={listHeaderComponent}
+      ListEmptyComponent={listEmptyComponent}
       stickyHeaderIndices={[0]}
       renderItem={renderItem}
     />

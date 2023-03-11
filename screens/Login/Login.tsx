@@ -83,14 +83,16 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
         console.log(`Login: ${token}`);
         if (token) await dispatch(login({ token }));
       } else if (res.status === 400) {
-        toast.show(`아이디와 비밀번호가 잘못되었습니다.`, { type: "warning" });
+        toast.show(`아이디와 비밀번호가 잘못되었습니다.`, { type: "danger" });
+      } else if (res.status === 404) {
+        toast.show(`존재하지 않는 아이디입니다.`, { type: "danger" });
       } else if (res.status === 500) {
-        toast.show(`알 수 없는 오류`, { type: "warning" });
+        toast.show(`알 수 없는 오류`, { type: "danger" });
       }
     },
     onError: (error) => {
       console.log(error);
-      toast.show(`네트워크를 확인해주세요.`, { type: "warning" });
+      toast.show(`네트워크를 확인해주세요.`, { type: "danger" });
     },
   });
 

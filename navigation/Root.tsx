@@ -136,14 +136,14 @@ const Root = () => {
       }
     });
 
-    const logoutSubScription = DeviceEventEmitter.addListener("Logout", async ({ fcmToken }) => {
+    const logoutSubScription = DeviceEventEmitter.addListener("Logout", async ({ fcmToken, isWitdrawUser }) => {
       console.log(`Root - Logout`);
       const res = await dispatch(logout());
       if (res.meta.requestStatus === "fulfilled") {
-        toast.show(`로그아웃 되었습니다.`, { type: "success" });
+        if (!isWitdrawUser) toast.show(`로그아웃 되었습니다.`, { type: "success" });
         try {
-          if (fcmToken) updateTargetToken(null);
-          else console.log(`Root - Logout : FCM Token 이 없습니다.`);
+          if (fcmToken && !isWitdrawUser) updateTargetToken(null);
+          if (!fcmToken) console.log(`Root - Logout : FCM Token 이 없습니다.`);
           dispatch(feedSlice.actions.deleteFeed());
         } catch (e) {
           console.warn(e);

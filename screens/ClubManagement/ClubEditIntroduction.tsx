@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
@@ -10,7 +10,7 @@ import CustomTextInput from "../../components/CustomTextInput";
 import { RootState } from "../../redux/store/reducers";
 import { ClubEditIntroductionProps } from "../../Types/Club";
 
-const Container = styled.SafeAreaView`
+const Container = styled.View`
   flex: 1;
 `;
 
@@ -116,6 +116,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
 
   return (
     <Container>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
         <MainView>
           <Content>

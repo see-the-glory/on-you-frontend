@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { ActivityIndicator, KeyboardAvoidingView, Platform, TouchableOpacity, useWindowDimensions } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { ClubEditBasicsProps } from "../../Types/Club";
 import * as ImagePicker from "expo-image-picker";
@@ -10,7 +10,7 @@ import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
 
-const Container = styled.SafeAreaView`
+const Container = styled.View`
   flex: 1;
 `;
 
@@ -308,6 +308,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
 
   return (
     <Container>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={40} style={{ flex: 1 }}>
         <MainView>
           <Header>
