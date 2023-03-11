@@ -162,14 +162,21 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
 
   useEffect(() => {
     setOptions({
-      headerRight: () => <TouchableOpacity onPress={onSubmit}>{mutation.isLoading ? <ActivityIndicator /> : <Text style={{ color: "#2995FA" }}>저장</Text>}</TouchableOpacity>,
+      headerRight: () =>
+        mutation.isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <TouchableOpacity onPress={onSubmit}>
+            <Text style={{ color: "#2995FA" }}>저장</Text>
+          </TouchableOpacity>
+        ),
     });
 
     return () => {
       DeviceEventEmitter.emit("ProfileRefresh");
       DeviceEventEmitter.emit("HomeFeedRefetch");
     };
-  }, [name, birthday, phoneNumber, organizationName, imageURI, mutation]);
+  }, [name, birthday, phoneNumber, organizationName, imageURI, mutation.isLoading]);
 
   useEffect(() => {
     if (phoneNumber?.length === 10) {

@@ -57,16 +57,15 @@ const ClubJoin = ({
     },
     onError: (error) => {
       console.log(`API ERROR | applyClub ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, {
-        type: "warning",
-      });
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
   const save = () => {
+    if (memo.trim() === "") return toast.show(`내용이 비어있습니다.`, { type: "danger" });
     const requestData: ClubApplyRequest = {
       clubId: clubData.id,
-      message: memo,
+      message: memo.trim(),
     };
 
     clubApplyMutation.mutate(requestData);
@@ -105,7 +104,7 @@ const ClubJoin = ({
             placeholderTextColor="#B0B0B0"
             textAlign="left"
             multiline={true}
-            maxLength={100}
+            maxLength={255}
             textAlignVertical="top"
             onChangeText={(text: string) => setMemo(text)}
             onEndEditing={() => setMemo((prev) => prev.trim())}
