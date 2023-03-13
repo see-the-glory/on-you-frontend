@@ -44,19 +44,17 @@ const Break = styled.View<{ sep: number }>`
 interface FeedReportModalProps {
   modalRef: any;
   buttonHeight: number;
-  complainSubmit: () => void;
+  complainSubmit: (reason: string) => void;
 }
 
 const FeedReportModal: React.FC<FeedReportModalProps> = ({ modalRef, buttonHeight, complainSubmit }) => {
   const complainOptionList = [
-    { name: "스팸" },
-    { name: "나체 이미지 또는 성적 이미지" },
-    { name: "사기 또는 거짓" },
-    { name: "혐오 발언 또는 혐오 이미지" },
-    { name: "폭력, 괴롭힘" },
-    { name: "불법 또는 규제 상품 판매" },
-    { name: "자살 또는 자해" },
-    { name: "기타" },
+    { name: "스팸", reason: "SPAM" },
+    { name: "나체 이미지 또는 성적 이미지", reason: "SEXUAL" },
+    { name: "사기 또는 거짓", reason: "FRAUD" },
+    { name: "혐오 발언 또는 혐오 이미지", reason: "HATRED" },
+    { name: "폭력, 괴롭힘", reason: "VIOLENCE" },
+    { name: "기타", reason: "ETC" },
   ];
   const modalHeight = buttonHeight * complainOptionList.length + 145;
 
@@ -89,7 +87,7 @@ const FeedReportModal: React.FC<FeedReportModalProps> = ({ modalRef, buttonHeigh
           {complainOptionList.map((option, index) => (
             <View key={`complainOption_${index}`}>
               {index > 0 ? <Break sep={1} /> : <></>}
-              <OptionButton onPress={complainSubmit} height={buttonHeight} padding={20} alignItems={"flex-start"}>
+              <OptionButton onPress={() => complainSubmit(option.reason)} height={buttonHeight} padding={20} alignItems={"flex-start"}>
                 <OptionName>{option.name}</OptionName>
               </OptionButton>
             </View>

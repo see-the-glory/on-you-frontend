@@ -294,7 +294,9 @@ export interface FeedUpdateRequest {
 
 export interface FeedReportRequest {
   feedId: number;
-  reason: string;
+  data: {
+    reason: string;
+  };
 }
 
 export interface ClubUpdateRequest {
@@ -566,7 +568,7 @@ const createFeed = (req: FeedCreationRequest) => {
 const updateFeed = (req: FeedUpdateRequest) => axios.put<string, BaseResponse>(`/api/feeds/${req.data.id}`, req.data);
 
 // Feed Option
-const reportFeed = (req: FeedReportRequest) => axios.put<string, BaseResponse>(`/api/feeds/${req.feedId}/report?reason=${req.reason}`);
+const reportFeed = (req: FeedReportRequest) => axios.post<string, BaseResponse>(`/api/feeds/${req.feedId}/report`, req.data);
 const likeFeed = (req: FeedLikeRequest) => axios.post<string, BaseResponse>(`/api/feeds/${req.feedId}/likes`);
 const deleteFeed = (req: FeedDeletionRequest) => axios.delete<string, BaseResponse>(`/api/feeds/${req.feedId}`);
 
