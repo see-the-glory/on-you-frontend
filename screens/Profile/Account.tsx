@@ -56,7 +56,7 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   const withdrawMutation = useMutation<BaseResponse, ErrorResponse>(UserApi.withdrawAccount, {
     onSuccess: (res) => {
       toast.show("회원탈퇴 되었습니다.", { type: "success" });
-      DeviceEventEmitter.emit("Logout", { fcmToken });
+      DeviceEventEmitter.emit("Logout", { fcmToken, isWitdrawUser: true });
       dispatch(logout());
     },
     onError: (error) => {
@@ -65,25 +65,23 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     },
   });
 
-  const onSubmit = () => {
-    withdrawMutation.mutate();
-  };
-
   const goToScreen = (screen: string) => {
     navigate("ProfileStack", { screen });
   };
 
-  const handleAlert = () => {
+  const withdrawUser = () => {
     Alert.alert(
       "탈퇴",
       "탈퇴 후 계정 복구는 불가합니다. 정말로 탈퇴하시겠습니까?",
       [
         {
           text: "네",
-          onPress: onSubmit,
+          onPress: () => {
+            withdrawMutation.mutate();
+          },
           style: "cancel",
         },
-        { text: "아니요", onPress: () => {} },
+        { text: "아니요" },
       ],
       { cancelable: false }
     );
@@ -100,7 +98,7 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     },
     {
       title: "탈퇴",
-      onPress: handleAlert,
+      onPress: withdrawUser,
     },
   ];
 

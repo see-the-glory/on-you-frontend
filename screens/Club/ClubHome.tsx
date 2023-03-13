@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter } from "react-native";
+import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter, NativeSyntheticEvent, TextLayoutEventData, TouchableWithoutFeedback, View } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
 import { ClubHomeScreenProps, ClubHomeParamList, RefinedSchedule } from "../../Types/Club";
@@ -12,8 +12,9 @@ import clubSlice from "../../redux/slices/club";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
+import Collapsible from "react-native-collapsible";
 
-const MEMBER_ICON_KERNING = 25;
+const MEMBER_ICON_KERNING = 20;
 const MEMBER_ICON_SIZE = 50;
 const SCREEN_PADDING_SIZE = 20;
 
@@ -62,6 +63,12 @@ const ContentView = styled.View<{ paddingSize?: number }>`
 const ContentText = styled(CustomText)`
   font-size: 13px;
   line-height: 18px;
+`;
+
+const ContentSubText = styled(CustomText)`
+  font-size: 13px;
+  line-height: 18px;
+  color: #9a9a9a;
 `;
 
 const ScheduleSeparator = styled.View`
@@ -182,6 +189,9 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const dispatch = useAppDispatch();
   const myRole = useSelector((state: RootState) => state.club.role);
   const toast = useToast();
+  const [clubLongDescLines, setClubLongDescLines] = useState<string[]>(typeof clubData?.clubLongDesc === "string" ? clubData?.clubLongDesc?.split("\n") : []);
+  const [isCollapsedLongDesc, setIsCollapsedLongDesc] = useState<boolean>(true);
+  const collapsed = 8;
 
   useLayoutEffect(() => {
     getData();
@@ -234,6 +244,10 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     }
   };
 
+  const clubLongDescTouch = () => {
+    setIsCollapsedLongDesc((prev) => !prev);
+  };
+
   const loading = memberLoading;
   return loading ? (
     <Loader>
@@ -277,7 +291,25 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           <SectionTitle>ABOUT</SectionTitle>
         </TitleView>
         <ContentView>
-          <ContentText>{clubData.clubLongDesc}</ContentText>
+          {clubLongDescLines.length < collapsed ? (
+            <ContentText>{clubData.clubLongDesc}</ContentText>
+          ) : (
+            <TouchableWithoutFeedback onPress={clubLongDescTouch}>
+              <View>
+                {isCollapsedLongDesc ? (
+                  <ContentText>
+                    {`${clubLongDescLines.slice(0, collapsed).join("\n")}...`}
+                    <ContentSubText>{` 더보기`}</ContentSubText>
+                  </ContentText>
+                ) : (
+                  <ContentText>{`${clubLongDescLines.slice(0, collapsed).join("\n")}`}</ContentText>
+                )}
+                <Collapsible collapsed={isCollapsedLongDesc}>
+                  <ContentText>{`${clubLongDescLines.slice(collapsed).join("\n")}`}</ContentText>
+                </Collapsible>
+              </View>
+            </TouchableWithoutFeedback>
+          )}
         </ContentView>
         <Break sep={15} />
       </SectionView>
@@ -374,15 +406,13 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             <MemberSubTitle>Manager</MemberSubTitle>
           </MemberSubTitleView>
           {managerData?.length !== 0 ? (
-            managerData?.map((bundle, index) => {
-              return (
-                <MemberLineView key={index}>
-                  {bundle.map((item, index) => {
-                    return <CircleIcon key={index} size={MEMBER_ICON_SIZE} uri={item.thumbnail} name={item.name} kerning={MEMBER_ICON_KERNING} badge={"check-circle"} />;
-                  })}
-                </MemberLineView>
-              );
-            })
+            managerData?.map((bundle, index) => (
+              <MemberLineView key={index}>
+                {bundle.map((item, index) => (
+                  <CircleIcon key={index} size={MEMBER_ICON_SIZE} uri={item.thumbnail} name={item.name} kerning={MEMBER_ICON_KERNING} badge={"check-circle"} />
+                ))}
+              </MemberLineView>
+            ))
           ) : (
             <MemberTextView>
               <MemberText>매니저가 없습니다.</MemberText>
@@ -392,15 +422,13 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             <MemberSubTitle>Member</MemberSubTitle>
           </MemberSubTitleView>
           {memberData?.length !== 0 ? (
-            memberData?.map((bundle, index) => {
-              return (
-                <MemberLineView key={index}>
-                  {bundle.map((item, index) => {
-                    return <CircleIcon key={index} size={MEMBER_ICON_SIZE} uri={item.thumbnail} name={item.name} kerning={MEMBER_ICON_KERNING} />;
-                  })}
-                </MemberLineView>
-              );
-            })
+            memberData?.map((bundle, index) => (
+              <MemberLineView key={index}>
+                {bundle.map((item, index) => (
+                  <CircleIcon key={index} size={MEMBER_ICON_SIZE} uri={item.thumbnail} name={item.name} kerning={MEMBER_ICON_KERNING} />
+                ))}
+              </MemberLineView>
+            ))
           ) : (
             <MemberTextView>
               <MemberText>멤버들이 클럽을 가입할 수 있게 해보세요.</MemberText>

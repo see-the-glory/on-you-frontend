@@ -189,16 +189,14 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     );
   };
 
-  const complainSubmit = () => {
+  const complainSubmit = (reason: string) => {
     if (selectFeedData === undefined || selectFeedData?.id === -1) {
-      toast.show("게시글 정보가 잘못되었습니다.", {
-        type: "warning",
-      });
+      toast.show("게시글 정보가 잘못되었습니다.", { type: "warning" });
       return;
     }
     const requestData: FeedReportRequest = {
       feedId: selectFeedData.id,
-      reason: "SPAM",
+      data: { reason },
     };
     complainMutation.mutate(requestData);
     closeComplainOption();

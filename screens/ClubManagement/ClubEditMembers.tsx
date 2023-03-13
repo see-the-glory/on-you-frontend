@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { ActivityIndicator, DeviceEventEmitter, FlatList, SectionList, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, DeviceEventEmitter, FlatList, SectionList, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
 import { BaseResponse, ChangeRole, ChangeRoleRequest, ErrorResponse, Member } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
@@ -13,7 +13,7 @@ import { useMutation } from "react-query";
 import { ClubApi } from "../../api";
 import { RootState } from "../../redux/store/reducers";
 
-const Container = styled.SafeAreaView`
+const Container = styled.View`
   flex: 1;
 `;
 
@@ -227,6 +227,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
 
   return (
     <Container>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <Header>
         <HeaderText>모임 리더는 회원 관리와 모임 관리의 권한이 있습니다.</HeaderText>
       </Header>

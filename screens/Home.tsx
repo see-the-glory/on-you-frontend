@@ -92,6 +92,7 @@ const Home: React.FC<HomeScreenProps> = () => {
     inputRange: [0, 50],
     outputRange: [0, 1],
   });
+  const homeFlatlistRef = useRef<Animated.FlatList<Feed>>();
 
   //getFeeds ( 무한 스크롤 )
   const {
@@ -132,13 +133,18 @@ const Home: React.FC<HomeScreenProps> = () => {
 
   useEffect(() => {
     console.log("Home - add listner");
-    let homeFeedSubscription = DeviceEventEmitter.addListener("HomeFeedRefetch", () => {
+    const homeFeedSubscription = DeviceEventEmitter.addListener("HomeFeedRefetch", () => {
       onRefresh();
+    });
+
+    const homeFeedScrollToTopSubscription = DeviceEventEmitter.addListener("HomeFeedScrollToTop", () => {
+      homeFlatlistRef?.current?.scrollToOffset({ animated: true, offset: 0 });
     });
 
     return () => {
       console.log("Home - remove listner");
       homeFeedSubscription.remove();
+      homeFeedScrollToTopSubscription.remove();
     };
   }, []);
 
@@ -264,14 +270,14 @@ const Home: React.FC<HomeScreenProps> = () => {
     );
   };
 
-  const complainSubmit = () => {
+  const complainSubmit = (reason: string) => {
     if (selectFeedData === undefined || selectFeedData?.id === -1) {
       toast.show("게시글 정보가 잘못되었습니다.", { type: "warning" });
       return;
     }
     const requestData: FeedReportRequest = {
       feedId: selectFeedData.id,
-      reason: "SPAM",
+      data: { reason },
     };
     complainMutation.mutate(requestData);
     closeComplainOption();
@@ -347,7 +353,6 @@ const Home: React.FC<HomeScreenProps> = () => {
               <MaterialIcons name="notifications" size={23} color="black" />
             </NotiView>
           </HeaderButton>
-
           <HeaderButton onPress={goToFeedCreation}>
             <MaterialIcons name="add-photo-alternate" size={23} color="black" />
           </HeaderButton>
@@ -355,6 +360,7 @@ const Home: React.FC<HomeScreenProps> = () => {
       </HeaderView>
       <Animated.View style={{ width: "100%", borderBottomWidth: 0.5, borderBottomColor: "rgba(0,0,0,0.3)", opacity: animatedHeaderOpacity }} />
       <Animated.FlatList
+        ref={homeFlatlistRef}
         refreshing={refreshing}
         onRefresh={onRefresh}
         onEndReached={loadMore}

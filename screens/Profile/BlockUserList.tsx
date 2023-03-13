@@ -136,16 +136,6 @@ const BlockUserList: React.FC<NativeStackScreenProps<any, "BlockUserList">> = ({
           <CircleIcon size={46} uri={item.thumbnail} />
           <ItemLeftDetail>
             <ItemText>{item.userName}</ItemText>
-            {/* <Tag
-              name={item.organizationName ?? ""}
-              iconName="cross"
-              backgroundColor="white"
-              textColor="#B4B4B4"
-              borderColor="#B4B4B4"
-              iconSize={7}
-              contentContainerStyle={{ paddingTop: 1, paddingBottom: 1, paddingRight: 3, paddingLeft: 3 }}
-              textStyle={{ fontSize: 10, lineHeight: 14 }}
-            /> */}
           </ItemLeftDetail>
         </ItemLeft>
         <ItemRight>
@@ -179,7 +169,7 @@ const BlockUserList: React.FC<NativeStackScreenProps<any, "BlockUserList">> = ({
       keyExtractor={(item: BlockUser, index: number) => String(index)}
       data={blockUserList?.data}
       ItemSeparatorComponent={itemSeparatorComponent}
-      ListFooterComponent={itemSeparatorComponent}
+      ListFooterComponent={blockUserList?.data?.length ? itemSeparatorComponent : null}
       renderItem={renderItem}
       ListEmptyComponent={listEmptyComponent}
     />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, DeviceEventEmitter, FlatList, StatusBar, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, BackHandler, DeviceEventEmitter, FlatList, StatusBar, TouchableOpacity, View } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useQuery } from "react-query";
 import styled from "styled-components/native";
@@ -34,7 +34,7 @@ const EmptyText = styled(CustomText)`
 `;
 
 const ClubNotification = ({
-  navigation: { navigate },
+  navigation: { navigate, goBack },
   route: {
     params: { clubData, clubRole },
   },
@@ -64,7 +64,14 @@ const ClubNotification = ({
       console.log("ClubNotification - Refresh Event");
       onRefresh();
     });
-    return () => clubNotiSubs.remove();
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+      goBack();
+      return true;
+    });
+    return () => {
+      clubNotiSubs.remove();
+      backHandler.remove();
+    };
   }, []);
 
   const onPressItem = (item: Notification) => {
