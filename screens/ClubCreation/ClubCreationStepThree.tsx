@@ -186,7 +186,13 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
         </MainView>
       </ScrollView>
 
-      <BottomButton onPress={onSubmit} disabled={clubShortDesc === "" || clubLongDesc === "" || disableSubmit} backgroundColor={"#FF6534"} title={"완료"} />
+      <BottomButton
+        onPress={onSubmit}
+        disabled={clubShortDesc === "" || clubLongDesc === "" || disableSubmit}
+        backgroundColor={"#FF6534"}
+        title={"완료"}
+        contentContainerStyle={{ position: "relative" }}
+      />
     </KeyboardAvoidingView>
   );
 };

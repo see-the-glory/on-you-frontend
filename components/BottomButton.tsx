@@ -1,5 +1,5 @@
 import React from "react";
-import { Platform } from "react-native";
+import { Platform, StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "./CustomText";
 
@@ -32,11 +32,12 @@ interface BottomButtonProps {
   title?: string;
   backgroundColor?: string;
   textColor?: string;
+  contentContainerStyle?: StyleProp<ViewStyle> | undefined;
 }
 
-const BottomButton: React.FC<BottomButtonProps> = ({ onPress, disabled, title, backgroundColor, textColor }) => {
+const BottomButton: React.FC<BottomButtonProps> = ({ onPress, disabled, title, backgroundColor, textColor, contentContainerStyle }) => {
   return (
-    <Container>
+    <Container style={contentContainerStyle}>
       <Button onPress={onPress} disabled={disabled} color={backgroundColor}>
         <Title color={textColor}>{title}</Title>
       </Button>
