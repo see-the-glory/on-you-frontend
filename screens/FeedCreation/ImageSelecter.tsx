@@ -1,7 +1,21 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { AntDesign, Entypo, Ionicons, MaterialIcons, Octicons } from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
-import { ActivityIndicator, Alert, DeviceEventEmitter, Keyboard, KeyboardAvoidingView, Platform, Text, TouchableOpacity, TouchableWithoutFeedback, useWindowDimensions, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  BackHandler,
+  DeviceEventEmitter,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import styled from "styled-components/native";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
@@ -117,7 +131,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     route: {
       params: { clubId, userId },
     },
-    navigation: { navigate },
+    navigation: { navigate, goBack },
   } = props;
   const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
@@ -136,76 +150,80 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
   }, []);
 
   const pickImage = async () => {
-    let images = await ImagePicker.openPicker({
-      mediaType: "photo",
-      multiple: true,
-      minFiles: 1,
-      maxFiles: 5,
-    });
-
-    if (images.length > 5) {
-      toast.show(`이미지는 5개까지 선택할 수 있습니다.`, {
-        type: "warning",
-      });
-      return;
-    }
-
-    let url = [];
-    for (let i = 0; i < images.length; i++) {
-      let croped = await ImagePicker.openCropper({
+    try {
+      let images = await ImagePicker.openPicker({
         mediaType: "photo",
-        path: images[i].path,
-        width: 1080,
-        height: 1080,
-        cropperCancelText: "Cancel",
-        cropperChooseText: "Check",
-        cropperToolbarTitle: "이미지를 크롭하세요",
-        forceJpg: true,
-      });
-      url.push(croped.path);
-    }
-    setSelectIndex(url?.length > 0 ? 0 : undefined);
-    setImageURL(url);
-  };
-
-  const morePickImage = async () => {
-    let newImages = await ImagePicker.openPicker({
-      mediaType: "photo",
-      multiple: true,
-      minFiles: 1,
-      maxFiles: 5,
-    });
-
-    if (imageURL.length + newImages.length > 5) {
-      toast.show(`이미지는 5개까지 선택할 수 있습니다.`, {
-        type: "warning",
-      });
-      return;
-    }
-
-    let url: any[] = [];
-    for (let i = 0; i < newImages.length; i++) {
-      let croped = await ImagePicker.openCropper({
-        mediaType: "photo",
-        path: newImages[i].path,
-        width: 1080,
-        height: 1080,
-        cropperCancelText: "Cancel",
-        cropperChooseText: "Check",
-        cropperToolbarTitle: "이미지를 크롭하세요",
-        forceJpg: true,
+        multiple: true,
+        minFiles: 1,
+        maxFiles: 5,
       });
 
-      if (imageURL.length > 5) {
+      if (images?.length > 5) {
         toast.show(`이미지는 5개까지 선택할 수 있습니다.`, {
           type: "warning",
         });
         return;
       }
-      url.push(croped.path);
-    }
-    setSelectIndex(url?.length > 0 ? 0 : undefined);
-    setImageURL((prev) => [...prev, ...url]);
+
+      let url = [];
+      for (let i = 0; i < images.length; i++) {
+        let croped = await ImagePicker.openCropper({
+          mediaType: "photo",
+          path: images[i].path,
+          width: 1080,
+          height: 1080,
+          cropperCancelText: "Cancel",
+          cropperChooseText: "Check",
+          cropperToolbarTitle: "이미지를 크롭하세요",
+          forceJpg: true,
+        });
+        url.push(croped.path);
+      }
+      setSelectIndex(url?.length > 0 ? 0 : undefined);
+      setImageURL(url);
+    } catch (e) {}
+  };
+
+  const morePickImage = async () => {
+    try {
+      let newImages = await ImagePicker.openPicker({
+        mediaType: "photo",
+        multiple: true,
+        minFiles: 1,
+        maxFiles: 5,
+      });
+
+      if (imageURL.length + newImages.length > 5) {
+        toast.show(`이미지는 5개까지 선택할 수 있습니다.`, {
+          type: "warning",
+        });
+        return;
+      }
+
+      let url: any[] = [];
+      for (let i = 0; i < newImages.length; i++) {
+        let croped = await ImagePicker.openCropper({
+          mediaType: "photo",
+          path: newImages[i].path,
+          width: 1080,
+          height: 1080,
+          cropperCancelText: "Cancel",
+          cropperChooseText: "Check",
+          cropperToolbarTitle: "이미지를 크롭하세요",
+          forceJpg: true,
+        });
+
+        if (imageURL.length > 5) {
+          toast.show(`이미지는 5개까지 선택할 수 있습니다.`, {
+            type: "warning",
+          });
+          return;
+        }
+        url.push(croped.path);
+      }
+      setSelectIndex(url?.length > 0 ? 0 : undefined);
+      setImageURL((prev) => [...prev, ...url]);
+    } catch (e) {}
   };
 
   const mutation = useMutation<BaseResponse, ErrorResponse, FeedCreationRequest>(FeedApi.createFeed, {
@@ -265,13 +283,13 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
           onPress: () => console.log(""),
           style: "cancel",
         },
-        { text: "네", onPress: () => navigate("Tabs", { screen: "Home" }) },
+        { text: "네", onPress: () => goBack() },
       ],
       { cancelable: false }
     );
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
         <TouchableOpacity onPress={cancelCreate}>
@@ -289,6 +307,17 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     });
   }, [imageURL, content, isSubmitShow]);
 
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+      goBack();
+      return true;
+    });
+
+    return () => {
+      backHandler.remove();
+    };
+  }, []);
+
   /** X선택시 사진 없어지는 태그 */
   const ImageCancel = (q: any) => {
     setImageURL((prev: string[]) => prev.filter((_, index) => index != q));
@@ -297,19 +326,21 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
 
   const moreImageFix = async (imageURL: string[], index?: number) => {
     if (index === undefined) return;
-    let croped = await ImagePicker.openCropper({
-      mediaType: "photo",
-      path: imageURL[index],
-      width: 1080,
-      height: 1080,
-      cropperCancelText: "Cancel",
-      cropperChooseText: "Check",
-      cropperToolbarTitle: "이미지를 크롭하세요",
-    });
-    setImageURL((prev) => {
-      prev[index] = croped.path;
-      return prev;
-    });
+    try {
+      let croped = await ImagePicker.openCropper({
+        mediaType: "photo",
+        path: imageURL[index],
+        width: 1080,
+        height: 1080,
+        cropperCancelText: "Cancel",
+        cropperChooseText: "Check",
+        cropperToolbarTitle: "이미지를 크롭하세요",
+      });
+      setImageURL((prev) => {
+        prev[index] = croped.path;
+        return prev;
+      });
+    } catch (e) {}
   };
 
   const renderItem = useCallback(
@@ -341,6 +372,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
 
   return (
     <Container>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
         <>
           <SelectImageView>
