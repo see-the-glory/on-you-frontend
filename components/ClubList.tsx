@@ -44,10 +44,11 @@ const TitleView = styled.View`
   padding-bottom: 5px;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
 `;
 
 const ClubNameText = styled(CustomText)`
+  flex: 5;
   font-size: 16px;
   font-family: "NotoSansKR-Bold";
   line-height: 25px;
@@ -55,9 +56,11 @@ const ClubNameText = styled(CustomText)`
 `;
 
 const TitleViewRight = styled.View`
+  flex: 1;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: flex-end;
+  padding-bottom: 5px;
 `;
 
 const Number = styled(CustomText)`
@@ -67,8 +70,8 @@ const Number = styled(CustomText)`
   line-height: 12px;
 `;
 
-const ClubInfo = styled.View`
-  width: 100%;
+const ClubInfo = styled.View<{ width: number }>`
+  width: ${(props: any) => (props.width ? `${props.width}px` : "100%")};
   padding: 0px 10px;
   justify-content: space-evenly;
 `;
@@ -78,12 +81,6 @@ const TagView = styled.View`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-`;
-
-const TagText = styled(CustomText)`
-  font-family: "NotoSansKR-Medium";
-  font-size: 10px;
-  line-height: 14px;
 `;
 
 const DescView = styled.View`
@@ -108,7 +105,6 @@ interface ClubListProps {
 }
 
 const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, clubName, memberNum, clubShortDesc, categories, recruitStatus, colSize }) => {
-  const lineCount = Math.floor((colSize - 10) / 12);
   return (
     <Club>
       <ThumbnailView>
@@ -131,14 +127,10 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
         </Gradient>
       </ThumbnailView>
 
-      <ClubInfo>
-        {clubShortDesc && clubShortDesc.length > 0 ? (
-          <DescView>
-            <ShortDescText>{clubShortDesc.length <= lineCount ? clubShortDesc : `${clubShortDesc.slice(0, lineCount)}\n${clubShortDesc.slice(lineCount)}`}</ShortDescText>
-          </DescView>
-        ) : (
-          <></>
-        )}
+      <ClubInfo width={colSize}>
+        <DescView>
+          <ShortDescText>{clubShortDesc}</ShortDescText>
+        </DescView>
         <TagView>
           <Tag
             name={organizationName ?? ""}
