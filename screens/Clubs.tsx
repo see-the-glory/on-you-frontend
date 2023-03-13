@@ -213,8 +213,6 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const [selectedSortIndex, setSelectedSortIndex] = useState<number>(0);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const colSize = Math.round(SCREEN_WIDTH / 2);
-  console.log(usingFilter);
-  console.log(params);
 
   const {
     isLoading: clubsLoading,

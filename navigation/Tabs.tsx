@@ -5,7 +5,7 @@ import Clubs from "../screens/Clubs";
 import Profile from "../screens/Profile";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
-import { Animated, Platform, useWindowDimensions, View } from "react-native";
+import { Animated, DeviceEventEmitter, Platform, useWindowDimensions, View } from "react-native";
 import { MainBottomTabParamList } from "../Types/Club";
 import { Shadow } from "react-native-shadow-2";
 
@@ -98,6 +98,8 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
                 target: route.key,
                 canPreventDefault: true,
               });
+
+              if (isFocused && route.name === "Home") DeviceEventEmitter.emit("HomeFeedScrollToTop");
 
               if (!isFocused && !event.defaultPrevented) {
                 // The `merge: true` option makes sure that the params inside the tab screen are preserved
