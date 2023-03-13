@@ -30,6 +30,7 @@ const H2 = styled(CustomText)`
 `;
 const Content = styled.View`
   width: 100%;
+  margin-bottom: 20px;
 `;
 
 const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
