@@ -1,15 +1,13 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, useLayoutEffect } from "react";
-import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from "react-native";
+import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar, KeyboardAvoidingView, Platform, ScrollView, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
 import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
-  width: 100%;
-  height: 100%;
-  align-items: center;
+  flex: 1;
 `;
 
 const Wrap = styled.View`
@@ -82,6 +80,7 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
 }) => {
   const [password, setPassword] = useState<string>("");
   const [checkPassword, setCheckPassword] = useState<string>("");
+  const { height: SCREEN_HEIGHT } = useWindowDimensions();
 
   const numReg = /[0-9]+/;
   const engReg = /[a-zA-Z]+/;
@@ -110,9 +109,9 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
   }, []);
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss}>
-      <Container>
-        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+    <Container>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <ScrollView contentContainerStyle={{ minHeight: SCREEN_HEIGHT - 100 }} stickyHeaderIndices={[0]} showsVerticalScrollIndicator={false}>
         <BorderWrap>
           <Border />
         </BorderWrap>
@@ -158,13 +157,9 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
             <></>
           )}
         </Wrap>
-        <BottomButton
-          onPress={validate}
-          disabled={!numReg.test(password) || !engReg.test(password) || !specialReg.test(password) || password.length < 8 || password !== checkPassword}
-          title={"다음"}
-        />
-      </Container>
-    </TouchableWithoutFeedback>
+      </ScrollView>
+      <BottomButton onPress={validate} disabled={!numReg.test(password) || !engReg.test(password) || !specialReg.test(password) || password.length < 8 || password !== checkPassword} title={"다음"} />
+    </Container>
   );
 };
 
