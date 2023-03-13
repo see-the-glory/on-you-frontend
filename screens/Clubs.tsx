@@ -185,18 +185,21 @@ interface ClubSortItem {
 }
 
 const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
+  const filterMinNumber = 0;
+  const filterMaxNumber = 100;
   const toast = useToast();
   const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
     categoryId: 0,
-    minMember: null,
-    maxMember: null,
+    minMember: filterMinNumber,
+    maxMember: filterMaxNumber,
     sortType: "created",
     orderBy: "DESC",
     showRecruiting: 0,
     showMy: 0,
   });
-  const [memberRange, setMemberRange] = useState<number | number[]>([0, 100]);
+  const [usingFilter, setUsingFilter] = useState<boolean>(false);
+  const [memberRange, setMemberRange] = useState<number | number[]>([filterMinNumber, filterMaxNumber]);
   let sliderTimeoutId: number;
   const [showRecruiting, setShowRecruiting] = useState<number>(0);
   const [showMy, setShowMy] = useState<number>(0);
@@ -210,6 +213,8 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const [selectedSortIndex, setSelectedSortIndex] = useState<number>(0);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const colSize = Math.round(SCREEN_WIDTH / 2);
+  console.log(usingFilter);
+  console.log(params);
 
   const {
     isLoading: clubsLoading,
@@ -287,6 +292,9 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     curParams.showMy = showMy;
     curParams.minMember = Array.isArray(memberRange) ? memberRange[0] : null;
     curParams.maxMember = Array.isArray(memberRange) ? memberRange[1] : null;
+    if (curParams.showRecruiting || curParams.showMy || curParams.minMember !== filterMinNumber || curParams.maxMember !== filterMaxNumber) setUsingFilter(true);
+    else setUsingFilter(false);
+
     setParams(curParams);
     setIsPageTransition(true);
   };
@@ -387,16 +395,8 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
           <HeaderSection>
             <HeaderItem>
               <HeaderItemText>상세 필터</HeaderItemText>
-              <TouchableOpacity
-                style={{
-                  height: 35,
-                  justifyContent: "center",
-                }}
-                onPress={() => {
-                  openFilteringSheet();
-                }}
-              >
-                <Feather name="filter" size={14} color="black" />
+              <TouchableOpacity style={{ height: 35, justifyContent: "center" }} onPress={() => openFilteringSheet()}>
+                <Feather name="filter" size={14} color={usingFilter ? "#FF6534" : "black"} />
               </TouchableOpacity>
             </HeaderItem>
             <View
@@ -537,9 +537,9 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                     }, 100);
                   }}
                   onSlidingComplete={(value) => setMemberRange(value)}
-                  minimumValue={0}
+                  minimumValue={filterMinNumber}
                   minimumTrackTintColor="#FF6534"
-                  maximumValue={100}
+                  maximumValue={filterMaxNumber}
                   maximumTrackTintColor="#E8E8E8"
                   step={5}
                   thumbTintColor="white"
