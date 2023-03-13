@@ -395,7 +395,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
         disabled={nameErrorCheck || clubName === "" || maxNumber === "" || phoneNumber === "" || organizationName === "" || !imageURI}
         backgroundColor={"#FF6534"}
         title={"다음 2/3"}
-        contentContainerStyle={{ position: "relative" }}
+        contentContainerStyle={Platform.OS === "android" ? { position: "relative" } : {}}
       />
     </KeyboardAvoidingView>
   );

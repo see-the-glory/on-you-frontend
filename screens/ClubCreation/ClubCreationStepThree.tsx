@@ -191,7 +191,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
         disabled={clubShortDesc === "" || clubLongDesc === "" || disableSubmit}
         backgroundColor={"#FF6534"}
         title={"완료"}
-        contentContainerStyle={{ position: "relative" }}
+        contentContainerStyle={Platform.OS === "android" ? { position: "relative" } : {}}
       />
     </KeyboardAvoidingView>
   );
