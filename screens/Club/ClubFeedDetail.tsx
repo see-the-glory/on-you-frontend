@@ -49,10 +49,10 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   const { ref: complainOptionRef, open: openComplainOption, close: closeComplainOption } = useModalize();
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const modalOptionButtonHeight = 45;
-  const feedDetailHeaderHeight = 54;
-  const feedDetailInfoHeight = 36;
+  const feedDetailHeaderHeight = 62;
+  const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
-  const itemSeparatorGap = 30;
+  const itemSeparatorGap = 20;
   const itemLength = SCREEN_WIDTH + feedDetailHeaderHeight + feedDetailInfoHeight + feedDetailContentHeight + itemSeparatorGap;
   const [selectFeedData, setSelectFeedData] = useState<Feed>();
 
