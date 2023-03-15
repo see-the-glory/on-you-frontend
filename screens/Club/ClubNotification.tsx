@@ -74,9 +74,11 @@ const ClubNotification = ({
     };
   }, []);
 
+  const handlingActions = ["APPLY", "APPROVE", "REJECT", "FEED_CREATE"];
+
   const onPressItem = (item: Notification) => {
-    if (clubRole && ["MASTER", "MANAGER"].includes(clubRole?.role)) {
-      if (item.actionType === "APPLY") {
+    if (item.actionType === "APPLY") {
+      if (clubRole && ["MASTER", "MANAGER"].includes(clubRole?.role)) {
         return navigate("ClubApplication", {
           clubData,
           actionId: item.actionId,
@@ -86,11 +88,11 @@ const ClubNotification = ({
           createdTime: item.created,
           processDone: item.processDone,
         });
+      } else {
+        return toast.show("가입신청서를 볼 수 있는 권한이 없습니다.", { type: "warning" });
       }
-    } else {
-      toast.show("가입신청서를 볼 수 있는 권한이 없습니다.", {
-        type: "warning",
-      });
+    } else if (item.actionType === "FEED_CREATE") {
+      return navigate("ClubStack", { screen: "ClubFeedDetail", clubData, targetIndex: 0 });
     }
   };
 
@@ -105,7 +107,7 @@ const ClubNotification = ({
         contentContainerStyle={{ flexGrow: 1, paddingVertical: 10, paddingHorizontal: SCREEN_PADDING_SIZE }}
         refreshing={refreshing}
         onRefresh={onRefresh}
-        data={notifications && Array.isArray(notifications?.data) ? [...notifications?.data].reverse() : []}
+        data={notifications && Array.isArray(notifications?.data) ? [...notifications?.data].filter((item) => handlingActions.includes(item.actionType ?? "")).reverse() : []}
         ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
         keyExtractor={(item: Notification, index: number) => String(index)}
         renderItem={({ item, index }: { item: Notification; index: number }) => (

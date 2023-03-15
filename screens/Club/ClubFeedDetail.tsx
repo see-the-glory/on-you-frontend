@@ -212,7 +212,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       headerTitle: () => (
         <HeaderTitleView>
           <HeaderClubName>{clubData.name}</HeaderClubName>
-          <HeaderText>게시글</HeaderText>
+          <HeaderText>게시물</HeaderText>
         </HeaderTitleView>
       ),
     });

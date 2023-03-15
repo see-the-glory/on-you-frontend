@@ -35,50 +35,68 @@ interface NotificationItemProps {
   clubData: Club;
 }
 
+interface ActionType {
+  title: string;
+}
+
 const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, clubData }) => {
-  if (notificationData?.actionType === "APPLY") {
-    return (
-      <Item>
-        <Header>
-          <ItemTitle>가입희망</ItemTitle>
-          <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
-        </Header>
-        <TextView>
-          <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionerName}</ItemBoldText>
-          <ItemText processDone={notificationData?.processDone}>{`님이 `}</ItemText>
-          <ItemBoldText processDone={notificationData?.processDone}>{clubData?.name}</ItemBoldText>
-          <ItemText processDone={notificationData?.processDone}>{` 가입을 희망합니다.`}</ItemText>
-        </TextView>
-      </Item>
-    );
-  } else if (notificationData?.actionType === "APPROVE") {
-    return (
-      <Item>
-        <Header>
-          <ItemTitle>가입수락</ItemTitle>
-          <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
-        </Header>
-        <TextView>
-          <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionClubName}</ItemBoldText>
-          <ItemText processDone={notificationData?.processDone}>{` 모임에 가입되셨습니다!`}</ItemText>
-        </TextView>
-      </Item>
-    );
-  } else if (notificationData?.actionType === "REJECT") {
-    return (
-      <Item>
-        <Header>
-          <ItemTitle>가입거절</ItemTitle>
-          <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
-        </Header>
-        <TextView>
-          <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionClubName}</ItemBoldText>
-          <ItemText processDone={notificationData?.processDone}>{` 모임에서 메시지가 도착했습니다.`}</ItemText>
-        </TextView>
-      </Item>
-    );
-  } else {
-    return <></>;
+  switch (notificationData?.actionType) {
+    case "APPLY":
+      return (
+        <Item>
+          <Header>
+            <ItemTitle>가입희망</ItemTitle>
+            <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
+          </Header>
+          <TextView>
+            <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionerName}</ItemBoldText>
+            <ItemText processDone={notificationData?.processDone}>{`님이 `}</ItemText>
+            <ItemBoldText processDone={notificationData?.processDone}>{clubData?.name}</ItemBoldText>
+            <ItemText processDone={notificationData?.processDone}>{` 가입을 희망합니다.`}</ItemText>
+          </TextView>
+        </Item>
+      );
+    case "APPROVE":
+      return (
+        <Item>
+          <Header>
+            <ItemTitle>가입수락</ItemTitle>
+            <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
+          </Header>
+          <TextView>
+            <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionClubName}</ItemBoldText>
+            <ItemText processDone={notificationData?.processDone}>{` 모임에 가입되셨습니다!`}</ItemText>
+          </TextView>
+        </Item>
+      );
+    case "REJECT":
+      return (
+        <Item>
+          <Header>
+            <ItemTitle>가입거절</ItemTitle>
+            <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
+          </Header>
+          <TextView>
+            <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionClubName}</ItemBoldText>
+            <ItemText processDone={notificationData?.processDone}>{` 모임에서 메시지가 도착했습니다.`}</ItemText>
+          </TextView>
+        </Item>
+      );
+    case "FEED_CREATE":
+      return (
+        <Item>
+          <Header>
+            <ItemTitle>모임소식</ItemTitle>
+            <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
+          </Header>
+          <TextView>
+            <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionerName}</ItemBoldText>
+            <ItemText processDone={notificationData?.processDone}>{`님이 게시물을 올렸습니다.`}</ItemText>
+          </TextView>
+        </Item>
+      );
+    default:
+      return <></>;
   }
 };
 
