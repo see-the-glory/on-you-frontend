@@ -1,9 +1,9 @@
 import React, { useLayoutEffect } from "react";
-import {ActivityIndicator, FlatList, ScrollView, TouchableOpacity} from "react-native";
+import { ActivityIndicator, FlatList, ScrollView, TouchableOpacity } from "react-native";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Club, MyClub, UserApi,MyClubsResponse } from "../../api";
+import { Club, MyClub, UserApi, MyClubsResponse } from "../../api";
 import { MyClubSelectorScreenProps } from "../../types/feed";
 import CustomText from "../../components/CustomText";
 import { Entypo } from "@expo/vector-icons";
@@ -14,9 +14,9 @@ const Container = styled.SafeAreaView`
 
 const GuideText = styled(CustomText)`
   padding: 10px 0px 0px 20px;
-  color: #A0A0A0;
+  color: #a0a0a0;
   font-size: 14px;
-`
+`;
 
 const IntroText = styled(CustomText)`
   padding: 10px 0px 0px 20px;
@@ -89,11 +89,11 @@ const CategoryNameText = styled(CustomText)`
 `;
 
 const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
-                                                               navigation: { setOptions, navigate, goBack },
-                                                               route: {
-                                                                 params: { userId },
-                                                               },
-                                                             }) => {
+  navigation: { setOptions, navigate, goBack },
+  route: {
+    params: { userId },
+  },
+}) => {
   const token = useSelector((state: any) => state.auth.token);
 
   const {
@@ -112,47 +112,47 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-          <TouchableOpacity onPress={() => goBack()}>
-            <Entypo name="chevron-thin-left" size={20} color="black" />
-          </TouchableOpacity>
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
       ),
     });
   }, []);
 
   return (
-      <Container>
-        <GuideText>게시글을 업로드 할 모임을 선택하세요.</GuideText>
-        <IntroText>가입한 모임 List</IntroText>
-        <ReplyContainer>
-          {myClubInfoLoading ? (
-              <ActivityIndicator />
-          ) : (
-              <FlatList
-                  keyExtractor={(item: MyClub, index: number) => String(index)}
-                  data={myClub?.data?.filter(item=>item.applyStatus === "APPROVED")}
-                  renderItem={({ item, index }: { item: MyClub; index: number }) => (
-                          <ClubArea key={index} onPress={() => goToImageSelect(item)}>
-                              <ClubImg source={{ uri: item.thumbnail }} />
-                              <HeaderNameView>
-                                  <CommentMent>
-                                      <ClubName>{item.name}</ClubName>
-                                  </CommentMent>
-                                  <CommentRemainder>
-                                      {item.categories?.map((name) => {
-                                          return (
-                                              <CategoryView>
-                                                  <Tag name={name.name} textColor="white" backgroundColor="#C4C4C4" />
-                                              </CategoryView>
-                                          );
-                                      })}
-                                  </CommentRemainder>
-                              </HeaderNameView>
-                          </ClubArea>
-                  )}
-              />
-          )}
-        </ReplyContainer>
-      </Container>
+    <Container>
+      <GuideText>게시글을 업로드 할 모임을 선택하세요.</GuideText>
+      <IntroText>가입한 모임 List</IntroText>
+      <ReplyContainer>
+        {myClubInfoLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <FlatList
+            keyExtractor={(item: MyClub, index: number) => String(index)}
+            data={myClub?.data?.filter((item) => item.applyStatus === "APPROVED")}
+            renderItem={({ item, index }: { item: MyClub; index: number }) => (
+              <ClubArea key={index} onPress={() => goToImageSelect(item)}>
+                <ClubImg source={{ uri: item.thumbnail }} />
+                <HeaderNameView>
+                  <CommentMent>
+                    <ClubName>{item.name}</ClubName>
+                  </CommentMent>
+                  <CommentRemainder>
+                    {item.categories?.map((name, index) => {
+                      return (
+                        <CategoryView key={`Category_${index}`}>
+                          <Tag name={name.name} textColor="white" backgroundColor="#C4C4C4" />
+                        </CategoryView>
+                      );
+                    })}
+                  </CommentRemainder>
+                </HeaderNameView>
+              </ClubArea>
+            )}
+          />
+        )}
+      </ReplyContainer>
+    </Container>
   );
 };
 export default MyClubSelector;

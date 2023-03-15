@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import {
-  AntDesign, Octicons
-} from "@expo/vector-icons";
+import { AntDesign, Octicons } from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
 import {
   ActivityIndicator,
@@ -79,7 +77,7 @@ const FeedText = styled.TextInput`
 `;
 
 const SelectImageView = styled.View`
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
   height: 100px;
   width: 100%;
   flex-direction: column;
@@ -97,21 +95,21 @@ const MoreImageArea = styled.View`
   width: 55px;
   height: 55px;
   margin: 8px;
-  background-color: #ECECEC;
+  background-color: #ececec;
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
 
 const ImagePlusBtn = styled.Text`
   color: #aaaaaa;
   font-size: 55px;
   font-weight: 100;
   bottom: 10px;
-`
+`;
 
 const ImageUnderArea = styled.View`
-  justify-content: start;
+  justify-content: flex-start;
   flex-direction: row;
   padding-top: 15px;
 `;
@@ -163,9 +161,9 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
 
   const [buttonClicked, setButtonClicked] = useState(false);
 
-  useEffect(() => {
-    pickImage();
-  }, []);
+  // useEffect(() => {
+  //   pickImage();
+  // }, []);
 
   const pickImage = async () => {
     try {
@@ -325,16 +323,16 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     });
   }, [imageURL, content, isSubmitShow]);
 
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-      goBack();
-      return true;
-    });
+  // useEffect(() => {
+  //   const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+  //     goBack();
+  //     return true;
+  //   });
 
-    return () => {
-      backHandler.remove();
-    };
-  }, []);
+  //   return () => {
+  //     backHandler.remove();
+  //   };
+  // }, []);
 
   /** X선택시 사진 없어지는 태그 */
   const ImageCancel = (q: any) => {
