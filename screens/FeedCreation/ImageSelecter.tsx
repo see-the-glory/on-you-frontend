@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { AntDesign, Entypo, Ionicons, MaterialIcons, Octicons } from "@expo/vector-icons";
+import {
+  AntDesign, Octicons
+} from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
 import {
   ActivityIndicator,
@@ -77,7 +79,7 @@ const FeedText = styled.TextInput`
 `;
 
 const SelectImageView = styled.View`
-  background-color: #f2f2f2;
+  background-color: #F5F5F5;
   height: 100px;
   width: 100%;
   flex-direction: column;
@@ -89,11 +91,27 @@ const MyImage = styled.View`
   align-items: center;
   flex-direction: row;
   justify-content: center;
-  z-index: 100;
 `;
 
+const MoreImageArea = styled.View`
+  width: 55px;
+  height: 55px;
+  margin: 8px;
+  background-color: #ECECEC;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const ImagePlusBtn = styled.Text`
+  color: #aaaaaa;
+  font-size: 55px;
+  font-weight: 100;
+  bottom: 10px;
+`
+
 const ImageUnderArea = styled.View`
-  justify-content: space-between;
+  justify-content: start;
   flex-direction: row;
   padding-top: 15px;
 `;
@@ -116,7 +134,7 @@ const CancelIcon = styled.TouchableOpacity`
   width: 20%;
   position: absolute;
   right: 12%;
-  bottom: 50px;
+  bottom: 48px;
 `;
 
 const FeedCreateText = styled.Text`
@@ -378,14 +396,16 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
           <SelectImageView>
             <MyImage>
               <DraggableFlatList horizontal data={imageURL} onDragEnd={({ data }) => setImageURL(data)} keyExtractor={(item) => item} renderItem={(props) => renderItem({ ...props })} />
-            </MyImage>
-            <ImageUnderArea>
-              <MoveImageText>사진을 옮겨 순서를 변경할 수 있습니다.</MoveImageText>
               {imageURL.length < 5 ? (
                 <TouchableOpacity onPress={morePickImage}>
-                  <MaterialIcons name="add-photo-alternate" size={23} color="black" />
+                  <MoreImageArea>
+                    <ImagePlusBtn>+</ImagePlusBtn>
+                  </MoreImageArea>
                 </TouchableOpacity>
               ) : null}
+            </MyImage>
+            <ImageUnderArea>
+              <MoveImageText>사진을 길게 눌러 순서를 변경할 수 있습니다.</MoveImageText>
             </ImageUnderArea>
           </SelectImageView>
           <FeedText
