@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, BackHandler, DeviceEventEmitter, FlatList, StatusBar, TouchableOpacity, View } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { ClubApi, ErrorResponse, Notification, NotificationsResponse } from "../../api";
 import CustomText from "../../components/CustomText";
 import NotificationItem from "../../components/NotificationItem";
+import { RootState } from "../../redux/store/reducers";
 
 const SCREEN_PADDING_SIZE = 20;
 
@@ -92,6 +94,7 @@ const ClubNotification = ({
         return toast.show("가입신청서를 볼 수 있는 권한이 없습니다.", { type: "warning" });
       }
     } else if (item.actionType === "FEED_CREATE") {
+      // const targetIndex = feeds.findIndex((feed => feed.id === id));
       return navigate("ClubStack", { screen: "ClubFeedDetail", clubData, targetIndex: 0 });
     }
   };

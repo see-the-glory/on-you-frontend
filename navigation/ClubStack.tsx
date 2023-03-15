@@ -106,11 +106,6 @@ const ClubStack = ({
         initialParams={{ clubData, targetIndex }}
         options={{
           headerBackVisible: false,
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
-              <Entypo name="chevron-thin-left" size={20} color="black"></Entypo>
-            </TouchableOpacity>
-          ),
         }}
       />
     </NativeStack.Navigator>
