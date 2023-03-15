@@ -242,9 +242,7 @@ const Home: React.FC<HomeScreenProps> = () => {
 
   const deleteFeed = () => {
     if (selectFeedData === undefined || selectFeedData?.id === -1) {
-      toast.show("게시글 정보가 잘못되었습니다.", {
-        type: "warning",
-      });
+      toast.show("게시글 정보가 잘못되었습니다.", { type: "warning" });
       return;
     }
     const requestData: FeedDeletionRequest = {
@@ -285,9 +283,7 @@ const Home: React.FC<HomeScreenProps> = () => {
 
   const blockUser = () => {
     if (selectFeedData === undefined || selectFeedData?.id === -1) {
-      toast.show("게시글 정보가 잘못되었습니다.", {
-        type: "warning",
-      });
+      toast.show("게시글 정보가 잘못되었습니다.", { type: "warning" });
       return;
     }
 

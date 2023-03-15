@@ -1,5 +1,5 @@
 import React, { useCallback, useLayoutEffect, useState } from "react";
-import { Alert, DeviceEventEmitter, EventSubscriptionVendor, FlatList, StatusBar, useWindowDimensions, View } from "react-native";
+import { Alert, DeviceEventEmitter, EventSubscriptionVendor, FlatList, StatusBar, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
@@ -14,6 +14,7 @@ import FeedOptionModal from "../Feed/FeedOptionModal";
 import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
 import clubSlice from "../../redux/slices/club";
+import { Entypo } from "@expo/vector-icons";
 
 const Container = styled.View``;
 const HeaderTitleView = styled.View`
@@ -34,12 +35,11 @@ const HeaderText = styled(CustomText)`
 `;
 
 const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
-  navigation: { setOptions, navigate },
+  navigation: { setOptions, navigate, goBack },
   route: {
     params: { clubData, targetIndex },
   },
 }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const me = useSelector((state: RootState) => state.auth.user);
   const feeds = useSelector((state: RootState) => state.club.feeds);
   const dispatch = useAppDispatch();
@@ -49,10 +49,10 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   const { ref: complainOptionRef, open: openComplainOption, close: closeComplainOption } = useModalize();
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const modalOptionButtonHeight = 45;
-  const feedDetailHeaderHeight = 54;
-  const feedDetailInfoHeight = 36;
+  const feedDetailHeaderHeight = 62;
+  const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
-  const itemSeparatorGap = 30;
+  const itemSeparatorGap = 20;
   const itemLength = SCREEN_WIDTH + feedDetailHeaderHeight + feedDetailInfoHeight + feedDetailContentHeight + itemSeparatorGap;
   const [selectFeedData, setSelectFeedData] = useState<Feed>();
 
@@ -114,9 +114,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
 
   const deleteFeed = () => {
     if (selectFeedData === undefined || selectFeedData?.id === -1) {
-      toast.show("게시글 정보가 잘못되었습니다.", {
-        type: "warning",
-      });
+      toast.show("게시글 정보가 잘못되었습니다.", { type: "warning" });
       return;
     }
 
@@ -212,8 +210,14 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       headerTitle: () => (
         <HeaderTitleView>
           <HeaderClubName>{clubData.name}</HeaderClubName>
-          <HeaderText>게시글</HeaderText>
+          <HeaderText>게시물</HeaderText>
         </HeaderTitleView>
+      ),
+
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black"></Entypo>
+        </TouchableOpacity>
       ),
     });
   }, []);
