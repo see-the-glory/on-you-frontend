@@ -105,7 +105,7 @@ const ImagePlusBtn = styled.Text`
   color: #aaaaaa;
   font-size: 55px;
   font-weight: 100;
-  bottom: 10px;
+  line-height: 59px;
 `;
 
 const ImageUnderArea = styled.View`
@@ -323,16 +323,16 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
     });
   }, [imageURL, content, isSubmitShow]);
 
-  // useEffect(() => {
-  //   const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-  //     goBack();
-  //     return true;
-  //   });
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+      goBack();
+      return true;
+    });
 
-  //   return () => {
-  //     backHandler.remove();
-  //   };
-  // }, []);
+    return () => {
+      backHandler.remove();
+    };
+  }, []);
 
   /** X선택시 사진 없어지는 태그 */
   const ImageCancel = (q: any) => {
