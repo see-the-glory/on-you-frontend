@@ -292,7 +292,7 @@ const Home: React.FC<HomeScreenProps> = () => {
     };
 
     Alert.alert(
-      `${selectFeedData.userName}님을 차단하시곘어요?`,
+      `${selectFeedData.userName}님을 차단하시겠어요?`,
       `${selectFeedData.userName}님의 게시글을 볼 수 없게 됩니다. 상대방에게는 회원님이 차단했다는 정보를 알리지 않습니다.`,
       [
         {
