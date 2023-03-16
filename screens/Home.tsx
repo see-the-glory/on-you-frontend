@@ -360,6 +360,7 @@ const Home: React.FC<HomeScreenProps> = () => {
         refreshing={refreshing}
         onRefresh={onRefresh}
         onEndReached={loadMore}
+        onEndReachedThreshold={0.7}
         data={feeds}
         ItemSeparatorComponent={ItemSeparatorComponent}
         ListFooterComponent={ListFooterComponent}

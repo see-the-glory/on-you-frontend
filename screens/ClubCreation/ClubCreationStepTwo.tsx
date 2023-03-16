@@ -192,7 +192,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
       return toast.show(`모임 이름은 공백으로 설정할 수 없습니다.`, { type: "warning" });
     } else if (specialChar.test(clubName)) {
       return toast.show(`모임 이름에 특수문자가 포함되어 있습니다.`, { type: "warning" });
-    } else if (clubName.length > lengthLimit) {
+    } else if (clubName.length - (clubName.split(" ").length - 1) > lengthLimit) {
       return toast.show(`모임 이름은 ${lengthLimit}자 이하여야 합니다.`, { type: "warning" });
     }
 
@@ -263,15 +263,16 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
                   value={clubName}
                   placeholder={`모임명 ${lengthLimit}자 이내 (특문 불가)`}
                   placeholderTextColor="#B0B0B0"
-                  maxLength={lengthLimit + 2}
+                  maxLength={20}
                   onEndEditing={() => {
                     setClubName((prev) => prev.trim());
                   }}
                   onChangeText={(name: string) => {
                     setClubName(name);
+                    const space = name.split(" ").length - 1;
                     if (isDuplicatedName) setIsDuplicatedName(false);
-                    if (!nameErrorCheck && (name.length > lengthLimit || specialChar.test(name))) setNameErrorCheck(true);
-                    if (nameErrorCheck && name.length <= lengthLimit && !specialChar.test(name)) setNameErrorCheck(false);
+                    if (!nameErrorCheck && (name.length - space > lengthLimit || specialChar.test(name))) setNameErrorCheck(true);
+                    if (nameErrorCheck && name.length - space <= lengthLimit && !specialChar.test(name)) setNameErrorCheck(false);
                   }}
                   returnKeyType="done"
                   returnKeyLabel="done"
@@ -296,7 +297,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
               ) : (
                 <></>
               )}
-              {clubName.length > lengthLimit ? (
+              {clubName.length - (clubName.split(" ").length - 1) > lengthLimit ? (
                 <ValidationItem>
                   <AntDesign name="check" size={12} color={"#ff6534"} />
                   <ValidationText>{` ${lengthLimit}자 초과`}</ValidationText>

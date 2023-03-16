@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { ActivityIndicator, DeviceEventEmitter, FlatList, Platform, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { ActivityIndicator, DeviceEventEmitter, FlatList, Platform, StatusBar, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
 import { Feather, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import ClubList from "../components/ClubList";
 import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
 import { Category, CategoryResponse, ClubApi, Club, ClubsResponse, ClubsParams, ErrorResponse } from "../api";
 import { ClubListScreenProps } from "../Types/Club";
-import { useSelector } from "react-redux";
 import CustomText from "../components/CustomText";
 import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { Slider } from "@miblanchard/react-native-slider";
-import { RootState } from "../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
 
 const Loader = styled.SafeAreaView`
@@ -213,6 +211,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const [selectedSortIndex, setSelectedSortIndex] = useState<number>(0);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const colSize = Math.round(SCREEN_WIDTH / 2);
+  const clubsFlatlistRef = useRef<FlatList<Club>>();
 
   const {
     isLoading: clubsLoading,
@@ -350,13 +349,18 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
       // },
     ]);
 
-    const ClubListSubscription = DeviceEventEmitter.addListener("ClubListRefetch", () => {
+    const clubListSubscription = DeviceEventEmitter.addListener("ClubListRefetch", () => {
       onRefresh();
+    });
+
+    const clubListScrollToTopSubscription = DeviceEventEmitter.addListener("ClubListScrollToTop", () => {
+      clubsFlatlistRef?.current?.scrollToOffset({ animated: true, offset: 0 });
     });
 
     return () => {
       console.log("Clubs - remove listner");
-      ClubListSubscription.remove();
+      clubListSubscription.remove();
+      clubListScrollToTopSubscription.remove();
     };
   }, []);
 
@@ -428,10 +432,12 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
             </Loader>
           ) : (
             <FlatList
+              ref={clubsFlatlistRef}
               contentContainerStyle={{ flexGrow: 1 }}
               refreshing={refreshing}
               onRefresh={onRefresh}
               onEndReached={loadMore}
+              onEndReachedThreshold={0.7}
               data={clubs?.pages?.map((page) => page?.responses?.content).flat()}
               columnWrapperStyle={{ justifyContent: "space-between" }}
               ItemSeparatorComponent={() => <View style={{ height: 25 }} />}

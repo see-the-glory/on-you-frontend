@@ -271,7 +271,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
         />
         <ContentArea>
           <Ment
-            value={feedData.content}
+            value={content}
             onChangeText={(content: string) => setContent(content)}
             placeholderTextColor="#B0B0B0"
             placeholder="게시글 입력 ..."

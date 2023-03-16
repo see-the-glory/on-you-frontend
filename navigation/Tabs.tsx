@@ -100,6 +100,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
               });
 
               if (isFocused && route.name === "Home") DeviceEventEmitter.emit("HomeFeedScrollToTop");
+              if (isFocused && route.name === "Clubs") DeviceEventEmitter.emit("ClubListScrollToTop");
 
               if (!isFocused && !event.defaultPrevented) {
                 // The `merge: true` option makes sure that the params inside the tab screen are preserved
