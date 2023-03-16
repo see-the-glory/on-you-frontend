@@ -104,7 +104,8 @@ const UserNotification = ({ navigation: { navigate } }) => {
           },
         });
       }
-      return navigate("ClubStack", { screen: "ClubTopTabs", clubData: { id: item.actionClubId } });
+      const clubTopTabsProps = { clubData: { id: item.actionClubId } };
+      return navigate("ClubStack", { screen: "ClubTopTabs", params: clubTopTabsProps });
     } else if (item.actionType === "REJECT") {
       if (!item.processDone) {
         readActionMutation.mutate(requestData, {

@@ -84,9 +84,14 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
   };
 
   const goToClubStack = (clubData: Club) => {
+    const clubTopTabsProps = {
+      clubData: {
+        id: clubData.id,
+      },
+    };
     return navigate("ClubStack", {
       screen: "ClubTopTabs",
-      clubData: { id: clubData.id },
+      params: clubTopTabsProps,
     });
   };
 

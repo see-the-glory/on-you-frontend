@@ -261,7 +261,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
   const goToScheduleEdit = (item: Schedule) => {
     hideMenu(item.id ?? -1);
     closeModal(true);
-    return navigation.navigate("ClubStack", { screen: "ClubScheduleEdit", clubData: { id: clubId }, scheduleData: item });
+    return navigation.navigate("ClubStack", { screen: "ClubScheduleEdit", params: { clubData: { id: clubId }, scheduleData: item } });
   };
 
   return (

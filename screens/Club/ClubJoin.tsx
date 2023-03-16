@@ -6,6 +6,7 @@ import CustomTextInput from "../../components/CustomTextInput";
 import { useMutation } from "react-query";
 import { BaseResponse, ClubApi, ClubApplyRequest, ErrorResponse } from "../../api";
 import { useToast } from "react-native-toast-notifications";
+import { Entypo } from "@expo/vector-icons";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -73,6 +74,11 @@ const ClubJoin = ({
 
   useLayoutEffect(() => {
     setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
       headerRight: () =>
         clubApplyMutation.isLoading ? (
           <ActivityIndicator />
