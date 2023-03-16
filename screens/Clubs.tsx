@@ -437,6 +437,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               refreshing={refreshing}
               onRefresh={onRefresh}
               onEndReached={loadMore}
+              onEndReachedThreshold={0.7}
               data={clubs?.pages?.map((page) => page?.responses?.content).flat()}
               columnWrapperStyle={{ justifyContent: "space-between" }}
               ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
