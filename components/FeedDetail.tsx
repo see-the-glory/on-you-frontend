@@ -207,7 +207,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
             </ContentTextView>
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback onPress={contentTextTouch}>
-            <Collapsible collapsed={this.state.isCollapsed} style={{ height: this.state.textHeight, backgroundColor: "orange" }}>
+            <Collapsible collapsed={this.state.isCollapsed} style={{ height: this.state.textHeight }}>
               <ContentTextView>
                 <ContentText>{this.state.remainedText}</ContentText>
               </ContentTextView>
