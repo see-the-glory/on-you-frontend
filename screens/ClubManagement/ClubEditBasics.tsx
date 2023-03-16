@@ -181,7 +181,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 5) * 3);
   const specialChar = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]+/;
-  const lengthLimit = 10;
+  const lengthLimit = 8;
 
   const { isLoading: categoryLoading, data: categories } = useQuery<CategoryResponse, ErrorResponse>(["getCategories"], ClubApi.getCategories, {
     onSuccess: (res) => {
