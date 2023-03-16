@@ -105,7 +105,7 @@ const Home: React.FC<HomeScreenProps> = () => {
   } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["feeds"], FeedApi.getFeeds, {
     getNextPageParam: (lastPage) => {
       if (lastPage) {
-        return lastPage.hasNext === false ? null : lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor;
+        return lastPage.hasData === true ? lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor : null;
       }
     },
     onSuccess: (res) => {
