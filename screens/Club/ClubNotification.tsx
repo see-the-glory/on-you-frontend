@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, BackHandler, DeviceEventEmitter, FlatList, StatusBar, TouchableOpacity, View } from "react-native";
 import { useToast } from "react-native-toast-notifications";
-import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
+import { useMutation, useQuery } from "react-query";
 import styled from "styled-components/native";
-import { ClubApi, ErrorResponse, Notification, NotificationsResponse } from "../../api";
+import { BaseResponse, ClubApi, CommonApi, ErrorResponse, Notification, NotificationsResponse, ReadActionRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import NotificationItem from "../../components/NotificationItem";
-import { RootState } from "../../redux/store/reducers";
 
 const SCREEN_PADDING_SIZE = 20;
 
@@ -55,6 +53,14 @@ const ClubNotification = ({
     },
   });
 
+  const readActionMutation = useMutation<BaseResponse, ErrorResponse, ReadActionRequest>(CommonApi.readAction, {
+    onSuccess: (res) => {},
+    onError: (error) => {
+      console.log(`API ERROR | readAction ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
   const onRefresh = async () => {
     setRefreshing(true);
     await notiRefetch();
@@ -79,6 +85,9 @@ const ClubNotification = ({
   const handlingActions = ["APPLY", "APPROVE", "REJECT", "FEED_CREATE"];
 
   const onPressItem = (item: Notification) => {
+    const requestData: ReadActionRequest = {
+      actionId: item.actionId,
+    };
     if (item.actionType === "APPLY") {
       if (clubRole && ["MASTER", "MANAGER"].includes(clubRole?.role)) {
         return navigate("ClubApplication", {
@@ -95,6 +104,13 @@ const ClubNotification = ({
       }
     } else if (item.actionType === "FEED_CREATE") {
       // const targetIndex = feeds.findIndex((feed => feed.id === id));
+      if (!item.processDone) {
+        readActionMutation.mutate(requestData, {
+          onSuccess: (res) => {
+            item.processDone = true;
+          },
+        });
+      }
       return navigate("ClubStack", { screen: "ClubFeedDetail", clubData, targetIndex: 0 });
     }
   };

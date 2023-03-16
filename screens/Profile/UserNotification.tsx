@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, DeviceEventEmitter, FlatList, StatusBar, TouchableOpacity, View } from "react-native";
 import { useToast } from "react-native-toast-notifications";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import styled from "styled-components/native";
-import { ErrorResponse, Notification, NotificationsResponse, UserApi } from "../../api";
+import { BaseResponse, CommonApi, ErrorResponse, Notification, NotificationsResponse, ReadActionRequest, UserApi } from "../../api";
 import CustomText from "../../components/CustomText";
 import NotificationItem from "../../components/NotificationItem";
 
@@ -48,6 +48,14 @@ const UserNotification = ({ navigation: { navigate } }) => {
     },
   });
 
+  const readActionMutation = useMutation<BaseResponse, ErrorResponse, ReadActionRequest>(CommonApi.readAction, {
+    onSuccess: (res) => {},
+    onError: (error) => {
+      console.log(`API ERROR | readAction ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
   const onRefresh = async () => {
     setRefreshing(true);
     await notiRefetch();
@@ -65,6 +73,9 @@ const UserNotification = ({ navigation: { navigate } }) => {
   const handlingActions = ["APPLY", "APPROVE", "REJECT"];
 
   const onPressItem = async (item: Notification) => {
+    const requestData: ReadActionRequest = {
+      actionId: item.actionId,
+    };
     if (item.actionType === "APPLY") {
       return navigate("ClubStack", {
         screen: "ClubApplication",
@@ -80,9 +91,24 @@ const UserNotification = ({ navigation: { navigate } }) => {
         processDone: item.processDone,
       });
     } else if (item.actionType === "APPROVE") {
+      if (!item.processDone) {
+        readActionMutation.mutate(requestData, {
+          onSuccess: (res) => {
+            item.processDone = true;
+          },
+        });
+      }
       return navigate("ClubStack", { screen: "ClubTopTabs", clubData: { id: item.actionClubId } });
     } else if (item.actionType === "REJECT") {
       // 거절 메시지 보여주기
+      if (!item.processDone) {
+        readActionMutation.mutate(requestData, {
+          onSuccess: (res) => {
+            item.processDone = true;
+          },
+        });
+      }
+      toast.show(`곧 구현됩니다!`, { type: "success" });
     }
   };
 
