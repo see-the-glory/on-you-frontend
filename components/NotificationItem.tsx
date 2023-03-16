@@ -95,6 +95,19 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, c
           </TextView>
         </Item>
       );
+    case "FEED_COMMENT":
+      return (
+        <Item>
+          <Header>
+            <ItemTitle>모임소식</ItemTitle>
+            <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
+          </Header>
+          <TextView>
+            <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionerName}</ItemBoldText>
+            <ItemText processDone={notificationData?.processDone}>{`님이 내 글에 댓글을 달았습니다.`}</ItemText>
+          </TextView>
+        </Item>
+      );
     default:
       return <></>;
   }

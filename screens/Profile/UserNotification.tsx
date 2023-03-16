@@ -67,10 +67,13 @@ const UserNotification = ({ navigation: { navigate } }) => {
       console.log("UserNotification - Refresh Event");
       onRefresh();
     });
-    return () => userNotifSubs.remove();
+    return () => {
+      DeviceEventEmitter.emit("HomeNotiRefetch");
+      userNotifSubs.remove();
+    };
   }, []);
 
-  const handlingActions = ["APPLY", "APPROVE", "REJECT"];
+  const handlingActions = ["APPLY", "APPROVE", "REJECT", "FEED_COMMENT"];
 
   const onPressItem = async (item: Notification) => {
     const requestData: ReadActionRequest = {
@@ -101,6 +104,15 @@ const UserNotification = ({ navigation: { navigate } }) => {
       return navigate("ClubStack", { screen: "ClubTopTabs", clubData: { id: item.actionClubId } });
     } else if (item.actionType === "REJECT") {
       // 거절 메시지 보여주기
+      if (!item.processDone) {
+        readActionMutation.mutate(requestData, {
+          onSuccess: (res) => {
+            item.processDone = true;
+          },
+        });
+      }
+      toast.show(`곧 구현됩니다!`, { type: "success" });
+    } else if (item.actionType === "FEED_COMMENT") {
       if (!item.processDone) {
         readActionMutation.mutate(requestData, {
           onSuccess: (res) => {

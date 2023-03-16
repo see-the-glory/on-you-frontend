@@ -133,8 +133,12 @@ const Home: React.FC<HomeScreenProps> = () => {
 
   useEffect(() => {
     console.log("Home - add listner");
-    const homeFeedSubscription = DeviceEventEmitter.addListener("HomeFeedRefetch", () => {
+    const homeFeedSubscription = DeviceEventEmitter.addListener("HomeAllRefetch", () => {
       onRefresh();
+    });
+
+    const homeNotiSubscription = DeviceEventEmitter.addListener("HomeNotiRefetch", () => {
+      notiRefetch();
     });
 
     const homeFeedScrollToTopSubscription = DeviceEventEmitter.addListener("HomeFeedScrollToTop", () => {
@@ -144,6 +148,7 @@ const Home: React.FC<HomeScreenProps> = () => {
     return () => {
       console.log("Home - remove listner");
       homeFeedSubscription.remove();
+      homeNotiSubscription.remove();
       homeFeedScrollToTopSubscription.remove();
     };
   }, []);
