@@ -105,7 +105,7 @@ const ImagePlusBtn = styled.Text`
   color: #aaaaaa;
   font-size: 55px;
   font-weight: 100;
-  bottom: ${Platform.OS === "ios" ? 10 : 12}px;;
+  line-height: 59px;
 `;
 
 const ImageUnderArea = styled.View`
