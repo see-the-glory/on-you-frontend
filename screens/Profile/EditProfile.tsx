@@ -174,7 +174,7 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
 
     return () => {
       DeviceEventEmitter.emit("ProfileRefresh");
-      DeviceEventEmitter.emit("HomeFeedRefetch");
+      DeviceEventEmitter.emit("HomeAllRefetch");
     };
   }, [name, birthday, phoneNumber, organizationName, imageURI, mutation.isLoading]);
 

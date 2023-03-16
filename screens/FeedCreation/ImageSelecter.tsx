@@ -245,7 +245,7 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
   const mutation = useMutation<BaseResponse, ErrorResponse, FeedCreationRequest>(FeedApi.createFeed, {
     onSuccess: (res) => {
       setSubmitShow(true);
-      DeviceEventEmitter.emit("HomeFeedRefetch");
+      DeviceEventEmitter.emit("HomeAllRefetch");
       navigate("Tabs", { screen: "Home" });
     },
     onError: (error) => {

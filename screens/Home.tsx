@@ -105,7 +105,7 @@ const Home: React.FC<HomeScreenProps> = () => {
   } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["feeds"], FeedApi.getFeeds, {
     getNextPageParam: (lastPage) => {
       if (lastPage) {
-        return lastPage.hasNext === false ? null : lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor;
+        return lastPage.hasData === true ? lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor : null;
       }
     },
     onSuccess: (res) => {
@@ -133,8 +133,12 @@ const Home: React.FC<HomeScreenProps> = () => {
 
   useEffect(() => {
     console.log("Home - add listner");
-    const homeFeedSubscription = DeviceEventEmitter.addListener("HomeFeedRefetch", () => {
+    const homeFeedSubscription = DeviceEventEmitter.addListener("HomeAllRefetch", () => {
       onRefresh();
+    });
+
+    const homeNotiSubscription = DeviceEventEmitter.addListener("HomeNotiRefetch", () => {
+      notiRefetch();
     });
 
     const homeFeedScrollToTopSubscription = DeviceEventEmitter.addListener("HomeFeedScrollToTop", () => {
@@ -144,6 +148,7 @@ const Home: React.FC<HomeScreenProps> = () => {
     return () => {
       console.log("Home - remove listner");
       homeFeedSubscription.remove();
+      homeNotiSubscription.remove();
       homeFeedScrollToTopSubscription.remove();
     };
   }, []);
@@ -292,7 +297,7 @@ const Home: React.FC<HomeScreenProps> = () => {
     };
 
     Alert.alert(
-      `${selectFeedData.userName}님을 차단하시곘어요?`,
+      `${selectFeedData.userName}님을 차단하시겠어요?`,
       `${selectFeedData.userName}님의 게시글을 볼 수 없게 됩니다. 상대방에게는 회원님이 차단했다는 정보를 알리지 않습니다.`,
       [
         {

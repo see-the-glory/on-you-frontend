@@ -96,7 +96,7 @@ const ClubJoin = ({
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
         <MainView>
           <Header>
-            <HeaderTitle>{`클럽의 가입 희망을 환영합니다!\n클럽 리더에게 신청자의 정보를 알려주세요.`}</HeaderTitle>
+            <HeaderTitle>{`모임의 가입 희망을 환영합니다!\n모임 리더에게 신청자의 정보를 알려주세요.`}</HeaderTitle>
             <HeaderText>{`ex) 이름, 연락처, 교회명과 소속부서명, 함께하고 싶은 이유 등`}</HeaderText>
           </Header>
           <MemoTextInput

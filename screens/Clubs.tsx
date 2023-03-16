@@ -223,7 +223,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   } = useInfiniteQuery<ClubsResponse, ErrorResponse>(["clubs", params], ClubApi.getClubs, {
     getNextPageParam: (lastPage) => {
       if (lastPage) {
-        return lastPage.hasNext === false ? null : lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor;
+        return lastPage.hasData === true ? lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor : null;
       }
     },
     onSuccess: (res) => {
@@ -456,7 +456,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                     thumbnailPath={item.thumbnail}
                     organizationName={item.organizationName}
                     clubName={item.name}
-                    memberNum={item.members?.filter((member) => member.role !== "PENDING").length}
+                    memberNum={item.recruitNumber}
                     clubShortDesc={item.clubShortDesc}
                     categories={item.categories}
                     recruitStatus={item.recruitStatus}

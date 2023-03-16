@@ -148,7 +148,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
   const mutation = useMutation<BaseResponse, ErrorResponse, FeedUpdateRequest>(FeedApi.updateFeed, {
     onSuccess: (res) => {
       toast.show(`피드가 수정되었습니다.`, { type: "success" });
-      DeviceEventEmitter.emit("HomeFeedRefetch");
+      DeviceEventEmitter.emit("HomeAllRefetch");
       navigate("Tabs", { screen: "Home" });
     },
     onError: (error) => {

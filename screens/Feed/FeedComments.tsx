@@ -63,6 +63,14 @@ const CommentInput = styled(CustomTextInput)`
   margin: 1px 0px;
 `;
 const SubmitButton = styled.TouchableOpacity`
+  width: 40px;
+  justify-content: center;
+  align-items: center;
+  padding-left: 8px;
+  margin-bottom: 8px;
+`;
+const SubmitLoadingView = styled.View`
+  width: 40px;
   justify-content: center;
   align-items: center;
   padding-left: 8px;
@@ -110,10 +118,10 @@ const FeedComments = ({
     params: { feedIndex, feedId, clubId },
   },
 }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const me = useSelector((state: RootState) => state.auth.user);
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [comment, setComment] = useState<string>("");
   const [validation, setValidation] = useState<boolean>(false);
   const [commentInputHeight, setCommentInputHeight] = useState<number>(0);
@@ -204,6 +212,12 @@ const FeedComments = ({
     });
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await commentsRefetch();
+    setRefreshing(false);
+  };
+
   return commentsLoading ? (
     <Loader>
       <ActivityIndicator />
@@ -213,6 +227,8 @@ const FeedComments = ({
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={commentInputHeight} style={{ flex: 1 }}>
         <SwipeListView
           contentContainerStyle={{ flexGrow: 1 }}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
           data={[...(comments?.data ?? [])].reverse()}
           keyExtractor={(item: FeedComment, index: number) => String(index)}
           ListFooterComponent={<View />}
@@ -263,9 +279,15 @@ const FeedComments = ({
               includeFontPadding={false}
             />
           </RoundingView>
-          <SubmitButton disabled={!validation} onPress={submit}>
-            <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
-          </SubmitButton>
+          {createFeedCommentMutation.isLoading ? (
+            <SubmitLoadingView>
+              <ActivityIndicator />
+            </SubmitLoadingView>
+          ) : (
+            <SubmitButton disabled={!validation} onPress={submit}>
+              <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
+            </SubmitButton>
+          )}
         </FooterView>
       </KeyboardAvoidingView>
     </Container>

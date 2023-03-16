@@ -178,7 +178,7 @@ export interface ClubCreationResponse extends BaseResponse {
 }
 
 export interface ClubsResponse extends BaseResponse {
-  hasNext: boolean;
+  hasData: boolean;
   responses: {
     content: Club[];
   };
@@ -194,7 +194,7 @@ export interface FeedResponse extends BaseResponse {
 }
 
 export interface FeedsResponse extends BaseResponse {
-  hasNext: boolean;
+  hasData: boolean;
   responses: {
     content: Feed[];
   };

@@ -324,7 +324,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                   value={clubName}
                   placeholder={`모임명 ${lengthLimit}자 이내 (특수문자 불가)`}
                   placeholderTextColor="#B0B0B0"
-                  maxLength={20}
+                  maxLength={12}
                   onEndEditing={() => {
                     setClubName((prev) => prev.trim());
                   }}
