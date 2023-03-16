@@ -181,7 +181,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 5) * 3);
   const specialChar = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]+/;
-  const lengthLimit = 8;
+  const lengthLimit = 10;
 
   const { isLoading: categoryLoading, data: categories } = useQuery<CategoryResponse, ErrorResponse>(["getCategories"], ClubApi.getCategories, {
     onSuccess: (res) => {
@@ -324,7 +324,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                   value={clubName}
                   placeholder={`모임명 ${lengthLimit}자 이내 (특수문자 불가)`}
                   placeholderTextColor="#B0B0B0"
-                  maxLength={10}
+                  maxLength={lengthLimit + 2}
                   onEndEditing={() => {
                     setClubName((prev) => prev.trim());
                   }}

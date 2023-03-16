@@ -163,7 +163,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const imageHeight = Math.floor(((SCREEN_WIDTH * 0.8) / 5) * 3);
   const specialChar = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]+/;
-  const lengthLimit = 8;
+  const lengthLimit = 10;
 
   const clubNameMutation = useMutation<DuplicateCheckResponse, ErrorResponse, DuplicateClubNameCheckRequest>(ClubApi.duplicateClubNameCheck);
 
@@ -263,7 +263,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
                   value={clubName}
                   placeholder={`모임명 ${lengthLimit}자 이내 (특문 불가)`}
                   placeholderTextColor="#B0B0B0"
-                  maxLength={10}
+                  maxLength={lengthLimit + 2}
                   onEndEditing={() => {
                     setClubName((prev) => prev.trim());
                   }}
