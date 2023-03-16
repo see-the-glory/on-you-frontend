@@ -32,7 +32,7 @@ const ClubArea = styled.TouchableOpacity`
   flex-direction: row;
   width: 100%;
   height: auto;
-  padding: 5px 15px 0 15px;
+  padding: 5px 15px;
   border-style: solid;
   border-bottom-color: #e9e9e9;
   border-bottom-width: 1px;
