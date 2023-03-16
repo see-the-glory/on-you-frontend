@@ -463,6 +463,10 @@ export interface FeedDeletionRequest {
   feedId: number;
 }
 
+export interface ReadActionRequest {
+  actionId: number;
+}
+
 // Categories
 const getCategories = ({ queryKey }: any) => axios.get<string, CategoryResponse>(`/api/categories`);
 
@@ -525,10 +529,6 @@ const deleteClub = (req: ClubDeletionRequest) => axios.delete<string, BaseRespon
 const duplicateClubNameCheck = (req: DuplicateClubNameCheckRequest) => axios.post<string, DuplicateCheckResponse>(`/api/clubs/duplicateCheck`, req);
 
 // Club Management
-const getClubNotifications = ({ queryKey }: any) => {
-  const [_key, clubId]: [string, number] = queryKey;
-  return axios.get<string, NotificationsResponse>(`/api/notifications/club/${clubId}`);
-};
 const approveToClubJoin = (req: ClubApproveRequest) => axios.post<string, BaseResponse>(`/api/clubs/approve`, req);
 const rejectToClubJoin = (req: ClubRejectRequest) => axios.post<string, BaseResponse>(`/api/clubs/reject`, req);
 
@@ -610,8 +610,13 @@ const withdrawAccount = () => axios.post<string, BaseResponse>(`/api/user/withdr
 const getMyClubs = ({ queryKey }: any) => axios.get<string, MyClubsResponse>(`/api/clubs/my`);
 const submitSuggestion = (req: SuggestionSubmitRequest) => axios.post<string, BaseResponse>(`/api/user/suggestion`, req);
 
-// User
+// Notification
+const getClubNotifications = ({ queryKey }: any) => {
+  const [_key, clubId]: [string, number] = queryKey;
+  return axios.get<string, NotificationsResponse>(`/api/notifications/club/${clubId}`);
+};
 const getUserNotifications = () => axios.get<string, NotificationsResponse>(`/api/notifications/user`);
+const readAction = (req: ReadActionRequest) => axios.post<string, BaseResponse>(`/api/notifications/${req.actionId}/read`);
 
 // FCM
 const updateTargetToken = (req: TargetTokenUpdateRequest) => axios.post<string, BaseResponse>(`/api/user/updateTargetToken`, req);
@@ -732,4 +737,4 @@ export const FeedApi = {
   likeFeed,
 };
 
-export const CommonApi = { login, duplicateEmailCheck };
+export const CommonApi = { login, duplicateEmailCheck, readAction };

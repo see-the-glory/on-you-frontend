@@ -119,7 +119,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
       const moreContent = event.nativeEvent.lines.length > 2 ? true : false;
       const collapsedText = event.nativeEvent.lines.slice(0, 2).map((line) => line.text).join("").trim();
       const remainedText = moreContent ? event.nativeEvent.lines.slice(2).map((line) => line.text).join("").trim() : "";
-      const textHeight = moreContent ? event.nativeEvent.lines.slice(2).length * this.props.contentHeight : 0;
+      const textHeight = moreContent ? (event.nativeEvent.lines.slice(2).length * (this.props.contentHeight / 2)) : 0;
       this.setState({ ...this.state, textHeight, moreContent, collapsedText, remainedText });
     };
 
