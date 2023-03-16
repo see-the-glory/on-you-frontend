@@ -272,6 +272,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
           />
           <ContentArea>
             <Ment
+              value={content}
               onChangeText={(content: string) => setContent(content)}
               placeholderTextColor="#B0B0B0"
               placeholder="게시글 입력 ..."
@@ -280,9 +281,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
               multiline={true}
               maxLength={999}
               includeFontPadding={false}
-            >
-              {feedData.content}
-            </Ment>
+            />
           </ContentArea>
         </KeyboardAvoidingView>
       </ScrollView>
