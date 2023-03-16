@@ -244,46 +244,44 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
   );
 
   return (
-    <>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={90} style={{ flex: 1 }}>
       <ScrollView>
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={120} style={{ flex: 1 }}>
-          <FeedUser>
-            <CircleIcon size={45} uri={me?.thumbnail} />
-            <UserInfo>
-              <UserId>{feedData.userName}</UserId>
-              <UserInfoSubButton onPress={onOpen} activeOpacity={1}>
-                <Tag name={clubName} textColor="black" backgroundColor="#E0E0E0" />
-                <MaterialCommunityIcons name="pencil-outline" size={20} color="#C4C4C4" />
-              </UserInfoSubButton>
-            </UserInfo>
-          </FeedUser>
-          <Carousel
-            pages={feedData.imageUrls}
-            pageWidth={feedSize}
-            gap={0}
-            offset={0}
-            initialScrollIndex={0}
-            keyExtractor={(item: string, index: number) => String(index)}
-            showIndicator={true}
-            renderItem={({ item, index }: { item: string; index: number }) => (
-              <FastImage key={String(index)} source={item ? { uri: item } : require("../../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} resizeMode={"contain"} />
-            )}
-            ListEmptyComponent={<FastImage source={require("../../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} resizeMode={"contain"} />}
+        <FeedUser>
+          <CircleIcon size={45} uri={me?.thumbnail} />
+          <UserInfo>
+            <UserId>{feedData.userName}</UserId>
+            <UserInfoSubButton onPress={onOpen} activeOpacity={1}>
+              <Tag name={clubName} textColor="black" backgroundColor="#E0E0E0" />
+              <MaterialCommunityIcons name="pencil-outline" size={20} color="#C4C4C4" />
+            </UserInfoSubButton>
+          </UserInfo>
+        </FeedUser>
+        <Carousel
+          pages={feedData.imageUrls}
+          pageWidth={feedSize}
+          gap={0}
+          offset={0}
+          initialScrollIndex={0}
+          keyExtractor={(item: string, index: number) => String(index)}
+          showIndicator={true}
+          renderItem={({ item, index }: { item: string; index: number }) => (
+            <FastImage key={String(index)} source={item ? { uri: item } : require("../../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} resizeMode={"contain"} />
+          )}
+          ListEmptyComponent={<FastImage source={require("../../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} resizeMode={"contain"} />}
+        />
+        <ContentArea>
+          <Ment
+            value={content}
+            onChangeText={(content: string) => setContent(content)}
+            placeholderTextColor="#B0B0B0"
+            placeholder="게시글 입력 ..."
+            textAlignVertical="top"
+            textAlign="left"
+            multiline={true}
+            maxLength={999}
+            includeFontPadding={false}
           />
-          <ContentArea>
-            <Ment
-              value={content}
-              onChangeText={(content: string) => setContent(content)}
-              placeholderTextColor="#B0B0B0"
-              placeholder="게시글 입력 ..."
-              textAlignVertical="top"
-              textAlign="left"
-              multiline={true}
-              maxLength={999}
-              includeFontPadding={false}
-            />
-          </ContentArea>
-        </KeyboardAvoidingView>
+        </ContentArea>
       </ScrollView>
 
       <Portal>
@@ -313,7 +311,7 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
           ) : null}
         </Modalize>
       </Portal>
-    </>
+    </KeyboardAvoidingView>
   );
 };
 export default ModifiyFeed;
