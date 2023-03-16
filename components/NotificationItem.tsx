@@ -99,7 +99,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, c
       return (
         <Item>
           <Header>
-            <ItemTitle>모임소식</ItemTitle>
+            <ItemTitle>댓글알림</ItemTitle>
             <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
           </Header>
           <TextView>
