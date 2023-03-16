@@ -263,7 +263,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
                   value={clubName}
                   placeholder={`모임명 ${lengthLimit}자 이내 (특문 불가)`}
                   placeholderTextColor="#B0B0B0"
-                  maxLength={20}
+                  maxLength={12}
                   onEndEditing={() => {
                     setClubName((prev) => prev.trim());
                   }}

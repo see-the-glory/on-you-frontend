@@ -68,7 +68,7 @@ const ClubStack = ({
         component={ClubJoin}
         initialParams={{ clubData }}
         options={{
-          title: "클럽 가입 신청",
+          title: "모임 가입 신청",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
               <Entypo name="chevron-thin-left" size={20} color="black" />

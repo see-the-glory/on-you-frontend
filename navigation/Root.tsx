@@ -81,11 +81,13 @@ const Root = () => {
         if (error.response) {
           const status = error.response.status;
           if (status === 400) {
-            if (!error.response.data) return toast.show(`잘못된 요청입니다`, { type: "warning" });
+            if (!error.response.data) error.response.data = { message: "잘못된 요청입니다." };
           } else if (status === 401) {
             DeviceEventEmitter.emit("Logout", { fcmToken });
-            return toast.show(`중복 로그인이 감지되어\n로그아웃 합니다.`, { type: "warning" });
-          } else if (status === 500) return toast.show(`알 수 없는 오류`, { type: "warning" });
+            toast.show(`중복 로그인이 감지되어\n로그아웃 합니다.`, { type: "warning" });
+          } else if (status === 500) {
+            error.response.data = { message: "알 수 없는 오류" };
+          }
           return Promise.reject({ ...error.response?.data, status, code: error.code });
         } else {
           return Promise.reject({ message: "요청시간이 만료되었습니다.", code: error.code });

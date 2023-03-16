@@ -101,8 +101,8 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
   const save = () => {
     let updateData: ClubUpdateRequest = {
       data: {
-        clubShortDesc,
-        clubLongDesc,
+        clubShortDesc: clubShortDesc.trim(),
+        clubLongDesc: clubLongDesc.trim(),
         category1Id: clubData?.categories ? clubData.categories[0]?.id ?? -1 : -1,
         category2Id: clubData?.categories ? clubData.categories[1]?.id ?? -1 : -1,
       },

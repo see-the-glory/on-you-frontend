@@ -108,14 +108,16 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
       category1Id: category1,
       clubName,
       clubMaxMember: maxNumber,
-      clubShortDesc,
-      clubLongDesc,
+      clubShortDesc: clubShortDesc.trim(),
+      clubLongDesc: clubLongDesc.trim(),
       contactPhone: phoneNumber,
       organizationName,
       isApproveRequired,
     };
 
     if (category2 !== -1) data.category2Id = category2;
+
+    console.log(data);
 
     const splitedURI = new String(imageURI).split("/");
     const requestData: ClubCreationRequest = {

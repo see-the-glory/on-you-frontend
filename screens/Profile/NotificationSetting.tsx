@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { Switch, View, Platform } from "react-native";
+import { Switch, Platform } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
-import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { BaseResponse, ErrorResponse, UserApi, UserPushAlarmRequest } from "../../api";
 import CustomText from "../../components/CustomText";
-import { RootState } from "../../redux/store/reducers";
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -92,8 +90,8 @@ const NotificationSetting = () => {
   return (
     <Container>
       <Header>
-        <HeaderTitle>{`푸쉬 알림`}</HeaderTitle>
-        <HeaderText>{`모임 가입과 관련된 메세지의 푸쉬 알림을 설정합니다.\n알람이 오지 않을 경우 휴대폰 > 설정 > 알림 > OnYou를 확인해주세요.`}</HeaderText>
+        <HeaderTitle>{`푸시 알림`}</HeaderTitle>
+        <HeaderText>{`모임 가입과 관련된 메세지의 푸시 알림을 설정합니다.\n알람이 오지 않을 경우 휴대폰 > 설정 > 알림 > OnYou를 확인해주세요.`}</HeaderText>
       </Header>
       <Main>
         <Item>
