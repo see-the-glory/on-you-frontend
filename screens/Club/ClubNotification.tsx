@@ -79,6 +79,7 @@ const ClubNotification = ({
     return () => {
       clubNotiSubs.remove();
       backHandler.remove();
+      DeviceEventEmitter.emit("ClubRefetch");
     };
   }, []);
 
@@ -90,7 +91,7 @@ const ClubNotification = ({
     };
     if (item.actionType === "APPLY") {
       if (clubRole && ["MASTER", "MANAGER"].includes(clubRole?.role)) {
-        return navigate("ClubApplication", {
+        const clubApplicationProps = {
           clubData,
           actionId: item.actionId,
           actionerName: item.actionerName,
@@ -98,7 +99,8 @@ const ClubNotification = ({
           message: item.message,
           createdTime: item.created,
           processDone: item.processDone,
-        });
+        };
+        return navigate("ClubApplication", clubApplicationProps);
       } else {
         return toast.show("가입신청서를 볼 수 있는 권한이 없습니다.", { type: "warning" });
       }

@@ -9,12 +9,14 @@ import ClubNotification from "../screens/Club/ClubNotification";
 import ClubApplication from "../screens/Club/ClubApplication";
 import ClubScheduleEdit from "../screens/Club/ClubScheduleEdit";
 import ClubFeedDetail from "../screens/Club/ClubFeedDetail";
+import ClubJoinReject from "../screens/Club/ClubJoinReject";
+import ClubJoinRejectMessage from "../screens/Club/ClubJoinRejectMessage";
 
 const NativeStack = createNativeStackNavigator();
 
 const ClubStack = ({
   route: {
-    params: { clubData, scheduleData, clubRole, targetIndex, actionId, actionerName, actionerId, message, createdTime, processDone },
+    params: { clubData, scheduleData, clubRole, targetIndex },
   },
   navigation: { navigate, goBack },
 }) => {
@@ -94,9 +96,24 @@ const ClubStack = ({
       <NativeStack.Screen
         name="ClubApplication"
         component={ClubApplication}
-        initialParams={{ clubData, actionId, actionerName, actionerId, message, createdTime, processDone }}
         options={{
-          title: "가입요청",
+          title: "가입 요청",
+        }}
+      />
+
+      <NativeStack.Screen
+        name="ClubJoinReject"
+        component={ClubJoinReject}
+        options={{
+          title: "가입 거절",
+        }}
+      />
+
+      <NativeStack.Screen
+        name="ClubJoinRejectMessage"
+        component={ClubJoinRejectMessage}
+        options={{
+          title: "가입 거절",
         }}
       />
 
