@@ -407,12 +407,15 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
             </ImageUnderArea>
           </SelectImageView>
           <FeedText
+            value={content}
             placeholder="사진과 함께 남길 게시글을 작성해 보세요."
             onChangeText={(content: string) => setContent(content)}
             onEndEditing={() => setContent((prev) => prev.trim())}
             autoCapitalize="none"
             autoCorrect={false}
             multiline={true}
+            includeFontPadding={false}
+            textAlignVertical="top"
           ></FeedText>
         </>
       </KeyboardAvoidingView>
