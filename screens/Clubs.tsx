@@ -262,9 +262,12 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   });
 
   const goToClub = (clubData: Club) => {
+    const clubTopTabsProps = {
+      clubData,
+    };
     return navigate("ClubStack", {
       screen: "ClubTopTabs",
-      clubData,
+      params: clubTopTabsProps,
     });
   };
 

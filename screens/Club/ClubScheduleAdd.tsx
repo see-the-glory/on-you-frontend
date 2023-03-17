@@ -13,6 +13,7 @@ import { BaseResponse, ClubApi, ClubScheduleCreationRequest, ErrorResponse } fro
 import { useMutation } from "react-query";
 import moment from "moment";
 import { RootState } from "../../redux/store/reducers";
+import { Entypo } from "@expo/vector-icons";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -148,6 +149,11 @@ const ClubScheduleAdd = ({
 
   useLayoutEffect(() => {
     setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
       headerRight: () =>
         scheduleMutation.isLoading ? (
           <ActivityIndicator />

@@ -267,7 +267,11 @@ const ClubTopTabs = ({
   };
 
   const goClubNotification = () => {
-    navigate("ClubNotification", { clubData: data, clubRole: clubRole?.data });
+    const clubNotificationProps = {
+      clubData: data,
+      clubRole: clubRole?.data,
+    };
+    navigate("ClubNotification", clubNotificationProps);
   };
 
   const withdrawClub = () => {

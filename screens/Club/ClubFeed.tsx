@@ -114,7 +114,11 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   }, []);
 
   const goToClubFeedDetail = (index: number) => {
-    return navigate("ClubStack", { screen: "ClubFeedDetail", clubData, targetIndex: index });
+    const clubFeedDetailProps = {
+      clubData,
+      targetIndex: index,
+    };
+    return navigate("ClubFeedDetail", clubFeedDetailProps);
   };
 
   return feedsLoading || refreshing ? (

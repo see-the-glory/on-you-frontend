@@ -200,7 +200,7 @@ const Home: React.FC<HomeScreenProps> = () => {
     },
   });
   const goToClub = useCallback((clubId: number) => {
-    navigation.navigate("ClubStack", { screen: "ClubTopTabs", clubData: { id: clubId } });
+    navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
   }, []);
 
   const goToFeedComments = useCallback((feedIndex: number, feedId: number) => {
