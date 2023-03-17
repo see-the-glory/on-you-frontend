@@ -12,12 +12,7 @@ import ClubJoinRejectMessage from "../screens/Club/ClubJoinRejectMessage";
 
 const NativeStack = createNativeStackNavigator();
 
-const ClubStack = ({
-  route: {
-    params: { clubData, scheduleData },
-  },
-  navigation: { navigate, goBack },
-}) => {
+const ClubStack = ({ route: { params }, navigation: { navigate, goBack } }) => {
   return (
     <NativeStack.Navigator
       screenOptions={{

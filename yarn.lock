@@ -1777,6 +1777,11 @@
   dependencies:
     "invariant" "^2.2.4"
 
+"@react-native-firebase/analytics@^17.3.0":
+  "integrity" "sha512-Sl93q+dEz/V9eSYHc/uXa2T0rSQM44zecGSE6u441IWuC5AjmZ+wMhtv/nuPS9RB1MKsuwQusDdq3vyoXJSmKg=="
+  "resolved" "https://registry.npmjs.org/@react-native-firebase/analytics/-/analytics-17.3.0.tgz"
+  "version" "17.3.0"
+
 "@react-native-firebase/app@^17.3.0", "@react-native-firebase/app@17.3.0":
   "integrity" "sha512-anQ4ITkoLgyAgRc8mX6Le2kc6nSNQEs4IWSYehxQU2hTNePqQdCq6XI2KgSo2sSgU3ZoS5YAEJgDFOBNB1U/lA=="
   "resolved" "https://registry.npmjs.org/@react-native-firebase/app/-/app-17.3.0.tgz"
@@ -1785,6 +1790,14 @@
     "@expo/config-plugins" "^5.0.4"
     "opencollective-postinstall" "^2.0.1"
     "superstruct" "^0.6.2"
+
+"@react-native-firebase/crashlytics@^17.3.0":
+  "integrity" "sha512-Vzdzj++uxwhiPK6qYdHeqXDAObqk+0snNcF25eyBB158fXMB13qm6eDFC/dN6DziQdmAKTdLE8pBPpbxR2YxcA=="
+  "resolved" "https://registry.npmjs.org/@react-native-firebase/crashlytics/-/crashlytics-17.3.0.tgz"
+  "version" "17.3.0"
+  dependencies:
+    "@expo/config-plugins" "^5.0.4"
+    "stacktrace-js" "^2.0.0"
 
 "@react-native-firebase/messaging@^17.3.0":
   "integrity" "sha512-A1NNrU5KrztJLym5p+VNIbU3pLOSHW9DpJdXyIBR/n/5nZBLL/zLsMoDs8dvfaeyBPiWuvVQbloOKfd5mTvmOw=="
@@ -7507,6 +7520,11 @@
   "resolved" "https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz"
   "version" "0.6.1"
 
+"source-map@0.5.6":
+  "integrity" "sha512-MjZkVp0NHr5+TPihLcadqnlVoGIoWo4IBHptutGh9wI3ttUYvCG26HkSuDi+K6lsZ25syXJXcctwgyVCt//xqA=="
+  "resolved" "https://registry.npmjs.org/source-map/-/source-map-0.5.6.tgz"
+  "version" "0.5.6"
+
 "split-on-first@^1.0.0":
   "integrity" "sha512-43ZssAJaMusuKWL8sKUBQXHWOpq8d6CfN/u1p4gUzfJkM05C8rxTmYrkIPTXapZpORA6LkkzcUulJ8FqA7Uudw=="
   "resolved" "https://registry.npmjs.org/split-on-first/-/split-on-first-1.1.0.tgz"
@@ -7538,6 +7556,13 @@
   dependencies:
     "minipass" "^3.1.1"
 
+"stack-generator@^2.0.5":
+  "integrity" "sha512-mwnua/hkqM6pF4k8SnmZ2zfETsRUpWXREfA/goT8SLCV4iOFa4bzOX2nDipWAZFPTjLvQB82f5yaodMVhK0yJQ=="
+  "resolved" "https://registry.npmjs.org/stack-generator/-/stack-generator-2.0.10.tgz"
+  "version" "2.0.10"
+  dependencies:
+    "stackframe" "^1.3.4"
+
 "stack-utils@^2.0.3":
   "integrity" "sha512-XlkWvfIm6RmsWtNJx+uqtKLS8eqFbxUg0ZzLXqY0caEy9l7hruX8IpiDnjsLavoBgqCCR71TqWO8MaXYheJ3RQ=="
   "resolved" "https://registry.npmjs.org/stack-utils/-/stack-utils-2.0.6.tgz"
@@ -7549,6 +7574,23 @@
   "integrity" "sha512-oeVtt7eWQS+Na6F//S4kJ2K2VbRlS9D43mAlMyVpVWovy9o+jfgH8O9agzANzaiLjclA0oYzUXEM4PurhSUChw=="
   "resolved" "https://registry.npmjs.org/stackframe/-/stackframe-1.3.4.tgz"
   "version" "1.3.4"
+
+"stacktrace-gps@^3.0.4":
+  "integrity" "sha512-GcUgbO4Jsqqg6RxfyTHFiPxdPqF+3LFmQhm7MgCuYQOYuWyqxo5pwRPz5d/u6/WYJdEnWfK4r+jGbyD8TSggXQ=="
+  "resolved" "https://registry.npmjs.org/stacktrace-gps/-/stacktrace-gps-3.1.2.tgz"
+  "version" "3.1.2"
+  dependencies:
+    "source-map" "0.5.6"
+    "stackframe" "^1.3.4"
+
+"stacktrace-js@^2.0.0":
+  "integrity" "sha512-Je5vBeY4S1r/RnLydLl0TBTi3F2qdfWmYsGvtfZgEI+SCprPppaIhQf5nGcal4gI4cGpCV/duLcAzT1np6sQqg=="
+  "resolved" "https://registry.npmjs.org/stacktrace-js/-/stacktrace-js-2.0.2.tgz"
+  "version" "2.0.2"
+  dependencies:
+    "error-stack-parser" "^2.0.6"
+    "stack-generator" "^2.0.5"
+    "stacktrace-gps" "^3.0.4"
 
 "stacktrace-parser@^0.1.3":
   "integrity" "sha512-KJP1OCML99+8fhOHxwwzyWrlUuVX5GQ0ZpJTd1DFXhdkrvg1szxfHhawXUZ3g9TkXORQd4/WG68jMlQZ2p8wlg=="

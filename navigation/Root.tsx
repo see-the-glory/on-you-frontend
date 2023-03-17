@@ -20,6 +20,7 @@ import feedSlice from "../redux/slices/feed";
 import messaging from "@react-native-firebase/messaging";
 import notifee, { EventType } from "@notifee/react-native";
 import { useNavigation } from "@react-navigation/native";
+import analytics, { firebase } from "@react-native-firebase/analytics";
 
 const Nav = createNativeStackNavigator();
 
@@ -29,7 +30,6 @@ const Root = () => {
   const dispatch = useAppDispatch();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const navigation = useNavigation();
 
   const { refetch: userInfoRefecth } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
@@ -61,7 +61,7 @@ const Root = () => {
 
   useEffect(() => {
     console.log(`Root - useEffect!`);
-
+    analytics().logScreenView({ screen_class: "screen", screen_name: "Root" });
     // Axios Setting
     axios.defaults.baseURL = "http://3.39.190.23:8080";
     if (token) axios.defaults.headers.common["Authorization"] = token;

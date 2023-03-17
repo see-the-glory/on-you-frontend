@@ -8,7 +8,6 @@ import JoinStepFive from "../screens/SignUp/JoinStepFive";
 import JoinStepSix from "../screens/SignUp/JoinStepSix";
 import JoinStepSeven from "../screens/SignUp/JoinStepSeven";
 import JoinStepEight from "../screens/SignUp/JoinStepEight";
-import JoinStepNine from "../screens/SignUp/JoinStepNine";
 import JoinConfirm from "../screens/SignUp/JoinConfirm";
 import JoinStepSuccess from "../screens/SignUp/JoinStepSuccess";
 import { TouchableOpacity } from "react-native";
