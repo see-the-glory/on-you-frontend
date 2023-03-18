@@ -130,6 +130,48 @@ const RootNavigation = () => {
 function App() {
   SplashScreen.preventAutoHideAsync();
   const queryClient = new QueryClient();
+  const linking = {
+    prefixes: ["https://onyou.page.link", "onyou://"],
+    async getInitialURL() {
+      // Check if there is an initial firebase notification
+      // const message = await messaging().getInitialNotification();
+      // console.log("getInitialNotification --");
+      // console.log(message?.data);
+      // // Get deep link from data
+      // // if this is undefined, the app will open the default/home page
+      // return message?.data;
+      return undefined;
+    },
+    subscribe(listener) {
+      // const unsubscribeNotification = messaging().onNotificationOpenedApp((message) => {
+      //   console.log("onNotificationOpenedApp --");
+      //   console.log(message?.data);
+      //   if (message?.data) {
+      //     // Any custom logic to check whether the URL needs to be handled
+      //     // Call the listener to let React Navigation handle the URL
+      //     console.log("listener Call");
+      //     listener(message?.data);
+      //   }
+      // });
+      // return () => {
+      //   unsubscribeNotification();
+      // };
+    },
+    getStateFromPath(path) {
+      console.log(path);
+      const match = path.split("/");
+      let state = { routes: [{ name: "Tabs" }] };
+      switch (match[0]) {
+        case "club":
+          state.routes.push({ name: "ClubStack", state: { routes: [{ name: "ClubTopTabs", params: { clubData: { id: match[1] } } }] } });
+          break;
+
+        default:
+          break;
+      }
+      return state;
+    },
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -147,7 +189,7 @@ function App() {
             warningIcon={<Ionicons name="checkmark-circle" size={18} color="white" />}
             dangerIcon={<Ionicons name="close-circle" size={18} color="white" />}
           >
-            <NavigationContainer>
+            <NavigationContainer linking={linking}>
               <RootNavigation />
             </NavigationContainer>
           </ToastProvider>

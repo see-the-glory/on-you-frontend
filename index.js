@@ -11,7 +11,6 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
 notifee.onBackgroundEvent(async ({ type, detail }) => {
   const { notification, pressAction } = detail;
   if (notification?.id) await notifee.cancelNotification(notification.id);
-  // navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: 1 } } });
 });
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);

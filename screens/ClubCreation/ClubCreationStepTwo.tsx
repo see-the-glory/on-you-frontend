@@ -168,22 +168,20 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   const clubNameMutation = useMutation<DuplicateCheckResponse, ErrorResponse, DuplicateClubNameCheckRequest>(ClubApi.duplicateClubNameCheck);
 
   const pickImage = async () => {
-    let image = await ImagePicker.openPicker({
-      mediaType: "photo",
-    });
-
-    let croped = await ImagePicker.openCropper({
-      mediaType: "photo",
-      path: image.path,
-      width: 1080,
-      height: 1080,
-      cropperCancelText: "Cancel",
-      cropperChooseText: "Check",
-      cropperToolbarTitle: "이미지를 크롭하세요",
-      forceJpg: true,
-    });
-
-    if (croped) setImageURI(croped.path);
+    try {
+      let image = await ImagePicker.openPicker({ mediaType: "photo" });
+      let croped = await ImagePicker.openCropper({
+        mediaType: "photo",
+        path: image.path,
+        width: 1080,
+        height: 1080,
+        cropperCancelText: "Cancel",
+        cropperChooseText: "Check",
+        cropperToolbarTitle: "이미지를 크롭하세요",
+        forceJpg: true,
+      });
+      if (croped) setImageURI(croped.path);
+    } catch (e) {}
   };
 
   const goToNext = () => {

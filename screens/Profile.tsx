@@ -166,7 +166,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     {
       icon: <MaterialIcons name="star" color="#2E2E2E" size={iconSize} />,
       title: "나의 모임",
-      screen: "MyClub",
+      screen: "MyClubs",
     },
     {
       icon: <MaterialIcons name="notifications" size={iconSize} color="#2E2E2E" />,

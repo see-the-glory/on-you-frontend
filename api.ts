@@ -87,16 +87,16 @@ export interface Schedule {
 
 export interface User {
   applyStatus: string;
-  birthday: string;
+  birthday: string | null;
   created: string;
   email: string;
   id: number;
   name: string;
   organizationName: string;
   role: string;
-  sex: string;
+  sex: string | null;
   thumbnail: string | null;
-  phoneNumber: string;
+  phoneNumber: string | null;
   interests: [];
 }
 
@@ -407,11 +407,11 @@ export interface FindPwRequest {
 export interface UserUpdateRequest {
   image?: ImageType | null;
   data?: {
-    birthday?: string;
+    birthday?: string | null;
     name?: string;
     organizationName?: string;
-    sex?: string;
-    phoneNumber?: string;
+    sex?: string | null;
+    phoneNumber?: string | null;
   };
 }
 
