@@ -1,12 +1,13 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useLayoutEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
-import { ActivityIndicator, Dimensions, FlatList, Platform, StatusBar, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Dimensions, FlatList, Platform, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
 import { useQuery } from "react-query";
 import { UserApi, Club, MyClubsResponse, ErrorResponse, MyClub } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
+import { Entypo } from "@expo/vector-icons";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -62,7 +63,7 @@ const EmptyText = styled(CustomText)`
   align-items: center;
 `;
 
-const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigation: { navigate } }, props) => {
+const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation: { navigate, setOptions, goBack } }, props) => {
   const [refreshing, setRefreshing] = useState(false);
   const toast = useToast();
   const {
@@ -94,6 +95,16 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
       params: clubTopTabsProps,
     });
   };
+
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
 
   const listHeaderComponent = useCallback(
     () => (
@@ -136,6 +147,7 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
       keyExtractor={(item: MyClub, index: number) => String(index)}
       data={myClubs?.data.filter((item) => item.applyStatus === "APPROVED")}
       ItemSeparatorComponent={itemSeparatorComponent}
+      ListFooterComponent={myClubs?.data?.length ? itemSeparatorComponent : null}
       ListHeaderComponent={listHeaderComponent}
       ListEmptyComponent={listEmptyComponent}
       stickyHeaderIndices={[0]}
@@ -144,4 +156,4 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
   );
 };
 
-export default MyClubPage;
+export default MyClubs;

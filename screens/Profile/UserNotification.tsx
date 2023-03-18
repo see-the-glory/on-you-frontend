@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { Entypo } from "@expo/vector-icons";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { ActivityIndicator, DeviceEventEmitter, FlatList, StatusBar, TouchableOpacity, View } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
@@ -33,7 +34,7 @@ const EmptyText = styled(CustomText)`
   align-items: center;
 `;
 
-const UserNotification = ({ navigation: { navigate } }) => {
+const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
   const toast = useToast();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const {
@@ -61,6 +62,16 @@ const UserNotification = ({ navigation: { navigate } }) => {
     await notiRefetch();
     setRefreshing(false);
   };
+
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
 
   useEffect(() => {
     let userNotifSubs = DeviceEventEmitter.addListener("UserNotificationRefresh", () => {

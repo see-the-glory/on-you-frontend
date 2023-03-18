@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Switch, Platform } from "react-native";
+import { Entypo } from "@expo/vector-icons";
+import React, { useLayoutEffect, useState } from "react";
+import { Switch, Platform, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import styled from "styled-components/native";
@@ -56,7 +57,7 @@ const ItemText = styled(CustomText)`
   color: #b0b0b0;
 `;
 
-const NotificationSetting = () => {
+const NotificationSetting = ({ navigation: { navigate, goBack, setOptions } }) => {
   const toast = useToast();
   const [userPush, setUserPush] = useState<boolean>(true);
   const [clubPush, setClubPush] = useState<boolean>(true);
@@ -68,6 +69,16 @@ const NotificationSetting = () => {
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
+
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
 
   const onValueChange = (alarmType: "USER" | "CLUB") => {
     let isOnOff: "Y" | "N" = "Y";

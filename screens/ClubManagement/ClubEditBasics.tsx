@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { ClubEditBasicsProps } from "../../Types/Club";
-import * as ImagePicker from "expo-image-picker";
+import ImagePicker from "react-native-image-crop-picker";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { useQuery, useMutation } from "react-query";
 import { Category, CategoryResponse, ClubApi, ClubUpdateRequest, ClubUpdateResponse, ErrorResponse } from "../../api";
@@ -235,10 +235,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
     let category1 = selectCategory1;
     let category2 = selectCategory2;
     if (category1 === -1 && category2 === -1) {
-      toast.show(`카테고리가 설정되어있지 않습니다.`, {
-        type: "warning",
-      });
-      return;
+      return toast.show(`카테고리가 설정되어있지 않습니다.`, { type: "warning" });
     } else if (category1 === -1 && category2 !== -1) {
       category1 = category2;
       category2 = -1;
@@ -277,16 +274,20 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   };
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
-      aspect: [16, 9],
-      quality: 1,
-    });
-
-    if (result.canceled === false) {
-      setImageURI(result.assets[0].uri);
-    }
+    try {
+      let image = await ImagePicker.openPicker({ mediaType: "photo" });
+      let croped = await ImagePicker.openCropper({
+        mediaType: "photo",
+        path: image.path,
+        width: 1080,
+        height: 1080,
+        cropperCancelText: "Cancel",
+        cropperChooseText: "Check",
+        cropperToolbarTitle: "이미지를 크롭하세요",
+        forceJpg: true,
+      });
+      if (croped) setImageURI(croped.path);
+    } catch (e) {}
   };
 
   const onPressCategory = (id: number) => {

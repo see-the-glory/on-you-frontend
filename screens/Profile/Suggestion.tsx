@@ -6,6 +6,7 @@ import CustomTextInput from "../../components/CustomTextInput";
 import { useMutation } from "react-query";
 import { BaseResponse, ErrorResponse, SuggestionSubmitRequest, UserApi } from "../../api";
 import { useToast } from "react-native-toast-notifications";
+import { Entypo } from "@expo/vector-icons";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -66,6 +67,11 @@ const Suggestion = ({ navigation: { navigate, goBack, setOptions } }) => {
 
   useLayoutEffect(() => {
     setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
       headerRight: () =>
         suggestionMutation.isLoading ? (
           <ActivityIndicator />
