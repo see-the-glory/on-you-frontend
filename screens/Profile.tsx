@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
 import { ErrorResponse, UserApi, UserInfoResponse } from "../api";
 import { MaterialCommunityIcons, Feather, MaterialIcons } from "@expo/vector-icons";
-import { DeviceEventEmitter } from "react-native";
+import { DeviceEventEmitter, StatusBar } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../components/CustomText";
 import CircleIcon from "../components/CircleIcon";
@@ -13,7 +13,7 @@ import { RootState } from "../redux/store/reducers";
 import { useAppDispatch } from "../redux/store";
 import { updateUser } from "../redux/slices/auth";
 
-const Container = styled.SafeAreaView`
+const Container = styled.View`
   flex: 1;
 `;
 const UserInfoSection = styled.View`
@@ -187,6 +187,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
 
   return (
     <Container>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <UserInfoSection>
         <CircleIcon size={65} uri={userInfo?.data?.thumbnail} kerning={15} />
         <InfoBox>

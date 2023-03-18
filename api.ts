@@ -630,8 +630,7 @@ const login = async (req: LoginRequest) => {
     },
     body: JSON.stringify(req),
   });
-  if (res.status === 200) return { status: res.status, ...(await res.json()) };
-  else return { status: res.status };
+  return { status: res.status, ...(await res.json()) };
 };
 
 const duplicateEmailCheck = async (req: DuplicateEmailCheckRequest) => {

@@ -13,14 +13,14 @@ import { RootState } from "../redux/store/reducers";
 import axios from "axios";
 import { useAppDispatch } from "../redux/store";
 import { logout, updateUser } from "../redux/slices/auth";
-import { DeviceEventEmitter } from "react-native";
+import { DeviceEventEmitter, Linking } from "react-native";
 import { BaseResponse, ErrorResponse, TargetTokenUpdateRequest, UserApi, UserInfoResponse } from "../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import feedSlice from "../redux/slices/feed";
 import messaging from "@react-native-firebase/messaging";
 import notifee, { EventType } from "@notifee/react-native";
+import dynamicLinks, { FirebaseDynamicLinksTypes } from "@react-native-firebase/dynamic-links";
 import { useNavigation } from "@react-navigation/native";
-import analytics, { firebase } from "@react-native-firebase/analytics";
 
 const Nav = createNativeStackNavigator();
 
@@ -30,6 +30,7 @@ const Root = () => {
   const dispatch = useAppDispatch();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const navigation = useNavigation();
 
   const { refetch: userInfoRefecth } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
@@ -59,9 +60,12 @@ const Root = () => {
     });
   };
 
+  const handleDynamicLink = (link: FirebaseDynamicLinksTypes.DynamicLink) => {
+    console.log(link);
+  };
+
   useEffect(() => {
     console.log(`Root - useEffect!`);
-    analytics().logScreenView({ screen_class: "screen", screen_name: "Root" });
     // Axios Setting
     axios.defaults.baseURL = "http://3.39.190.23:8080";
     if (token) axios.defaults.headers.common["Authorization"] = token;
@@ -86,6 +90,7 @@ const Root = () => {
             DeviceEventEmitter.emit("Logout", { fcmToken });
             toast.show(`중복 로그인이 감지되어\n로그아웃 합니다.`, { type: "warning" });
           } else if (status === 500) {
+            console.log(error.response.data);
             error.response.data = { message: "알 수 없는 오류" };
           }
           return Promise.reject({ ...error.response?.data, status, code: error.code });
@@ -99,35 +104,6 @@ const Root = () => {
     queryClient.resetQueries(["feeds"]);
 
     if (fcmToken) updateTargetToken(fcmToken);
-
-    //푸시를 받으면 호출됨
-    const fcmUnsubscribe = messaging().onMessage(async (remoteMessage) => {
-      try {
-        await notifee.displayNotification({
-          title: remoteMessage?.notification?.title,
-          body: remoteMessage?.notification?.body,
-          android: {
-            channelId: "club",
-          },
-        });
-      } catch (e) {
-        console.warn(e);
-      }
-    });
-
-    const notiUnsubscribe = notifee.onForegroundEvent(({ type, detail }) => {
-      switch (type) {
-        case EventType.DISMISSED:
-          console.log("User dismissed notification", detail.notification);
-          break;
-        case EventType.PRESS:
-          console.log("User pressed notification", detail.notification);
-          break;
-        case EventType.ACTION_PRESS:
-          console.log(`Action Press: ${detail.pressAction?.id}`);
-          break;
-      }
-    });
 
     const logoutSubScription = DeviceEventEmitter.addListener("Logout", async ({ fcmToken, isWitdrawUser }) => {
       console.log(`Root - Logout`);
@@ -144,6 +120,58 @@ const Root = () => {
       } else toast.show(`로그아웃 실패.`, { type: "warning" });
     });
 
+    const dynamicLinksUnsubscribe = dynamicLinks().onLink(handleDynamicLink);
+
+    // Firebase - Foreground Push
+    const fcmUnsubscribe = messaging().onMessage(async (message) => {
+      try {
+        await notifee.displayNotification({
+          title: message?.notification?.title,
+          body: message?.notification?.body,
+          android: {
+            channelId: "club",
+          },
+          data: message?.data,
+        });
+      } catch (e) {
+        console.warn(e);
+      }
+    });
+
+    // Firebase - bacgkround 에서 실행 중에 push 가 선택될 경우
+    const unsubscribeNotification = messaging().onNotificationOpenedApp((message) => {
+      console.log("onNotificationOpenedApp --");
+      console.log(message?.data);
+    });
+
+    // Firebase - 앱이 종료되었는데 push 가 선택될 경우
+    messaging()
+      .getInitialNotification()
+      .then((message) => {
+        console.log("Firebase - getInitialNotification");
+        console.log(message?.data);
+      });
+
+    // Notifee - 앱이 종료되었는데 push 가 선택될 경우
+    notifee.getInitialNotification().then((message) => {
+      console.log("Notifee - getInitialNotification");
+      console.log(message?.notification);
+    });
+
+    const notiUnsubscribe = notifee.onForegroundEvent(({ type, detail }) => {
+      switch (type) {
+        case EventType.DISMISSED:
+          console.log("User dismissed notification", detail.notification);
+          break;
+        case EventType.PRESS:
+          console.log("User pressed notification", detail.notification);
+          break;
+        case EventType.ACTION_PRESS:
+          console.log(`Action Press: ${detail.pressAction?.id}`);
+          break;
+      }
+    });
+
     return () => {
       console.log(`Root - remove!`);
       axios.interceptors.request.eject(requestInterceptor);
@@ -151,6 +179,8 @@ const Root = () => {
       logoutSubScription.remove();
       fcmUnsubscribe();
       notiUnsubscribe();
+      dynamicLinksUnsubscribe();
+      unsubscribeNotification();
     };
   }, []);
 
@@ -164,11 +194,11 @@ const Root = () => {
           }}
         >
           <Nav.Screen name="Tabs" component={Tabs} />
-          <Nav.Screen name="ClubCreationStack" component={ClubCreationStack} />
-          <Nav.Screen name="ClubManagementStack" component={ClubManagementStack} />
+          <Nav.Screen name="FeedStack" component={FeedStack} />
           <Nav.Screen name="ClubStack" component={ClubStack} />
           <Nav.Screen name="ProfileStack" component={ProfileStack} />
-          <Nav.Screen name="FeedStack" component={FeedStack} />
+          <Nav.Screen name="ClubCreationStack" component={ClubCreationStack} />
+          <Nav.Screen name="ClubManagementStack" component={ClubManagementStack} />
         </Nav.Navigator>
       }
     ></Host>
