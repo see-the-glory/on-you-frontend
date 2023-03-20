@@ -187,38 +187,35 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
 
   return (
     <Container>
-      <>
-        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
-        <UserInfoSection>
-          <CircleIcon size={65} uri={userInfo?.data?.thumbnail} kerning={15} />
-          <InfoBox>
-            <Email>{userInfo?.data?.email}</Email>
-            <Title>{userInfo?.data?.name}</Title>
-          </InfoBox>
-          <EditBox>
-            <EditButton onPress={goToEditProfile}>
-              <MaterialCommunityIcons name="pencil-outline" color="#295AF5" size={20} />
-            </EditButton>
-          </EditBox>
-        </UserInfoSection>
-        <MenuWrapper>
-          {items?.map((item: ProfileEditItem, index: number) => (
-            <TouchMenu key={index}>
-              <MenuItem onPress={() => goToScreen(item.screen)}>
-                {item.icon}
-                <MenuItemText>{item.title}</MenuItemText>
-                <ChevronBox>
-                  <Feather name="chevron-right" color="#CCCCCC" size={22} />
-                </ChevronBox>
-              </MenuItem>
-            </TouchMenu>
-          ))}
-        </MenuWrapper>
-
-        <LogoutButton onPress={goLogout}>
-          <LogoutText>Logout</LogoutText>
-        </LogoutButton>
-      </>
+      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <UserInfoSection>
+        <CircleIcon size={65} uri={userInfo?.data?.thumbnail} kerning={15} />
+        <InfoBox>
+          <Email>{userInfo?.data?.email}</Email>
+          <Title>{userInfo?.data?.name}</Title>
+        </InfoBox>
+        <EditBox>
+          <EditButton onPress={goToEditProfile}>
+            <MaterialCommunityIcons name="pencil-outline" color="#295AF5" size={20} />
+          </EditButton>
+        </EditBox>
+      </UserInfoSection>
+      <MenuWrapper>
+        {items?.map((item: ProfileEditItem, index: number) => (
+          <TouchMenu key={index}>
+            <MenuItem onPress={() => goToScreen(item.screen)}>
+              {item.icon}
+              <MenuItemText>{item.title}</MenuItemText>
+              <ChevronBox>
+                <Feather name="chevron-right" color="#CCCCCC" size={22} />
+              </ChevronBox>
+            </MenuItem>
+          </TouchMenu>
+        ))}
+      </MenuWrapper>
+      <LogoutButton onPress={goLogout}>
+        <LogoutText>Logout</LogoutText>
+      </LogoutButton>
     </Container>
   );
 };

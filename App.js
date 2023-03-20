@@ -5,7 +5,7 @@ import Auth from "./navigation/Auth";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider, useSelector } from "react-redux";
 import { ToastProvider } from "react-native-toast-notifications";
-import { createIconSetFromFontello, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { LogBox, Platform, Text, TextInput, View } from "react-native";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";

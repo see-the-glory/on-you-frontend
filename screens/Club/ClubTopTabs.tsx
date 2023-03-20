@@ -290,7 +290,7 @@ const ClubTopTabs = ({
           descriptionText: data?.clubShortDesc ?? "",
           imageUrl: data?.thumbnail ?? "",
         },
-        navigation: { forcedRedirectEnabled: true },
+        // navigation: { forcedRedirectEnabled: true }, // iOS에서 preview page를 스킵하는 옵션. 이걸 사용하면 온유앱이 꺼져있을 때는 제대로 navigation이 되질 않는 버그가 있음.
       },
       dynamicLinks.ShortLinkType.SHORT
     );
