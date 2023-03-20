@@ -5,7 +5,7 @@ import Auth from "./navigation/Auth";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider, useSelector } from "react-redux";
 import { ToastProvider } from "react-native-toast-notifications";
-import { Ionicons } from "@expo/vector-icons";
+import { createIconSetFromFontello, Ionicons } from "@expo/vector-icons";
 import { LogBox, Platform, Text, TextInput, View } from "react-native";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -18,6 +18,8 @@ import { init, updateFCMToken } from "./redux/slices/auth";
 import BackgroundColor from "react-native-background-color";
 import CodePush from "react-native-code-push";
 import notifee, { AndroidImportance } from "@notifee/react-native";
+import dynamicLinks from "@react-native-firebase/dynamic-links";
+import queryString from "query-string";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -130,6 +132,27 @@ const RootNavigation = () => {
 function App() {
   SplashScreen.preventAutoHideAsync();
   const queryClient = new QueryClient();
+  const linking = {
+    prefixes: ["https://onyou.page.link"],
+    async getInitialURL() {
+      const message = await dynamicLinks().getInitialLink();
+      return message?.url;
+    },
+    getStateFromPath(path, config) {
+      const parsed = queryString.parseUrl(path);
+      let state = { routes: [{ name: "Tabs" }] };
+      const match = parsed.url.split("/").pop();
+      switch (match) {
+        case "club":
+          state.routes.push({ name: "ClubStack", state: { routes: [{ name: "ClubTopTabs", params: { clubData: { id: parsed.query.id } } }] } });
+          break;
+
+        default:
+          break;
+      }
+      return state;
+    },
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -147,7 +170,7 @@ function App() {
             warningIcon={<Ionicons name="checkmark-circle" size={18} color="white" />}
             dangerIcon={<Ionicons name="close-circle" size={18} color="white" />}
           >
-            <NavigationContainer>
+            <NavigationContainer linking={linking}>
               <RootNavigation />
             </NavigationContainer>
           </ToastProvider>

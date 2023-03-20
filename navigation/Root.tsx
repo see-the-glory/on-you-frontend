@@ -21,6 +21,7 @@ import messaging from "@react-native-firebase/messaging";
 import notifee, { EventType } from "@notifee/react-native";
 import dynamicLinks, { FirebaseDynamicLinksTypes } from "@react-native-firebase/dynamic-links";
 import { useNavigation } from "@react-navigation/native";
+import queryString from "query-string";
 
 const Nav = createNativeStackNavigator();
 
@@ -61,7 +62,16 @@ const Root = () => {
   };
 
   const handleDynamicLink = (link: FirebaseDynamicLinksTypes.DynamicLink) => {
-    console.log(link);
+    const parsed = queryString.parseUrl(link?.url);
+    const match = parsed.url.split("/").pop();
+    switch (match) {
+      case "club":
+        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: parsed.query.id } } });
+        break;
+
+      default:
+        break;
+    }
   };
 
   useEffect(() => {
