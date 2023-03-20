@@ -70,8 +70,8 @@ const ImagePickerText = styled.Text`
 
 const FeedText = styled.TextInput`
   color: black;
-  height: ${Platform.OS === "ios" ? 90 : 100}px;
-  padding: 0 20px 0 20px;
+  height: ${Platform.OS === "ios" ? 230 : 250}px;
+  padding: 10px 20px 0 20px;
   top: ${Platform.OS === "ios" ? 2 : 0}%;
   font-size: 15px;
 `;
