@@ -285,11 +285,13 @@ const ClubTopTabs = ({
         domainUriPrefix: "https://onyou.page.link",
         android: { packageName: "com.onyoufrontend" },
         ios: { bundleId: "com.onyou.project", appStoreId: "1663717005" },
+        otherPlatform: { fallbackUrl: "https://thin-helium-f6d.notion.site/e33250ceb44c428cb881d6ac7d163e69" },
         social: {
           title: data?.name ?? "",
           descriptionText: data?.clubShortDesc ?? "",
           imageUrl: data?.thumbnail ?? "",
         },
+
         // navigation: { forcedRedirectEnabled: true }, // iOS에서 preview page를 스킵하는 옵션. 이걸 사용하면 온유앱이 꺼져있을 때는 제대로 navigation이 되질 않는 버그가 있음.
       },
       dynamicLinks.ShortLinkType.SHORT
