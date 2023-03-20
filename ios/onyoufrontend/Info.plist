@@ -20,10 +20,27 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>https://onyou.page.link</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.onyou.project</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CodePushDeploymentKey</key>
 	<string>${CODEPUSH_KEY}</string>
+	<key>FIREBASE_ANALYTICS_COLLECTION_DEACTIVATED</key>
+	<string>NO</string>
+	<key>FIREBASE_ANALYTICS_COLLECTION_ENABLED</key>
+	<string>YES</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -68,9 +85,5 @@
 	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>FIREBASE_ANALYTICS_COLLECTION_DEACTIVATED</key>
-	<string>NO</string>
-	<key>FIREBASE_ANALYTICS_COLLECTION_ENABLED</key>
-	<string>YES</string>
 </dict>
 </plist>

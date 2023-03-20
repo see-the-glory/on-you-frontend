@@ -290,6 +290,7 @@ const ClubTopTabs = ({
           descriptionText: data?.clubShortDesc ?? "",
           imageUrl: data?.thumbnail ?? "",
         },
+        navigation: { forcedRedirectEnabled: true },
       },
       dynamicLinks.ShortLinkType.SHORT
     );
