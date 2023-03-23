@@ -1,15 +1,12 @@
 import React, { useState } from "react";
 import { Entypo } from "@expo/vector-icons";
 import { useLayoutEffect } from "react";
-import { ActivityIndicator, Alert, DeviceEventEmitter, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Alert, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
-import { useSelector } from "react-redux";
-import { BaseResponse, ClubApi, ClubApproveRequest, ClubRejectRequest, ErrorResponse } from "../../api";
+import { BaseResponse, ClubApi, ClubRejectRequest, ErrorResponse } from "../../api";
 import { useMutation } from "react-query";
 import { useToast } from "react-native-toast-notifications";
-import { RootState } from "../../redux/store/reducers";
-import moment from "moment";
 import CustomTextInput from "../../components/CustomTextInput";
 
 const Container = styled.SafeAreaView`
@@ -35,49 +32,15 @@ const HeaderText = styled(CustomText)`
 const HeaderBoldText = styled(HeaderText)`
   font-family: "NotoSansKR-Bold";
 `;
-const Content = styled.View``;
-const MessageView = styled.ScrollView`
-  height: 250px;
-  border: 1px solid #dcdcdc;
-`;
 
-const CreatedTimeView = styled.View`
-  justify-content: center;
+const MemoInfo = styled.View`
   align-items: flex-end;
-`;
-const CreatedTimeText = styled(CustomText)`
-  color: #8e8e8e;
-`;
-const ContentText = styled(CustomText)`
-  margin: 8px;
-  color: #343434;
-  font-size: 14px;
-  line-height: 20px;
+  justify-content: center;
 `;
 
-const Footer = styled.View`
-  flex-direction: row;
-  position: absolute;
-  bottom: 0px;
-  height: 70px;
-`;
-const RejectButton = styled.TouchableOpacity`
-  width: 50%;
-  background-color: #b0b0b0;
-  justify-content: center;
-  align-items: center;
-`;
-const AcceptButton = styled.TouchableOpacity`
-  width: 50%;
-  background-color: #295af5;
-  justify-content: center;
-  align-items: center;
-`;
-const ButtonText = styled(CustomText)`
-  font-family: "NotoSansKR-Medium";
-  font-size: 20px;
-  line-height: 26px;
-  color: white;
+const InfoText = styled(CustomText)`
+  font-size: 12px;
+  color: #b5b5b5;
 `;
 
 const MemoTextInput = styled(CustomTextInput)`
@@ -97,6 +60,7 @@ const ClubJoinReject = ({
 }) => {
   const toast = useToast();
   const [message, setMessage] = useState<string>("");
+  const maxLength = 1000;
 
   const refetchEmit = () => {
     DeviceEventEmitter.emit("ClubNotificationRefresh");
@@ -160,12 +124,15 @@ const ClubJoinReject = ({
           <HeaderBoldText>{actionerName}</HeaderBoldText>
           <HeaderText>{`님에게 거절 사유를 전해주세요.`}</HeaderText>
         </Header>
+        <MemoInfo>
+          <InfoText>{`${message.length} / ${maxLength}`}</InfoText>
+        </MemoInfo>
         <MemoTextInput
           placeholder="가입 거절 사유를 입력해주세요."
           placeholderTextColor="#B0B0B0"
           textAlign="left"
           multiline={true}
-          maxLength={255}
+          maxLength={maxLength}
           textAlignVertical="top"
           onChangeText={(text: string) => setMessage(text)}
           onEndEditing={() => setMessage((prev) => prev.trim())}

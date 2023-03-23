@@ -291,7 +291,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           <SectionTitle>ABOUT</SectionTitle>
         </TitleView>
         <ContentView>
-          {clubLongDescLines.length < collapsed ? (
+          {clubLongDescLines.length <= collapsed ? (
             <ContentText>{clubData.clubLongDesc}</ContentText>
           ) : (
             <TouchableWithoutFeedback onPress={clubLongDescTouch}>
