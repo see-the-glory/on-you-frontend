@@ -12,6 +12,7 @@ import BlockUserList from "../screens/Profile/BlockUserList";
 import UserNotification from "../screens/Profile/UserNotification";
 import ChangePassword from "../screens/Profile/ChangePassword";
 import MyClubs from "../screens/Profile/MyClubs";
+import SuggestionSuccess from "../screens/Profile/SuggestionSuccess";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -37,6 +38,7 @@ const ProfileStack = ({
       <NativeStack.Screen name="BlockUserList" component={BlockUserList} options={{ title: "차단된 계정" }} />
       <NativeStack.Screen name="NotificationSetting" component={NotificationSetting} options={{ title: "알림 설정" }} />
       <NativeStack.Screen name="Suggestion" component={Suggestion} options={{ title: "건의사항 요청" }} />
+      <NativeStack.Screen name="SuggestionSuccess" component={SuggestionSuccess} options={{ title: "건의사항 요청" }} />
       <NativeStack.Screen name="Notice" component={Notice} options={{ title: "공지사항" }} />
       <NativeStack.Screen name="Info" component={Info} options={{ title: "정보" }} />
       <NativeStack.Screen name="UserNotification" component={UserNotification} options={{ title: "개인 소식" }} />

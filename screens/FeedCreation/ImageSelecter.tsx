@@ -408,11 +408,14 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
           </SelectImageView>
           <FeedText
             placeholder="사진과 함께 남길 게시글을 작성해 보세요."
+            placeholderTextColor="#B0B0B0"
             onChangeText={(content: string) => setContent(content)}
             onEndEditing={() => setContent((prev) => prev.trim())}
-            autoCapitalize="none"
-            autoCorrect={false}
+            textAlign="left"
             multiline={true}
+            maxLength={1000}
+            textAlignVertical="top"
+            includeFontPadding={false}
           ></FeedText>
         </>
       </KeyboardAvoidingView>
