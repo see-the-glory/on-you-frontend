@@ -7,11 +7,9 @@ import CustomTextInput from "../../components/CustomTextInput";
 import Collapsible from "react-native-collapsible";
 import DatePicker from "react-native-date-picker";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
-import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 import { BaseResponse, ClubApi, ClubScheduleUpdateRequest, ErrorResponse } from "../../api";
 import { useMutation } from "react-query";
-import { RootState } from "../../redux/store/reducers";
 import moment from "moment";
 import { Entypo } from "@expo/vector-icons";
 
@@ -68,6 +66,11 @@ const ItemTextInput = styled(CustomTextInput)`
   flex: 1;
 `;
 
+const InfoText = styled(CustomText)`
+  font-size: 12px;
+  color: #b5b5b5;
+`;
+
 const MemoView = styled.View`
   padding: 15px 0px;
 `;
@@ -82,6 +85,12 @@ const MemoInput = styled(CustomTextInput)`
   background-color: #f3f3f3;
 `;
 
+const ItemTitleView = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
 const ClubScheduleEdit = ({
   navigation: { navigate, goBack, setOptions },
   route: {
@@ -94,9 +103,8 @@ const ClubScheduleEdit = ({
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [dateTime, setDateTime] = useState(new Date(moment(scheduleData?.startDate).tz("Asia/Seoul").format("YYYY-MM-DDTHH:mm:ss")));
   const [selectedDate, setSelectedDate] = useState<string>(scheduleData?.startDate.split("T")[0]);
-  const markedDate = {
-    [selectedDate]: { selected: true },
-  };
+  const markedDate = { [selectedDate]: { selected: true } };
+  const memoMax = 1000;
 
   const scheduleMutation = useMutation<BaseResponse, ErrorResponse, ClubScheduleUpdateRequest>(ClubApi.updateClubSchedule, {
     onSuccess: (res) => {
@@ -237,17 +245,20 @@ const ClubScheduleEdit = ({
               </InputItem>
             </ItemView>
             <MemoView>
-              <ItemTitle>메모</ItemTitle>
+              <ItemTitleView>
+                <ItemTitle>메모</ItemTitle>
+                <InfoText>{`${memo.length} / ${memoMax}`}</InfoText>
+              </ItemTitleView>
               <MemoInput
                 placeholder="스케줄에 대한 메모를 남겨주세요."
                 placeholderTextColor="#B0B0B0"
                 value={memo}
+                textAlignVertical="top"
                 textAlign="left"
                 multiline={true}
-                maxLength={1000}
-                textAlignVertical="top"
+                maxLength={memoMax}
                 onChangeText={(value: string) => setMemo(value)}
-                onEndEditing={() => setMemo((prev) => prev.trim())}
+                onEndEditing={() => setMemo((prev: string) => prev.trim())}
                 includeFontPadding={false}
               />
             </MemoView>
