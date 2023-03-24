@@ -248,6 +248,13 @@ export interface DuplicateCheckResponse extends BaseResponse {
   };
 }
 
+export interface PushAlarmResponse extends BaseResponse {
+  data: {
+    clubPushAlarm: string;
+    userPushAlarm: string;
+  };
+}
+
 export interface ClubCreationData {
   category1Id: number;
   category2Id?: number | null;
@@ -605,6 +612,7 @@ const blockUser = (req: UserBlockRequest) => axios.post<string, BaseResponse>(`/
 const getBlockUserList = ({ queryKey }: any) => axios.get<string, BlockUserListResponse>(`/api/user/blockUserList`);
 
 // Account Setting
+const getPushAlarm = ({ queryKey }: any) => axios.get<String, PushAlarmResponse>(`/api/user/pushAlarm`);
 const setPushAlarm = (req: UserPushAlarmRequest) => axios.put<string, BaseResponse>(`/api/user/pushAlarm`, req);
 const withdrawAccount = () => axios.post<string, BaseResponse>(`/api/user/withdraw`);
 const getMyClubs = ({ queryKey }: any) => axios.get<string, MyClubsResponse>(`/api/clubs/my`);
@@ -716,6 +724,7 @@ export const UserApi = {
   withdrawAccount,
   blockUser,
   getBlockUserList,
+  getPushAlarm,
   setPushAlarm,
   updateTargetToken,
   submitSuggestion,
