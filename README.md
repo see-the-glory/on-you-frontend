@@ -10,6 +10,8 @@ https://docs.google.com/spreadsheets/d/17FOub5XQzyAATTe4Eugj1X-nNH6v4mrTryUCXivH
 https://docs.google.com/spreadsheets/d/1FXkIMqmg9_Y08TT939kjzkc7ilMlviRP9y9idvgvuRU/edit
 https://docs.google.com/spreadsheets/d/1zG6zVHs9nBWFAcj297-2w7DCpJS6Tp7pClm5HrFs20s/edit#gid=0
 
-## Store
-App store: https://apps.apple.com/kr/app/%EC%98%A8%EC%9C%A0/id1663717005
-Google Play: https://play.google.com/store/apps/details?id=com.onyoufrontend
+### App store
+https://apps.apple.com/kr/app/%EC%98%A8%EC%9C%A0/id1663717005
+
+### Google Play
+https://play.google.com/store/apps/details?id=com.onyoufrontend
