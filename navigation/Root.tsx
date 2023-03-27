@@ -151,7 +151,25 @@ const Root = () => {
     // Firebase - bacgkround 에서 실행 중에 push 가 선택될 경우
     const unsubscribeNotification = messaging().onNotificationOpenedApp((message) => {
       console.log("onNotificationOpenedApp --");
-      console.log(message?.data);
+      switch (message?.data?.type) {
+        case "APPLY":
+          navigation.navigate("ProfileStack", { screen: "UserNotification" });
+          break;
+        case "APPROVE":
+          navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: message?.data?.clubId } } });
+          break;
+        case "REJECT":
+          navigation.navigate("ProfileStack", { screen: "UserNotification" });
+          break;
+        case "FEED_CREATE":
+          console.log(message?.data);
+          break;
+        case "FEED_COMMENT":
+          console.log(message?.data);
+          break;
+        default:
+          break;
+      }
     });
 
     // Firebase - 앱이 종료되었는데 push 가 선택될 경우
@@ -159,7 +177,25 @@ const Root = () => {
       .getInitialNotification()
       .then((message) => {
         console.log("Firebase - getInitialNotification");
-        console.log(message?.data);
+        switch (message?.data?.type) {
+          case "APPLY":
+            navigation.navigate("ProfileStack", { screen: "UserNotification" });
+            break;
+          case "APPROVE":
+            navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: message?.data?.clubId } } });
+            break;
+          case "REJECT":
+            navigation.navigate("ProfileStack", { screen: "UserNotification" });
+            break;
+          case "FEED_CREATE":
+            console.log(message?.data);
+            break;
+          case "FEED_COMMENT":
+            console.log(message?.data);
+            break;
+          default:
+            break;
+        }
       });
 
     // Notifee - 앱이 종료되었는데 push 가 선택될 경우

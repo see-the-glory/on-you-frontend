@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Entypo } from "@expo/vector-icons";
 import { useLayoutEffect } from "react";
 import { Alert, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
@@ -82,6 +82,7 @@ const ClubApplication = ({
   navigation: { navigate, goBack, setOptions },
 }) => {
   const toast = useToast();
+  const [showButton, setShowButton] = useState<boolean>(!processDone);
 
   const refetchEmit = () => {
     DeviceEventEmitter.emit("ClubNotificationRefresh");
@@ -99,6 +100,17 @@ const ClubApplication = ({
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
+
+  useEffect(() => {
+    let processDoneChangeSubs = DeviceEventEmitter.addListener("ClubApplicationProcessDone", () => {
+      console.log("ClubApplication - Process Done Event");
+      setShowButton(false);
+    });
+    return () => {
+      processDoneChangeSubs.remove();
+    };
+  }, []);
+
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
@@ -153,7 +165,7 @@ const ClubApplication = ({
           <CreatedTimeText>{moment(createdTime).tz("Asia/Seoul").format("YYYY-MM-DD  A h시 mm분")}</CreatedTimeText>
         </CreatedTimeView>
       </Content>
-      {processDone !== true ? (
+      {showButton ? (
         <Footer>
           <RejectButton onPress={reject} disabled={approveMutation.isLoading}>
             <ButtonText>거절</ButtonText>
