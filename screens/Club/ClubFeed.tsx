@@ -70,7 +70,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["getClubFeeds", clubData.id], FeedApi.getClubFeeds, {
     getNextPageParam: (currentPage) => {
       if (currentPage) {
-        return currentPage.hasNext === false ? null : currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor;
+        return currentPage.hasData === true ? currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor : null;
       }
     },
     onSuccess: (res) => {
@@ -80,7 +80,6 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       console.log(`API ERROR | getClubFeeds ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
-    enabled: ["MASTER", "MANAGER", "MEMBER"].includes(myRole ?? ""),
   });
 
   const loadMore = () => {
@@ -125,7 +124,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     <Loader>
       <ActivityIndicator />
     </Loader>
-  ) : ["MASTER", "MANAGER", "MEMBER"].includes(myRole ?? "") ? (
+  ) : (
     <Animated.FlatList
       ref={(ref) => {
         screenScrollRefs.current[screenName] = ref;
@@ -172,10 +171,6 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
         </TouchableOpacity>
       )}
     />
-  ) : (
-    <EmptyView>
-      <EmptyText>{`모임의 멤버만 게시물을 볼 수 있습니다.`}</EmptyText>
-    </EmptyView>
   );
 };
 

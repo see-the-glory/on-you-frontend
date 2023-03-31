@@ -98,12 +98,12 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   };
 
   const goToFeedComments = (feedIndex: number, feedId: number) => {
-    navigate("FeedStack", { screen: "FeedComments", feedIndex, feedId, clubId: clubData.id });
+    navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId, clubId: clubData.id } });
   };
 
   const goToUpdateFeed = () => {
     closeMyFeedOption();
-    navigate("FeedStack", { screen: "ModifiyFeed", feedData: selectFeedData });
+    navigate("FeedStack", { screen: "ModifiyFeed", params: { feedData: selectFeedData } });
   };
 
   const openFeedOption = (feedData: Feed) => {

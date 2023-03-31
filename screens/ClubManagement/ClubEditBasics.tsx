@@ -3,7 +3,7 @@ import { ActivityIndicator, KeyboardAvoidingView, Platform, StatusBar, Touchable
 import styled from "styled-components/native";
 import { ClubEditBasicsProps } from "../../Types/Club";
 import ImagePicker from "react-native-image-crop-picker";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
 import { useQuery, useMutation } from "react-query";
 import { Category, CategoryResponse, ClubApi, ClubUpdateRequest, ClubUpdateResponse, ErrorResponse } from "../../api";
 import { useToast } from "react-native-toast-notifications";
@@ -208,6 +208,11 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
 
   useLayoutEffect(() => {
     setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
       headerRight: () =>
         mutation.isLoading ? (
           <ActivityIndicator />

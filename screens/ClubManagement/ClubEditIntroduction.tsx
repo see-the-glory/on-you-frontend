@@ -1,3 +1,4 @@
+import { Entypo } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-toast-notifications";
@@ -92,6 +93,11 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
 
   useEffect(() => {
     setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
       headerRight: () =>
         mutation.isLoading ? (
           <ActivityIndicator />

@@ -76,15 +76,11 @@ const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "JoinStepSuccess">> 
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-      navigation.navigate("LoginStack", {
-        screen: "Login",
-      });
+      navigation.navigate("LoginStack", { screen: "Login" });
       return true;
     });
     const unsubscribe = navigation.addListener("gestureEnd", () => {
-      navigation.navigate("LoginStack", {
-        screen: "Login",
-      });
+      navigation.navigate("LoginStack", { screen: "Login" });
     });
 
     return () => {

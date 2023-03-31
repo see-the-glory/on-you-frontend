@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { DeviceEventEmitter, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { Entypo } from "@expo/vector-icons";
+import React, { useLayoutEffect, useState } from "react";
+import { DeviceEventEmitter, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import styled from "styled-components/native";
@@ -83,7 +84,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   route: {
     params: { category1, category2, clubName, maxNumber, isApproveRequired, phoneNumber, organizationName, imageURI },
   },
-  navigation: { navigate },
+  navigation: { navigate, setOptions, goBack },
 }) => {
   const toast = useToast();
   const [clubShortDesc, setClubShortDesc] = useState<string>("");
@@ -91,6 +92,16 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   const shortDescMax = 20;
   const longDescMax = 3000;
   const [disableSubmit, setDisableSubmit] = useState<boolean>(false);
+
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
 
   const mutation = useMutation<ClubCreationResponse, ErrorResponse, ClubCreationRequest>(ClubApi.createClub, {
     onSuccess: (res) => {

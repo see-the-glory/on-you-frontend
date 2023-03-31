@@ -73,7 +73,7 @@ const SkipText = styled(CustomText)`
 `;
 
 const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
-  navigation: { navigate, setOptions },
+  navigation: { navigate, setOptions, goBack },
   route: {
     params: { name, email, password, sex, birth },
   },
@@ -100,31 +100,35 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
     }
     navigate("SignUpStack", {
       screen: "JoinStepEight",
-      name,
-      email,
-      password,
-      sex,
-      birth,
-      phone: phoneNumber,
+      params: {
+        name,
+        email,
+        password,
+        sex,
+        birth,
+        phone: phoneNumber,
+      },
     });
   };
 
   const goToNext = () => {
     navigate("SignUpStack", {
       screen: "JoinStepEight",
-      name,
-      email,
-      password,
-      sex,
-      birth,
-      phone: null,
+      params: {
+        name,
+        email,
+        password,
+        sex,
+        birth,
+        phone: null,
+      },
     });
   };
 
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinStepSix", name, email, password, sex, birth })}>
+        <TouchableOpacity onPress={() => goBack()}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),

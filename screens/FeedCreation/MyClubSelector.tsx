@@ -1,10 +1,9 @@
 import React, { useLayoutEffect } from "react";
-import { ActivityIndicator, FlatList, ScrollView, TouchableOpacity } from "react-native";
+import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { Club, MyClub, UserApi, MyClubsResponse } from "../../api";
-import { MyClubSelectorScreenProps } from "../../types/feed";
 import CustomText from "../../components/CustomText";
 import { Entypo } from "@expo/vector-icons";
 import Tag from "../../components/Tag";
@@ -88,7 +87,7 @@ const CategoryNameText = styled(CustomText)`
   color: white;
 `;
 
-const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
+const MyClubSelector = ({
   navigation: { setOptions, navigate, goBack },
   route: {
     params: { userId },
@@ -102,11 +101,7 @@ const MyClubSelector: React.FC<MyClubSelectorScreenProps> = ({
   } = useQuery<MyClubsResponse>(["getMyClubs"], UserApi.getMyClubs);
 
   const goToImageSelect = (clubData: Club) => {
-    return navigate("FeedStack", {
-      screen: "ImageSelecter",
-      userId: userId,
-      clubId: clubData.id,
-    });
+    return navigate("FeedStack", { screen: "ImageSelecter", params: { userId: userId, clubId: clubData.id } });
   };
 
   useLayoutEffect(() => {

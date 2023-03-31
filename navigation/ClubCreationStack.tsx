@@ -11,7 +11,7 @@ import ClubCreationFail from "../screens/ClubCreation/ClubCreationFail";
 
 const NativeStack = createNativeStackNavigator<ClubStackParamList>();
 
-const ClubCreationStack: React.FC<ClubCreationStackProps> = ({ navigation: { navigate }, route: { params: category } }) => {
+const ClubCreationStack: React.FC<ClubCreationStackProps> = ({ navigation: { navigate }, route: { params } }) => {
   return (
     <NativeStack.Navigator
       screenOptions={{
@@ -21,67 +21,11 @@ const ClubCreationStack: React.FC<ClubCreationStackProps> = ({ navigation: { nav
         headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
       }}
     >
-      <NativeStack.Screen
-        name="ClubCreationStepOne"
-        component={ClubCreationStepOne}
-        initialParams={category}
-        options={{
-          title: "모임 개설",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Clubs" })}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <NativeStack.Screen
-        name="ClubCreationStepTwo"
-        component={ClubCreationStepTwo}
-        options={{
-          title: "모임 개설",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("ClubCreationStepOne", { category })}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <NativeStack.Screen
-        name="ClubCreationStepThree"
-        component={ClubCreationStepThree}
-        options={({
-          route: {
-            params: { category1, category2 },
-          },
-        }) => ({
-          title: "모임 개설",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("ClubCreationStepTwo", { category1, category2 })}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
-        })}
-      />
-
-      <NativeStack.Screen
-        name="ClubCreationSuccess"
-        component={ClubCreationSuccess}
-        options={({
-          route: {
-            params: { clubId },
-          },
-        }) => ({
-          headerShown: false,
-        })}
-      />
-
-      <NativeStack.Screen
-        name="ClubCreationFail"
-        component={ClubCreationFail}
-        options={({}) => ({
-          headerShown: false,
-        })}
-      />
+      <NativeStack.Screen name="ClubCreationStepOne" component={ClubCreationStepOne} options={{ title: "모임 개설" }} />
+      <NativeStack.Screen name="ClubCreationStepTwo" component={ClubCreationStepTwo} options={{ title: "모임 개설" }} />
+      <NativeStack.Screen name="ClubCreationStepThree" component={ClubCreationStepThree} options={{ title: "모임 개설" }} />
+      <NativeStack.Screen name="ClubCreationSuccess" component={ClubCreationSuccess} options={{ headerShown: false }} />
+      <NativeStack.Screen name="ClubCreationFail" component={ClubCreationFail} options={{ headerShown: false }} />
     </NativeStack.Navigator>
   );
 };
