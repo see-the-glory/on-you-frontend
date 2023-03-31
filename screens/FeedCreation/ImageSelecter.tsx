@@ -8,7 +8,7 @@ import {
   DeviceEventEmitter,
   Keyboard,
   KeyboardAvoidingView,
-  Platform,
+  Platform, ScrollView,
   StatusBar,
   Text,
   TouchableOpacity,
@@ -25,6 +25,7 @@ import { useNavigation } from "@react-navigation/native";
 import { RootState } from "../../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
 import DraggableFlatList, { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
+import CustomTextInput from "../../components/CustomTextInput";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -68,10 +69,14 @@ const ImagePickerText = styled.Text`
   top: 8px;
 `;
 
-const FeedText = styled.TextInput`
-  color: black;
-  height: ${Platform.OS === "ios" ? 90 : 100}px;
-  padding: 0 20px 0 20px;
+const FeedTextArea = styled.View`
+  padding: 10px 20px 0 20px;
+`
+
+const FeedText = styled(CustomTextInput)`
+  width: 100%;
+  color: black; 
+  height: 250px;
   top: ${Platform.OS === "ios" ? 2 : 0}%;
   font-size: 15px;
 `;
@@ -389,8 +394,8 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
   return (
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
-      <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
-        <>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
+        <ScrollView>
           <SelectImageView>
             <MyImage>
               <DraggableFlatList horizontal data={imageURL} onDragEnd={({ data }) => setImageURL(data)} keyExtractor={(item) => item} renderItem={(props) => renderItem({ ...props })} />
@@ -406,18 +411,20 @@ const ImageSelecter = (props: FeedCreateScreenProps) => {
               <MoveImageText>사진을 길게 눌러 순서를 변경할 수 있습니다.</MoveImageText>
             </ImageUnderArea>
           </SelectImageView>
-          <FeedText
-            placeholder="사진과 함께 남길 게시글을 작성해 보세요."
-            placeholderTextColor="#B0B0B0"
-            onChangeText={(content: string) => setContent(content)}
-            onEndEditing={() => setContent((prev) => prev.trim())}
-            textAlign="left"
-            multiline={true}
-            maxLength={1000}
-            textAlignVertical="top"
-            includeFontPadding={false}
-          ></FeedText>
-        </>
+          <FeedTextArea>
+            <FeedText
+                value={content}
+                placeholder="사진과 함께 남길 게시글을 작성해 보세요."
+                onChangeText={(content: string) => setContent(content)}
+                onEndEditing={() => setContent((prev) => prev.trim())}
+                autoCapitalize="none"
+                autoCorrect={false}
+                multiline={true}
+                includeFontPadding={false}
+                textAlignVertical="top"
+            />
+          </FeedTextArea>
+        </ScrollView>
       </KeyboardAvoidingView>
     </Container>
   );
