@@ -74,6 +74,28 @@ const Root = () => {
     }
   };
 
+  const handlePushMessage = (data: any) => {
+    switch (data?.type) {
+      case "APPLY":
+        navigation.navigate("ProfileStack", { screen: "UserNotification" });
+        break;
+      case "APPROVE":
+        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
+        break;
+      case "REJECT":
+        navigation.navigate("ProfileStack", { screen: "UserNotification" });
+        break;
+      case "FEED_CREATE":
+        console.log(data);
+        break;
+      case "FEED_COMMENT":
+        console.log(data);
+        break;
+      default:
+        break;
+    }
+  };
+
   useEffect(() => {
     console.log(`Root - useEffect!`);
     // Axios Setting
@@ -140,6 +162,7 @@ const Root = () => {
           body: message?.notification?.body,
           android: {
             channelId: "club",
+            pressAction: { id: "default" },
           },
           data: message?.data,
         });
@@ -151,7 +174,7 @@ const Root = () => {
     // Firebase - bacgkround 에서 실행 중에 push 가 선택될 경우
     const unsubscribeNotification = messaging().onNotificationOpenedApp((message) => {
       console.log("onNotificationOpenedApp --");
-      console.log(message?.data);
+      handlePushMessage(message?.data);
     });
 
     // Firebase - 앱이 종료되었는데 push 가 선택될 경우
@@ -159,25 +182,19 @@ const Root = () => {
       .getInitialNotification()
       .then((message) => {
         console.log("Firebase - getInitialNotification");
-        console.log(message?.data);
+        handlePushMessage(message?.data);
       });
 
     // Notifee - 앱이 종료되었는데 push 가 선택될 경우
     notifee.getInitialNotification().then((message) => {
       console.log("Notifee - getInitialNotification");
-      console.log(message?.notification);
+      handlePushMessage(message?.notification?.data);
     });
 
     const notiUnsubscribe = notifee.onForegroundEvent(({ type, detail }) => {
       switch (type) {
-        case EventType.DISMISSED:
-          console.log("User dismissed notification", detail.notification);
-          break;
         case EventType.PRESS:
-          console.log("User pressed notification", detail.notification);
-          break;
-        case EventType.ACTION_PRESS:
-          console.log(`Action Press: ${detail.pressAction?.id}`);
+          handlePushMessage(detail?.notification?.data);
           break;
       }
     });

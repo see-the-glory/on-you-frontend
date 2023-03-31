@@ -240,10 +240,7 @@ const ClubTopTabs = ({
 
   // Function in Modal
   const goToClubEdit = () => {
-    navigate("ClubManagementStack", {
-      screen: "ClubManagementMain",
-      clubData: data,
-    });
+    navigate("ClubManagementStack", { screen: "ClubManagementMain", params: { clubData: data } });
   };
 
   const goToClubJoin = () => {
@@ -262,11 +259,7 @@ const ClubTopTabs = ({
       toast.show("유저 정보를 알 수 없습니다.", { type: "warning" });
       return;
     }
-    navigate("FeedStack", {
-      screen: "ImageSelecter",
-      userId: me?.id,
-      clubId: data.id,
-    });
+    navigate("FeedStack", { screen: "ImageSelecter", params: { userId: me?.id, clubId: data.id } });
   };
 
   const goClubNotification = () => {

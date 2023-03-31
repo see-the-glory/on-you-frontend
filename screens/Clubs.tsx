@@ -270,10 +270,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   };
 
   const goToCreation = () => {
-    return navigate("ClubCreationStack", {
-      screen: "ClubCreationStepOne",
-      category,
-    });
+    return navigate("ClubCreationStack", { screen: "ClubCreationStepOne", params: { category } });
   };
 
   const setClubsCategoryParams = (categoryId: number) => {

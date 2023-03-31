@@ -73,7 +73,7 @@ const TextInfo = styled.Text`
 `;
 
 const JoinConfirm: React.FC<NativeStackScreenProps<any, "JoinConfirm">> = ({
-  navigation: { navigate, setOptions },
+  navigation: { navigate, setOptions, goBack },
   route: {
     params: { name, email, password, sex, birth, phone, church },
   },
@@ -85,32 +85,26 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "JoinConfirm">> = ({
       if (res.status === 200) {
         navigate("SignUpStack", {
           screen: "JoinStepSuccess",
-          email,
-          password,
-          token: res.token,
+          params: {
+            email,
+            password,
+            token: res.token,
+          },
         });
       } else if (res.status === 404) {
         console.log(res);
-        toast.show("이미 가입된 사용자입니다.", {
-          type: "warning",
-        });
-        navigate("LoginStack", {
-          screen: "Login",
-        });
+        toast.show("이미 가입된 사용자입니다.", { type: "warning" });
+        navigate("LoginStack", { screen: "Login" });
       } else {
         console.log(`user register mutation success but please check status code`);
         console.log(res);
-        toast.show(`회원가입에 실패했습니다. (Error Code: ${res.status})`, {
-          type: "warning",
-        });
+        toast.show(`회원가입에 실패했습니다. (Error Code: ${res.status})`, { type: "warning" });
       }
     },
     onError: (error) => {
       console.log("--- regeister Error ---");
       console.log(`error: ${error}`);
-      toast.show(`회원가입에 실패했습니다. (Error Code: ${error})`, {
-        type: "warning",
-      });
+      toast.show(`회원가입에 실패했습니다. (Error Code: ${error})`, { type: "warning" });
     },
   });
 
@@ -132,7 +126,7 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "JoinConfirm">> = ({
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinStepEight", name, email, password, sex, birth, phone, church })}>
+        <TouchableOpacity onPress={() => goBack()}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),

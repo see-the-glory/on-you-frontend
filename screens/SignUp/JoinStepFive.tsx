@@ -78,7 +78,7 @@ const ChoiceButton = styled.TouchableOpacity`
 `;
 
 const JoinStepFive: React.FC<NativeStackScreenProps<any, "JoinStepFive">> = ({
-  navigation: { navigate, setOptions },
+  navigation: { navigate, setOptions, goBack },
   route: {
     params: { name, email, password },
   },
@@ -91,17 +91,19 @@ const JoinStepFive: React.FC<NativeStackScreenProps<any, "JoinStepFive">> = ({
     if (approvalMethod === 2) sex = "여성";
     navigate("SignUpStack", {
       screen: "JoinStepSix",
-      name,
-      email,
-      password,
-      sex,
+      params: {
+        name,
+        email,
+        password,
+        sex,
+      },
     });
   };
 
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinStepFour", name, email, password })}>
+        <TouchableOpacity onPress={() => goBack()}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),

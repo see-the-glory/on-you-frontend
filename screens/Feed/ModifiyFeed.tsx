@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
 import styled from "styled-components/native";
-import { ActivityIndicator, Alert, DeviceEventEmitter, Dimensions, FlatList, KeyboardAvoidingView, Platform, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, DeviceEventEmitter, Dimensions, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { useMutation, useQuery } from "react-query";
 import { FeedApi, FeedUpdateRequest, UserApi, MyClub, ErrorResponse, MyClubsResponse, BaseResponse } from "../../api";
-import { ModifiyFeedScreenProps } from "../../types/feed";
-import { ClubStackParamList } from "../../types/Club";
 import { useNavigation } from "@react-navigation/native";
 import CustomTextInput from "../../components/CustomTextInput";
 import CustomText from "../../components/CustomText";
@@ -19,7 +17,6 @@ import { RootState } from "../../redux/store/reducers";
 import { BackHandler } from "react-native";
 import CircleIcon from "../../components/CircleIcon";
 import Tag from "../../components/Tag";
-import { ScrollView } from "react-native-gesture-handler";
 
 const Loader = styled.View`
   flex: 1;
@@ -124,7 +121,7 @@ const FeedModifyFin = styled.Text`
   padding-top: 5px;
 `;
 
-const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
+const ModifiyFeed = ({
   navigation: { navigate, goBack },
   route: {
     params: { feedData },
@@ -134,7 +131,6 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
   const [content, setContent] = useState<string>(feedData.content);
   const navigation = useNavigation();
   const modalizeRef = useRef<Modalize>(null);
-  const [isSummitShow, setSummitShow] = useState<boolean>(true); //저장버튼 로딩
   const [clubId, setClubId] = useState<number>(feedData.clubId);
   const [clubName, setClubName] = useState<string>(feedData.clubName);
   const feedSize = Dimensions.get("window").width;
@@ -162,7 +158,6 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
     if (content?.length == 0) {
       Alert.alert("글을 수정하세요");
     } else {
-      setSummitShow(false);
       const data = {
         id: feedData.id,
         clubId: clubId,
@@ -182,15 +177,15 @@ const ModifiyFeed: React.FC<ModifiyFeedScreenProps> = ({
         </TouchableOpacity>
       ),
       headerRight: () =>
-        isSummitShow ? (
+        mutation.isLoading ? (
+          <ActivityIndicator />
+        ) : (
           <TouchableOpacity onPress={FixComplete}>
             <FeedModifyFin>저장</FeedModifyFin>
           </TouchableOpacity>
-        ) : (
-          <ActivityIndicator />
         ),
     });
-  }, [content, clubId, isSummitShow]);
+  }, [content, clubId, mutation.isLoading]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {

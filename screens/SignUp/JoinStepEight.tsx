@@ -79,7 +79,7 @@ const FieldContentText = styled.Text`
 `;
 
 const JoinStepEight: React.FC<NativeStackScreenProps<any, "JoinStepEight">> = ({
-  navigation: { navigate, setOptions },
+  navigation: { navigate, setOptions, goBack },
   route: {
     params: { name, email, password, sex, birth, phone },
   },
@@ -92,20 +92,22 @@ const JoinStepEight: React.FC<NativeStackScreenProps<any, "JoinStepEight">> = ({
 
     navigate("SignUpStack", {
       screen: "JoinConfirm",
-      name,
-      email,
-      password,
-      sex,
-      birth,
-      phone,
-      church: "시광교회",
+      params: {
+        name,
+        email,
+        password,
+        sex,
+        birth,
+        phone,
+        church: "시광교회",
+      },
     });
   };
 
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinStepSeven", name, email, password, sex, birth, phone })}>
+        <TouchableOpacity onPress={() => goBack()}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),

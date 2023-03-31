@@ -73,7 +73,7 @@ const ValidationText = styled.Text`
 `;
 
 const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
-  navigation: { navigate, setOptions },
+  navigation: { navigate, setOptions, goBack },
   route: {
     params: { name, email },
   },
@@ -92,16 +92,18 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
     }
     navigate("SignUpStack", {
       screen: "JoinStepFive",
-      name,
-      email,
-      password,
+      params: {
+        name,
+        email,
+        password,
+      },
     });
   };
 
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinStepThree", name, email })}>
+        <TouchableOpacity onPress={() => goBack()}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),

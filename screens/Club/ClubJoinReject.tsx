@@ -8,6 +8,7 @@ import { BaseResponse, ClubApi, ClubRejectRequest, ErrorResponse } from "../../a
 import { useMutation } from "react-query";
 import { useToast } from "react-native-toast-notifications";
 import CustomTextInput from "../../components/CustomTextInput";
+import { StackActions } from "@react-navigation/native";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -56,22 +57,23 @@ const ClubJoinReject = ({
   route: {
     params: { clubId, actionId, actionerId, actionerName },
   },
-  navigation: { navigate, goBack, setOptions, pop },
+  navigation: { navigate, goBack, setOptions },
 }) => {
   const toast = useToast();
   const [message, setMessage] = useState<string>("");
   const maxLength = 1000;
 
-  const refetchEmit = () => {
+  const eventEmit = () => {
     DeviceEventEmitter.emit("ClubNotificationRefresh");
     DeviceEventEmitter.emit("UserNotificationRefresh");
+    DeviceEventEmitter.emit("ClubApplicationProcessDone");
   };
 
   const rejectMutation = useMutation<BaseResponse, ErrorResponse, ClubRejectRequest>(ClubApi.rejectToClubJoin, {
     onSuccess: (res) => {
       toast.show(`가입신청 거절 메시지를 보냈습니다.`, { type: "success" });
-      refetchEmit();
-      pop(2);
+      eventEmit();
+      goBack();
     },
     onError: (error) => {
       console.log(`API ERROR | rejectToClubJoin ${error.code} ${error.status}`);
