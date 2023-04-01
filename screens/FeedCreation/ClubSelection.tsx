@@ -41,6 +41,7 @@ const Item = styled.TouchableOpacity`
 
 const ItemInfo = styled.View`
   padding-left: 10px;
+  justify-content: space-around;
 `;
 
 const ClubNameView = styled.View``;
@@ -70,7 +71,7 @@ const EmptyText = styled(CustomText)`
   align-items: center;
 `;
 
-const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation: { navigate, setOptions, goBack } }) => {
+const ClubSelection: React.FC<NativeStackScreenProps<any, "ClubSelection">> = ({ navigation: { navigate, setOptions, goBack } }) => {
   const [refreshing, setRefreshing] = useState(false);
   const toast = useToast();
   const {
@@ -91,13 +92,13 @@ const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation:
     setRefreshing(false);
   };
 
-  const goToClubStack = (clubData: Club) => {
-    const clubTopTabsProps = {
-      clubData: { id: clubData.id },
+  const goToImageSelection = (clubData: Club) => {
+    const imageSelectionProps = {
+      clubId: clubData.id,
     };
-    return navigate("ClubStack", {
-      screen: "ClubTopTabs",
-      params: clubTopTabsProps,
+    return navigate("FeedStack", {
+      screen: "ImageSelection",
+      params: imageSelectionProps,
     });
   };
 
@@ -114,7 +115,7 @@ const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation:
   const listHeaderComponent = useCallback(
     () => (
       <Header>
-        <Title>가입한 모임 리스트</Title>
+        <Title>게시물을 업로드할 모임을 선택하세요.</Title>
       </Header>
     ),
     []
@@ -122,7 +123,7 @@ const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation:
   const itemSeparatorComponent = useCallback(() => <Break />, []);
   const renderItem = useCallback(
     ({ item, index }: { item: MyClub; index: number }) => (
-      <Item key={index} onPress={() => goToClubStack(item)}>
+      <Item key={index} onPress={() => goToImageSelection(item)}>
         <CircleIcon size={37} uri={item.thumbnail} />
         <ItemInfo>
           <ClubNameView>
@@ -175,4 +176,4 @@ const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation:
   );
 };
 
-export default MyClubs;
+export default ClubSelection;

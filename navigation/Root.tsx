@@ -86,7 +86,7 @@ const Root = () => {
         navigation.navigate("ProfileStack", { screen: "UserNotification" });
         break;
       case "FEED_CREATE":
-        console.log(data);
+        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
         break;
       case "FEED_COMMENT":
         console.log(data);
