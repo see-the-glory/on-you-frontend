@@ -51,7 +51,7 @@ const ImageSelectionButton = styled.TouchableOpacity<{ size: number }>`
 const PlusText = styled.Text`
   font-weight: 100;
   color: #aaaaaa;
-  font-size: 38px;
+  font-size: ${Platform.OS === "ios" ? 42 : 38}px;
   text-align: center;
 `;
 
