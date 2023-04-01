@@ -9,6 +9,7 @@ import ClubScheduleEdit from "../screens/Club/ClubScheduleEdit";
 import ClubFeedDetail from "../screens/Club/ClubFeedDetail";
 import ClubJoinReject from "../screens/Club/ClubJoinReject";
 import ClubJoinRejectMessage from "../screens/Club/ClubJoinRejectMessage";
+import ClubInvitation from "../screens/Club/ClubInvitation";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ const ClubStack = ({ route: { params }, navigation: { navigate, goBack } }) => {
       <NativeStack.Screen name="ClubApplication" component={ClubApplication} options={{ title: "가입 요청" }} />
       <NativeStack.Screen name="ClubJoinReject" component={ClubJoinReject} options={{ title: "가입 거절" }} />
       <NativeStack.Screen name="ClubJoinRejectMessage" component={ClubJoinRejectMessage} options={{ title: "가입 거절" }} />
+      <NativeStack.Screen name="ClubInvitation" component={ClubInvitation} options={{ title: "모임 초대" }} />
       <NativeStack.Screen name="ClubFeedDetail" component={ClubFeedDetail} options={{ headerBackVisible: false }} />
     </NativeStack.Navigator>
   );
