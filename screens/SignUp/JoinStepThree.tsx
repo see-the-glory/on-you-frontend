@@ -64,7 +64,7 @@ const ValidationView = styled.View`
 `;
 
 const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
-  navigation: { navigate, setOptions },
+  navigation: { navigate, setOptions, goBack },
   route: {
     params: { name },
   },
@@ -89,8 +89,10 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
           } else {
             navigate("SignUpStack", {
               screen: "JoinStepFour",
-              name,
-              email,
+              params: {
+                name,
+                email,
+              },
             });
           }
         } else if (res.status === 400) {
@@ -109,7 +111,7 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinStepTwo", name })}>
+        <TouchableOpacity onPress={() => goBack()}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),

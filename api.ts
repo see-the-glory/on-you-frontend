@@ -87,16 +87,16 @@ export interface Schedule {
 
 export interface User {
   applyStatus: string;
-  birthday: string;
+  birthday: string | null;
   created: string;
   email: string;
   id: number;
   name: string;
   organizationName: string;
   role: string;
-  sex: string;
+  sex: string | null;
   thumbnail: string | null;
-  phoneNumber: string;
+  phoneNumber: string | null;
   interests: [];
 }
 
@@ -248,6 +248,13 @@ export interface DuplicateCheckResponse extends BaseResponse {
   };
 }
 
+export interface PushAlarmResponse extends BaseResponse {
+  data: {
+    clubPushAlarm: string;
+    userPushAlarm: string;
+  };
+}
+
 export interface ClubCreationData {
   category1Id: number;
   category2Id?: number | null;
@@ -278,7 +285,7 @@ export interface ClubDeletionRequest {
 export interface FeedCreationRequest {
   image?: ImageType[] | null;
   data: {
-    userId?: number;
+    clubId?: number;
     content?: string;
   };
 }
@@ -407,11 +414,11 @@ export interface FindPwRequest {
 export interface UserUpdateRequest {
   image?: ImageType | null;
   data?: {
-    birthday?: string;
+    birthday?: string | null;
     name?: string;
     organizationName?: string;
-    sex?: string;
-    phoneNumber?: string;
+    sex?: string | null;
+    phoneNumber?: string | null;
   };
 }
 
@@ -605,6 +612,7 @@ const blockUser = (req: UserBlockRequest) => axios.post<string, BaseResponse>(`/
 const getBlockUserList = ({ queryKey }: any) => axios.get<string, BlockUserListResponse>(`/api/user/blockUserList`);
 
 // Account Setting
+const getPushAlarm = ({ queryKey }: any) => axios.get<String, PushAlarmResponse>(`/api/user/pushAlarm`);
 const setPushAlarm = (req: UserPushAlarmRequest) => axios.put<string, BaseResponse>(`/api/user/pushAlarm`, req);
 const withdrawAccount = () => axios.post<string, BaseResponse>(`/api/user/withdraw`);
 const getMyClubs = ({ queryKey }: any) => axios.get<string, MyClubsResponse>(`/api/clubs/my`);
@@ -630,8 +638,7 @@ const login = async (req: LoginRequest) => {
     },
     body: JSON.stringify(req),
   });
-  if (res.status === 200) return { status: res.status, ...(await res.json()) };
-  else return { status: res.status };
+  return { status: res.status, ...(await res.json()) };
 };
 
 const duplicateEmailCheck = async (req: DuplicateEmailCheckRequest) => {
@@ -717,6 +724,7 @@ export const UserApi = {
   withdrawAccount,
   blockUser,
   getBlockUserList,
+  getPushAlarm,
   setPushAlarm,
   updateTargetToken,
   submitSuggestion,

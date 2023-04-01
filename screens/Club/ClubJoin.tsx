@@ -6,6 +6,7 @@ import CustomTextInput from "../../components/CustomTextInput";
 import { useMutation } from "react-query";
 import { BaseResponse, ClubApi, ClubApplyRequest, ErrorResponse } from "../../api";
 import { useToast } from "react-native-toast-notifications";
+import { Entypo } from "@expo/vector-icons";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -18,6 +19,16 @@ const MainView = styled.ScrollView`
 const Header = styled.View`
   width: 100%;
   padding: 10px 0px;
+`;
+
+const MemoInfo = styled.View`
+  align-items: flex-end;
+  justify-content: center;
+`;
+
+const InfoText = styled(CustomText)`
+  font-size: 12px;
+  color: #b5b5b5;
 `;
 
 const HeaderTitle = styled(CustomText)`
@@ -47,6 +58,7 @@ const ClubJoin = ({
   },
 }) => {
   const [memo, setMemo] = useState<string>("");
+  const maxLength = 1000;
   const toast = useToast();
 
   const clubApplyMutation = useMutation<BaseResponse, ErrorResponse, ClubApplyRequest>(ClubApi.applyClub, {
@@ -73,6 +85,11 @@ const ClubJoin = ({
 
   useLayoutEffect(() => {
     setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
       headerRight: () =>
         clubApplyMutation.isLoading ? (
           <ActivityIndicator />
@@ -93,25 +110,26 @@ const ClubJoin = ({
   return (
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
-        <MainView>
-          <Header>
-            <HeaderTitle>{`모임의 가입 희망을 환영합니다!\n모임 리더에게 신청자의 정보를 알려주세요.`}</HeaderTitle>
-            <HeaderText>{`ex) 이름, 연락처, 교회명과 소속부서명, 함께하고 싶은 이유 등`}</HeaderText>
-          </Header>
-          <MemoTextInput
-            placeholder="신청서를 작성해보세요."
-            placeholderTextColor="#B0B0B0"
-            textAlign="left"
-            multiline={true}
-            maxLength={255}
-            textAlignVertical="top"
-            onChangeText={(text: string) => setMemo(text)}
-            onEndEditing={() => setMemo((prev) => prev.trim())}
-            includeFontPadding={false}
-          />
-        </MainView>
-      </KeyboardAvoidingView>
+      <MainView>
+        <Header>
+          <HeaderTitle>{`모임의 가입 희망을 환영합니다!\n모임 리더에게 신청자의 정보를 알려주세요.`}</HeaderTitle>
+          <HeaderText>{`ex) 이름, 연락처, 교회명과 소속부서명, 함께하고 싶은 이유 등`}</HeaderText>
+        </Header>
+        <MemoInfo>
+          <InfoText>{`${memo.length} / ${maxLength}`}</InfoText>
+        </MemoInfo>
+        <MemoTextInput
+          placeholder="신청서를 작성해보세요."
+          placeholderTextColor="#B0B0B0"
+          textAlign="left"
+          multiline={true}
+          maxLength={1000}
+          textAlignVertical="top"
+          onChangeText={(text: string) => setMemo(text)}
+          onEndEditing={() => setMemo((prev) => prev.trim())}
+          includeFontPadding={false}
+        />
+      </MainView>
     </Container>
   );
 };

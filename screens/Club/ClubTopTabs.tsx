@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Alert, Animated, BackHandler, DeviceEventEmitter, StatusBar, Text, TouchableOpacity, useWindowDimensions } from "react-native";
+import { Alert, Animated, BackHandler, DeviceEventEmitter, Platform, StatusBar, Text, TouchableOpacity, useWindowDimensions } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
@@ -18,6 +18,8 @@ import moment from "moment-timezone";
 import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
 import clubSlice from "../../redux/slices/club";
+import Share from "react-native-share";
+import dynamicLinks from "@react-native-firebase/dynamic-links";
 
 const Container = styled.View`
   flex: 1;
@@ -35,11 +37,11 @@ const NavigationView = styled.SafeAreaView<{ height: number }>`
 
 const LeftNavigationView = styled.View`
   flex-direction: row;
-  padding-left: 10px;
+  padding: 5px 10px 5px 10px;
 `;
 const RightNavigationView = styled.View`
   flex-direction: row;
-  padding-right: 10px;
+  padding: 5px 10px 5px 10px;
 `;
 
 const NotiView = styled.View``;
@@ -78,6 +80,7 @@ const ClubTopTabs = ({
   const [data, setData] = useState<Club>(clubData);
   const [scheduleData, setScheduleData] = useState<RefinedSchedule[]>();
   const [notiCount, setNotiCount] = useState<number>(0);
+  const [isShareOpend, setIsShareOpend] = useState<boolean>(false);
   // Header Height Definition
   const { top } = useSafeAreaInsets();
   const { height: SCREEN_HEIGHT } = useWindowDimensions();
@@ -237,10 +240,7 @@ const ClubTopTabs = ({
 
   // Function in Modal
   const goToClubEdit = () => {
-    navigate("ClubManagementStack", {
-      screen: "ClubManagementMain",
-      clubData: data,
-    });
+    navigate("ClubManagementStack", { screen: "ClubManagementMain", params: { clubData: data } });
   };
 
   const goToClubJoin = () => {
@@ -259,15 +259,48 @@ const ClubTopTabs = ({
       toast.show("유저 정보를 알 수 없습니다.", { type: "warning" });
       return;
     }
-    navigate("FeedStack", {
-      screen: "ImageSelecter",
-      userId: me?.id,
-      clubId: data.id,
-    });
+    navigate("FeedStack", { screen: "ImageSelection", params: { clubId: data.id } });
   };
 
   const goClubNotification = () => {
-    navigate("ClubNotification", { clubData: data, clubRole: clubRole?.data });
+    const clubNotificationProps = {
+      clubData: data,
+      clubRole: clubRole?.data,
+    };
+    navigate("ClubNotification", clubNotificationProps);
+  };
+
+  const openShare = async () => {
+    setIsShareOpend(true);
+    const link = await dynamicLinks().buildShortLink(
+      {
+        link: `https://onyou.page.link/club?id=${data.id}`,
+        domainUriPrefix: "https://onyou.page.link",
+        android: { packageName: "com.onyoufrontend" },
+        ios: { bundleId: "com.onyou.project", appStoreId: "1663717005" },
+        otherPlatform: { fallbackUrl: "https://thin-helium-f6d.notion.site/e33250ceb44c428cb881d6ac7d163e69" },
+        social: {
+          title: data?.name ?? "",
+          descriptionText: data?.clubShortDesc ?? "",
+          imageUrl: data?.thumbnail ?? "",
+        },
+
+        // navigation: { forcedRedirectEnabled: true }, // iOS에서 preview page를 스킵하는 옵션. 이걸 사용하면 온유앱이 꺼져있을 때는 제대로 navigation이 되질 않는 버그가 있음.
+      },
+      dynamicLinks.ShortLinkType.SHORT
+    );
+    const title = data.name;
+    const options = Platform.select({
+      default: {
+        title,
+        subject: title,
+        message: `${link}`,
+      },
+    });
+    try {
+      await Share.open(options);
+    } catch (e) {}
+    setIsShareOpend(false);
   };
 
   const withdrawClub = () => {
@@ -356,7 +389,7 @@ const ClubTopTabs = ({
         </LeftNavigationView>
         <RightNavigationView>
           {clubRole?.data?.role && clubRole.data.role !== "PENDING" ? (
-            <TouchableOpacity onPress={goClubNotification} style={{ marginRight: 10 }}>
+            <TouchableOpacity onPress={goClubNotification} style={{ paddingHorizontal: 8 }}>
               <NotiView>
                 {notiCount > 0 && !notiLoading ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
                 <Ionicons name="mail-outline" size={24} color="white" />
@@ -365,10 +398,9 @@ const ClubTopTabs = ({
           ) : (
             <></>
           )}
-          {/* 하트는 이후 공개 */}
-          {/* <TouchableOpacity onPress={() => setHeartSelected(!heartSelected)} style={{ marginRight: 10 }}>
-            {heartSelected ? <Ionicons name="md-heart" size={24} color="white" /> : <Ionicons name="md-heart-outline" size={24} color="white" />}
-          </TouchableOpacity> */}
+          <TouchableOpacity disabled={isShareOpend} onPress={openShare} style={{ paddingLeft: 10, paddingRight: 1 }}>
+            <Ionicons name="ios-share-social-outline" size={24} color="white" />
+          </TouchableOpacity>
         </RightNavigationView>
       </NavigationView>
 

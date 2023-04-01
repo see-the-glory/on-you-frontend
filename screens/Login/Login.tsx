@@ -87,6 +87,7 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
       } else if (res.status === 404) {
         toast.show(`존재하지 않는 아이디입니다.`, { type: "danger" });
       } else if (res.status === 500) {
+        console.log(res);
         toast.show(`알 수 없는 오류`, { type: "danger" });
       }
     },
@@ -138,7 +139,7 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
             </FormTitleView>
             <Input secureTextEntry={true} placeholder="비밀번호를 입력해주세요." placeholderTextColor={"#B0B0B0"} onChangeText={(text: string) => setPassword(text)} />
             <ForgetView onPress={goToFindLoginInfo}>
-              <ForgetText>로그인 정보가 기억나지 않을때</ForgetText>
+              <ForgetText>로그인 정보가 기억나지 않을 때</ForgetText>
             </ForgetView>
           </Form>
         </Wrap>

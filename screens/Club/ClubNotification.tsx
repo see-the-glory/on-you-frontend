@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { Entypo } from "@expo/vector-icons";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { ActivityIndicator, BackHandler, DeviceEventEmitter, FlatList, StatusBar, TouchableOpacity, View } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
@@ -34,7 +35,7 @@ const EmptyText = styled(CustomText)`
 `;
 
 const ClubNotification = ({
-  navigation: { navigate, goBack },
+  navigation: { navigate, goBack, setOptions },
   route: {
     params: { clubData, clubRole },
   },
@@ -67,6 +68,16 @@ const ClubNotification = ({
     setRefreshing(false);
   };
 
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black"></Entypo>
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
   useEffect(() => {
     let clubNotiSubs = DeviceEventEmitter.addListener("ClubNotificationRefresh", () => {
       console.log("ClubNotification - Refresh Event");
@@ -79,6 +90,7 @@ const ClubNotification = ({
     return () => {
       clubNotiSubs.remove();
       backHandler.remove();
+      DeviceEventEmitter.emit("ClubRefetch");
     };
   }, []);
 
@@ -90,7 +102,7 @@ const ClubNotification = ({
     };
     if (item.actionType === "APPLY") {
       if (clubRole && ["MASTER", "MANAGER"].includes(clubRole?.role)) {
-        return navigate("ClubApplication", {
+        const clubApplicationProps = {
           clubData,
           actionId: item.actionId,
           actionerName: item.actionerName,
@@ -98,12 +110,12 @@ const ClubNotification = ({
           message: item.message,
           createdTime: item.created,
           processDone: item.processDone,
-        });
+        };
+        return navigate("ClubApplication", clubApplicationProps);
       } else {
         return toast.show("가입신청서를 볼 수 있는 권한이 없습니다.", { type: "warning" });
       }
     } else if (item.actionType === "FEED_CREATE") {
-      // const targetIndex = feeds.findIndex((feed => feed.id === id));
       if (!item.processDone) {
         readActionMutation.mutate(requestData, {
           onSuccess: (res) => {
@@ -111,7 +123,12 @@ const ClubNotification = ({
           },
         });
       }
-      return navigate("ClubStack", { screen: "ClubFeedDetail", clubData, targetIndex: 0 });
+      // const targetIndex = feeds.findIndex((feed => feed.id === id));
+      const clubFeedDetailProps = {
+        clubData,
+        targetIndex: 0,
+      };
+      return navigate("ClubStack", { screen: "ClubFeedDetail", params: clubFeedDetailProps });
     }
   };
 

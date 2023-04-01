@@ -238,7 +238,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
 
   const goToScheduleAdd = () => {
     if (myRole && ["MASTER", "MANAGER"].includes(myRole)) {
-      return navigate("ClubStack", { screen: "ClubScheduleAdd", clubData });
+      return navigate("ClubStack", { screen: "ClubScheduleAdd", params: { clubData } });
     } else {
       toast.show(`권한이 없습니다.`, { type: "warning" });
     }
@@ -291,7 +291,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           <SectionTitle>ABOUT</SectionTitle>
         </TitleView>
         <ContentView>
-          {clubLongDescLines.length < collapsed ? (
+          {clubLongDescLines.length <= collapsed ? (
             <ContentText>{clubData.clubLongDesc}</ContentText>
           ) : (
             <TouchableWithoutFeedback onPress={clubLongDescTouch}>

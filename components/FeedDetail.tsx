@@ -11,6 +11,7 @@ import Carousel from "./Carousel";
 import Tag from "./Tag";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import Collapsible from "react-native-collapsible";
+import Pinchable from "react-native-pinchable";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -144,7 +145,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
             </HeaderNameView>
           </HeaderLeftView>
           <HeaderRightView>
-            <TouchableOpacity onPress={() => this.props.openFeedOption(this.props.feedData)} style={{ paddingLeft: 10 }}>
+            <TouchableOpacity onPress={() => this.props.openFeedOption(this.props.feedData)} style={{ paddingLeft: 15, paddingTop: 15 }}>
               <Ionicons name="ellipsis-vertical" size={15} color="black" style={{ marginRight: -5 }} />
             </TouchableOpacity>
           </HeaderRightView>
@@ -158,12 +159,14 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           keyExtractor={(item: string, index: number) => String(index)}
           showIndicator={(this.props.feedData?.imageUrls?.length ?? 0) > 1 ? true : false}
           renderItem={({ item, index }: { item: string; index: number }) => (
-            <FastImage
-              key={String(index)}
-              source={item ? { uri: item } : require("../assets/basic.jpg")}
-              style={{ width: this.props.feedSize, height: this.props.feedSize }}
-              resizeMode={FastImage.resizeMode.contain}
-            />
+            <Pinchable>
+              <FastImage
+                key={String(index)}
+                source={item ? { uri: item } : require("../assets/basic.jpg")}
+                style={{ width: this.props.feedSize, height: this.props.feedSize }}
+                resizeMode={FastImage.resizeMode.contain}
+              />
+            </Pinchable>
           )}
           ListEmptyComponent={<FastImage source={require("../assets/basic.jpg")} style={{ width: this.props.feedSize, height: this.props.feedSize }} />}
         />

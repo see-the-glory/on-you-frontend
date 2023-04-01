@@ -69,6 +69,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   const deleteFeedMutation = useMutation<BaseResponse, ErrorResponse, FeedDeletionRequest>(FeedApi.deleteFeed, {
     onSuccess: (res) => {
       toast.show(`게시글이 삭제되었습니다.`, { type: "success" });
+      DeviceEventEmitter.emit("HomeAllRefetch");
       DeviceEventEmitter.emit("ClubFeedRefetch");
       closeMyFeedOption();
     },
@@ -98,12 +99,12 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   };
 
   const goToFeedComments = (feedIndex: number, feedId: number) => {
-    navigate("FeedStack", { screen: "FeedComments", feedIndex, feedId, clubId: clubData.id });
+    navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId, clubId: clubData.id } });
   };
 
   const goToUpdateFeed = () => {
     closeMyFeedOption();
-    navigate("FeedStack", { screen: "ModifiyFeed", feedData: selectFeedData });
+    navigate("FeedStack", { screen: "FeedModification", params: { feedData: selectFeedData } });
   };
 
   const openFeedOption = (feedData: Feed) => {

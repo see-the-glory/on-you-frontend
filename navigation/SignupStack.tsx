@@ -8,7 +8,6 @@ import JoinStepFive from "../screens/SignUp/JoinStepFive";
 import JoinStepSix from "../screens/SignUp/JoinStepSix";
 import JoinStepSeven from "../screens/SignUp/JoinStepSeven";
 import JoinStepEight from "../screens/SignUp/JoinStepEight";
-import JoinStepNine from "../screens/SignUp/JoinStepNine";
 import JoinConfirm from "../screens/SignUp/JoinConfirm";
 import JoinStepSuccess from "../screens/SignUp/JoinStepSuccess";
 import { TouchableOpacity } from "react-native";
@@ -55,71 +54,14 @@ const SignUpStack = ({
           ),
         }}
       />
-      <NativeStack.Screen
-        name="JoinStepThree"
-        component={JoinStepThree}
-        initialParams={{ name }}
-        options={{
-          title: "회원가입",
-        }}
-      />
-      <NativeStack.Screen
-        name="JoinStepFour"
-        component={JoinStepFour}
-        initialParams={{ name, email }}
-        options={{
-          title: "회원가입",
-        }}
-      />
-      <NativeStack.Screen
-        name="JoinStepFive"
-        component={JoinStepFive}
-        initialParams={{ name, email, password }}
-        options={{
-          title: "회원가입",
-        }}
-      />
-      <NativeStack.Screen
-        name="JoinStepSix"
-        component={JoinStepSix}
-        initialParams={{ name, email, password, sex }}
-        options={{
-          title: "회원가입",
-        }}
-      />
-      <NativeStack.Screen
-        name="JoinStepSeven"
-        component={JoinStepSeven}
-        initialParams={{ name, email, password, sex, birth }}
-        options={{
-          title: "회원가입",
-        }}
-      />
-      <NativeStack.Screen
-        name="JoinStepEight"
-        component={JoinStepEight}
-        initialParams={{ name, email, password, sex, birth, phone }}
-        options={{
-          title: "회원가입",
-        }}
-      />
-      <NativeStack.Screen
-        name="JoinConfirm"
-        component={JoinConfirm}
-        initialParams={{ name, email, password, sex, birth, phone, church }}
-        options={{
-          title: "회원가입",
-        }}
-      />
-      <NativeStack.Screen
-        name="JoinStepSuccess"
-        component={JoinStepSuccess}
-        initialParams={{ name, email, password, token }}
-        options={{
-          title: "회원가입",
-          headerLeft: () => <></>,
-        }}
-      />
+      <NativeStack.Screen name="JoinStepThree" component={JoinStepThree} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="JoinStepFour" component={JoinStepFour} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="JoinStepFive" component={JoinStepFive} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="JoinStepSix" component={JoinStepSix} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="JoinStepSeven" component={JoinStepSeven} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="JoinStepEight" component={JoinStepEight} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="JoinConfirm" component={JoinConfirm} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="JoinStepSuccess" component={JoinStepSuccess} options={{ title: "회원가입", headerLeft: () => <></> }} />
     </NativeStack.Navigator>
   );
 };

@@ -1,10 +1,15 @@
-import React, { useState } from "react";
-import { Switch, Platform } from "react-native";
+import { Entypo } from "@expo/vector-icons";
+import React, { useLayoutEffect, useState } from "react";
+import { Switch, Platform, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useToast } from "react-native-toast-notifications";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import styled from "styled-components/native";
-import { BaseResponse, ErrorResponse, UserApi, UserPushAlarmRequest } from "../../api";
+import { BaseResponse, ErrorResponse, PushAlarmResponse, UserApi, UserPushAlarmRequest } from "../../api";
 import CustomText from "../../components/CustomText";
+
+const Loader = styled.SafeAreaView`
+  flex: 1;
+`;
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -56,10 +61,23 @@ const ItemText = styled(CustomText)`
   color: #b0b0b0;
 `;
 
-const NotificationSetting = () => {
+const NotificationSetting = ({ navigation: { navigate, goBack, setOptions } }) => {
   const toast = useToast();
   const [userPush, setUserPush] = useState<boolean>(true);
   const [clubPush, setClubPush] = useState<boolean>(true);
+
+  const { isLoading: isLoadingPushData } = useQuery<PushAlarmResponse, ErrorResponse>(["getPushAlaram"], UserApi.getPushAlarm, {
+    onSuccess: (res) => {
+      if (res?.data?.userPushAlarm === "Y") setUserPush(true);
+      else setUserPush(false);
+      if (res?.data?.clubPushAlarm === "Y") setClubPush(true);
+      else setClubPush(false);
+    },
+    onError: (error) => {
+      console.log(`API ERROR | getPushAlaram ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
 
   const setPushAlarmMutation = useMutation<BaseResponse, ErrorResponse, UserPushAlarmRequest>(UserApi.setPushAlarm, {
     onSuccess: (res) => {},
@@ -69,14 +87,24 @@ const NotificationSetting = () => {
     },
   });
 
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
   const onValueChange = (alarmType: "USER" | "CLUB") => {
     let isOnOff: "Y" | "N" = "Y";
     if (alarmType === "USER") {
-      isOnOff = !userPush ? "Y" : "N";
+      isOnOff = userPush ? "N" : "Y";
       setUserPush((prev) => !prev);
     }
     if (alarmType === "CLUB") {
-      isOnOff = !clubPush ? "Y" : "N";
+      isOnOff = clubPush ? "N" : "Y";
       setClubPush((prev) => !prev);
     }
 
@@ -87,7 +115,11 @@ const NotificationSetting = () => {
     setPushAlarmMutation.mutate(requestData);
   };
 
-  return (
+  return isLoadingPushData ? (
+    <Loader>
+      <ActivityIndicator />
+    </Loader>
+  ) : (
     <Container>
       <Header>
         <HeaderTitle>{`푸시 알림`}</HeaderTitle>

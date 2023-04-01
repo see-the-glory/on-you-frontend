@@ -255,24 +255,22 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     },
     onError: (error) => {
       console.log(`API ERROR | getCategories ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, {
-        type: "warning",
-      });
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
   const goToClub = (clubData: Club) => {
+    const clubTopTabsProps = {
+      clubData,
+    };
     return navigate("ClubStack", {
       screen: "ClubTopTabs",
-      clubData,
+      params: clubTopTabsProps,
     });
   };
 
   const goToCreation = () => {
-    return navigate("ClubCreationStack", {
-      screen: "ClubCreationStepOne",
-      category,
-    });
+    return navigate("ClubCreationStack", { screen: "ClubCreationStepOne", params: { category } });
   };
 
   const setClubsCategoryParams = (categoryId: number) => {

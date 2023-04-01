@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Entypo } from "@expo/vector-icons";
 import { useLayoutEffect } from "react";
 import { Alert, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
@@ -82,24 +82,13 @@ const ClubApplication = ({
   navigation: { navigate, goBack, setOptions },
 }) => {
   const toast = useToast();
+  const [showButton, setShowButton] = useState<boolean>(!processDone);
 
   const refetchEmit = () => {
-    DeviceEventEmitter.emit("ClubRefetch");
     DeviceEventEmitter.emit("ClubNotificationRefresh");
     DeviceEventEmitter.emit("UserNotificationRefresh");
   };
 
-  const rejectMutation = useMutation<BaseResponse, ErrorResponse, ClubRejectRequest>(ClubApi.rejectToClubJoin, {
-    onSuccess: (res) => {
-      toast.show(`가입신청을 거절했습니다.`, { type: "warning" });
-      refetchEmit();
-      goBack();
-    },
-    onError: (error) => {
-      console.log(`API ERROR | rejectToClubJoin ${error.code} ${error.status}`);
-      toast.show(`${error.message ?? error.code}`, { type: "warning" });
-    },
-  });
   const approveMutation = useMutation<BaseResponse, ErrorResponse, ClubApproveRequest>(ClubApi.approveToClubJoin, {
     onSuccess: (res) => {
       toast.show(`가입신청을 수락했습니다.`, { type: "success" });
@@ -111,6 +100,17 @@ const ClubApplication = ({
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
+
+  useEffect(() => {
+    let processDoneChangeSubs = DeviceEventEmitter.addListener("ClubApplicationProcessDone", () => {
+      console.log("ClubApplication - Process Done Event");
+      setShowButton(false);
+    });
+    return () => {
+      processDoneChangeSubs.remove();
+    };
+  }, []);
+
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
@@ -122,20 +122,13 @@ const ClubApplication = ({
   }, []);
 
   const reject = () => {
-    Alert.alert("가입 거절", "정말로 가입을 거절하시겠습니까?", [
-      { text: "아니요", onPress: () => {} },
-      {
-        text: "예",
-        onPress: () => {
-          let data: ClubRejectRequest = {
-            clubId: clubData.id,
-            actionId: actionId,
-            userId: actionerId,
-          };
-          rejectMutation.mutate(data);
-        },
-      },
-    ]);
+    const clubJoinRejectProps = {
+      clubId: clubData.id,
+      actionId,
+      actionerName,
+      actionerId,
+    };
+    navigate("ClubJoinReject", clubJoinRejectProps);
   };
 
   const approve = () => {
@@ -172,12 +165,12 @@ const ClubApplication = ({
           <CreatedTimeText>{moment(createdTime).tz("Asia/Seoul").format("YYYY-MM-DD  A h시 mm분")}</CreatedTimeText>
         </CreatedTimeView>
       </Content>
-      {processDone !== true ? (
+      {showButton ? (
         <Footer>
-          <RejectButton onPress={reject} disabled={rejectMutation.isLoading || approveMutation.isLoading}>
+          <RejectButton onPress={reject} disabled={approveMutation.isLoading}>
             <ButtonText>거절</ButtonText>
           </RejectButton>
-          <AcceptButton onPress={approve} disabled={rejectMutation.isLoading || approveMutation.isLoading}>
+          <AcceptButton onPress={approve} disabled={approveMutation.isLoading}>
             <ButtonText>수락</ButtonText>
           </AcceptButton>
         </Footer>

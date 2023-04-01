@@ -18,11 +18,10 @@ import { init, updateFCMToken } from "./redux/slices/auth";
 import BackgroundColor from "react-native-background-color";
 import CodePush from "react-native-code-push";
 import notifee, { AndroidImportance } from "@notifee/react-native";
+import dynamicLinks from "@react-native-firebase/dynamic-links";
+import queryString from "query-string";
 
 LogBox.ignoreLogs(["Setting a timer"]);
-
-const queryClient = new QueryClient();
-SplashScreen.preventAutoHideAsync();
 
 const RootNavigation = () => {
   const token = useSelector((state) => state.auth.token);
@@ -32,21 +31,7 @@ const RootNavigation = () => {
   const timezoneSetting = () => {
     moment.tz.setDefault("Asia/Seoul");
     moment.updateLocale("ko", {
-      relativeTime: {
-        future: "%s 후",
-        past: "%s 전",
-        s: "1초",
-        m: "1분",
-        mm: "%d분",
-        h: "1시간",
-        hh: "%d시간",
-        d: "1일",
-        dd: "%d일",
-        M: "1달",
-        MM: "%d달",
-        y: "1년",
-        yy: "%d년",
-      },
+      relativeTime: { future: "%s 후", past: "%s 전", s: "1초", m: "1분", mm: "%d분", h: "1시간", hh: "%d시간", d: "1일", dd: "%d일", M: "1달", MM: "%d달", y: "1년", yy: "%d년" },
     });
   };
 
@@ -111,7 +96,6 @@ const RootNavigation = () => {
       await fontSetting();
       timezoneSetting();
       updateFCM();
-      await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (e) {
       console.warn(e);
     } finally {
@@ -129,6 +113,7 @@ const RootNavigation = () => {
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       await SplashScreen.hideAsync();
     }
   }, [appIsReady]);
@@ -145,6 +130,30 @@ const RootNavigation = () => {
 };
 
 function App() {
+  SplashScreen.preventAutoHideAsync();
+  const queryClient = new QueryClient();
+  const linking = {
+    prefixes: ["https://onyou.page.link"],
+    async getInitialURL() {
+      const message = await dynamicLinks().getInitialLink();
+      return message?.url;
+    },
+    getStateFromPath(path, config) {
+      const parsed = queryString.parseUrl(path);
+      let state = { routes: [{ name: "Tabs" }] };
+      const match = parsed.url.split("/").pop();
+      switch (match) {
+        case "club":
+          state.routes.push({ name: "ClubStack", state: { routes: [{ name: "ClubTopTabs", params: { clubData: { id: parsed.query.id } } }] } });
+          break;
+
+        default:
+          break;
+      }
+      return state;
+    },
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView style={{ flex: 1 }}>
@@ -161,7 +170,7 @@ function App() {
             warningIcon={<Ionicons name="checkmark-circle" size={18} color="white" />}
             dangerIcon={<Ionicons name="close-circle" size={18} color="white" />}
           >
-            <NavigationContainer>
+            <NavigationContainer linking={linking}>
               <RootNavigation />
             </NavigationContainer>
           </ToastProvider>

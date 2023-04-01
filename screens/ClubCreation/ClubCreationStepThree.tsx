@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { DeviceEventEmitter, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { Entypo } from "@expo/vector-icons";
+import React, { useLayoutEffect, useState } from "react";
+import { DeviceEventEmitter, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import styled from "styled-components/native";
@@ -50,6 +51,17 @@ const ItemText = styled(CustomText)`
   color: #8c8c8c;
 `;
 
+const ItemTitleView = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const InfoText = styled(CustomText)`
+  font-size: 12px;
+  color: #b5b5b5;
+`;
+
 const ShortDescInput = styled(CustomTextInput)`
   width: 100%;
   font-size: 14px;
@@ -72,12 +84,24 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
   route: {
     params: { category1, category2, clubName, maxNumber, isApproveRequired, phoneNumber, organizationName, imageURI },
   },
-  navigation: { navigate },
+  navigation: { navigate, setOptions, goBack },
 }) => {
   const toast = useToast();
   const [clubShortDesc, setClubShortDesc] = useState<string>("");
   const [clubLongDesc, setClubLongDesc] = useState<string>("");
+  const shortDescMax = 20;
+  const longDescMax = 3000;
   const [disableSubmit, setDisableSubmit] = useState<boolean>(false);
+
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
 
   const mutation = useMutation<ClubCreationResponse, ErrorResponse, ClubCreationRequest>(ClubApi.createClub, {
     onSuccess: (res) => {
@@ -147,39 +171,37 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
           </HeaderView>
           <Content>
             <ContentItem>
-              <ItemTitle>간단 소개</ItemTitle>
+              <ItemTitleView>
+                <ItemTitle>간단 소개</ItemTitle>
+                <InfoText>{`${clubShortDesc.length} / ${shortDescMax}`}</InfoText>
+              </ItemTitleView>
               <ShortDescInput
                 placeholder="20자 이내로 간단 소개글을 적어주세요."
                 placeholderTextColor="#B0B0B0"
                 value={clubShortDesc}
                 textAlign="center"
-                maxLength={21}
+                maxLength={shortDescMax}
                 textAlignVertical="center"
-                onChangeText={(value: string) => {
-                  if (value.length > 20) {
-                    toast.show(`간단 소개는 20자 제한입니다.`, { type: "warning" });
-                  } else setClubShortDesc(value);
-                }}
+                onChangeText={(value: string) => setClubShortDesc(value)}
                 onEndEditing={() => setClubShortDesc((prev) => prev.trim())}
                 includeFontPadding={false}
               />
               <ItemText>{`ex) 묵상훈련을 하는 책모임입니다.`}</ItemText>
             </ContentItem>
             <ContentItem>
-              <ItemTitle>상세 소개</ItemTitle>
+              <ItemTitleView>
+                <ItemTitle>상세 소개</ItemTitle>
+                <InfoText>{`${clubLongDesc.length} / ${longDescMax}`}</InfoText>
+              </ItemTitleView>
               <LongDescInput
                 placeholder="모임의 상세 소개글을 적어주세요."
                 placeholderTextColor="#B0B0B0"
                 value={clubLongDesc}
                 textAlign="left"
                 multiline={true}
-                maxLength={3001}
+                maxLength={longDescMax}
                 textAlignVertical="top"
-                onChangeText={(value: string) => {
-                  if (value.length > 3000) {
-                    toast.show(`상세 소개는 3000자 제한입니다.`, { type: "warning" });
-                  } else setClubLongDesc(value);
-                }}
+                onChangeText={(value: string) => setClubLongDesc(value)}
                 onEndEditing={() => setClubLongDesc((prev) => prev.trim())}
                 includeFontPadding={false}
               />

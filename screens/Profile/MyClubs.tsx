@@ -1,12 +1,14 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useLayoutEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
-import { ActivityIndicator, Dimensions, FlatList, Platform, StatusBar, useWindowDimensions } from "react-native";
+import { ActivityIndicator, FlatList, Platform, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
 import { useQuery } from "react-query";
 import { UserApi, Club, MyClubsResponse, ErrorResponse, MyClub } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
+import { Entypo } from "@expo/vector-icons";
+import Tag from "../../components/Tag";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -29,19 +31,25 @@ const Break = styled.View`
   border-bottom-color: #e9e9e9;
 `;
 
-const MyClubBox = styled.TouchableOpacity`
+const Item = styled.TouchableOpacity`
   flex-direction: row;
   width: 100%;
   align-items: center;
   background-color: white;
-  padding: 5px 20px;
+  padding: 8px 20px;
 `;
 
-const MyClubTextBox = styled.View`
+const ItemInfo = styled.View`
   padding-left: 10px;
 `;
 
-const MyClubText = styled(CustomText)`
+const ClubNameView = styled.View``;
+const CategoryView = styled.View`
+  flex-direction: row;
+  margin-top: 2px;
+`;
+
+const ItemTitle = styled(CustomText)`
   font-size: 14px;
   line-height: 20px;
   font-family: "NotoSansKR-Medium";
@@ -62,11 +70,11 @@ const EmptyText = styled(CustomText)`
   align-items: center;
 `;
 
-const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ navigation: { navigate } }, props) => {
+const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation: { navigate, setOptions, goBack } }) => {
   const [refreshing, setRefreshing] = useState(false);
   const toast = useToast();
   const {
-    isLoading: myClubInfoLoading, // true or false
+    isLoading: myClubInfoLoading,
     data: myClubs,
     refetch: myClubRefetch,
   } = useQuery<MyClubsResponse, ErrorResponse>(["getMyClubs"], UserApi.getMyClubs, {
@@ -84,11 +92,24 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
   };
 
   const goToClubStack = (clubData: Club) => {
+    const clubTopTabsProps = {
+      clubData: { id: clubData.id },
+    };
     return navigate("ClubStack", {
       screen: "ClubTopTabs",
-      clubData: { id: clubData.id },
+      params: clubTopTabsProps,
     });
   };
+
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
 
   const listHeaderComponent = useCallback(
     () => (
@@ -101,12 +122,26 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
   const itemSeparatorComponent = useCallback(() => <Break />, []);
   const renderItem = useCallback(
     ({ item, index }: { item: MyClub; index: number }) => (
-      <MyClubBox key={index} onPress={() => goToClubStack(item)}>
+      <Item key={index} onPress={() => goToClubStack(item)}>
         <CircleIcon size={37} uri={item.thumbnail} />
-        <MyClubTextBox>
-          <MyClubText>{item.name}</MyClubText>
-        </MyClubTextBox>
-      </MyClubBox>
+        <ItemInfo>
+          <ClubNameView>
+            <ItemTitle>{item.name}</ItemTitle>
+          </ClubNameView>
+          <CategoryView>
+            {item.categories?.map((category, index) => (
+              <Tag
+                key={`Category_${index}`}
+                textColor="white"
+                backgroundColor="#C4C4C4"
+                name={category.name}
+                textStyle={{ fontSize: 10 }}
+                contentContainerStyle={{ paddingTop: 1, paddingBottom: 1 }}
+              />
+            ))}
+          </CategoryView>
+        </ItemInfo>
+      </Item>
     ),
     []
   );
@@ -131,6 +166,7 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
       keyExtractor={(item: MyClub, index: number) => String(index)}
       data={myClubs?.data.filter((item) => item.applyStatus === "APPROVED")}
       ItemSeparatorComponent={itemSeparatorComponent}
+      ListFooterComponent={myClubs?.data?.length ? itemSeparatorComponent : null}
       ListHeaderComponent={listHeaderComponent}
       ListEmptyComponent={listEmptyComponent}
       stickyHeaderIndices={[0]}
@@ -139,4 +175,4 @@ const MyClubPage: React.FC<NativeStackScreenProps<any, "ProfileStack">> = ({ nav
   );
 };
 
-export default MyClubPage;
+export default MyClubs;

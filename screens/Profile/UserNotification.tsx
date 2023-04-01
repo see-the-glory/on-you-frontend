@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { Entypo } from "@expo/vector-icons";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { ActivityIndicator, DeviceEventEmitter, FlatList, StatusBar, TouchableOpacity, View } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
@@ -33,7 +34,7 @@ const EmptyText = styled(CustomText)`
   align-items: center;
 `;
 
-const UserNotification = ({ navigation: { navigate } }) => {
+const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
   const toast = useToast();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const {
@@ -62,6 +63,16 @@ const UserNotification = ({ navigation: { navigate } }) => {
     setRefreshing(false);
   };
 
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
   useEffect(() => {
     let userNotifSubs = DeviceEventEmitter.addListener("UserNotificationRefresh", () => {
       console.log("UserNotification - Refresh Event");
@@ -80,8 +91,7 @@ const UserNotification = ({ navigation: { navigate } }) => {
       actionId: item.actionId,
     };
     if (item.actionType === "APPLY") {
-      return navigate("ClubStack", {
-        screen: "ClubApplication",
+      const clubApplicationProps = {
         clubData: {
           id: item.actionClubId,
           name: item.actionClubName,
@@ -92,6 +102,10 @@ const UserNotification = ({ navigation: { navigate } }) => {
         message: item.message,
         createdTime: item.created,
         processDone: item.processDone,
+      };
+      return navigate("ClubStack", {
+        screen: "ClubApplication",
+        params: clubApplicationProps,
       });
     } else if (item.actionType === "APPROVE") {
       if (!item.processDone) {
@@ -101,9 +115,9 @@ const UserNotification = ({ navigation: { navigate } }) => {
           },
         });
       }
-      return navigate("ClubStack", { screen: "ClubTopTabs", clubData: { id: item.actionClubId } });
+      const clubTopTabsProps = { clubData: { id: item.actionClubId } };
+      return navigate("ClubStack", { screen: "ClubTopTabs", params: clubTopTabsProps });
     } else if (item.actionType === "REJECT") {
-      // 거절 메시지 보여주기
       if (!item.processDone) {
         readActionMutation.mutate(requestData, {
           onSuccess: (res) => {
@@ -111,7 +125,12 @@ const UserNotification = ({ navigation: { navigate } }) => {
           },
         });
       }
-      toast.show(`곧 구현됩니다!`, { type: "success" });
+      const clubJoinRejectMessageProps = {
+        clubName: item.actionClubName,
+        message: item.message,
+        createdTime: item.created,
+      };
+      return navigate("ClubStack", { screen: "ClubJoinRejectMessage", params: clubJoinRejectMessageProps });
     } else if (item.actionType === "FEED_COMMENT") {
       if (!item.processDone) {
         readActionMutation.mutate(requestData, {

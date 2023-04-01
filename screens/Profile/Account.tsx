@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import { useSelector } from "react-redux";
 import { useMutation } from "react-query";
-import { Feather } from "@expo/vector-icons";
+import { Entypo, Feather } from "@expo/vector-icons";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import { RootState } from "../../redux/store/reducers";
 import { BaseResponse, ErrorResponse, UserApi } from "../../api";
-import { Alert, DeviceEventEmitter } from "react-native";
+import { Alert, DeviceEventEmitter, TouchableOpacity } from "react-native";
 import { logout } from "../../redux/slices/auth";
 import { useAppDispatch } from "../../redux/store";
 
@@ -48,7 +48,7 @@ interface AccountItem {
   onPress?: () => void;
 }
 
-const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation: { navigate } }) => {
+const Account: React.FC<NativeStackScreenProps<any, "Account">> = ({ navigation: { navigate, goBack, setOptions } }) => {
   const toast = useToast();
   const fcmToken = useSelector((state: RootState) => state.auth.fcmToken);
   const dispatch = useAppDispatch();
@@ -64,6 +64,16 @@ const Account: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
+
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
 
   const goToScreen = (screen: string) => {
     navigate("ProfileStack", { screen });

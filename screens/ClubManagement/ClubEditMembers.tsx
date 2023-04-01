@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import { BaseResponse, ChangeRole, ChangeRoleRequest, ErrorResponse, Member } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 import { Menu, MenuItem, MenuDivider } from "react-native-material-menu";
 import { ClubEditMembersProps } from "../../types/Club";
 import { useToast } from "react-native-toast-notifications";
@@ -211,6 +211,11 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
 
   useLayoutEffect(() => {
     setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
       headerRight: () =>
         mutation.isLoading ? (
           <ActivityIndicator />

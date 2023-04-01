@@ -13,7 +13,6 @@ import FeedDetail from "../components/FeedDetail";
 import feedSlice from "../redux/slices/feed";
 import { useAppDispatch } from "../redux/store";
 import { RootState } from "../redux/store/reducers";
-import { HomeScreenProps } from "../types/feed";
 import FeedOptionModal from "./Feed/FeedOptionModal";
 import FeedReportModal from "./Feed/FeedReportModal";
 
@@ -68,7 +67,7 @@ const NotiBadgeText = styled.Text`
   font-size: 3px;
 `;
 
-const Home: React.FC<HomeScreenProps> = () => {
+const Home = () => {
   const me = useSelector((state: RootState) => state.auth.user);
   const feeds = useSelector((state: RootState) => state.feed.data);
   const dispatch = useAppDispatch();
@@ -200,16 +199,16 @@ const Home: React.FC<HomeScreenProps> = () => {
     },
   });
   const goToClub = useCallback((clubId: number) => {
-    navigation.navigate("ClubStack", { screen: "ClubTopTabs", clubData: { id: clubId } });
+    navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
   }, []);
 
   const goToFeedComments = useCallback((feedIndex: number, feedId: number) => {
-    navigation.navigate("FeedStack", { screen: "FeedComments", feedIndex, feedId });
+    navigation.navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId } });
   }, []);
 
   const goToUpdateFeed = () => {
     closeMyFeedOption();
-    navigation.navigate("FeedStack", { screen: "ModifiyFeed", feedData: selectFeedData });
+    navigation.navigate("FeedStack", { screen: "FeedModification", params: { feedData: selectFeedData } });
   };
 
   const goToUserNotification = useCallback(() => {
@@ -217,8 +216,8 @@ const Home: React.FC<HomeScreenProps> = () => {
   }, []);
 
   const goToFeedCreation = useCallback(() => {
-    navigation.navigate("FeedStack", { screen: "MyClubSelector", userId: me?.id });
-  }, [me]);
+    navigation.navigate("FeedStack", { screen: "ClubSelection" });
+  }, []);
 
   const openFeedOption = (feedData: Feed) => {
     setSelectFeedData(feedData);

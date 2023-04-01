@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, FlatList } from "react-native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { ActivityIndicator, Alert, FlatList, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { ClubCreationStepOneScreenProps } from "../../Types/Club";
 import { Category } from "../../api";
 import CustomText from "../../components/CustomText";
@@ -72,7 +72,7 @@ const CategoryText = styled(CustomText)<{ selected: boolean }>`
 `;
 
 const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
-  navigation: { navigate },
+  navigation: { navigate, setOptions, goBack },
   route: {
     params: { category },
   },
@@ -82,6 +82,16 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
   const [categories, setCategories] = useState<Array<Array<Category>>>([[]]);
   const [selectCategory1, setCategory1] = useState<number>(-1);
   const [selectCategory2, setCategory2] = useState<number>(-1);
+
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
 
   const getCategories = () => {
     const result = [];

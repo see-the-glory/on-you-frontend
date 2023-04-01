@@ -69,10 +69,7 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ nav
     if (!nameReg.test(userName)) {
       return;
     }
-    navigate("SignUpStack", {
-      screen: "JoinStepThree",
-      name: userName,
-    });
+    navigate("SignUpStack", { screen: "JoinStepThree", params: { name: userName } });
   };
 
   return (

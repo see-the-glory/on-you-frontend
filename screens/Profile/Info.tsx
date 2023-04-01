@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
-import { Feather } from "@expo/vector-icons";
+import { Entypo, Feather } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
 import * as WebBrowser from "expo-web-browser";
+import { TouchableOpacity } from "react-native";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -36,10 +37,21 @@ const ChevronBox = styled.View`
   align-items: flex-end;
 `;
 
-const Info: React.FC<NativeStackScreenProps<any, "Info">> = ({ navigation: { navigate } }) => {
+const Info: React.FC<NativeStackScreenProps<any, "Info">> = ({ navigation: { navigate, setOptions, goBack } }) => {
   const openWebView = async (url: string) => {
     await WebBrowser.openBrowserAsync(url);
   };
+
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
   return (
     <Container>
       <TouchMenu>

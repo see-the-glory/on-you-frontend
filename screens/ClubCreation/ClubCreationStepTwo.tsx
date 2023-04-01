@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, useWindowDimensions, View } from "react-native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
 import { ClubCreationStepTwoScreenProps } from "../../Types/Club";
 import CustomText from "../../components/CustomText";
@@ -148,7 +148,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   route: {
     params: { category1, category2 },
   },
-  navigation: { navigate },
+  navigation: { navigate, setOptions, goBack },
 }) => {
   const toast = useToast();
   const [clubName, setClubName] = useState<string>("");
@@ -168,22 +168,20 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
   const clubNameMutation = useMutation<DuplicateCheckResponse, ErrorResponse, DuplicateClubNameCheckRequest>(ClubApi.duplicateClubNameCheck);
 
   const pickImage = async () => {
-    let image = await ImagePicker.openPicker({
-      mediaType: "photo",
-    });
-
-    let croped = await ImagePicker.openCropper({
-      mediaType: "photo",
-      path: image.path,
-      width: 1080,
-      height: 1080,
-      cropperCancelText: "Cancel",
-      cropperChooseText: "Check",
-      cropperToolbarTitle: "이미지를 크롭하세요",
-      forceJpg: true,
-    });
-
-    if (croped) setImageURI(croped.path);
+    try {
+      let image = await ImagePicker.openPicker({ mediaType: "photo" });
+      let croped = await ImagePicker.openCropper({
+        mediaType: "photo",
+        path: image.path,
+        width: 1080,
+        height: 1080,
+        cropperCancelText: "Cancel",
+        cropperChooseText: "Check",
+        cropperToolbarTitle: "이미지를 크롭하세요",
+        forceJpg: true,
+      });
+      if (croped) setImageURI(croped.path);
+    } catch (e) {}
   };
 
   const goToNext = () => {
@@ -223,6 +221,16 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
       },
     });
   };
+
+  useLayoutEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
 
   useEffect(() => {
     if (phoneNumber.length === 10) {
