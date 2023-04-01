@@ -145,7 +145,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
             </HeaderNameView>
           </HeaderLeftView>
           <HeaderRightView>
-            <TouchableOpacity onPress={() => this.props.openFeedOption(this.props.feedData)} style={{ paddingLeft: 10 }}>
+            <TouchableOpacity onPress={() => this.props.openFeedOption(this.props.feedData)} style={{ paddingLeft: 15, paddingTop: 15 }}>
               <Ionicons name="ellipsis-vertical" size={15} color="black" style={{ marginRight: -5 }} />
             </TouchableOpacity>
           </HeaderRightView>
