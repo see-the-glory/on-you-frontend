@@ -225,10 +225,12 @@ const ImageSelection: React.FC<NativeStackScreenProps<any, "ImageSelection">> = 
   const renderItem = ({ drag, isActive, item, getIndex }: RenderItemParams<ImageBundle>) => {
     return (
       <TouchableOpacity key={String(getIndex())} activeOpacity={1} onLongPress={drag} disabled={isActive} onPress={() => cropImage(getIndex())} style={{ opacity: isActive ? 0.5 : 1 }}>
-        <SelectImage size={IMAGE_SIZE} source={{ uri: item.cropped }} />
-        <CancelIcon onPress={() => deleteImage(getIndex())}>
-          <AntDesign name="close" size={15} color="white" />
-        </CancelIcon>
+        <ScaleDecorator>
+          <SelectImage size={IMAGE_SIZE} source={{ uri: item.cropped }} />
+          <CancelIcon onPress={() => deleteImage(getIndex())}>
+            <AntDesign name="close" size={15} color="white" />
+          </CancelIcon>
+        </ScaleDecorator>
       </TouchableOpacity>
     );
   };
