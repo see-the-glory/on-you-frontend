@@ -263,7 +263,7 @@ const ImageSelection: React.FC<NativeStackScreenProps<any, "ImageSelection">> = 
                 renderItem={renderItem}
                 ItemSeparatorComponent={itemSeparatorComponent}
                 ListFooterComponent={imageURLs.length < IMAGE_MAX ? listFooterComponent : <></>}
-                ListFooterComponentStyle={imageURLs.length < IMAGE_MAX ? { marginLeft: IMAGE_GAP_SIZE } : {}}
+                ListFooterComponentStyle={imageURLs.length > 0 && imageURLs.length < IMAGE_MAX ? { marginLeft: IMAGE_GAP_SIZE } : {}}
               />
             </ImageSelectionView>
             <HeaderText>사진을 길게 눌러 순서를 변경할 수 있습니다.</HeaderText>
