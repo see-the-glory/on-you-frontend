@@ -208,7 +208,7 @@ const Home = () => {
 
   const goToUpdateFeed = () => {
     closeMyFeedOption();
-    navigation.navigate("FeedStack", { screen: "ModifiyFeed", params: { feedData: selectFeedData } });
+    navigation.navigate("FeedStack", { screen: "FeedModification", params: { feedData: selectFeedData } });
   };
 
   const goToUserNotification = useCallback(() => {
@@ -216,8 +216,8 @@ const Home = () => {
   }, []);
 
   const goToFeedCreation = useCallback(() => {
-    navigation.navigate("FeedStack", { screen: "MyClubSelector", params: { userId: me?.id } });
-  }, [me]);
+    navigation.navigate("FeedStack", { screen: "ClubSelection" });
+  }, []);
 
   const openFeedOption = (feedData: Feed) => {
     setSelectFeedData(feedData);

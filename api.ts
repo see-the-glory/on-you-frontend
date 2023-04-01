@@ -285,7 +285,7 @@ export interface ClubDeletionRequest {
 export interface FeedCreationRequest {
   image?: ImageType[] | null;
   data: {
-    userId?: number;
+    clubId?: number;
     content?: string;
   };
 }

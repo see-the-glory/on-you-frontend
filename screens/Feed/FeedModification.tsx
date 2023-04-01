@@ -50,7 +50,6 @@ const UserId = styled(CustomText)`
 const ContentArea = styled.View`
   margin: 10px 10px 50px 10px;
   padding: 10px;
-  font-size: 15px;
   background-color: #f3f3f3;
 `;
 
@@ -121,7 +120,7 @@ const FeedModifyFin = styled.Text`
   padding-top: 5px;
 `;
 
-const ModifiyFeed = ({
+const FeedModification = ({
   navigation: { navigate, goBack },
   route: {
     params: { feedData },
@@ -197,10 +196,7 @@ const ModifiyFeed = ({
     };
   }, []);
 
-  const {
-    isLoading: clubInfoLoading, // true or false
-    data: club,
-  } = useQuery<MyClubsResponse, ErrorResponse>(["getMyClubs"], UserApi.getMyClubs, {
+  const { isLoading: clubInfoLoading, data: club } = useQuery<MyClubsResponse, ErrorResponse>(["getMyClubs"], UserApi.getMyClubs, {
     onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getMyClubs ${error.code} ${error.status}`);
@@ -309,4 +305,4 @@ const ModifiyFeed = ({
     </KeyboardAvoidingView>
   );
 };
-export default ModifiyFeed;
+export default FeedModification;

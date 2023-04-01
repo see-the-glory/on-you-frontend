@@ -259,7 +259,7 @@ const ClubTopTabs = ({
       toast.show("유저 정보를 알 수 없습니다.", { type: "warning" });
       return;
     }
-    navigate("FeedStack", { screen: "ImageSelecter", params: { userId: me?.id, clubId: data.id } });
+    navigate("FeedStack", { screen: "ImageSelection", params: { clubId: data.id } });
   };
 
   const goClubNotification = () => {
