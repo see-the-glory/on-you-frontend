@@ -374,8 +374,11 @@ const ClubTopTabs = ({
     [headerDiff, data, scheduleData]
   );
   const renderClubFeed = useCallback(
-    (props: any) => <ClubFeed {...props} offsetY={offsetY} scrollY={scrollY} headerDiff={headerDiff} syncScrollOffset={syncScrollOffset} screenScrollRefs={screenScrollRefs} />,
-    [headerDiff]
+    (props: any) => {
+      props.route.params.clubData = data;
+      return <ClubFeed {...props} offsetY={offsetY} scrollY={scrollY} headerDiff={headerDiff} syncScrollOffset={syncScrollOffset} screenScrollRefs={screenScrollRefs} />;
+    },
+    [headerDiff, data]
   );
 
   return (
