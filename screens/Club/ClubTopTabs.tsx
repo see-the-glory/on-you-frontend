@@ -37,11 +37,11 @@ const NavigationView = styled.SafeAreaView<{ height: number }>`
 
 const LeftNavigationView = styled.View`
   flex-direction: row;
-  padding: 10px;
+  padding: 5px 10px 5px 10px;
 `;
 const RightNavigationView = styled.View`
   flex-direction: row;
-  padding: 10px;
+  padding: 5px 10px 5px 10px;
 `;
 
 const NotiView = styled.View``;
