@@ -290,6 +290,7 @@ const ImageSelection: React.FC<NativeStackScreenProps<any, "ImageSelection">> = 
               placeholder="사진과 함께 남길 게시글을 작성해 보세요."
               onChangeText={(content: string) => setContent(content)}
               onEndEditing={() => setContent((prev) => prev.trim())}
+              maxLength={maxLength}
               autoCapitalize="none"
               autoCorrect={false}
               multiline={true}
