@@ -17,6 +17,17 @@ const Container = styled.View`
   flex: 1;
 `;
 
+const ContentInfo = styled.View`
+  padding: 10px 10px 0px 0px;
+  align-items: flex-end;
+  justify-content: center;
+`;
+
+const InfoText = styled(CustomText)`
+  font-size: 12px;
+  color: #b5b5b5;
+`;
+
 const ContentView = styled.View`
   background-color: #f3f3f3;
   margin: 10px 10px 50px 10px;
@@ -89,6 +100,7 @@ const ImageSelection: React.FC<NativeStackScreenProps<any, "ImageSelection">> = 
   const IMAGE_SIZE = 55;
   const IMAGE_MAX = 5;
   const IMAGE_GAP_SIZE = (SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2 - IMAGE_SIZE * IMAGE_MAX) / 4;
+  const maxLength = 1000;
 
   const mutation = useMutation<BaseResponse, ErrorResponse, FeedCreationRequest>(FeedApi.createFeed, {
     onSuccess: (res) => {
@@ -268,6 +280,10 @@ const ImageSelection: React.FC<NativeStackScreenProps<any, "ImageSelection">> = 
             </ImageSelectionView>
             <HeaderText>사진을 길게 눌러 순서를 변경할 수 있습니다.</HeaderText>
           </HeaderView>
+
+          <ContentInfo>
+            <InfoText>{`${content.length} / ${maxLength}`}</InfoText>
+          </ContentInfo>
           <ContentView>
             <FeedTextInput
               value={content}

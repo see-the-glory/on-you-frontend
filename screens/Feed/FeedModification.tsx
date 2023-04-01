@@ -47,8 +47,19 @@ const UserId = styled(CustomText)`
   line-height: 22px;
 `;
 
+const ContentInfo = styled.View`
+  padding: 10px 10px 0px 0px;
+  align-items: flex-end;
+  justify-content: center;
+`;
+
+const InfoText = styled(CustomText)`
+  font-size: 12px;
+  color: #b5b5b5;
+`;
+
 const ContentArea = styled.View`
-  margin: 10px 10px 50px 10px;
+  margin: 0px 10px 50px 10px;
   padding: 10px;
   background-color: #f3f3f3;
 `;
@@ -134,6 +145,7 @@ const FeedModification = ({
   const [clubName, setClubName] = useState<string>(feedData.clubName);
   const feedSize = Dimensions.get("window").width;
   const toast = useToast();
+  const maxLength = 1000;
 
   const onOpen = () => {
     console.log("Before Modal Passed FeedId");
@@ -260,6 +272,10 @@ const FeedModification = ({
           )}
           ListEmptyComponent={<FastImage source={require("../../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} resizeMode={"contain"} />}
         />
+
+        <ContentInfo>
+          <InfoText>{`${content.length} / ${maxLength}`}</InfoText>
+        </ContentInfo>
         <ContentArea>
           <Ment
             value={content}
@@ -269,7 +285,7 @@ const FeedModification = ({
             textAlignVertical="top"
             textAlign="left"
             multiline={true}
-            maxLength={999}
+            maxLength={maxLength}
             includeFontPadding={false}
           />
         </ContentArea>
