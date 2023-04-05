@@ -247,13 +247,10 @@ const ImageSelection: React.FC<NativeStackScreenProps<any, "ImageSelection">> = 
     );
   };
 
-  const listFooterComponent = useCallback(
-    () => (
-      <ImageSelectionButton size={IMAGE_SIZE} onPress={selectImage}>
-        <PlusText>+</PlusText>
-      </ImageSelectionButton>
-    ),
-    []
+  const listFooterComponent = () => (
+    <ImageSelectionButton size={IMAGE_SIZE} onPress={selectImage}>
+      <PlusText>+</PlusText>
+    </ImageSelectionButton>
   );
 
   const itemSeparatorComponent = useCallback(() => <View style={{ width: IMAGE_GAP_SIZE }} />, []);
@@ -264,20 +261,18 @@ const ImageSelection: React.FC<NativeStackScreenProps<any, "ImageSelection">> = 
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={90} style={{ flex: 1 }}>
         <ScrollView>
           <HeaderView>
-            <ImageSelectionView>
-              <DraggableFlatList
-                horizontal
-                contentContainerStyle={{ width: "100%", paddingVertical: 10, justifyContent: "center", alignItems: "center" }}
-                data={imageURLs}
-                showsHorizontalScrollIndicator={false}
-                onDragEnd={({ data }) => setImageURLs(data)}
-                keyExtractor={(item, index: number) => String(index)}
-                renderItem={renderItem}
-                ItemSeparatorComponent={itemSeparatorComponent}
-                ListFooterComponent={imageURLs.length < IMAGE_MAX ? listFooterComponent : <></>}
-                ListFooterComponentStyle={imageURLs.length > 0 && imageURLs.length < IMAGE_MAX ? { marginLeft: IMAGE_GAP_SIZE } : {}}
-              />
-            </ImageSelectionView>
+            <DraggableFlatList
+              horizontal
+              contentContainerStyle={{ width: "100%", paddingVertical: 10, justifyContent: "center", alignItems: "center" }}
+              data={imageURLs}
+              showsHorizontalScrollIndicator={false}
+              onDragEnd={({ data }) => setImageURLs(data)}
+              keyExtractor={(item, index: number) => String(index)}
+              renderItem={renderItem}
+              ItemSeparatorComponent={itemSeparatorComponent}
+              ListFooterComponent={imageURLs.length < IMAGE_MAX ? listFooterComponent : <></>}
+              ListFooterComponentStyle={imageURLs.length > 0 && imageURLs.length < IMAGE_MAX ? { marginLeft: IMAGE_GAP_SIZE } : {}}
+            />
             <HeaderText>사진을 길게 눌러 순서를 변경할 수 있습니다.</HeaderText>
           </HeaderView>
 
