@@ -100,6 +100,7 @@ interface FeedDetailState {
   moreContent: boolean;
   textHeight: number;
   collapsedText: string;
+  collapsedTextList: string[];
   remainedText: string;
 }
 
@@ -111,6 +112,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
       moreContent: false,
       textHeight: 0,
       collapsedText: "",
+      collapsedTextList: [],
       remainedText: "",
     };
   }
@@ -118,10 +120,11 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
     // prettier-ignore
     const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
       const moreContent = event.nativeEvent.lines.length > 2 ? true : false;
-      const collapsedText = event.nativeEvent.lines.slice(0, 2).map((line) => line.text).join("").trim();
+      const collapsedTextList = event.nativeEvent.lines.slice(0, 2).map(line => line.text);
+      const collapsedText = collapsedTextList.join("").trim();
       const remainedText = moreContent ? event.nativeEvent.lines.slice(2).map((line) => line.text).join("").trim() : "";
       const textHeight = moreContent ? (event.nativeEvent.lines.slice(2).length * (this.props.contentHeight / 2)) : 0;
-      this.setState({ ...this.state, textHeight, moreContent, collapsedText, remainedText });
+      this.setState({ ...this.state, textHeight, moreContent, collapsedText, collapsedTextList, remainedText });
     };
 
     const contentTextTouch = () => {
@@ -197,15 +200,15 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           </ScrollView>
           <TouchableWithoutFeedback onPress={contentTextTouch}>
             <ContentTextView height={this.props.contentHeight}>
-              <ContentText>{this.state.collapsedText}</ContentText>
               {this.state.moreContent && this.state.isCollapsed ? (
                 <>
-                  {" "}
-                  <ContentText>{`...`}</ContentText>
+                  <ContentText>{`${
+                    this.state.collapsedTextList.length > 1 && this.state.collapsedTextList[1].length > 15 ? this.state.collapsedText.slice(0, -8) : this.state.collapsedText
+                  }...`}</ContentText>
                   <ContentSubText>{` 더 보기`}</ContentSubText>
                 </>
               ) : (
-                <></>
+                <ContentText>{this.state.collapsedText}</ContentText>
               )}
             </ContentTextView>
           </TouchableWithoutFeedback>
