@@ -248,6 +248,14 @@ export interface DuplicateCheckResponse extends BaseResponse {
   };
 }
 
+export interface SendCheckEmailResponse extends BaseResponse {
+  data: string;
+}
+
+export interface ValidCheckEmailResponse extends BaseResponse {
+  message: string;
+}
+
 export interface PushAlarmResponse extends BaseResponse {
   data: {
     clubPushAlarm: string;
@@ -391,8 +399,13 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface DuplicateEmailCheckRequest {
+export interface EmailCheckRequest {
   email: string;
+}
+
+export interface EmailValidRequest {
+  email: string;
+  checkString: string;
 }
 
 export interface DuplicateClubNameCheckRequest {
@@ -633,61 +646,65 @@ const updateTargetToken = (req: TargetTokenUpdateRequest) => axios.post<string, 
 const login = async (req: LoginRequest) => {
   const res = await fetch(`${BASE_URL}/api/user/login`, {
     method: "POST",
-    headers: {
-      "Content-Type": "Application/json",
-    },
+    headers: { "Content-Type": "Application/json" },
     body: JSON.stringify(req),
   });
   return { status: res.status, ...(await res.json()) };
 };
 
-const duplicateEmailCheck = async (req: DuplicateEmailCheckRequest) => {
+const duplicateEmailCheck = async (req: EmailCheckRequest) => {
   const res = await fetch(`${BASE_URL}/api/user/duplicateEmailCheck`, {
     method: "POST",
-    headers: {
-      "Content-Type": "Application/json",
-    },
+    headers: { "Content-Type": "Application/json" },
     body: JSON.stringify(req),
   });
-  if (res.status === 200) return { status: res.status, ...(await res.json()) };
-  else return { status: res.status };
+  return { status: res.status, ...(await res.json()) };
+};
+
+const sendCheckEmail = async (req: EmailCheckRequest) => {
+  const res = await fetch(`${BASE_URL}/api/mail/sendCheckEmail`, {
+    method: "POST",
+    headers: { "Content-Type": "Application/json" },
+    body: JSON.stringify(req),
+  });
+  return { status: res.status, ...(await res.json()) };
+};
+
+const validCheckEmail = async (req: EmailValidRequest) => {
+  const res = await fetch(`${BASE_URL}/api/mail/validCheck`, {
+    method: "POST",
+    headers: { "Content-Type": "Application/json" },
+    body: JSON.stringify(req),
+  });
+  return { status: res.status, ...(await res.json()) };
 };
 
 // Sign Up
 const registerUserInfo = async (req: SignUp) => {
   const res = await fetch(`${BASE_URL}/api/user/signup`, {
     method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
+    headers: { "content-type": "application/json" },
     body: JSON.stringify(req),
   });
-  if (res.status === 200) return { status: res.status, ...(await res.json()) };
-  else return { status: res.status };
+  return { status: res.status, ...(await res.json()) };
 };
 
 const FindUserId = async (req: FindIdRequest) => {
   const res = await fetch(`${BASE_URL}/api/user/findId`, {
     method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
+    headers: { "content-type": "application/json" },
     body: JSON.stringify(req),
   });
-  if (res.status === 200) return { status: res.status, ...(await res.json()) };
-  else return { status: res.status };
+  return { status: res.status, ...(await res.json()) };
 };
 
 const FindUserPw = async (req: FindPwRequest) => {
   const res = await fetch(`${BASE_URL}/api/mail/findPw`, {
     method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
+    headers: { "content-type": "application/json" },
     body: JSON.stringify(req),
   });
-  if (res.status === 200) return { status: res.status, ...(await res.json()) };
-  else return { status: res.status };
+  return { status: res.status, ...(await res.json()) };
 };
 
 export const ClubApi = {
@@ -745,4 +762,4 @@ export const FeedApi = {
   likeFeed,
 };
 
-export const CommonApi = { login, duplicateEmailCheck, readAction };
+export const CommonApi = { login, duplicateEmailCheck, sendCheckEmail, validCheckEmail, readAction };

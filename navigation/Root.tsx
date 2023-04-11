@@ -123,6 +123,8 @@ const Root = () => {
             toast.show(`중복 로그인이 감지되어\n로그아웃 합니다.`, { type: "warning" });
           } else if (status === 500) {
             console.log(error.response.data);
+            // toast.show(`${error?.response?.data?.error}`, { type: "warning" });
+            // toast.show(`${error?.response?.data?.message}`, { type: "warning" });
             error.response.data = { message: "알 수 없는 오류" };
           }
           return Promise.reject({ ...error.response?.data, status, code: error.code });
