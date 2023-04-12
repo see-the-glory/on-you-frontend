@@ -1,24 +1,11 @@
-import { AntDesign, Entypo } from "@expo/vector-icons";
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  BackHandler,
-  DeviceEventEmitter,
-  FlatList,
-  KeyboardAvoidingView,
-  LayoutChangeEvent,
-  NativeSyntheticEvent,
-  Platform,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { AntDesign, Entypo, EvilIcons } from "@expo/vector-icons";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ActivityIndicator, BackHandler, KeyboardAvoidingView, LayoutChangeEvent, Platform, StatusBar, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import { useSelector } from "react-redux";
-import { FeedComment, FeedApi, FeedCommentsResponse, User, ErrorResponse, BaseResponse, FeedCommentCreationRequest, FeedCommentDeletionRequest } from "../../api";
+import { FeedComment, FeedApi, FeedCommentsResponse, ErrorResponse, BaseResponse, FeedCommentCreationRequest, FeedCommentDefaultRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import Comment from "../../components/Comment";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -37,11 +24,27 @@ const Loader = styled.SafeAreaView`
   padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
 `;
 
-const Container = styled.SafeAreaView`
+const Container = styled.View`
   flex: 1;
 `;
 
-const FooterView = styled.View<{ padding: number }>`
+const FooterView = styled.View<{ padding: number }>``;
+
+const ReplyStatusView = styled.View<{ padding: number }>`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ececec;
+  padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
+`;
+
+const StatusText = styled(CustomText)`
+  color: #8e8e8e;
+`;
+
+const CloseButton = styled.TouchableOpacity``;
+
+const CommentInputView = styled.View<{ padding: number }>`
   flex-direction: row;
   border-top-width: 1px;
   border-top-color: #c4c4c4;
@@ -121,12 +124,16 @@ const FeedComments = ({
   const me = useSelector((state: RootState) => state.auth.user);
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const commentInputRef = useRef<TextInput>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [comment, setComment] = useState<string>("");
+  const [parentUserName, setParentUserName] = useState<string>();
+  const [parentCommentId, setParentCommentId] = useState<number>();
   const [validation, setValidation] = useState<boolean>(false);
   const [commentInputHeight, setCommentInputHeight] = useState<number>(0);
   const insets = useSafeAreaInsets();
   const hiddenItemWidth = 60;
+  const paddingSize = 20;
   const {
     data: comments,
     isLoading: commentsLoading,
@@ -142,8 +149,38 @@ const FeedComments = ({
     },
   });
 
-  const createFeedCommentMutation = useMutation<BaseResponse, ErrorResponse, FeedCommentCreationRequest>(FeedApi.createFeedComment);
-  const deleteFeedCommentMutation = useMutation<BaseResponse, ErrorResponse, FeedCommentDeletionRequest>(FeedApi.deleteFeedComment);
+  const createFeedCommentMutation = useMutation<BaseResponse, ErrorResponse, FeedCommentCreationRequest>(FeedApi.createFeedComment, {
+    onSuccess: (res) => {
+      setComment("");
+      setParentUserName(undefined);
+      setParentCommentId(undefined);
+      setValidation(false);
+      commentsRefetch();
+    },
+    onError: (error) => {
+      console.log(`API ERROR | createFeedComment ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+  const deleteFeedCommentMutation = useMutation<BaseResponse, ErrorResponse, FeedCommentDefaultRequest>(FeedApi.deleteFeedComment, {
+    onSuccess: (res) => {
+      commentsRefetch();
+      toast.show(`댓글을 삭제했습니다.`, { type: "success" });
+    },
+    onError: (error) => {
+      console.log(`API ERROR | deleteFeedComment ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+  const likeFeedCommentMutation = useMutation<BaseResponse, ErrorResponse, FeedCommentDefaultRequest>(FeedApi.likeFeedComment, {
+    onSuccess: (res) => {
+      console.log(res);
+    },
+    onError: (error) => {
+      console.log(`API ERROR | likeFeedComment ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
 
   useLayoutEffect(() => {
     setOptions({
@@ -166,50 +203,45 @@ const FeedComments = ({
   }, []);
 
   const submit = () => {
-    if (!validation) {
-      return toast.show(`글을 입력하세요.`, {
-        type: "warning",
-      });
-    }
+    if (!validation) return toast.show(`글을 입력하세요.`, { type: "warning" });
 
     let requestData: FeedCommentCreationRequest = {
       feedId,
       content: comment.trim(),
     };
 
-    createFeedCommentMutation.mutate(requestData, {
-      onSuccess: (res) => {
-        setComment("");
-        setValidation(false);
-        commentsRefetch();
-      },
-      onError: (error) => {
-        console.log(`API ERROR | createFeedComment ${error.code} ${error.status}`);
-        toast.show(`${error.message ?? error.code}`, { type: "warning" });
-      },
-    });
+    if (parentCommentId) requestData.parentId = parentCommentId;
+
+    createFeedCommentMutation.mutate(requestData);
   };
 
   const deleteComment = (commentId: number) => {
-    if (commentId === -1) {
-      return toast.show(`댓글 정보가 잘못되었습니다.`, {
-        type: "warning",
-      });
-    }
-    let requestData: FeedCommentDeletionRequest = {
-      commentId,
-    };
+    if (commentId === -1) return toast.show(`댓글 정보가 잘못되었습니다.`, { type: "warning" });
 
-    deleteFeedCommentMutation.mutate(requestData, {
-      onSuccess: (res) => {
-        commentsRefetch();
-        toast.show(`댓글을 삭제했습니다.`, { type: "success" });
-      },
-      onError: (error) => {
-        console.log(`API ERROR | deleteFeedComment ${error.code} ${error.status}`);
-        toast.show(`${error.message ?? error.code}`, { type: "warning" });
-      },
-    });
+    let requestData: FeedCommentDefaultRequest = { commentId };
+
+    deleteFeedCommentMutation.mutate(requestData);
+  };
+
+  const likeComment = (commentId: number) => {
+    if (commentId === -1) return toast.show(`댓글 정보가 잘못되었습니다.`, { type: "warning" });
+
+    let requestData: FeedCommentDefaultRequest = { commentId };
+
+    likeFeedCommentMutation.mutate(requestData);
+  };
+
+  const setReplyStatus = (commentId?: number, userName?: string) => {
+    if (!commentId || !userName) return;
+
+    setParentCommentId(commentId);
+    setParentUserName(userName);
+    commentInputRef?.current?.focus();
+  };
+
+  const initReplyStatus = () => {
+    setParentCommentId(undefined);
+    setParentUserName(undefined);
   };
 
   const onRefresh = async () => {
@@ -226,6 +258,8 @@ const FeedComments = ({
     <Container>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={commentInputHeight} style={{ flex: 1 }}>
         <SwipeListView
+          // keyboardDismissMode={"on-drag"}
+          keyboardShouldPersistTaps={"always"}
           contentContainerStyle={{ flexGrow: 1 }}
           refreshing={refreshing}
           onRefresh={onRefresh}
@@ -240,7 +274,7 @@ const FeedComments = ({
                   <AntDesign name="delete" size={20} color="white" />
                 </HiddenItemButton>
               </HiddenItemContainer>
-              <Comment commentData={item} />
+              <Comment commentData={item} likeComment={likeComment} setReplyStatus={setReplyStatus} />
             </SwipeRow>
           )}
           ListEmptyComponent={() => (
@@ -250,44 +284,56 @@ const FeedComments = ({
           )}
         />
         <FooterView
-          padding={20}
           onLayout={(event: LayoutChangeEvent) => {
             const { height } = event.nativeEvent.layout;
             setCommentInputHeight(height + insets.bottom + 10);
           }}
         >
-          <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
-          <RoundingView>
-            <CommentInput
-              placeholder="댓글을 입력해보세요"
-              placeholderTextColor="#B0B0B0"
-              value={comment}
-              textAlign="left"
-              multiline={true}
-              maxLength={1000}
-              autoCapitalize="none"
-              autoCorrect={false}
-              autoComplete="off"
-              returnKeyType="done"
-              returnKeyLabel="done"
-              onChangeText={(value: string) => {
-                setComment(value);
-                if (!validation && value.trim() !== "") setValidation(true);
-                if (validation && value.trim() === "") setValidation(false);
-              }}
-              onEndEditing={() => setComment((prev) => prev.trim())}
-              includeFontPadding={false}
-            />
-          </RoundingView>
-          {createFeedCommentMutation.isLoading ? (
-            <SubmitLoadingView>
-              <ActivityIndicator />
-            </SubmitLoadingView>
+          {parentUserName && parentCommentId ? (
+            <ReplyStatusView padding={paddingSize}>
+              <StatusText>{`${parentUserName}님에게 답글 남기는중`}</StatusText>
+              <CloseButton onPress={initReplyStatus}>
+                <EvilIcons name="close" size={16} color="#8E8E8E" />
+              </CloseButton>
+            </ReplyStatusView>
           ) : (
-            <SubmitButton disabled={!validation} onPress={submit}>
-              <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
-            </SubmitButton>
+            <></>
           )}
+          <CommentInputView padding={paddingSize}>
+            <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
+            <RoundingView>
+              <CommentInput
+                ref={commentInputRef}
+                placeholder="댓글을 입력해보세요"
+                placeholderTextColor="#B0B0B0"
+                value={comment}
+                textAlign="left"
+                multiline={true}
+                maxLength={1000}
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="off"
+                returnKeyType="done"
+                returnKeyLabel="done"
+                onChangeText={(value: string) => {
+                  setComment(value);
+                  if (!validation && value.trim() !== "") setValidation(true);
+                  if (validation && value.trim() === "") setValidation(false);
+                }}
+                onEndEditing={() => setComment((prev) => prev.trim())}
+                includeFontPadding={false}
+              />
+            </RoundingView>
+            {createFeedCommentMutation.isLoading ? (
+              <SubmitLoadingView>
+                <ActivityIndicator />
+              </SubmitLoadingView>
+            ) : (
+              <SubmitButton disabled={!validation} onPress={submit}>
+                <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
+              </SubmitButton>
+            )}
+          </CommentInputView>
         </FooterView>
       </KeyboardAvoidingView>
     </Container>

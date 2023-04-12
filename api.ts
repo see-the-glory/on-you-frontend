@@ -130,6 +130,7 @@ export interface FeedComment {
   content: string;
   created: string;
   thumbnail: string;
+  likeCount: number;
 }
 
 export interface Reply {
@@ -473,9 +474,10 @@ export interface FeedLikeRequest {
 export interface FeedCommentCreationRequest {
   feedId: number;
   content: string;
+  parentId?: number;
 }
 
-export interface FeedCommentDeletionRequest {
+export interface FeedCommentDefaultRequest {
   commentId: number;
 }
 
@@ -598,7 +600,8 @@ const getFeedComments = ({ queryKey }: any) => {
   return axios.get<string, FeedCommentsResponse>(`/api/feeds/${feedId}/comments`);
 };
 const createFeedComment = (req: FeedCommentCreationRequest) => axios.post<string, BaseResponse>(`/api/feeds/${req.feedId}/comment`, req);
-const deleteFeedComment = (req: FeedCommentDeletionRequest) => axios.delete<string, BaseResponse>(`/api/comments/${req.commentId}`);
+const deleteFeedComment = (req: FeedCommentDefaultRequest) => axios.delete<string, BaseResponse>(`/api/comments/${req.commentId}`);
+const likeFeedComment = (req: FeedCommentDefaultRequest) => axios.post<string, BaseResponse>(`/api/comments/${req.commentId}/likes`);
 
 // Profile
 const getUserInfo = ({ queryKey }: any) => {
@@ -755,6 +758,7 @@ export const FeedApi = {
   getFeedComments,
   createFeedComment,
   deleteFeedComment,
+  likeFeedComment,
   createFeed,
   deleteFeed,
   reportFeed,
