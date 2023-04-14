@@ -1,11 +1,12 @@
 import { Entypo } from "@expo/vector-icons";
-import React, { useLayoutEffect, useState } from "react";
-import { Switch, Platform, TouchableOpacity, ActivityIndicator } from "react-native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { Switch, Platform, TouchableOpacity, ActivityIndicator, PermissionsAndroid, Linking, Alert } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import styled from "styled-components/native";
 import { BaseResponse, ErrorResponse, PushAlarmResponse, UserApi, UserPushAlarmRequest } from "../../api";
 import CustomText from "../../components/CustomText";
+import messaging from "@react-native-firebase/messaging";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -63,8 +64,9 @@ const ItemText = styled(CustomText)`
 
 const NotificationSetting = ({ navigation: { navigate, goBack, setOptions } }) => {
   const toast = useToast();
-  const [userPush, setUserPush] = useState<boolean>(true);
-  const [clubPush, setClubPush] = useState<boolean>(true);
+  const [permission, setPermission] = useState<boolean>(false);
+  const [userPush, setUserPush] = useState<boolean>(false);
+  const [clubPush, setClubPush] = useState<boolean>(false);
 
   const { isLoading: isLoadingPushData } = useQuery<PushAlarmResponse, ErrorResponse>(["getPushAlaram"], UserApi.getPushAlarm, {
     onSuccess: (res) => {
@@ -77,6 +79,7 @@ const NotificationSetting = ({ navigation: { navigate, goBack, setOptions } }) =
       console.log(`API ERROR | getPushAlaram ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
+    enabled: permission,
   });
 
   const setPushAlarmMutation = useMutation<BaseResponse, ErrorResponse, UserPushAlarmRequest>(UserApi.setPushAlarm, {
@@ -86,6 +89,23 @@ const NotificationSetting = ({ navigation: { navigate, goBack, setOptions } }) =
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
+
+  const checkPermission = async () => {
+    const authStatus = await messaging().hasPermission();
+    if (authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL) {
+      setPermission(true);
+    } else {
+      Alert.alert("기기 알림을 켜주세요.", "알림을 받기 위해서 기기 알림을 켜주세요.", [{ text: "아니요" }, { text: "네", onPress: () => openNotificationSettings() }], { cancelable: false });
+    }
+  };
+
+  const openNotificationSettings = async () => {
+    try {
+      await Linking.openSettings();
+    } catch (error) {
+      console.error("알림 설정 화면을 열 수 없습니다.", error);
+    }
+  };
 
   useLayoutEffect(() => {
     setOptions({
@@ -97,7 +117,16 @@ const NotificationSetting = ({ navigation: { navigate, goBack, setOptions } }) =
     });
   }, []);
 
-  const onValueChange = (alarmType: "USER" | "CLUB") => {
+  useEffect(() => {
+    checkPermission();
+  }, []);
+
+  const onValueChange = async (alarmType: "USER" | "CLUB") => {
+    if (!permission) {
+      checkPermission();
+      return;
+    }
+
     let isOnOff: "Y" | "N" = "Y";
     if (alarmType === "USER") {
       isOnOff = userPush ? "N" : "Y";
