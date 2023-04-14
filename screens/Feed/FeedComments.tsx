@@ -101,20 +101,6 @@ const EmptyText = styled(CustomText)`
   text-align: center;
 `;
 
-const HiddenItemContainer = styled.View`
-  height: 100%;
-  align-items: center;
-  flex-direction: row;
-  justify-content: flex-end;
-`;
-const HiddenItemButton = styled.TouchableOpacity<{ width: number }>`
-  width: ${(props: any) => props.width}px;
-  height: 100%;
-  background-color: #8e8e8e;
-  justify-content: center;
-  align-items: center;
-`;
-
 const FeedComments = ({
   navigation: { setOptions, navigate, goBack },
   route: {
@@ -131,17 +117,17 @@ const FeedComments = ({
   const [parentCommentId, setParentCommentId] = useState<number>();
   const [validation, setValidation] = useState<boolean>(false);
   const [commentInputHeight, setCommentInputHeight] = useState<number>(0);
+  const [commentData, setCommentData] = useState<FeedComment[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const insets = useSafeAreaInsets();
-  const hiddenItemWidth = 60;
   const paddingSize = 20;
-  const {
-    data: comments,
-    isLoading: commentsLoading,
-    refetch: commentsRefetch,
-  } = useQuery<FeedCommentsResponse, ErrorResponse>(["getFeedComments", feedId], FeedApi.getFeedComments, {
-    onSuccess: (res) => {
-      if (clubId) dispatch(clubSlice.actions.updateCommentCount({ feedIndex, count: res.data.length }));
-      else dispatch(feedSlice.actions.updateCommentCount({ feedIndex, count: res.data.length }));
+  let { refetch: commentsRefetch } = useQuery<FeedCommentsResponse, ErrorResponse>(["getFeedComments", feedId], FeedApi.getFeedComments, {
+    onSuccess: (res: FeedCommentsResponse) => {
+      setCommentData(res?.data);
+      setIsLoading(false);
+      const count = res.data.length + res.data.reduce((acc, comment) => acc + comment.replies.length, 0);
+      if (clubId) dispatch(clubSlice.actions.updateCommentCount({ feedIndex, count }));
+      else dispatch(feedSlice.actions.updateCommentCount({ feedIndex, count }));
     },
     onError: (error) => {
       console.log(`API ERROR | getFeedComments ${error.code} ${error.status}`);
@@ -173,9 +159,6 @@ const FeedComments = ({
     },
   });
   const likeFeedCommentMutation = useMutation<BaseResponse, ErrorResponse, FeedCommentDefaultRequest>(FeedApi.likeFeedComment, {
-    onSuccess: (res) => {
-      console.log(res);
-    },
     onError: (error) => {
       console.log(`API ERROR | likeFeedComment ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
@@ -212,6 +195,8 @@ const FeedComments = ({
 
     if (parentCommentId) requestData.parentId = parentCommentId;
 
+    console.log(requestData);
+
     createFeedCommentMutation.mutate(requestData);
   };
 
@@ -223,25 +208,53 @@ const FeedComments = ({
     deleteFeedCommentMutation.mutate(requestData);
   };
 
-  const likeComment = (commentId: number) => {
+  /**
+   *
+   * @param commentId
+   * @param commentType 0: 기본 , 1: 답글
+   * @param parentIndex
+   * @param replyIndex
+   * @returns
+   */
+  const likeComment = (commentId: number, commentType: number, parentIndex: number, replyIndex?: number) => {
     if (commentId === -1) return toast.show(`댓글 정보가 잘못되었습니다.`, { type: "warning" });
 
     let requestData: FeedCommentDefaultRequest = { commentId };
-
     likeFeedCommentMutation.mutate(requestData);
+
+    setCommentData((prev) => {
+      if (commentType == 0) {
+        // 기본 댓글
+        if (prev[parentIndex].likeYn) prev[parentIndex].likeCount--;
+        else prev[parentIndex].likeCount++;
+        prev[parentIndex].likeYn = !prev[parentIndex].likeYn;
+      } else {
+        // 답글
+        if (replyIndex !== undefined) {
+          if (prev[parentIndex].replies[replyIndex].likeYn) prev[parentIndex].replies[replyIndex].likeCount--;
+          else prev[parentIndex].replies[replyIndex].likeCount++;
+          prev[parentIndex].replies[replyIndex].likeYn = !prev[parentIndex].replies[replyIndex].likeYn;
+        }
+      }
+      return prev;
+    });
   };
 
-  const setReplyStatus = (commentId?: number, userName?: string) => {
-    if (!commentId || !userName) return;
+  const setReplyStatus = (parentId?: number, userName?: string) => {
+    if (!parentId || !userName) return;
 
-    setParentCommentId(commentId);
+    setParentCommentId(parentId);
     setParentUserName(userName);
     commentInputRef?.current?.focus();
+    setComment(`@${userName} `);
+    setValidation(true);
   };
 
   const initReplyStatus = () => {
     setParentCommentId(undefined);
     setParentUserName(undefined);
+    setComment("");
+    setValidation(false);
   };
 
   const onRefresh = async () => {
@@ -250,39 +263,34 @@ const FeedComments = ({
     setRefreshing(false);
   };
 
-  return commentsLoading ? (
-    <Loader>
-      <ActivityIndicator />
-    </Loader>
-  ) : (
+  return (
     <Container>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={commentInputHeight} style={{ flex: 1 }}>
-        <SwipeListView
-          // keyboardDismissMode={"on-drag"}
-          keyboardShouldPersistTaps={"always"}
-          contentContainerStyle={{ flexGrow: 1 }}
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          data={[...(comments?.data ?? [])].reverse()}
-          keyExtractor={(item: FeedComment, index: number) => String(index)}
-          ListFooterComponent={<View />}
-          ListFooterComponentStyle={{ marginBottom: 40 }}
-          renderItem={({ item, index }: { item: FeedComment; index: number }) => (
-            <SwipeRow disableRightSwipe={true} disableLeftSwipe={item.userId !== me?.id} rightOpenValue={-hiddenItemWidth}>
-              <HiddenItemContainer>
-                <HiddenItemButton width={hiddenItemWidth} onPress={() => deleteComment(item.commentId ?? -1)}>
-                  <AntDesign name="delete" size={20} color="white" />
-                </HiddenItemButton>
-              </HiddenItemContainer>
-              <Comment commentData={item} likeComment={likeComment} setReplyStatus={setReplyStatus} />
-            </SwipeRow>
-          )}
-          ListEmptyComponent={() => (
-            <EmptyView>
-              <EmptyText>{`아직 등록된 댓글이 없습니다.\n첫 댓글을 남겨보세요.`}</EmptyText>
-            </EmptyView>
-          )}
-        />
+        {isLoading ? (
+          <Loader>
+            <ActivityIndicator />
+          </Loader>
+        ) : (
+          <SwipeListView
+            // keyboardDismissMode={"on-drag"}
+            keyboardShouldPersistTaps={"always"}
+            contentContainerStyle={{ flexGrow: 1 }}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            data={commentData}
+            keyExtractor={(item: FeedComment, index: number) => String(index)}
+            ListFooterComponent={<View />}
+            ListFooterComponentStyle={{ marginBottom: 40 }}
+            renderItem={({ item, index }: { item: FeedComment; index: number }) => (
+              <Comment commentData={item} parentIndex={index} parentId={item.commentId} deleteComment={deleteComment} likeComment={likeComment} setReplyStatus={setReplyStatus} />
+            )}
+            ListEmptyComponent={() => (
+              <EmptyView>
+                <EmptyText>{`아직 등록된 댓글이 없습니다.\n첫 댓글을 남겨보세요.`}</EmptyText>
+              </EmptyView>
+            )}
+          />
+        )}
         <FooterView
           onLayout={(event: LayoutChangeEvent) => {
             const { height } = event.nativeEvent.layout;

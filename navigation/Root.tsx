@@ -134,10 +134,18 @@ const Root = () => {
       }
     );
 
+    // User Infomation Resetting
     userInfoRefecth();
+
+    // Feed Resetting
     queryClient.resetQueries(["feeds"]);
 
+    // Target Token Update
     if (fcmToken) updateTargetToken(fcmToken);
+
+    // Version Infomation Check
+
+    //
 
     const logoutSubScription = DeviceEventEmitter.addListener("Logout", async ({ fcmToken, isWitdrawUser }) => {
       console.log(`Root - Logout`);

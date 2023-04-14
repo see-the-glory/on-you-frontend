@@ -131,6 +131,8 @@ export interface FeedComment {
   created: string;
   thumbnail: string;
   likeCount: number;
+  likeYn: boolean;
+  replies: FeedComment[];
 }
 
 export interface Reply {
@@ -261,6 +263,13 @@ export interface PushAlarmResponse extends BaseResponse {
   data: {
     clubPushAlarm: string;
     userPushAlarm: string;
+  };
+}
+
+export interface MetainfoResponse extends BaseResponse {
+  data: {
+    latestVersion: string;
+    updateRequired: string;
   };
 }
 
@@ -467,6 +476,10 @@ export interface SuggestionSubmitRequest {
   content: string;
 }
 
+export interface MetainfoRequest {
+  currentVesrion: string;
+}
+
 export interface FeedLikeRequest {
   feedId: number;
 }
@@ -633,6 +646,7 @@ const setPushAlarm = (req: UserPushAlarmRequest) => axios.put<string, BaseRespon
 const withdrawAccount = () => axios.post<string, BaseResponse>(`/api/user/withdraw`);
 const getMyClubs = ({ queryKey }: any) => axios.get<string, MyClubsResponse>(`/api/clubs/my`);
 const submitSuggestion = (req: SuggestionSubmitRequest) => axios.post<string, BaseResponse>(`/api/user/suggestion`, req);
+const metaInfo = (req: MetainfoRequest) => axios.post<string, MetainfoResponse>(`/api/user/versionRequest`, req);
 
 // Notification
 const getClubNotifications = ({ queryKey }: any) => {
@@ -749,6 +763,7 @@ export const UserApi = {
   updateTargetToken,
   submitSuggestion,
   getUserNotifications,
+  metaInfo,
 };
 
 export const FeedApi = {
