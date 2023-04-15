@@ -335,7 +335,7 @@ const ClubTopTabs = ({
       schedulesRefetch();
     });
     const clubSubscription = DeviceEventEmitter.addListener("ClubRefetch", () => {
-      console.log("ClubTopTabs - ClubData, ClubRole Refetch Event");
+      console.log("ClubTopTabs - ClubData, ClubRole, ClubNoti Refetch Event");
       clubDataRefetch();
       clubRoleRefetch();
       clubNotiRefetch();

@@ -94,12 +94,19 @@ const ClubNotification = ({
     };
   }, []);
 
-  const handlingActions = ["APPLY", "APPROVE", "REJECT", "FEED_CREATE"];
+  const handlingActions = ["APPLY", "APPROVE", "REJECT", "FEED_CREATE", "SCHEDULE_CREATE"];
+
+  const readAction = (item: Notification) => {
+    if (item.processDone) return;
+    const requestData: ReadActionRequest = { actionId: item.actionId };
+    readActionMutation.mutate(requestData, {
+      onSuccess: (res) => {
+        item.processDone = true;
+      },
+    });
+  };
 
   const onPressItem = (item: Notification) => {
-    const requestData: ReadActionRequest = {
-      actionId: item.actionId,
-    };
     if (item.actionType === "APPLY") {
       if (clubRole && ["MASTER", "MANAGER"].includes(clubRole?.role)) {
         const clubApplicationProps = {
@@ -116,19 +123,16 @@ const ClubNotification = ({
         return toast.show("가입신청서를 볼 수 있는 권한이 없습니다.", { type: "warning" });
       }
     } else if (item.actionType === "FEED_CREATE") {
-      if (!item.processDone) {
-        readActionMutation.mutate(requestData, {
-          onSuccess: (res) => {
-            item.processDone = true;
-          },
-        });
-      }
+      readAction(item);
       // const targetIndex = feeds.findIndex((feed => feed.id === id));
       const clubFeedDetailProps = {
         clubData,
         targetIndex: 0,
       };
       return navigate("ClubStack", { screen: "ClubFeedDetail", params: clubFeedDetailProps });
+    } else if (item.actionType === "SCHEDULE_CREATE") {
+      readAction(item);
+      goBack();
     }
   };
 
@@ -148,7 +152,7 @@ const ClubNotification = ({
         keyExtractor={(item: Notification, index: number) => String(index)}
         renderItem={({ item, index }: { item: Notification; index: number }) => (
           <TouchableOpacity onPress={() => onPressItem(item)}>
-            <NotificationItem notificationData={item} clubData={clubData} />
+            <NotificationItem notificationData={item} notificationType={"CLUB"} clubData={clubData} />
           </TouchableOpacity>
         )}
         ListEmptyComponent={() => (

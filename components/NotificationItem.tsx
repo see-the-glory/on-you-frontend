@@ -32,6 +32,7 @@ const ItemBoldText = styled(ItemText)`
 
 interface NotificationItemProps {
   notificationData: Notification;
+  notificationType: string;
   clubData: Club;
 }
 
@@ -39,7 +40,7 @@ interface ActionType {
   title: string;
 }
 
-const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, clubData }) => {
+const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, notificationType, clubData }) => {
   switch (notificationData?.actionType) {
     case "APPLY":
       return (
@@ -105,6 +106,47 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, c
           <TextView>
             <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionerName}</ItemBoldText>
             <ItemText processDone={notificationData?.processDone}>{`님이 내 글에 댓글을 달았습니다.`}</ItemText>
+          </TextView>
+        </Item>
+      );
+    case "SCHEDULE_CREATE":
+      if (notificationType === "CLUB") {
+        return (
+          <Item>
+            <Header>
+              <ItemTitle>일정알림</ItemTitle>
+              <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
+            </Header>
+            <TextView>
+              <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionerName}</ItemBoldText>
+              <ItemText processDone={notificationData?.processDone}>{`님이 새로운 일정을 등록했습니다.`}</ItemText>
+            </TextView>
+          </Item>
+        );
+      } else if (notificationType === "USER") {
+        return (
+          <Item>
+            <Header>
+              <ItemTitle>일정알림</ItemTitle>
+              <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
+            </Header>
+            <TextView>
+              <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionClubName}</ItemBoldText>
+              <ItemText processDone={notificationData?.processDone}>{`에 새로운 일정이 등록되었습니다.`}</ItemText>
+            </TextView>
+          </Item>
+        );
+      }
+    case "COMMENT_REPLY":
+      return (
+        <Item>
+          <Header>
+            <ItemTitle>답글알림</ItemTitle>
+            <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
+          </Header>
+          <TextView>
+            <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionerName}</ItemBoldText>
+            <ItemText processDone={notificationData?.processDone}>{`님이 내 글에 답글을 달았습니다.`}</ItemText>
           </TextView>
         </Item>
       );

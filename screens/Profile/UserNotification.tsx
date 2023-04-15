@@ -84,12 +84,19 @@ const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
     };
   }, []);
 
-  const handlingActions = ["APPLY", "APPROVE", "REJECT", "FEED_COMMENT"];
+  const handlingActions = ["APPLY", "APPROVE", "REJECT", "FEED_COMMENT", "SCHEDULE_CREATE", "COMMENT_REPLY"];
+
+  const readAction = (item: Notification) => {
+    if (item.processDone) return;
+    const requestData: ReadActionRequest = { actionId: item.actionId };
+    readActionMutation.mutate(requestData, {
+      onSuccess: (res) => {
+        item.processDone = true;
+      },
+    });
+  };
 
   const onPressItem = async (item: Notification) => {
-    const requestData: ReadActionRequest = {
-      actionId: item.actionId,
-    };
     if (item.actionType === "APPLY") {
       const clubApplicationProps = {
         clubData: {
@@ -108,23 +115,11 @@ const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
         params: clubApplicationProps,
       });
     } else if (item.actionType === "APPROVE") {
-      if (!item.processDone) {
-        readActionMutation.mutate(requestData, {
-          onSuccess: (res) => {
-            item.processDone = true;
-          },
-        });
-      }
+      readAction(item);
       const clubTopTabsProps = { clubData: { id: item.actionClubId } };
       return navigate("ClubStack", { screen: "ClubTopTabs", params: clubTopTabsProps });
     } else if (item.actionType === "REJECT") {
-      if (!item.processDone) {
-        readActionMutation.mutate(requestData, {
-          onSuccess: (res) => {
-            item.processDone = true;
-          },
-        });
-      }
+      readAction(item);
       const clubJoinRejectMessageProps = {
         clubName: item.actionClubName,
         message: item.message,
@@ -132,14 +127,15 @@ const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
       };
       return navigate("ClubStack", { screen: "ClubJoinRejectMessage", params: clubJoinRejectMessageProps });
     } else if (item.actionType === "FEED_COMMENT") {
-      if (!item.processDone) {
-        readActionMutation.mutate(requestData, {
-          onSuccess: (res) => {
-            item.processDone = true;
-          },
-        });
-      }
+      readAction(item);
       toast.show(`곧 구현됩니다!`, { type: "success" });
+    } else if (item.actionType === "SCHEDULE_CREATE") {
+      readAction(item);
+      const clubTopTabsProps = { clubData: { id: item.actionClubId } };
+      return navigate("ClubStack", { screen: "ClubTopTabs", params: clubTopTabsProps });
+    } else if (item.actionType === "COMMENT_REPLY") {
+      readAction(item);
+      console.log(item);
     }
   };
 
@@ -159,7 +155,7 @@ const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
         keyExtractor={(item: Notification, index: number) => String(index)}
         renderItem={({ item, index }: { item: Notification; index: number }) => (
           <TouchableOpacity onPress={() => onPressItem(item)}>
-            <NotificationItem notificationData={item} clubData={{ id: item.actionClubId, name: item.actionClubName }} />
+            <NotificationItem notificationData={item} notificationType={"USER"} clubData={{ id: item.actionClubId, name: item.actionClubName }} />
           </TouchableOpacity>
         )}
         ListEmptyComponent={() => (

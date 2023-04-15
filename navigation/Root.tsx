@@ -91,6 +91,12 @@ const Root = () => {
       case "FEED_COMMENT":
         console.log(data);
         break;
+      case "SCHEDULE_CREATE":
+        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
+        break;
+      case "COMMENT_REPLY":
+        console.log(data);
+        break;
       default:
         break;
     }
