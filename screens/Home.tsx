@@ -122,7 +122,7 @@ const Home = () => {
     refetch: notiRefetch,
   } = useQuery<NotificationsResponse, ErrorResponse>(["getUserNotifications"], UserApi.getUserNotifications, {
     onSuccess: (res) => {
-      if (Array.isArray(res?.data)) setNotiCount(res?.data.filter((item) => !item?.processDone).length);
+      if (Array.isArray(res?.data)) setNotiCount(res?.data.filter((item) => !item?.read).length);
     },
     onError: (error) => {
       console.log(`API ERROR | getUserNotifications ${error.code} ${error.status}`);

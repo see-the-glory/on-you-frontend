@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Tabs from "./Tabs";
 import ClubCreationStack from "./ClubCreationStack";
@@ -13,8 +13,8 @@ import { RootState } from "../redux/store/reducers";
 import axios from "axios";
 import { useAppDispatch } from "../redux/store";
 import { logout, updateUser } from "../redux/slices/auth";
-import { DeviceEventEmitter, Linking } from "react-native";
-import { BaseResponse, ErrorResponse, TargetTokenUpdateRequest, UserApi, UserInfoResponse } from "../api";
+import { BackHandler, DeviceEventEmitter, Linking, Modal, Platform, Text, View } from "react-native";
+import { BaseResponse, ErrorResponse, MetaInfoRequest, MetaInfoResponse, TargetTokenUpdateRequest, UserApi, UserInfoResponse } from "../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import feedSlice from "../redux/slices/feed";
 import messaging from "@react-native-firebase/messaging";
@@ -22,12 +22,61 @@ import notifee, { EventType } from "@notifee/react-native";
 import dynamicLinks, { FirebaseDynamicLinksTypes } from "@react-native-firebase/dynamic-links";
 import { useNavigation } from "@react-navigation/native";
 import queryString from "query-string";
+import { getDeviceId, getReadableVersion } from "react-native-device-info";
+import styled from "styled-components/native";
+import CustomText from "../components/CustomText";
 
 const Nav = createNativeStackNavigator();
+
+const ModalContainer = styled.View`
+  width: 80%;
+  padding: 15px 20px 15px 20px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  background-color: white;
+  border-radius: 10px;
+`;
+
+const Content = styled.View`
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom: 40px;
+`;
+
+const ContentText = styled(CustomText)`
+  font-size: 15px;
+  line-height: 21px;
+`;
+
+const Footer = styled.View`
+  width: 100%;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
+const ExitAppButton = styled.TouchableOpacity`
+  margin-right: 20px;
+`;
+
+const UpdateButton = styled.TouchableOpacity``;
+
+const ExitAppText = styled(CustomText)`
+  font-size: 15px;
+  line-height: 21px;
+  opacity: 0.5;
+`;
+
+const UpdateText = styled(CustomText)`
+  font-family: "NotoSansKR-Bold";
+  font-size: 16px;
+  line-height: 22px;
+`;
 
 const Root = () => {
   const token = useSelector((state: RootState) => state.auth.token);
   const fcmToken = useSelector((state: RootState) => state.auth.fcmToken);
+  const [updateRequire, setUpdateRequire] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -45,6 +94,7 @@ const Root = () => {
   });
 
   const updateTargetTokenMutation = useMutation<BaseResponse, ErrorResponse, TargetTokenUpdateRequest>(UserApi.updateTargetToken);
+  const updateMetaInfoMutation = useMutation<MetaInfoResponse, ErrorResponse, MetaInfoRequest>(UserApi.metaInfo);
 
   const updateTargetToken = (fcmToken: string | null) => {
     const requestData: TargetTokenUpdateRequest = {
@@ -59,6 +109,32 @@ const Root = () => {
         toast.show(`${error.message ?? error.code}`, { type: "warning" });
       },
     });
+  };
+
+  const updateMetaInfo = async () => {
+    let deviceInfo = await getDeviceId();
+    let currentVersion = await getReadableVersion();
+    const requestData: MetaInfoRequest = { deviceInfo, currentVersion };
+
+    // updateMetaInfoMutation.mutate(requestData, {
+    //   onSuccess: (res) => {
+    //     if (res.data.updateRequired) {
+    //     }
+    //   },
+    //   onError: (error) => {
+    //     console.log(`API ERROR | updateMetaInfo ${error.code} ${error.status}`);
+    //     toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    //   },
+    // });
+  };
+
+  const exitApp = () => {
+    BackHandler.exitApp();
+  };
+
+  const goToStore = () => {
+    if (Platform.OS === "android") Linking.openURL("https://play.google.com/store/apps/details?id=com.onyoufrontend");
+    else if (Platform.OS === "ios") Linking.openURL("https://apps.apple.com/kr/app/%EC%98%A8%EC%9C%A0/id1663717005");
   };
 
   const handleDynamicLink = (link: FirebaseDynamicLinksTypes.DynamicLink) => {
@@ -85,17 +161,17 @@ const Root = () => {
       case "REJECT":
         navigation.navigate("ProfileStack", { screen: "UserNotification" });
         break;
-      case "FEED_CREATE":
-        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
-        break;
-      case "FEED_COMMENT":
-        console.log(data);
-        break;
       case "SCHEDULE_CREATE":
         navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
         break;
+      case "FEED_CREATE":
+        navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        break;
+      case "FEED_COMMENT":
+        navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        break;
       case "COMMENT_REPLY":
-        console.log(data);
+        navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
         break;
       default:
         break;
@@ -150,7 +226,7 @@ const Root = () => {
     if (fcmToken) updateTargetToken(fcmToken);
 
     // Version Infomation Check
-
+    updateMetaInfo();
     //
 
     const logoutSubScription = DeviceEventEmitter.addListener("Logout", async ({ fcmToken, isWitdrawUser }) => {
@@ -228,23 +304,46 @@ const Root = () => {
   }, []);
 
   return (
-    <Host
-      children={
-        <Nav.Navigator
-          screenOptions={{
-            presentation: "card",
-            headerShown: false,
-          }}
-        >
-          <Nav.Screen name="Tabs" component={Tabs} />
-          <Nav.Screen name="FeedStack" component={FeedStack} />
-          <Nav.Screen name="ClubStack" component={ClubStack} />
-          <Nav.Screen name="ProfileStack" component={ProfileStack} />
-          <Nav.Screen name="ClubCreationStack" component={ClubCreationStack} />
-          <Nav.Screen name="ClubManagementStack" component={ClubManagementStack} />
-        </Nav.Navigator>
-      }
-    ></Host>
+    <>
+      {updateRequire ? (
+        <Modal transparent visible={updateRequire} animationType="fade" supportedOrientations={["landscape", "portrait"]}>
+          <View style={{ justifyContent: "center", alignItems: "center", width: "100%", height: "100%", backgroundColor: "rgba(0,0,0,0.5)" }}>
+            <ModalContainer>
+              <Content>
+                <ContentText>{`온유 앱이 업데이트 되었습니다.\n조금 더 편리해지고 예뻐졌답니다.\n앱 업데이트 부탁드려요 :)`}</ContentText>
+              </Content>
+              <Footer>
+                <ExitAppButton onPress={exitApp}>
+                  <ExitAppText>{`앱 종료`}</ExitAppText>
+                </ExitAppButton>
+                <UpdateButton onPress={goToStore}>
+                  <UpdateText>{`지금 업데이트`}</UpdateText>
+                </UpdateButton>
+              </Footer>
+            </ModalContainer>
+          </View>
+        </Modal>
+      ) : (
+        <></>
+      )}
+      <Host
+        children={
+          <Nav.Navigator
+            screenOptions={{
+              presentation: "card",
+              headerShown: false,
+            }}
+          >
+            <Nav.Screen name="Tabs" component={Tabs} />
+            <Nav.Screen name="FeedStack" component={FeedStack} />
+            <Nav.Screen name="ClubStack" component={ClubStack} />
+            <Nav.Screen name="ProfileStack" component={ProfileStack} />
+            <Nav.Screen name="ClubCreationStack" component={ClubCreationStack} />
+            <Nav.Screen name="ClubManagementStack" component={ClubManagementStack} />
+          </Nav.Navigator>
+        }
+      ></Host>
+    </>
   );
 };
 export default Root;

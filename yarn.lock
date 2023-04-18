@@ -6618,6 +6618,11 @@
   dependencies:
     "prop-types" "^15.8.1"
 
+"react-native-device-info@^10.6.0":
+  "integrity" "sha512-/MmINdojWdw2/9rwYpH/dX+1gFP0o78p8yYPjwxiPhoySSL2rZaNi+Mq9VwC+zFi/yQmJUvHntkKSw2KUc7rFw=="
+  "resolved" "https://registry.npmjs.org/react-native-device-info/-/react-native-device-info-10.6.0.tgz"
+  "version" "10.6.0"
+
 "react-native-draggable-flatlist@^4.0.1":
   "integrity" "sha512-ZO1QUTNx64KZfXGXeXcBfql67l38X7kBcJ3rxUVZzPHt5r035GnGzIC0F8rqSXp6zgnwgUYMfB6zQc5PKmPL9Q=="
   "resolved" "https://registry.npmjs.org/react-native-draggable-flatlist/-/react-native-draggable-flatlist-4.0.1.tgz"

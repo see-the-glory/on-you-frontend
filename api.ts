@@ -59,7 +59,8 @@ export interface Notification {
   actionType?: string;
   message?: string | null;
   created?: string;
-  processDone?: boolean;
+  read?: boolean;
+  done?: boolean;
 }
 
 export interface Member {
@@ -478,7 +479,7 @@ export interface SuggestionSubmitRequest {
 }
 
 export interface MetaInfoRequest {
-  currentVesrion: string;
+  currentVersion: string;
   deviceInfo: string;
 }
 
@@ -656,7 +657,7 @@ const getClubNotifications = ({ queryKey }: any) => {
   return axios.get<string, NotificationsResponse>(`/api/notifications/club/${clubId}`);
 };
 const getUserNotifications = () => axios.get<string, NotificationsResponse>(`/api/notifications/user`);
-const readAction = (req: ReadActionRequest) => axios.post<string, BaseResponse>(`/api/notifications/${req.actionId}/read`);
+const readAction = (req: ReadActionRequest) => axios.post<string, BaseResponse>(`/api/notifications/${req.actionId}/readAction`);
 
 // FCM
 const updateTargetToken = (req: TargetTokenUpdateRequest) => axios.post<string, BaseResponse>(`/api/user/updateTargetToken`, req);

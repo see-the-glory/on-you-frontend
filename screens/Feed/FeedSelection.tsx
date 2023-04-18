@@ -27,7 +27,6 @@ const FeedSelection = ({
     params: { selectFeedId },
   },
 }) => {
-  console.log(selectFeedId);
   const me = useSelector((state: RootState) => state.auth.user);
   const toast = useToast();
   const { ref: myFeedOptionRef, open: openMyFeedOption, close: closeMyFeedOption } = useModalize();

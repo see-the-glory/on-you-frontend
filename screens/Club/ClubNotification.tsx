@@ -97,11 +97,11 @@ const ClubNotification = ({
   const handlingActions = ["APPLY", "APPROVE", "REJECT", "FEED_CREATE", "SCHEDULE_CREATE"];
 
   const readAction = (item: Notification) => {
-    if (item.processDone) return;
+    if (item.read || item.done) return;
     const requestData: ReadActionRequest = { actionId: item.actionId };
     readActionMutation.mutate(requestData, {
       onSuccess: (res) => {
-        item.processDone = true;
+        item.read = true;
       },
     });
   };
@@ -116,7 +116,7 @@ const ClubNotification = ({
           actionerId: item.actionerId,
           message: item.message,
           createdTime: item.created,
-          processDone: item.processDone,
+          processDone: item.done,
         };
         return navigate("ClubApplication", clubApplicationProps);
       } else {
