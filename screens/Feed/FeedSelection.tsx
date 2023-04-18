@@ -6,12 +6,12 @@ import { useMutation, useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { BaseResponse, Club, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedResponse, UserApi, UserBlockRequest } from "../../api";
-import CustomText from "../../components/CustomText";
 import FeedDetail from "../../components/FeedDetail";
 import FeedReportModal from "../Feed/FeedReportModal";
 import FeedOptionModal from "../Feed/FeedOptionModal";
 import { RootState } from "../../redux/store/reducers";
 import { Entypo } from "@expo/vector-icons";
+import RNFetchBlob from "rn-fetch-blob";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -184,6 +184,28 @@ const FeedSelection = ({
     );
   };
 
+  const downloadImages = () => {
+    Alert.alert("사진 저장", "이 피드의 사진을 전부 저장하시겠습니까?", [
+      { text: "아니요" },
+      {
+        text: "예",
+        onPress: () => {
+          feedData?.imageUrls?.map((url) => {
+            let fileName = url.split("/").pop();
+            RNFetchBlob.config({
+              addAndroidDownloads: {
+                useDownloadManager: true,
+                notification: true,
+                path: `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}`,
+              },
+            }).fetch("GET", url);
+          });
+          closeOtherFeedOption();
+        },
+      },
+    ]);
+  };
+
   const complainSubmit = (reason: string) => {
     if (!feedData) {
       toast.show("게시글 정보가 잘못되었습니다.", { type: "warning" });
@@ -245,6 +267,7 @@ const FeedSelection = ({
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
+        downloadImages={downloadImages}
       />
       <FeedOptionModal
         modalRef={otherFeedOptionRef}
@@ -254,6 +277,7 @@ const FeedSelection = ({
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
+        downloadImages={downloadImages}
       />
       <FeedReportModal modalRef={complainOptionRef} buttonHeight={modalOptionButtonHeight} complainSubmit={complainSubmit} />
     </Container>

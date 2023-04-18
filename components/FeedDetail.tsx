@@ -5,13 +5,14 @@ import styled from "styled-components/native";
 import CustomText from "./CustomText";
 import CircleIcon from "./CircleIcon";
 import { Feed } from "../api";
-import { NativeSyntheticEvent, ScrollView, TextLayoutEventData, TouchableOpacity, View } from "react-native";
+import { Alert, NativeSyntheticEvent, ScrollView, TextLayoutEventData, TouchableOpacity, View } from "react-native";
 import moment from "moment";
 import Carousel from "./Carousel";
 import Tag from "./Tag";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import Collapsible from "react-native-collapsible";
 import Pinchable from "react-native-pinchable";
+import RNFetchBlob from "rn-fetch-blob";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -116,6 +117,27 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
       remainedText: "",
     };
   }
+
+  downloadImage(url?: string) {
+    if (!url) return;
+    let fileName = url.split("/").pop();
+    Alert.alert("사진 저장", "이 사진을 저장하시겠습니까?", [
+      { text: "아니요" },
+      {
+        text: "예",
+        onPress: () => {
+          RNFetchBlob.config({
+            addAndroidDownloads: {
+              useDownloadManager: true,
+              notification: true,
+              path: `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}`,
+            },
+          }).fetch("GET", url);
+        },
+      },
+    ]);
+  }
+
   render() {
     // prettier-ignore
     const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
@@ -163,12 +185,14 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           showIndicator={(this.props.feedData?.imageUrls?.length ?? 0) > 1 ? true : false}
           renderItem={({ item, index }: { item: string; index: number }) => (
             <Pinchable>
-              <FastImage
-                key={String(index)}
-                source={item ? { uri: item } : require("../assets/basic.jpg")}
-                style={{ width: this.props.feedSize, height: this.props.feedSize }}
-                resizeMode={FastImage.resizeMode.contain}
-              />
+              <TouchableOpacity activeOpacity={1} onLongPress={() => this.downloadImage(item)}>
+                <FastImage
+                  key={String(index)}
+                  source={item ? { uri: item } : require("../assets/basic.jpg")}
+                  style={{ width: this.props.feedSize, height: this.props.feedSize }}
+                  resizeMode={FastImage.resizeMode.contain}
+                />
+              </TouchableOpacity>
             </Pinchable>
           )}
           ListEmptyComponent={<FastImage source={require("../assets/basic.jpg")} style={{ width: this.props.feedSize, height: this.props.feedSize }} />}

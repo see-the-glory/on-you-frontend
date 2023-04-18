@@ -38,15 +38,17 @@ interface FeedOptionModalProps {
   deleteFeed: () => void;
   goToComplain: () => void;
   blockUser: () => void;
+  downloadImages: () => void;
 }
 
-const FeedOptionModal: React.FC<FeedOptionModalProps> = ({ modalRef, buttonHeight, isMyFeed, goToUpdateFeed, deleteFeed, goToComplain, blockUser }) => {
+const FeedOptionModal: React.FC<FeedOptionModalProps> = ({ modalRef, buttonHeight, isMyFeed, goToUpdateFeed, deleteFeed, goToComplain, blockUser, downloadImages }) => {
   const feedOptionList = isMyFeed
     ? [
         { name: "수정", warning: false, onPress: goToUpdateFeed },
         { name: "삭제", warning: true, onPress: deleteFeed },
       ]
     : [
+        { name: "이미지 모두 저장", warning: false, onPress: downloadImages },
         { name: "신고", warning: false, onPress: goToComplain },
         { name: "사용자 차단", warning: true, onPress: blockUser },
       ];

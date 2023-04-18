@@ -115,17 +115,17 @@ const Root = () => {
     let deviceInfo = await getDeviceId();
     let currentVersion = await getReadableVersion();
     const requestData: MetaInfoRequest = { deviceInfo, currentVersion };
+    console.log(requestData);
 
-    // updateMetaInfoMutation.mutate(requestData, {
-    //   onSuccess: (res) => {
-    //     if (res.data.updateRequired) {
-    //     }
-    //   },
-    //   onError: (error) => {
-    //     console.log(`API ERROR | updateMetaInfo ${error.code} ${error.status}`);
-    //     toast.show(`${error.message ?? error.code}`, { type: "warning" });
-    //   },
-    // });
+    updateMetaInfoMutation.mutate(requestData, {
+      onSuccess: (res) => {
+        if (res.data.updateRequired === "Y") setUpdateRequire(true);
+      },
+      onError: (error) => {
+        console.log(`API ERROR | updateMetaInfo ${error.code} ${error.status}`);
+        toast.show(`${error.message ?? error.code}`, { type: "warning" });
+      },
+    });
   };
 
   const exitApp = () => {

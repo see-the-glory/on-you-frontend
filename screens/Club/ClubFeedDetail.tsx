@@ -15,6 +15,7 @@ import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
 import clubSlice from "../../redux/slices/club";
 import { Entypo } from "@expo/vector-icons";
+import RNFetchBlob from "rn-fetch-blob";
 
 const Container = styled.View``;
 const HeaderTitleView = styled.View`
@@ -185,6 +186,28 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     );
   };
 
+  const downloadImages = () => {
+    Alert.alert("사진 저장", "이 피드의 사진을 전부 저장하시겠습니까?", [
+      { text: "아니요" },
+      {
+        text: "예",
+        onPress: () => {
+          selectFeedData?.imageUrls?.map((url) => {
+            let fileName = url.split("/").pop();
+            RNFetchBlob.config({
+              addAndroidDownloads: {
+                useDownloadManager: true,
+                notification: true,
+                path: `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}`,
+              },
+            }).fetch("GET", url);
+          });
+          closeOtherFeedOption();
+        },
+      },
+    ]);
+  };
+
   const complainSubmit = (reason: string) => {
     if (selectFeedData === undefined || selectFeedData?.id === -1) {
       toast.show("게시글 정보가 잘못되었습니다.", { type: "warning" });
@@ -273,6 +296,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
+        downloadImages={downloadImages}
       />
       <FeedOptionModal
         modalRef={otherFeedOptionRef}
@@ -282,6 +306,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
+        downloadImages={downloadImages}
       />
       <FeedReportModal modalRef={complainOptionRef} buttonHeight={modalOptionButtonHeight} complainSubmit={complainSubmit} />
     </Container>

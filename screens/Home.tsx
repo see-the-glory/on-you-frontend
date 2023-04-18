@@ -15,6 +15,7 @@ import { useAppDispatch } from "../redux/store";
 import { RootState } from "../redux/store/reducers";
 import FeedOptionModal from "./Feed/FeedOptionModal";
 import FeedReportModal from "./Feed/FeedReportModal";
+import RNFetchBlob from "rn-fetch-blob";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -68,6 +69,7 @@ const NotiBadgeText = styled.Text`
 `;
 
 const Home = () => {
+  const token = useSelector((state: RootState) => state.auth.token);
   const me = useSelector((state: RootState) => state.auth.user);
   const feeds = useSelector((state: RootState) => state.feed.data);
   const dispatch = useAppDispatch();
@@ -202,7 +204,7 @@ const Home = () => {
     if (clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
   }, []);
 
-  const goToFeedComments = useCallback((feedIndex: number, feedId: number) => {
+  const goToFeedComments = useCallback((feedIndex?: number, feedId?: number) => {
     if (feedIndex === undefined || feedId === undefined) return;
     navigation.navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId } });
   }, []);
@@ -292,9 +294,7 @@ const Home = () => {
       return;
     }
 
-    const requestData: UserBlockRequest = {
-      userId: selectFeedData.userId,
-    };
+    const requestData: UserBlockRequest = { userId: selectFeedData.userId };
 
     Alert.alert(
       `${selectFeedData.userName}님을 차단하시겠어요?`,
@@ -313,6 +313,28 @@ const Home = () => {
       ],
       { cancelable: false }
     );
+  };
+
+  const downloadImages = () => {
+    Alert.alert("사진 저장", "이 피드의 사진을 전부 저장하시겠습니까?", [
+      { text: "아니요" },
+      {
+        text: "예",
+        onPress: () => {
+          selectFeedData?.imageUrls?.map((url) => {
+            let fileName = url.split("/").pop();
+            RNFetchBlob.config({
+              addAndroidDownloads: {
+                useDownloadManager: true,
+                notification: true,
+                path: `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}`,
+              },
+            }).fetch("GET", url);
+          });
+          closeOtherFeedOption();
+        },
+      },
+    ]);
   };
 
   const keyExtractor = useCallback((item: Feed, index: number) => String(index), []);
@@ -383,6 +405,7 @@ const Home = () => {
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
+        downloadImages={downloadImages}
       />
       <FeedOptionModal
         modalRef={otherFeedOptionRef}
@@ -392,6 +415,7 @@ const Home = () => {
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
+        downloadImages={downloadImages}
       />
       <FeedReportModal modalRef={complainOptionRef} buttonHeight={modalOptionButtonHeight} complainSubmit={complainSubmit} />
     </Container>
