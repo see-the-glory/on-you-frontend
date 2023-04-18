@@ -108,7 +108,7 @@ const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
         actionerId: item.actionerId,
         message: item.message,
         createdTime: item.created,
-        processDone: item.done,
+        processDone: item.done || item.processDone,
       };
       return navigate("ClubStack", {
         screen: "ClubApplication",

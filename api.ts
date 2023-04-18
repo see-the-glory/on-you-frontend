@@ -61,6 +61,7 @@ export interface Notification {
   created?: string;
   read?: boolean;
   done?: boolean;
+  processDone?: boolean; // lagacy
 }
 
 export interface Member {

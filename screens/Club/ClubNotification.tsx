@@ -116,7 +116,7 @@ const ClubNotification = ({
           actionerId: item.actionerId,
           message: item.message,
           createdTime: item.created,
-          processDone: item.done,
+          processDone: item.done || item.processDone,
         };
         return navigate("ClubApplication", clubApplicationProps);
       } else {
@@ -124,12 +124,17 @@ const ClubNotification = ({
       }
     } else if (item.actionType === "FEED_CREATE") {
       readAction(item);
-      // const targetIndex = feeds.findIndex((feed => feed.id === id));
-      const clubFeedDetailProps = {
-        clubData,
-        targetIndex: 0,
-      };
-      return navigate("ClubStack", { screen: "ClubFeedDetail", params: clubFeedDetailProps });
+      // const targetIndex = feeds.findIndex((feed => feed.id === id)); 현재 feed redux에서 찾아보기
+      if (item.actionFeedId === undefined) {
+        const clubFeedDetailProps = {
+          clubData,
+          targetIndex: 0,
+        };
+        return navigate("ClubStack", { screen: "ClubFeedDetail", params: clubFeedDetailProps });
+      } else {
+        const feedSelectionProps = { selectFeedId: item.actionFeedId };
+        return navigate("FeedStack", { screen: "FeedSelection", params: feedSelectionProps });
+      }
     } else if (item.actionType === "SCHEDULE_CREATE") {
       readAction(item);
       goBack();
