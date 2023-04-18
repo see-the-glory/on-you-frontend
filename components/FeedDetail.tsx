@@ -106,6 +106,7 @@ interface FeedDetailState {
 }
 
 class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
+  lastTapTime?: number;
   constructor(props: any) {
     super(props);
     this.state = {
@@ -116,6 +117,20 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
       collapsedTextList: [],
       remainedText: "",
     };
+    this.lastTapTime = undefined;
+  }
+
+  doubleTap() {
+    const now = Date.now();
+    const DOUBLE_PRESS_DELAY = 300;
+
+    if (this.lastTapTime && now - this.lastTapTime < DOUBLE_PRESS_DELAY) {
+      if (this.props.likeFeed) {
+        this.props.likeFeed(this.props.feedIndex, this.props.feedData?.id);
+      }
+    } else {
+      this.lastTapTime = now;
+    }
   }
 
   downloadImage(url?: string) {
@@ -185,7 +200,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           showIndicator={(this.props.feedData?.imageUrls?.length ?? 0) > 1 ? true : false}
           renderItem={({ item, index }: { item: string; index: number }) => (
             <Pinchable>
-              <TouchableOpacity activeOpacity={1} onLongPress={() => this.downloadImage(item)}>
+              <TouchableOpacity activeOpacity={1} onPress={() => this.doubleTap()} onLongPress={() => this.downloadImage(item)}>
                 <FastImage
                   key={String(index)}
                   source={item ? { uri: item } : require("../assets/basic.jpg")}

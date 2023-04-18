@@ -22,7 +22,7 @@ import notifee, { EventType } from "@notifee/react-native";
 import dynamicLinks, { FirebaseDynamicLinksTypes } from "@react-native-firebase/dynamic-links";
 import { useNavigation } from "@react-navigation/native";
 import queryString from "query-string";
-import { getDeviceId, getReadableVersion } from "react-native-device-info";
+import { getDeviceId, getVersion } from "react-native-device-info";
 import styled from "styled-components/native";
 import CustomText from "../components/CustomText";
 
@@ -97,9 +97,7 @@ const Root = () => {
   const updateMetaInfoMutation = useMutation<MetaInfoResponse, ErrorResponse, MetaInfoRequest>(UserApi.metaInfo);
 
   const updateTargetToken = (fcmToken: string | null) => {
-    const requestData: TargetTokenUpdateRequest = {
-      targetToken: fcmToken,
-    };
+    const requestData: TargetTokenUpdateRequest = { targetToken: fcmToken };
     updateTargetTokenMutation.mutate(requestData, {
       onSuccess: (res) => {
         console.log(`API CALL | updateTargetToken : ${fcmToken}`);
@@ -113,9 +111,8 @@ const Root = () => {
 
   const updateMetaInfo = async () => {
     let deviceInfo = await getDeviceId();
-    let currentVersion = await getReadableVersion();
+    let currentVersion = await getVersion();
     const requestData: MetaInfoRequest = { deviceInfo, currentVersion };
-    console.log(requestData);
 
     updateMetaInfoMutation.mutate(requestData, {
       onSuccess: (res) => {
