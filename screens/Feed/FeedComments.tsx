@@ -1,6 +1,6 @@
 import { AntDesign, Entypo, EvilIcons } from "@expo/vector-icons";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ActivityIndicator, BackHandler, KeyboardAvoidingView, LayoutChangeEvent, Platform, StatusBar, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, BackHandler, DeviceEventEmitter, KeyboardAvoidingView, LayoutChangeEvent, Platform, StatusBar, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
@@ -125,9 +125,13 @@ const FeedComments = ({
     onSuccess: (res: FeedCommentsResponse) => {
       setCommentData(res?.data);
       setIsLoading(false);
-      const count = res.data.length + res.data.reduce((acc, comment) => acc + comment.replies.length, 0);
-      if (clubId) dispatch(clubSlice.actions.updateCommentCount({ feedIndex, count }));
-      else dispatch(feedSlice.actions.updateCommentCount({ feedIndex, count }));
+      if (feedIndex !== undefined) {
+        const count = res.data.length + res.data.reduce((acc, comment) => acc + comment.replies.length, 0);
+        if (clubId) dispatch(clubSlice.actions.updateCommentCount({ feedIndex, count }));
+        else dispatch(feedSlice.actions.updateCommentCount({ feedIndex, count }));
+      } else {
+        DeviceEventEmitter.emit("SelectFeedRefetch");
+      }
     },
     onError: (error) => {
       console.log(`API ERROR | getFeedComments ${error.code} ${error.status}`);

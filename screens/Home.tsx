@@ -101,7 +101,7 @@ const Home = () => {
     hasNextPage,
     refetch: feedsRefetch,
     fetchNextPage,
-  } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["feeds"], FeedApi.getFeeds, {
+  } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["getFeeds"], FeedApi.getFeeds, {
     getNextPageParam: (lastPage) => {
       if (lastPage) {
         return lastPage.hasData === true ? lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor : null;
@@ -198,11 +198,12 @@ const Home = () => {
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
-  const goToClub = useCallback((clubId: number) => {
-    navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
+  const goToClub = useCallback((clubId?: number) => {
+    if (clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
   }, []);
 
   const goToFeedComments = useCallback((feedIndex: number, feedId: number) => {
+    if (feedIndex === undefined || feedId === undefined) return;
     navigation.navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId } });
   }, []);
 
@@ -219,9 +220,10 @@ const Home = () => {
     navigation.navigate("FeedStack", { screen: "ClubSelection" });
   }, []);
 
-  const openFeedOption = (feedData: Feed) => {
+  const openFeedOption = (feedData?: Feed) => {
+    if (!feedData) return;
     setSelectFeedData(feedData);
-    if (feedData.userId === me?.id) openMyFeedOption();
+    if (feedData?.userId === me?.id) openMyFeedOption();
     else openOtherFeedOption();
   };
   const goToComplain = () => {
@@ -229,10 +231,9 @@ const Home = () => {
     openComplainOption();
   };
 
-  const likeFeed = useCallback((feedIndex: number, feedId: number) => {
-    const requestData: FeedLikeRequest = {
-      feedId,
-    };
+  const likeFeed = useCallback((feedIndex?: number, feedId?: number) => {
+    if (feedIndex === undefined || feedId === undefined) return;
+    const requestData: FeedLikeRequest = { feedId };
     likeFeedMutation.mutate(requestData, {
       onSuccess: (res) => {
         dispatch(feedSlice.actions.likeToggle(feedIndex));

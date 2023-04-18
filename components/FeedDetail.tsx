@@ -82,17 +82,17 @@ const ContentSubText = styled(CustomText)`
 `;
 
 interface FeedDetailProps {
-  feedData: Feed;
-  feedIndex: number;
+  feedData?: Feed;
+  feedIndex?: number;
   feedSize: number;
   headerHeight: number;
   infoHeight: number;
   contentHeight: number;
   showClubName?: boolean;
-  openFeedOption: (feedData: Feed) => void;
-  goToFeedComments: (feedIndex: number, feedId: number) => void;
-  goToClub?: (clubId: number) => void;
-  likeFeed?: (feedIndex: number, feedId: number) => void;
+  openFeedOption: (feedData?: Feed) => void;
+  goToFeedComments: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
+  goToClub?: (clubId?: number) => void;
+  likeFeed?: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
 }
 
 interface FeedDetailState {
@@ -140,7 +140,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
               <HeaderText>{this.props.feedData?.userName}</HeaderText>
               {this.props.showClubName ? (
                 <TouchableWithoutFeedback onPress={() => (this.props.goToClub ? this.props.goToClub(this.props.feedData?.clubId) : {})}>
-                  <Tag name={this.props.feedData?.clubName} textColor="white" backgroundColor="#C4C4C4" />
+                  <Tag name={this.props.feedData?.clubName ?? ""} textColor="white" backgroundColor="#C4C4C4" />
                 </TouchableWithoutFeedback>
               ) : (
                 <></>

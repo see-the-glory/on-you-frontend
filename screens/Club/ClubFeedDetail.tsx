@@ -98,7 +98,8 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     openComplainOption();
   };
 
-  const goToFeedComments = (feedIndex: number, feedId: number) => {
+  const goToFeedComments = (feedIndex?: number, feedId?: number) => {
+    if (feedIndex === undefined || feedId === undefined) return;
     navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId, clubId: clubData.id } });
   };
 
@@ -107,7 +108,8 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     navigate("FeedStack", { screen: "FeedModification", params: { feedData: selectFeedData } });
   };
 
-  const openFeedOption = (feedData: Feed) => {
+  const openFeedOption = (feedData?: Feed) => {
+    if (!feedData) return;
     setSelectFeedData(feedData);
     if (feedData?.userId === me?.id) openMyFeedOption();
     else openOtherFeedOption();
@@ -119,9 +121,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       return;
     }
 
-    const requestData: FeedDeletionRequest = {
-      feedId: selectFeedData.id,
-    };
+    const requestData: FeedDeletionRequest = { feedId: selectFeedData.id };
 
     Alert.alert(
       "게시물 삭제",
@@ -142,10 +142,9 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     );
   };
 
-  const likeFeed = useCallback((feedIndex: number, feedId: number) => {
-    const requestData: FeedLikeRequest = {
-      feedId,
-    };
+  const likeFeed = useCallback((feedIndex?: number, feedId?: number) => {
+    if (feedIndex === undefined || feedId === undefined) return;
+    const requestData: FeedLikeRequest = { feedId };
     likeFeedMutation.mutate(requestData, {
       onSuccess: (res) => {
         dispatch(clubSlice.actions.likeToggle(feedIndex));
@@ -165,9 +164,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       return;
     }
 
-    const requestData: UserBlockRequest = {
-      userId: selectFeedData.userId,
-    };
+    const requestData: UserBlockRequest = { userId: selectFeedData.userId };
 
     Alert.alert(
       `${selectFeedData.userName}님을 차단하시곘어요?`,

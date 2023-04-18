@@ -78,7 +78,7 @@ const Comment: React.FC<CommentProps> = ({ commentData, parentIndex, parentId, d
         <></>
       )}
       {/* Collapsible 에 minHeight 이 없으면 HiddenItemContainer의 배경색이 적용되지 않는 이슈가 있음. */}
-      <Collapsible style={{ minHeight: 100 }} collapsed={collapsed}>
+      <Collapsible style={{ minHeight: commentData.replies.length ? 50 : 0 }} collapsed={collapsed}>
         {commentData.replies?.map((reply: FeedComment, index: number) => (
           <SwipeRow key={`Reply_${index}`} disableRightSwipe={true} disableLeftSwipe={reply.userId !== me?.id} rightOpenValue={-hiddenItemWidth} tension={60}>
             <HiddenItemContainer>

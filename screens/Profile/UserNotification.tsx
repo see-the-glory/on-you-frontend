@@ -128,14 +128,16 @@ const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
       return navigate("ClubStack", { screen: "ClubJoinRejectMessage", params: clubJoinRejectMessageProps });
     } else if (item.actionType === "FEED_COMMENT") {
       readAction(item);
-      toast.show(`곧 구현됩니다!`, { type: "success" });
+      const feedSelectionProps = { selectFeedId: item.actionFeedId };
+      return navigate("FeedStack", { screen: "FeedSelection", params: feedSelectionProps });
     } else if (item.actionType === "SCHEDULE_CREATE") {
       readAction(item);
       const clubTopTabsProps = { clubData: { id: item.actionClubId } };
       return navigate("ClubStack", { screen: "ClubTopTabs", params: clubTopTabsProps });
     } else if (item.actionType === "COMMENT_REPLY") {
       readAction(item);
-      console.log(item);
+      const feedSelectionProps = { selectFeedId: item.actionFeedId };
+      return navigate("FeedStack", { screen: "FeedSelection", params: feedSelectionProps });
     }
   };
 

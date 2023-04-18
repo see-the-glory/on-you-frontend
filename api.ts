@@ -48,8 +48,9 @@ export interface MyClub extends Club {
 }
 
 export interface Notification {
-  actionClubId: number;
   actionClubName: string;
+  actionClubId: number;
+  actionFeedId: number;
   actionId: number;
   actionerId?: number | null;
   actionerName?: string | null;
@@ -266,7 +267,7 @@ export interface PushAlarmResponse extends BaseResponse {
   };
 }
 
-export interface MetainfoResponse extends BaseResponse {
+export interface MetaInfoResponse extends BaseResponse {
   data: {
     latestVersion: string;
     updateRequired: string;
@@ -476,8 +477,9 @@ export interface SuggestionSubmitRequest {
   content: string;
 }
 
-export interface MetainfoRequest {
+export interface MetaInfoRequest {
   currentVesrion: string;
+  deviceInfo: string;
 }
 
 export interface FeedLikeRequest {
@@ -646,7 +648,7 @@ const setPushAlarm = (req: UserPushAlarmRequest) => axios.put<string, BaseRespon
 const withdrawAccount = () => axios.post<string, BaseResponse>(`/api/user/withdraw`);
 const getMyClubs = ({ queryKey }: any) => axios.get<string, MyClubsResponse>(`/api/clubs/my`);
 const submitSuggestion = (req: SuggestionSubmitRequest) => axios.post<string, BaseResponse>(`/api/user/suggestion`, req);
-const metaInfo = (req: MetainfoRequest) => axios.post<string, MetainfoResponse>(`/api/user/versionRequest`, req);
+const metaInfo = (req: MetaInfoRequest) => axios.post<string, MetaInfoResponse>(`/api/user/metaInfo`, req);
 
 // Notification
 const getClubNotifications = ({ queryKey }: any) => {
