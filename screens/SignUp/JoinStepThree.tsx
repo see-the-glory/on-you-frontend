@@ -158,7 +158,7 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
             },
           });
         } else if (res.status === 400) {
-          toast.show(`잘못된 요청입니다.`, { type: "warning" });
+          toast.show(`인증코드가 잘못되었습니다.`, { type: "warning" });
         } else if (res.status === 404) {
           toast.show(`${res.message}`, { type: "danger" });
         } else if (res.status === 500) {

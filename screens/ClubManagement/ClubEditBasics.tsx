@@ -191,7 +191,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
       setCategoryBundle(bundle);
     },
     onError: (error) => {
-      console.log(`API ERROR | getFeeds ${error.code} ${error.status}`);
+      console.log(`API ERROR | getCategories ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });

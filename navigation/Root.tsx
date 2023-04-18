@@ -220,7 +220,7 @@ const Root = () => {
     userInfoRefecth();
 
     // Feed Resetting
-    queryClient.resetQueries(["feeds"]);
+    queryClient.resetQueries(["getFeeds"]);
 
     // Target Token Update
     if (fcmToken) updateTargetToken(fcmToken);
