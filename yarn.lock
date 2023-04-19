@@ -1585,6 +1585,11 @@
   dependencies:
     "merge-options" "^3.0.4"
 
+"@react-native-camera-roll/camera-roll@^5.3.1":
+  "integrity" "sha512-2XKMkb/pLBC6vYkNh+bJ4UEj49V2ZSyWFHmaxsUJU9beLo1QbM3XJnySV6F1uv7aC+I2RBlDuAusCqNiTQiCOw=="
+  "resolved" "https://registry.npmjs.org/@react-native-camera-roll/camera-roll/-/camera-roll-5.3.1.tgz"
+  "version" "5.3.1"
+
 "@react-native-community/cli-clean@^9.2.1":
   "integrity" "sha512-dyNWFrqRe31UEvNO+OFWmQ4hmqA07bR9Ief/6NnGwx67IO9q83D5PEAf/o96ML6jhSbDwCmpPKhPwwBbsyM3mQ=="
   "resolved" "https://registry.npmjs.org/@react-native-community/cli-clean/-/cli-clean-9.2.1.tgz"
@@ -4111,6 +4116,11 @@
   "integrity" "sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw=="
   "resolved" "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   "version" "1.0.0"
+
+"fsevents@^2.1.2":
+  "integrity" "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA=="
+  "resolved" "https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz"
+  "version" "2.3.2"
 
 "ftp@^0.3.10":
   "integrity" "sha512-faFVML1aBx2UoDStmLwv2Wptt4vw5x03xxX172nhA5Y5HBshW5JweqQ2W4xL4dezQTG8inJsuYcpPHHU3X5OTQ=="

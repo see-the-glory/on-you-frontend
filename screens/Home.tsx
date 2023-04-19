@@ -16,6 +16,7 @@ import { RootState } from "../redux/store/reducers";
 import FeedOptionModal from "./Feed/FeedOptionModal";
 import FeedReportModal from "./Feed/FeedReportModal";
 import RNFetchBlob from "rn-fetch-blob";
+import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -328,13 +329,24 @@ const Home = () => {
         onPress: () => {
           selectFeedData?.imageUrls?.map((url) => {
             let fileName = url.split("/").pop();
+            let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}` : `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}`;
             RNFetchBlob.config({
               addAndroidDownloads: {
                 useDownloadManager: true,
                 notification: true,
-                path: `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}`,
+                path,
               },
-            }).fetch("GET", url);
+              path,
+            })
+              .fetch("GET", url)
+              .then((res) => {
+                if (Platform.OS === "ios") {
+                  const filePath = res.path();
+                  CameraRoll.save(filePath).then(() => {
+                    RNFetchBlob.fs.unlink(filePath);
+                  });
+                }
+              });
           });
           closeOtherFeedOption();
         },

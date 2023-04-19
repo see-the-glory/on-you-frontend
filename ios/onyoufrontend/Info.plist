@@ -58,6 +58,12 @@
 	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Photo library access is required to add photos in the feed.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Photo library access is required to save photos in the feed.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>itms-apps</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

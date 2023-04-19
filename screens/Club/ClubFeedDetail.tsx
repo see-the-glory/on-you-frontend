@@ -1,5 +1,5 @@
 import React, { useCallback, useLayoutEffect, useState } from "react";
-import { Alert, DeviceEventEmitter, FlatList, StatusBar, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Alert, DeviceEventEmitter, FlatList, Platform, StatusBar, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
@@ -16,6 +16,7 @@ import { useAppDispatch } from "../../redux/store";
 import clubSlice from "../../redux/slices/club";
 import { Entypo } from "@expo/vector-icons";
 import RNFetchBlob from "rn-fetch-blob";
+import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 
 const Container = styled.View``;
 const HeaderTitleView = styled.View`
@@ -199,13 +200,24 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         onPress: () => {
           selectFeedData?.imageUrls?.map((url) => {
             let fileName = url.split("/").pop();
+            let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}` : `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}`;
             RNFetchBlob.config({
               addAndroidDownloads: {
                 useDownloadManager: true,
                 notification: true,
-                path: `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}`,
+                path,
               },
-            }).fetch("GET", url);
+              path,
+            })
+              .fetch("GET", url)
+              .then((res) => {
+                if (Platform.OS === "ios") {
+                  const filePath = res.path();
+                  CameraRoll.save(filePath).then(() => {
+                    RNFetchBlob.fs.unlink(filePath);
+                  });
+                }
+              });
           });
           closeOtherFeedOption();
         },

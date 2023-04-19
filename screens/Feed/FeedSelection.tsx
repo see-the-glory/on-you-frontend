@@ -1,17 +1,18 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { ActivityIndicator, Alert, DeviceEventEmitter, StatusBar, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, Alert, DeviceEventEmitter, StatusBar, TouchableOpacity, useWindowDimensions, Platform } from "react-native";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { BaseResponse, Club, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedResponse, LikeUser, UserApi, UserBlockRequest } from "../../api";
+import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedResponse, LikeUser, UserApi, UserBlockRequest } from "../../api";
 import FeedDetail from "../../components/FeedDetail";
 import FeedReportModal from "../Feed/FeedReportModal";
 import FeedOptionModal from "../Feed/FeedOptionModal";
 import { RootState } from "../../redux/store/reducers";
 import { Entypo } from "@expo/vector-icons";
 import RNFetchBlob from "rn-fetch-blob";
+import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -197,13 +198,24 @@ const FeedSelection = ({
         onPress: () => {
           feedData?.imageUrls?.map((url) => {
             let fileName = url.split("/").pop();
+            let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}` : `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}`;
             RNFetchBlob.config({
               addAndroidDownloads: {
                 useDownloadManager: true,
                 notification: true,
-                path: `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}`,
+                path,
               },
-            }).fetch("GET", url);
+              path,
+            })
+              .fetch("GET", url)
+              .then((res) => {
+                if (Platform.OS === "ios") {
+                  const filePath = res.path();
+                  CameraRoll.save(filePath).then(() => {
+                    RNFetchBlob.fs.unlink(filePath);
+                  });
+                }
+              });
           });
           closeOtherFeedOption();
         },
