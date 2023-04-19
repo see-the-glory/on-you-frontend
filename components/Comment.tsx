@@ -1,68 +1,106 @@
-import moment from "moment";
-import React from "react";
-import { useWindowDimensions } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import React, { useState } from "react";
+import Collapsible from "react-native-collapsible";
+import { SwipeRow } from "react-native-swipe-list-view";
+import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { FeedComment } from "../api";
-import CircleIcon from "./CircleIcon";
+import { RootState } from "../redux/store/reducers";
+import CommentDetail from "./CommentDetail";
 import CustomText from "./CustomText";
 
-const Container = styled.View<{ padding: number }>`
+const HiddenItemContainer = styled.View`
+  height: 100%;
+  align-items: center;
   flex-direction: row;
-  padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
-  background-color: white;
+  justify-content: flex-end;
 `;
-
-const LeftView = styled.View``;
-const RightView = styled.View`
+const HiddenItemButton = styled.TouchableOpacity<{ width: number }>`
+  width: ${(props: any) => props.width}px;
+  height: 100%;
+  background-color: #8e8e8e;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 `;
 
-const ContentTextBundle = styled(CustomText)<{ width: number }>`
-  ${(props: any) => (props.width ? `width: ${props.width}px` : "")};
+const ReplyShowButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
 `;
-
-const ContentUserName = styled(CustomText)`
-  font-size: 15px;
-  line-height: 22px;
-  color: #2b2b2b;
-  font-family: "NotoSansKR-Medium";
-`;
-const ContentText = styled(CustomText)`
-  font-size: 14px;
-  line-height: 21px;
-`;
-const InformationView = styled.View``;
-const CreatedTime = styled(CustomText)`
+const ReplyText = styled(CustomText)`
   font-size: 11px;
+  line-height: 16px;
   color: #8e8e8e;
 `;
 
 interface CommentProps {
   commentData: FeedComment;
+  parentIndex: number;
+  parentId: number;
+  deleteComment: (commentId: number) => void;
+  likeComment: (commentId: number, commentType: number, parentIndex: number, replyIndex?: number) => void;
+  setReplyStatus: (parentId: number, userName: string) => void;
 }
 
-const Comment: React.FC<CommentProps> = ({ commentData }) => {
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
+const Comment: React.FC<CommentProps> = ({ commentData, parentIndex, parentId, deleteComment, likeComment, setReplyStatus }) => {
+  const me = useSelector((state: RootState) => state.auth.user);
+  const [collapsed, setCollapsed] = useState<boolean>(true);
   const paddingSize = 20;
-  const iconSize = 45;
-  const iconKerning = 10;
+  const hiddenItemWidth = 60;
+  const thumbnailSize = 45;
+  const thumbnailKerning = 10;
 
   return (
-    <Container padding={20}>
-      <LeftView>
-        <CircleIcon uri={commentData.thumbnail} size={iconSize} kerning={iconKerning} />
-      </LeftView>
-      <RightView>
-        <ContentTextBundle width={SCREEN_WIDTH - paddingSize * 2 - iconSize - iconKerning}>
-          <ContentUserName>{commentData.userName.trim() + `  `}</ContentUserName>
-          <ContentText>{commentData.content.trim()}</ContentText>
-        </ContentTextBundle>
-        <InformationView>
-          <CreatedTime>{moment(commentData.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
-        </InformationView>
-      </RightView>
-    </Container>
+    <>
+      <SwipeRow disableRightSwipe={true} disableLeftSwipe={commentData.userId !== me?.id} rightOpenValue={-hiddenItemWidth} tension={60}>
+        <HiddenItemContainer>
+          <HiddenItemButton width={hiddenItemWidth} onPress={() => deleteComment(commentData.commentId ?? -1)}>
+            <AntDesign name="delete" size={20} color="white" />
+          </HiddenItemButton>
+        </HiddenItemContainer>
+        <CommentDetail
+          commentData={commentData}
+          commentType={0}
+          parentIndex={parentIndex}
+          parentId={parentId}
+          thumbnailSize={thumbnailSize}
+          thumbnailKerning={thumbnailKerning}
+          likeComment={likeComment}
+          setReplyStatus={setReplyStatus}
+        />
+      </SwipeRow>
+      {commentData?.replies?.length && collapsed ? (
+        <ReplyShowButton style={{ paddingLeft: paddingSize + thumbnailSize + thumbnailKerning }} onPress={() => setCollapsed(false)}>
+          <AntDesign name="minus" size={11} color="#8e8e8e" />
+          <ReplyText>{` 답글 ${commentData.replies.length}개 더 보기`}</ReplyText>
+        </ReplyShowButton>
+      ) : (
+        <></>
+      )}
+      {/* Collapsible 에 minHeight 이 없으면 HiddenItemContainer의 배경색이 적용되지 않는 이슈가 있음. */}
+      <Collapsible style={{ minHeight: commentData.replies.length ? 50 : 0 }} collapsed={collapsed}>
+        {commentData.replies?.map((reply: FeedComment, index: number) => (
+          <SwipeRow key={`Reply_${index}`} disableRightSwipe={true} disableLeftSwipe={reply.userId !== me?.id} rightOpenValue={-hiddenItemWidth} tension={60}>
+            <HiddenItemContainer>
+              <HiddenItemButton width={hiddenItemWidth} onPress={() => deleteComment(reply.commentId ?? -1)}>
+                <AntDesign name="delete" size={20} color="white" />
+              </HiddenItemButton>
+            </HiddenItemContainer>
+            <CommentDetail
+              commentData={reply}
+              commentType={1}
+              replyIndex={index}
+              parentIndex={parentIndex}
+              parentId={parentId}
+              thumbnailSize={thumbnailSize}
+              thumbnailKerning={thumbnailKerning}
+              likeComment={likeComment}
+              setReplyStatus={setReplyStatus}
+            />
+          </SwipeRow>
+        ))}
+      </Collapsible>
+    </>
   );
 };
 

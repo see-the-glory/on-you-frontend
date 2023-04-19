@@ -8,13 +8,14 @@ import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, NotificationsResponse, UserApi, UserBlockRequest } from "../api";
+import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, LikeUser, NotificationsResponse, UserApi, UserBlockRequest } from "../api";
 import FeedDetail from "../components/FeedDetail";
 import feedSlice from "../redux/slices/feed";
 import { useAppDispatch } from "../redux/store";
 import { RootState } from "../redux/store/reducers";
 import FeedOptionModal from "./Feed/FeedOptionModal";
 import FeedReportModal from "./Feed/FeedReportModal";
+import RNFetchBlob from "rn-fetch-blob";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -68,6 +69,7 @@ const NotiBadgeText = styled.Text`
 `;
 
 const Home = () => {
+  const token = useSelector((state: RootState) => state.auth.token);
   const me = useSelector((state: RootState) => state.auth.user);
   const feeds = useSelector((state: RootState) => state.feed.data);
   const dispatch = useAppDispatch();
@@ -101,7 +103,7 @@ const Home = () => {
     hasNextPage,
     refetch: feedsRefetch,
     fetchNextPage,
-  } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["feeds"], FeedApi.getFeeds, {
+  } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["getFeeds"], FeedApi.getFeeds, {
     getNextPageParam: (lastPage) => {
       if (lastPage) {
         return lastPage.hasData === true ? lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor : null;
@@ -122,7 +124,7 @@ const Home = () => {
     refetch: notiRefetch,
   } = useQuery<NotificationsResponse, ErrorResponse>(["getUserNotifications"], UserApi.getUserNotifications, {
     onSuccess: (res) => {
-      if (Array.isArray(res?.data)) setNotiCount(res?.data.filter((item) => !item?.processDone).length);
+      if (Array.isArray(res?.data)) setNotiCount(res?.data.filter((item) => !item?.read).length);
     },
     onError: (error) => {
       console.log(`API ERROR | getUserNotifications ${error.code} ${error.status}`);
@@ -198,12 +200,18 @@ const Home = () => {
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
-  const goToClub = useCallback((clubId: number) => {
-    navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
+  const goToClub = useCallback((clubId?: number) => {
+    if (clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
   }, []);
 
-  const goToFeedComments = useCallback((feedIndex: number, feedId: number) => {
+  const goToFeedComments = useCallback((feedIndex?: number, feedId?: number) => {
+    if (feedIndex === undefined || feedId === undefined) return;
     navigation.navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId } });
+  }, []);
+
+  const goToFeedLikes = useCallback((likeUsers?: LikeUser[]) => {
+    if (!likeUsers || likeUsers.length === 0) return;
+    navigation.navigate("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
   }, []);
 
   const goToUpdateFeed = () => {
@@ -219,9 +227,10 @@ const Home = () => {
     navigation.navigate("FeedStack", { screen: "ClubSelection" });
   }, []);
 
-  const openFeedOption = (feedData: Feed) => {
+  const openFeedOption = (feedData?: Feed) => {
+    if (!feedData) return;
     setSelectFeedData(feedData);
-    if (feedData.userId === me?.id) openMyFeedOption();
+    if (feedData?.userId === me?.id) openMyFeedOption();
     else openOtherFeedOption();
   };
   const goToComplain = () => {
@@ -229,10 +238,9 @@ const Home = () => {
     openComplainOption();
   };
 
-  const likeFeed = useCallback((feedIndex: number, feedId: number) => {
-    const requestData: FeedLikeRequest = {
-      feedId,
-    };
+  const likeFeed = useCallback((feedIndex?: number, feedId?: number) => {
+    if (feedIndex === undefined || feedId === undefined) return;
+    const requestData: FeedLikeRequest = { feedId };
     likeFeedMutation.mutate(requestData, {
       onSuccess: (res) => {
         dispatch(feedSlice.actions.likeToggle(feedIndex));
@@ -291,9 +299,7 @@ const Home = () => {
       return;
     }
 
-    const requestData: UserBlockRequest = {
-      userId: selectFeedData.userId,
-    };
+    const requestData: UserBlockRequest = { userId: selectFeedData.userId };
 
     Alert.alert(
       `${selectFeedData.userName}님을 차단하시겠어요?`,
@@ -314,6 +320,28 @@ const Home = () => {
     );
   };
 
+  const downloadImages = () => {
+    Alert.alert("사진 저장", "이 피드의 사진을 전부 저장하시겠습니까?", [
+      { text: "아니요" },
+      {
+        text: "예",
+        onPress: () => {
+          selectFeedData?.imageUrls?.map((url) => {
+            let fileName = url.split("/").pop();
+            RNFetchBlob.config({
+              addAndroidDownloads: {
+                useDownloadManager: true,
+                notification: true,
+                path: `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}`,
+              },
+            }).fetch("GET", url);
+          });
+          closeOtherFeedOption();
+        },
+      },
+    ]);
+  };
+
   const keyExtractor = useCallback((item: Feed, index: number) => String(index), []);
   const ItemSeparatorComponent = useCallback(() => <View style={{ height: itemSeparatorGap }} />, []);
   const ListFooterComponent = useCallback(() => <View style={{ height: 100 }} />, []);
@@ -331,6 +359,7 @@ const Home = () => {
         goToClub={goToClub}
         openFeedOption={openFeedOption}
         goToFeedComments={goToFeedComments}
+        goToFeedLikes={goToFeedLikes}
         likeFeed={likeFeed}
       />
     ),
@@ -382,6 +411,7 @@ const Home = () => {
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
+        downloadImages={downloadImages}
       />
       <FeedOptionModal
         modalRef={otherFeedOptionRef}
@@ -391,6 +421,7 @@ const Home = () => {
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
+        downloadImages={downloadImages}
       />
       <FeedReportModal modalRef={complainOptionRef} buttonHeight={modalOptionButtonHeight} complainSubmit={complainSubmit} />
     </Container>

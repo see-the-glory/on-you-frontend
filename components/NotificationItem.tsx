@@ -21,10 +21,10 @@ const ItemDateText = styled(CustomText)`
 const TextView = styled.View`
   flex-direction: row;
 `;
-const ItemText = styled(CustomText)<{ processDone: boolean }>`
+const ItemText = styled(CustomText)<{ read: boolean }>`
   font-size: 15px;
   line-height: 22px;
-  ${(props: any) => (props.processDone ? "color: #8E8E8E" : "")};
+  ${(props: any) => (props.read ? "color: #8E8E8E" : "")};
 `;
 const ItemBoldText = styled(ItemText)`
   font-family: "NotoSansKR-Bold";
@@ -32,6 +32,7 @@ const ItemBoldText = styled(ItemText)`
 
 interface NotificationItemProps {
   notificationData: Notification;
+  notificationType: string;
   clubData: Club;
 }
 
@@ -39,7 +40,7 @@ interface ActionType {
   title: string;
 }
 
-const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, clubData }) => {
+const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, notificationType, clubData }) => {
   switch (notificationData?.actionType) {
     case "APPLY":
       return (
@@ -49,10 +50,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, c
             <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
           </Header>
           <TextView>
-            <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionerName}</ItemBoldText>
-            <ItemText processDone={notificationData?.processDone}>{`님이 `}</ItemText>
-            <ItemBoldText processDone={notificationData?.processDone}>{clubData?.name}</ItemBoldText>
-            <ItemText processDone={notificationData?.processDone}>{` 가입을 희망합니다.`}</ItemText>
+            <ItemBoldText read={notificationData?.read}>{notificationData?.actionerName}</ItemBoldText>
+            <ItemText read={notificationData?.read}>{`님이 `}</ItemText>
+            <ItemBoldText read={notificationData?.read}>{clubData?.name}</ItemBoldText>
+            <ItemText read={notificationData?.read}>{` 가입을 희망합니다.`}</ItemText>
           </TextView>
         </Item>
       );
@@ -64,8 +65,8 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, c
             <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
           </Header>
           <TextView>
-            <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionClubName}</ItemBoldText>
-            <ItemText processDone={notificationData?.processDone}>{` 모임에 가입되셨습니다!`}</ItemText>
+            <ItemBoldText read={notificationData?.read}>{notificationData?.actionClubName}</ItemBoldText>
+            <ItemText read={notificationData?.read}>{` 모임에 가입되셨습니다!`}</ItemText>
           </TextView>
         </Item>
       );
@@ -77,8 +78,8 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, c
             <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
           </Header>
           <TextView>
-            <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionClubName}</ItemBoldText>
-            <ItemText processDone={notificationData?.processDone}>{` 모임에서 메시지가 도착했습니다.`}</ItemText>
+            <ItemBoldText read={notificationData?.read}>{notificationData?.actionClubName}</ItemBoldText>
+            <ItemText read={notificationData?.read}>{` 모임에서 메시지가 도착했습니다.`}</ItemText>
           </TextView>
         </Item>
       );
@@ -90,8 +91,8 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, c
             <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
           </Header>
           <TextView>
-            <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionerName}</ItemBoldText>
-            <ItemText processDone={notificationData?.processDone}>{`님이 게시물을 올렸습니다.`}</ItemText>
+            <ItemBoldText read={notificationData?.read}>{notificationData?.actionerName}</ItemBoldText>
+            <ItemText read={notificationData?.read}>{`님이 게시물을 올렸습니다.`}</ItemText>
           </TextView>
         </Item>
       );
@@ -103,8 +104,49 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, c
             <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
           </Header>
           <TextView>
-            <ItemBoldText processDone={notificationData?.processDone}>{notificationData?.actionerName}</ItemBoldText>
-            <ItemText processDone={notificationData?.processDone}>{`님이 내 글에 댓글을 달았습니다.`}</ItemText>
+            <ItemBoldText read={notificationData?.read}>{notificationData?.actionerName}</ItemBoldText>
+            <ItemText read={notificationData?.read}>{`님이 내 글에 댓글을 달았습니다.`}</ItemText>
+          </TextView>
+        </Item>
+      );
+    case "SCHEDULE_CREATE":
+      if (notificationType === "CLUB") {
+        return (
+          <Item>
+            <Header>
+              <ItemTitle>일정알림</ItemTitle>
+              <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
+            </Header>
+            <TextView>
+              <ItemBoldText read={notificationData?.read}>{notificationData?.actionerName}</ItemBoldText>
+              <ItemText read={notificationData?.read}>{`님이 새로운 일정을 등록했습니다.`}</ItemText>
+            </TextView>
+          </Item>
+        );
+      } else if (notificationType === "USER") {
+        return (
+          <Item>
+            <Header>
+              <ItemTitle>일정알림</ItemTitle>
+              <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
+            </Header>
+            <TextView>
+              <ItemBoldText read={notificationData?.read}>{notificationData?.actionClubName}</ItemBoldText>
+              <ItemText read={notificationData?.read}>{`에 새로운 일정이 등록되었습니다.`}</ItemText>
+            </TextView>
+          </Item>
+        );
+      }
+    case "COMMENT_REPLY":
+      return (
+        <Item>
+          <Header>
+            <ItemTitle>답글알림</ItemTitle>
+            <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
+          </Header>
+          <TextView>
+            <ItemBoldText read={notificationData?.read}>{notificationData?.actionerName}</ItemBoldText>
+            <ItemText read={notificationData?.read}>{`님이 내 글에 답글을 달았습니다.`}</ItemText>
           </TextView>
         </Item>
       );

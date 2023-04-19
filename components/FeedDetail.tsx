@@ -4,14 +4,15 @@ import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import CustomText from "./CustomText";
 import CircleIcon from "./CircleIcon";
-import { Feed } from "../api";
-import { NativeSyntheticEvent, ScrollView, TextLayoutEventData, TouchableOpacity, View } from "react-native";
+import { Feed, LikeUser } from "../api";
+import { Alert, NativeSyntheticEvent, ScrollView, TextLayoutEventData, TouchableOpacity, View } from "react-native";
 import moment from "moment";
 import Carousel from "./Carousel";
 import Tag from "./Tag";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import Collapsible from "react-native-collapsible";
 import Pinchable from "react-native-pinchable";
+import RNFetchBlob from "rn-fetch-blob";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -53,7 +54,14 @@ const InformationLeftView = styled.View`
   flex-direction: row;
   align-items: center;
 `;
-const InformationButton = styled.TouchableOpacity`
+
+const InformationIconButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  margin-right: 3px;
+`;
+
+const InformationNumberButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   margin-right: 12px;
@@ -82,17 +90,18 @@ const ContentSubText = styled(CustomText)`
 `;
 
 interface FeedDetailProps {
-  feedData: Feed;
-  feedIndex: number;
+  feedData?: Feed;
+  feedIndex?: number;
   feedSize: number;
   headerHeight: number;
   infoHeight: number;
   contentHeight: number;
   showClubName?: boolean;
-  openFeedOption: (feedData: Feed) => void;
-  goToFeedComments: (feedIndex: number, feedId: number) => void;
-  goToClub?: (clubId: number) => void;
-  likeFeed?: (feedIndex: number, feedId: number) => void;
+  openFeedOption: (feedData?: Feed) => void;
+  goToFeedComments: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
+  goToFeedLikes: (likeUsers: LikeUser[]) => void;
+  goToClub?: (clubId?: number) => void;
+  likeFeed?: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
 }
 
 interface FeedDetailState {
@@ -100,10 +109,12 @@ interface FeedDetailState {
   moreContent: boolean;
   textHeight: number;
   collapsedText: string;
+  collapsedTextList: string[];
   remainedText: string;
 }
 
 class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
+  lastTapTime?: number;
   constructor(props: any) {
     super(props);
     this.state = {
@@ -111,17 +122,54 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
       moreContent: false,
       textHeight: 0,
       collapsedText: "",
+      collapsedTextList: [],
       remainedText: "",
     };
+    this.lastTapTime = undefined;
   }
+
+  doubleTap() {
+    const now = Date.now();
+    const DOUBLE_PRESS_DELAY = 300;
+
+    if (this.lastTapTime && now - this.lastTapTime < DOUBLE_PRESS_DELAY) {
+      if (this.props.likeFeed) {
+        this.props.likeFeed(this.props.feedIndex, this.props.feedData?.id);
+      }
+    } else {
+      this.lastTapTime = now;
+    }
+  }
+
+  downloadImage(url?: string) {
+    if (!url) return;
+    let fileName = url.split("/").pop();
+    Alert.alert("사진 저장", "이 사진을 저장하시겠습니까?", [
+      { text: "아니요" },
+      {
+        text: "예",
+        onPress: () => {
+          RNFetchBlob.config({
+            addAndroidDownloads: {
+              useDownloadManager: true,
+              notification: true,
+              path: `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}`,
+            },
+          }).fetch("GET", url);
+        },
+      },
+    ]);
+  }
+
   render() {
     // prettier-ignore
     const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
       const moreContent = event.nativeEvent.lines.length > 2 ? true : false;
-      const collapsedText = event.nativeEvent.lines.slice(0, 2).map((line) => line.text).join("").trim();
+      const collapsedTextList = event.nativeEvent.lines.slice(0, 2).map(line => line.text);
+      const collapsedText = collapsedTextList.join("").trim();
       const remainedText = moreContent ? event.nativeEvent.lines.slice(2).map((line) => line.text).join("").trim() : "";
       const textHeight = moreContent ? (event.nativeEvent.lines.slice(2).length * (this.props.contentHeight / 2)) : 0;
-      this.setState({ ...this.state, textHeight, moreContent, collapsedText, remainedText });
+      this.setState({ ...this.state, textHeight, moreContent, collapsedText, collapsedTextList, remainedText });
     };
 
     const contentTextTouch = () => {
@@ -137,7 +185,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
               <HeaderText>{this.props.feedData?.userName}</HeaderText>
               {this.props.showClubName ? (
                 <TouchableWithoutFeedback onPress={() => (this.props.goToClub ? this.props.goToClub(this.props.feedData?.clubId) : {})}>
-                  <Tag name={this.props.feedData?.clubName} textColor="white" backgroundColor="#C4C4C4" />
+                  <Tag name={this.props.feedData?.clubName ?? ""} textColor="white" backgroundColor="#C4C4C4" />
                 </TouchableWithoutFeedback>
               ) : (
                 <></>
@@ -160,12 +208,14 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           showIndicator={(this.props.feedData?.imageUrls?.length ?? 0) > 1 ? true : false}
           renderItem={({ item, index }: { item: string; index: number }) => (
             <Pinchable>
-              <FastImage
-                key={String(index)}
-                source={item ? { uri: item } : require("../assets/basic.jpg")}
-                style={{ width: this.props.feedSize, height: this.props.feedSize }}
-                resizeMode={FastImage.resizeMode.contain}
-              />
+              <TouchableOpacity activeOpacity={1} onPress={() => this.doubleTap()} onLongPress={() => this.downloadImage(item)}>
+                <FastImage
+                  key={String(index)}
+                  source={item ? { uri: item } : require("../assets/basic.jpg")}
+                  style={{ width: this.props.feedSize, height: this.props.feedSize }}
+                  resizeMode={FastImage.resizeMode.contain}
+                />
+              </TouchableOpacity>
             </Pinchable>
           )}
           ListEmptyComponent={<FastImage source={require("../assets/basic.jpg")} style={{ width: this.props.feedSize, height: this.props.feedSize }} />}
@@ -174,18 +224,22 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           <InformationView height={this.props.infoHeight}>
             <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "flex-start" }}>
               <InformationLeftView>
-                <InformationButton onPress={() => (this.props.likeFeed ? this.props.likeFeed(this.props.feedIndex, this.props.feedData?.id) : {})}>
+                <InformationIconButton onPress={() => (this.props.likeFeed ? this.props.likeFeed(this.props.feedIndex, this.props.feedData?.id) : {})}>
                   {this.props.feedData?.likeYn ? (
                     <Ionicons name="heart" size={26} color="#FF551F" style={{ marginLeft: -2, marginRight: -2 }} />
                   ) : (
                     <Ionicons name="heart-outline" size={26} color="black" style={{ marginLeft: -2, marginRight: -2 }} />
                   )}
+                </InformationIconButton>
+                <InformationNumberButton activeOpacity={1} onPress={() => this.props.goToFeedLikes(this.props.feedData?.likeUserList ?? [])}>
                   <CountingNumber>{this.props.feedData?.likesCount}</CountingNumber>
-                </InformationButton>
-                <InformationButton onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData?.id)}>
-                  <Ionicons name="md-chatbox-ellipses" size={24} color="black" style={{}} />
+                </InformationNumberButton>
+                <InformationIconButton activeOpacity={1} onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData?.id)}>
+                  <Ionicons name="md-chatbox-ellipses" size={24} color="black" />
+                </InformationIconButton>
+                <InformationNumberButton activeOpacity={1} onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData?.id)}>
                   <CountingNumber>{this.props.feedData?.commentCount}</CountingNumber>
-                </InformationButton>
+                </InformationNumberButton>
               </InformationLeftView>
               <InformationRightView>
                 <CreatedTime>{moment(this.props.feedData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
@@ -197,15 +251,15 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           </ScrollView>
           <TouchableWithoutFeedback onPress={contentTextTouch}>
             <ContentTextView height={this.props.contentHeight}>
-              <ContentText>{this.state.collapsedText}</ContentText>
               {this.state.moreContent && this.state.isCollapsed ? (
                 <>
-                  {" "}
-                  <ContentText>{`...`}</ContentText>
+                  <ContentText>{`${
+                    this.state.collapsedTextList.length > 1 && this.state.collapsedTextList[1].length > 15 ? this.state.collapsedText.slice(0, -8) : this.state.collapsedText
+                  }...`}</ContentText>
                   <ContentSubText>{` 더 보기`}</ContentSubText>
                 </>
               ) : (
-                <></>
+                <ContentText>{this.state.collapsedText}</ContentText>
               )}
             </ContentTextView>
           </TouchableWithoutFeedback>

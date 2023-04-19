@@ -1,11 +1,11 @@
 import React, { useCallback, useLayoutEffect, useState } from "react";
-import { Alert, DeviceEventEmitter, EventSubscriptionVendor, FlatList, StatusBar, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Alert, DeviceEventEmitter, FlatList, StatusBar, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, UserApi, UserBlockRequest } from "../../api";
+import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, LikeUser, UserApi, UserBlockRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import FeedDetail from "../../components/FeedDetail";
 import { ClubFeedDetailScreenProps } from "../../Types/Club";
@@ -15,6 +15,7 @@ import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
 import clubSlice from "../../redux/slices/club";
 import { Entypo } from "@expo/vector-icons";
+import RNFetchBlob from "rn-fetch-blob";
 
 const Container = styled.View``;
 const HeaderTitleView = styled.View`
@@ -98,8 +99,14 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     openComplainOption();
   };
 
-  const goToFeedComments = (feedIndex: number, feedId: number) => {
+  const goToFeedComments = (feedIndex?: number, feedId?: number) => {
+    if (feedIndex === undefined || feedId === undefined) return;
     navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId, clubId: clubData.id } });
+  };
+
+  const goToFeedLikes = (likeUsers?: LikeUser[]) => {
+    if (!likeUsers || likeUsers.length === 0) return;
+    navigate("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
   };
 
   const goToUpdateFeed = () => {
@@ -107,7 +114,8 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     navigate("FeedStack", { screen: "FeedModification", params: { feedData: selectFeedData } });
   };
 
-  const openFeedOption = (feedData: Feed) => {
+  const openFeedOption = (feedData?: Feed) => {
+    if (!feedData) return;
     setSelectFeedData(feedData);
     if (feedData?.userId === me?.id) openMyFeedOption();
     else openOtherFeedOption();
@@ -119,9 +127,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       return;
     }
 
-    const requestData: FeedDeletionRequest = {
-      feedId: selectFeedData.id,
-    };
+    const requestData: FeedDeletionRequest = { feedId: selectFeedData.id };
 
     Alert.alert(
       "게시물 삭제",
@@ -142,10 +148,9 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     );
   };
 
-  const likeFeed = useCallback((feedIndex: number, feedId: number) => {
-    const requestData: FeedLikeRequest = {
-      feedId,
-    };
+  const likeFeed = useCallback((feedIndex?: number, feedId?: number) => {
+    if (feedIndex === undefined || feedId === undefined) return;
+    const requestData: FeedLikeRequest = { feedId };
     likeFeedMutation.mutate(requestData, {
       onSuccess: (res) => {
         dispatch(clubSlice.actions.likeToggle(feedIndex));
@@ -165,9 +170,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       return;
     }
 
-    const requestData: UserBlockRequest = {
-      userId: selectFeedData.userId,
-    };
+    const requestData: UserBlockRequest = { userId: selectFeedData.userId };
 
     Alert.alert(
       `${selectFeedData.userName}님을 차단하시곘어요?`,
@@ -186,6 +189,28 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       ],
       { cancelable: false }
     );
+  };
+
+  const downloadImages = () => {
+    Alert.alert("사진 저장", "이 피드의 사진을 전부 저장하시겠습니까?", [
+      { text: "아니요" },
+      {
+        text: "예",
+        onPress: () => {
+          selectFeedData?.imageUrls?.map((url) => {
+            let fileName = url.split("/").pop();
+            RNFetchBlob.config({
+              addAndroidDownloads: {
+                useDownloadManager: true,
+                notification: true,
+                path: `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}`,
+              },
+            }).fetch("GET", url);
+          });
+          closeOtherFeedOption();
+        },
+      },
+    ]);
   };
 
   const complainSubmit = (reason: string) => {
@@ -236,6 +261,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         contentHeight={feedDetailContentHeight}
         openFeedOption={openFeedOption}
         goToFeedComments={goToFeedComments}
+        goToFeedLikes={goToFeedLikes}
         likeFeed={likeFeed}
       />
     ),
@@ -276,6 +302,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
+        downloadImages={downloadImages}
       />
       <FeedOptionModal
         modalRef={otherFeedOptionRef}
@@ -285,6 +312,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
+        downloadImages={downloadImages}
       />
       <FeedReportModal modalRef={complainOptionRef} buttonHeight={modalOptionButtonHeight} complainSubmit={complainSubmit} />
     </Container>

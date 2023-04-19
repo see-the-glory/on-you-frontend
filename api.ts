@@ -48,8 +48,9 @@ export interface MyClub extends Club {
 }
 
 export interface Notification {
-  actionClubId: number;
   actionClubName: string;
+  actionClubId: number;
+  actionFeedId: number;
   actionId: number;
   actionerId?: number | null;
   actionerName?: string | null;
@@ -58,7 +59,9 @@ export interface Notification {
   actionType?: string;
   message?: string | null;
   created?: string;
-  processDone?: boolean;
+  read?: boolean;
+  done?: boolean;
+  processDone?: boolean; // lagacy
 }
 
 export interface Member {
@@ -106,6 +109,13 @@ export interface BlockUser {
   thumbnail: string | null;
   organizationName: string;
 }
+
+export interface LikeUser {
+  thumbnail: string;
+  userName: string;
+  likeDate: string;
+}
+
 export interface Feed {
   id: number;
   clubId: number;
@@ -121,6 +131,7 @@ export interface Feed {
   commentCount: number;
   created: string;
   customCursor?: string;
+  likeUserList?: LikeUser[];
 }
 
 export interface FeedComment {
@@ -130,6 +141,9 @@ export interface FeedComment {
   content: string;
   created: string;
   thumbnail: string;
+  likeCount: number;
+  likeYn: boolean;
+  replies: FeedComment[];
 }
 
 export interface Reply {
@@ -248,10 +262,25 @@ export interface DuplicateCheckResponse extends BaseResponse {
   };
 }
 
+export interface SendCheckEmailResponse extends BaseResponse {
+  data: string;
+}
+
+export interface ValidCheckEmailResponse extends BaseResponse {
+  message: string;
+}
+
 export interface PushAlarmResponse extends BaseResponse {
   data: {
     clubPushAlarm: string;
     userPushAlarm: string;
+  };
+}
+
+export interface MetaInfoResponse extends BaseResponse {
+  data: {
+    latestVersion: string;
+    updateRequired: string;
   };
 }
 
@@ -391,8 +420,13 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface DuplicateEmailCheckRequest {
+export interface EmailCheckRequest {
   email: string;
+}
+
+export interface EmailValidRequest {
+  email: string;
+  checkString: string;
 }
 
 export interface DuplicateClubNameCheckRequest {
@@ -453,6 +487,11 @@ export interface SuggestionSubmitRequest {
   content: string;
 }
 
+export interface MetaInfoRequest {
+  currentVersion: string;
+  deviceInfo: string;
+}
+
 export interface FeedLikeRequest {
   feedId: number;
 }
@@ -460,9 +499,10 @@ export interface FeedLikeRequest {
 export interface FeedCommentCreationRequest {
   feedId: number;
   content: string;
+  parentId?: number;
 }
 
-export interface FeedCommentDeletionRequest {
+export interface FeedCommentDefaultRequest {
   commentId: number;
 }
 
@@ -585,7 +625,8 @@ const getFeedComments = ({ queryKey }: any) => {
   return axios.get<string, FeedCommentsResponse>(`/api/feeds/${feedId}/comments`);
 };
 const createFeedComment = (req: FeedCommentCreationRequest) => axios.post<string, BaseResponse>(`/api/feeds/${req.feedId}/comment`, req);
-const deleteFeedComment = (req: FeedCommentDeletionRequest) => axios.delete<string, BaseResponse>(`/api/comments/${req.commentId}`);
+const deleteFeedComment = (req: FeedCommentDefaultRequest) => axios.delete<string, BaseResponse>(`/api/comments/${req.commentId}`);
+const likeFeedComment = (req: FeedCommentDefaultRequest) => axios.post<string, BaseResponse>(`/api/comments/${req.commentId}/likes`);
 
 // Profile
 const getUserInfo = ({ queryKey }: any) => {
@@ -617,6 +658,7 @@ const setPushAlarm = (req: UserPushAlarmRequest) => axios.put<string, BaseRespon
 const withdrawAccount = () => axios.post<string, BaseResponse>(`/api/user/withdraw`);
 const getMyClubs = ({ queryKey }: any) => axios.get<string, MyClubsResponse>(`/api/clubs/my`);
 const submitSuggestion = (req: SuggestionSubmitRequest) => axios.post<string, BaseResponse>(`/api/user/suggestion`, req);
+const metaInfo = (req: MetaInfoRequest) => axios.post<string, MetaInfoResponse>(`/api/user/metaInfo`, req);
 
 // Notification
 const getClubNotifications = ({ queryKey }: any) => {
@@ -624,7 +666,7 @@ const getClubNotifications = ({ queryKey }: any) => {
   return axios.get<string, NotificationsResponse>(`/api/notifications/club/${clubId}`);
 };
 const getUserNotifications = () => axios.get<string, NotificationsResponse>(`/api/notifications/user`);
-const readAction = (req: ReadActionRequest) => axios.post<string, BaseResponse>(`/api/notifications/${req.actionId}/read`);
+const readAction = (req: ReadActionRequest) => axios.post<string, BaseResponse>(`/api/notifications/${req.actionId}/readAction`);
 
 // FCM
 const updateTargetToken = (req: TargetTokenUpdateRequest) => axios.post<string, BaseResponse>(`/api/user/updateTargetToken`, req);
@@ -633,61 +675,65 @@ const updateTargetToken = (req: TargetTokenUpdateRequest) => axios.post<string, 
 const login = async (req: LoginRequest) => {
   const res = await fetch(`${BASE_URL}/api/user/login`, {
     method: "POST",
-    headers: {
-      "Content-Type": "Application/json",
-    },
+    headers: { "Content-Type": "Application/json" },
     body: JSON.stringify(req),
   });
   return { status: res.status, ...(await res.json()) };
 };
 
-const duplicateEmailCheck = async (req: DuplicateEmailCheckRequest) => {
+const duplicateEmailCheck = async (req: EmailCheckRequest) => {
   const res = await fetch(`${BASE_URL}/api/user/duplicateEmailCheck`, {
     method: "POST",
-    headers: {
-      "Content-Type": "Application/json",
-    },
+    headers: { "Content-Type": "Application/json" },
     body: JSON.stringify(req),
   });
-  if (res.status === 200) return { status: res.status, ...(await res.json()) };
-  else return { status: res.status };
+  return { status: res.status, ...(await res.json()) };
+};
+
+const sendCheckEmail = async (req: EmailCheckRequest) => {
+  const res = await fetch(`${BASE_URL}/api/mail/sendCheckEmail`, {
+    method: "POST",
+    headers: { "Content-Type": "Application/json" },
+    body: JSON.stringify(req),
+  });
+  return { status: res.status, ...(await res.json()) };
+};
+
+const validCheckEmail = async (req: EmailValidRequest) => {
+  const res = await fetch(`${BASE_URL}/api/mail/validCheck`, {
+    method: "POST",
+    headers: { "Content-Type": "Application/json" },
+    body: JSON.stringify(req),
+  });
+  return { status: res.status, ...(await res.json()) };
 };
 
 // Sign Up
 const registerUserInfo = async (req: SignUp) => {
   const res = await fetch(`${BASE_URL}/api/user/signup`, {
     method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
+    headers: { "content-type": "application/json" },
     body: JSON.stringify(req),
   });
-  if (res.status === 200) return { status: res.status, ...(await res.json()) };
-  else return { status: res.status };
+  return { status: res.status, ...(await res.json()) };
 };
 
 const FindUserId = async (req: FindIdRequest) => {
   const res = await fetch(`${BASE_URL}/api/user/findId`, {
     method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
+    headers: { "content-type": "application/json" },
     body: JSON.stringify(req),
   });
-  if (res.status === 200) return { status: res.status, ...(await res.json()) };
-  else return { status: res.status };
+  return { status: res.status, ...(await res.json()) };
 };
 
 const FindUserPw = async (req: FindPwRequest) => {
   const res = await fetch(`${BASE_URL}/api/mail/findPw`, {
     method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
+    headers: { "content-type": "application/json" },
     body: JSON.stringify(req),
   });
-  if (res.status === 200) return { status: res.status, ...(await res.json()) };
-  else return { status: res.status };
+  return { status: res.status, ...(await res.json()) };
 };
 
 export const ClubApi = {
@@ -729,6 +775,7 @@ export const UserApi = {
   updateTargetToken,
   submitSuggestion,
   getUserNotifications,
+  metaInfo,
 };
 
 export const FeedApi = {
@@ -738,6 +785,7 @@ export const FeedApi = {
   getFeedComments,
   createFeedComment,
   deleteFeedComment,
+  likeFeedComment,
   createFeed,
   deleteFeed,
   reportFeed,
@@ -745,4 +793,4 @@ export const FeedApi = {
   likeFeed,
 };
 
-export const CommonApi = { login, duplicateEmailCheck, readAction };
+export const CommonApi = { login, duplicateEmailCheck, sendCheckEmail, validCheckEmail, readAction };

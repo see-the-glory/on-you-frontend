@@ -180,7 +180,7 @@ const ClubTopTabs = ({
 
   const { isLoading: notiLoading, refetch: clubNotiRefetch } = useQuery<NotificationsResponse, ErrorResponse>(["getClubNotifications", data.id], ClubApi.getClubNotifications, {
     onSuccess: (res) => {
-      setNotiCount(res?.data.filter((item) => !item.processDone).length);
+      setNotiCount(res?.data.filter((item) => !item.read).length);
     },
     onError: (error) => {
       console.log(`API ERROR | getClubNotifications ${error.code} ${error.status}`);
@@ -335,7 +335,7 @@ const ClubTopTabs = ({
       schedulesRefetch();
     });
     const clubSubscription = DeviceEventEmitter.addListener("ClubRefetch", () => {
-      console.log("ClubTopTabs - ClubData, ClubRole Refetch Event");
+      console.log("ClubTopTabs - ClubData, ClubRole, ClubNoti Refetch Event");
       clubDataRefetch();
       clubRoleRefetch();
       clubNotiRefetch();
