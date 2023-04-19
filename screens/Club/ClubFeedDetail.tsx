@@ -43,6 +43,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   },
 }) => {
   const me = useSelector((state: RootState) => state.auth.user);
+  const myRole = useSelector((state: RootState) => state.club.role);
   const feeds = useSelector((state: RootState) => state.club.feeds);
   const dispatch = useAppDispatch();
   const toast = useToast();
@@ -275,6 +276,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         goToFeedComments={goToFeedComments}
         goToFeedLikes={goToFeedLikes}
         likeFeed={likeFeed}
+        isMyClubPost={["MASTER", "MANAGER", "MEMBER"].includes(myRole ?? "") ? true : false}
       />
     ),
     []
@@ -306,22 +308,12 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         removeClippedSubviews={true}
       />
 
-      <FeedOptionModal
-        modalRef={myFeedOptionRef}
-        buttonHeight={modalOptionButtonHeight}
-        isMyFeed={true}
-        goToUpdateFeed={goToUpdateFeed}
-        deleteFeed={deleteFeed}
-        goToComplain={goToComplain}
-        blockUser={blockUser}
-        downloadImages={downloadImages}
-      />
+      <FeedOptionModal modalRef={myFeedOptionRef} buttonHeight={modalOptionButtonHeight} isMyFeed={true} goToUpdateFeed={goToUpdateFeed} deleteFeed={deleteFeed} />
       <FeedOptionModal
         modalRef={otherFeedOptionRef}
         buttonHeight={modalOptionButtonHeight}
         isMyFeed={false}
-        goToUpdateFeed={goToUpdateFeed}
-        deleteFeed={deleteFeed}
+        isMyClubPost={["MASTER", "MANAGER", "MEMBER"].includes(myRole ?? "") ? true : false}
         goToComplain={goToComplain}
         blockUser={blockUser}
         downloadImages={downloadImages}

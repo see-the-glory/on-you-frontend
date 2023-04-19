@@ -22,7 +22,7 @@ import notifee, { EventType } from "@notifee/react-native";
 import dynamicLinks, { FirebaseDynamicLinksTypes } from "@react-native-firebase/dynamic-links";
 import { useNavigation } from "@react-navigation/native";
 import queryString from "query-string";
-import { getDeviceId, getVersion } from "react-native-device-info";
+import { getModel, getVersion } from "react-native-device-info";
 import styled from "styled-components/native";
 import CustomText from "../components/CustomText";
 
@@ -110,7 +110,7 @@ const Root = () => {
   };
 
   const updateMetaInfo = async () => {
-    let deviceInfo = await getDeviceId();
+    let deviceInfo = await getModel();
     let currentVersion = await getVersion();
     const requestData: MetaInfoRequest = { deviceInfo, currentVersion };
 

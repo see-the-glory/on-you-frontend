@@ -98,6 +98,7 @@ interface FeedDetailProps {
   infoHeight: number;
   contentHeight: number;
   showClubName?: boolean;
+  isMyClubPost?: boolean;
   openFeedOption: (feedData?: Feed) => void;
   goToFeedComments: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
   goToFeedLikes: (likeUsers: LikeUser[]) => void;
@@ -144,6 +145,7 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
 
   downloadImage(url?: string) {
     if (!url) return;
+    if (!this.props.isMyClubPost) return;
     let fileName = url.split("/").pop();
     let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}` : `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}`;
     Alert.alert("사진 저장", "이 사진을 저장하시겠습니까?", [

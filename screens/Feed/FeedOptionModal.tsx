@@ -10,11 +10,12 @@ const ModalContainer = styled.View`
   padding: 35px 0px 20px 0px;
 `;
 
-const OptionButton = styled.TouchableOpacity<{ height: number; padding: number; alignItems: string }>`
+const OptionButton = styled.TouchableOpacity<{ height: number; padding: number; alignItems: string; disabled: boolean }>`
   height: ${(props: any) => props.height}px;
   justify-content: center;
   align-items: ${(props: any) => (props.alignItems ? props.alignItems : "center")};
   padding: 0px ${(props: any) => (props.padding ? props.padding : 0)}px;
+  opacity: ${(props: any) => (props.disabled ? 0.2 : 1)};
 `;
 const OptionName = styled(CustomText)<{ warning: boolean }>`
   font-size: 16px;
@@ -34,23 +35,24 @@ interface FeedOptionModalProps {
   modalRef: any;
   buttonHeight: number;
   isMyFeed: boolean;
-  goToUpdateFeed: () => void;
-  deleteFeed: () => void;
-  goToComplain: () => void;
-  blockUser: () => void;
-  downloadImages: () => void;
+  isMyClubPost?: boolean;
+  goToUpdateFeed?: () => void;
+  deleteFeed?: () => void;
+  goToComplain?: () => void;
+  blockUser?: () => void;
+  downloadImages?: () => void;
 }
 
-const FeedOptionModal: React.FC<FeedOptionModalProps> = ({ modalRef, buttonHeight, isMyFeed, goToUpdateFeed, deleteFeed, goToComplain, blockUser, downloadImages }) => {
+const FeedOptionModal: React.FC<FeedOptionModalProps> = ({ modalRef, buttonHeight, isMyFeed, isMyClubPost, goToUpdateFeed, deleteFeed, goToComplain, blockUser, downloadImages }) => {
   const feedOptionList = isMyFeed
     ? [
-        { name: "수정", warning: false, onPress: goToUpdateFeed },
-        { name: "삭제", warning: true, onPress: deleteFeed },
+        { name: "수정", active: true, warning: false, onPress: goToUpdateFeed },
+        { name: "삭제", active: true, warning: true, onPress: deleteFeed },
       ]
     : [
-        { name: "이미지 모두 저장", warning: false, onPress: downloadImages },
-        { name: "신고", warning: false, onPress: goToComplain },
-        { name: "사용자 차단", warning: true, onPress: blockUser },
+        { name: "이미지 모두 저장", active: isMyClubPost, warning: false, onPress: downloadImages },
+        { name: "신고", active: true, warning: false, onPress: goToComplain },
+        { name: "사용자 차단", active: true, warning: true, onPress: blockUser },
       ];
   const modalHeight = buttonHeight * feedOptionList.length + 60;
 
@@ -79,7 +81,7 @@ const FeedOptionModal: React.FC<FeedOptionModalProps> = ({ modalRef, buttonHeigh
           {feedOptionList.map((option, index) => (
             <View key={`FeedOption_${index}`}>
               {index > 0 ? <Break sep={1} /> : <></>}
-              <OptionButton onPress={option.onPress} height={buttonHeight}>
+              <OptionButton onPress={option.onPress} disabled={!option.active} height={buttonHeight}>
                 <OptionName warning={option.warning}>{option.name}</OptionName>
               </OptionButton>
             </View>
