@@ -8,7 +8,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, NotificationsResponse, UserApi, UserBlockRequest } from "../api";
+import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, LikeUser, NotificationsResponse, UserApi, UserBlockRequest } from "../api";
 import FeedDetail from "../components/FeedDetail";
 import feedSlice from "../redux/slices/feed";
 import { useAppDispatch } from "../redux/store";
@@ -209,6 +209,11 @@ const Home = () => {
     navigation.navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId } });
   }, []);
 
+  const goToFeedLikes = useCallback((likeUsers?: LikeUser[]) => {
+    if (!likeUsers || likeUsers.length === 0) return;
+    navigation.navigate("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
+  }, []);
+
   const goToUpdateFeed = () => {
     closeMyFeedOption();
     navigation.navigate("FeedStack", { screen: "FeedModification", params: { feedData: selectFeedData } });
@@ -354,6 +359,7 @@ const Home = () => {
         goToClub={goToClub}
         openFeedOption={openFeedOption}
         goToFeedComments={goToFeedComments}
+        goToFeedLikes={goToFeedLikes}
         likeFeed={likeFeed}
       />
     ),

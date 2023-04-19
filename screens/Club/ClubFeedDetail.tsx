@@ -1,11 +1,11 @@
 import React, { useCallback, useLayoutEffect, useState } from "react";
-import { Alert, DeviceEventEmitter, EventSubscriptionVendor, FlatList, StatusBar, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Alert, DeviceEventEmitter, FlatList, StatusBar, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, UserApi, UserBlockRequest } from "../../api";
+import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, LikeUser, UserApi, UserBlockRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import FeedDetail from "../../components/FeedDetail";
 import { ClubFeedDetailScreenProps } from "../../Types/Club";
@@ -102,6 +102,11 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   const goToFeedComments = (feedIndex?: number, feedId?: number) => {
     if (feedIndex === undefined || feedId === undefined) return;
     navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId, clubId: clubData.id } });
+  };
+
+  const goToFeedLikes = (likeUsers?: LikeUser[]) => {
+    if (!likeUsers || likeUsers.length === 0) return;
+    navigate("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
   };
 
   const goToUpdateFeed = () => {
@@ -256,6 +261,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         contentHeight={feedDetailContentHeight}
         openFeedOption={openFeedOption}
         goToFeedComments={goToFeedComments}
+        goToFeedLikes={goToFeedLikes}
         likeFeed={likeFeed}
       />
     ),

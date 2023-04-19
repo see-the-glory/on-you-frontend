@@ -109,6 +109,13 @@ export interface BlockUser {
   thumbnail: string | null;
   organizationName: string;
 }
+
+export interface LikeUser {
+  thumbnail: string;
+  userName: string;
+  likeDate: string;
+}
+
 export interface Feed {
   id: number;
   clubId: number;
@@ -124,6 +131,7 @@ export interface Feed {
   commentCount: number;
   created: string;
   customCursor?: string;
+  likeUserList?: LikeUser[];
 }
 
 export interface FeedComment {

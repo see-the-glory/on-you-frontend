@@ -4,7 +4,7 @@ import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import CustomText from "./CustomText";
 import CircleIcon from "./CircleIcon";
-import { Feed } from "../api";
+import { Feed, LikeUser } from "../api";
 import { Alert, NativeSyntheticEvent, ScrollView, TextLayoutEventData, TouchableOpacity, View } from "react-native";
 import moment from "moment";
 import Carousel from "./Carousel";
@@ -54,7 +54,14 @@ const InformationLeftView = styled.View`
   flex-direction: row;
   align-items: center;
 `;
-const InformationButton = styled.TouchableOpacity`
+
+const InformationIconButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  margin-right: 3px;
+`;
+
+const InformationNumberButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   margin-right: 12px;
@@ -92,6 +99,7 @@ interface FeedDetailProps {
   showClubName?: boolean;
   openFeedOption: (feedData?: Feed) => void;
   goToFeedComments: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
+  goToFeedLikes: (likeUsers: LikeUser[]) => void;
   goToClub?: (clubId?: number) => void;
   likeFeed?: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
 }
@@ -216,18 +224,22 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
           <InformationView height={this.props.infoHeight}>
             <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "flex-start" }}>
               <InformationLeftView>
-                <InformationButton onPress={() => (this.props.likeFeed ? this.props.likeFeed(this.props.feedIndex, this.props.feedData?.id) : {})}>
+                <InformationIconButton onPress={() => (this.props.likeFeed ? this.props.likeFeed(this.props.feedIndex, this.props.feedData?.id) : {})}>
                   {this.props.feedData?.likeYn ? (
                     <Ionicons name="heart" size={26} color="#FF551F" style={{ marginLeft: -2, marginRight: -2 }} />
                   ) : (
                     <Ionicons name="heart-outline" size={26} color="black" style={{ marginLeft: -2, marginRight: -2 }} />
                   )}
+                </InformationIconButton>
+                <InformationNumberButton activeOpacity={1} onPress={() => this.props.goToFeedLikes(this.props.feedData?.likeUserList ?? [])}>
                   <CountingNumber>{this.props.feedData?.likesCount}</CountingNumber>
-                </InformationButton>
-                <InformationButton onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData?.id)}>
-                  <Ionicons name="md-chatbox-ellipses" size={24} color="black" style={{}} />
+                </InformationNumberButton>
+                <InformationIconButton activeOpacity={1} onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData?.id)}>
+                  <Ionicons name="md-chatbox-ellipses" size={24} color="black" />
+                </InformationIconButton>
+                <InformationNumberButton activeOpacity={1} onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData?.id)}>
                   <CountingNumber>{this.props.feedData?.commentCount}</CountingNumber>
-                </InformationButton>
+                </InformationNumberButton>
               </InformationLeftView>
               <InformationRightView>
                 <CreatedTime>{moment(this.props.feedData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
