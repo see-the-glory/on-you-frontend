@@ -199,8 +199,6 @@ const FeedComments = ({
 
     if (parentCommentId) requestData.parentId = parentCommentId;
 
-    console.log(requestData);
-
     createFeedCommentMutation.mutate(requestData);
   };
 
@@ -208,7 +206,6 @@ const FeedComments = ({
     if (commentId === -1) return toast.show(`댓글 정보가 잘못되었습니다.`, { type: "warning" });
 
     let requestData: FeedCommentDefaultRequest = { commentId };
-
     deleteFeedCommentMutation.mutate(requestData);
   };
 

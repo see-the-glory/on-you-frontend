@@ -131,7 +131,7 @@ const Root = () => {
 
   const goToStore = () => {
     if (Platform.OS === "android") Linking.openURL("https://play.google.com/store/apps/details?id=com.onyoufrontend");
-    else if (Platform.OS === "ios") Linking.openURL("https://apps.apple.com/kr/app/%EC%98%A8%EC%9C%A0/id1663717005");
+    else if (Platform.OS === "ios") Linking.openURL("itms-apps://apps.apple.com/kr/app/%EC%98%A8%EC%9C%A0/id1663717005");
   };
 
   const handleDynamicLink = (link: FirebaseDynamicLinksTypes.DynamicLink) => {
@@ -310,9 +310,13 @@ const Root = () => {
                 <ContentText>{`온유 앱이 업데이트 되었습니다.\n조금 더 편리해지고 예뻐졌답니다.\n앱 업데이트 부탁드려요 :)`}</ContentText>
               </Content>
               <Footer>
-                <ExitAppButton onPress={exitApp}>
-                  <ExitAppText>{`앱 종료`}</ExitAppText>
-                </ExitAppButton>
+                {Platform.OS === "android" ? (
+                  <ExitAppButton onPress={exitApp}>
+                    <ExitAppText>{`앱 종료`}</ExitAppText>
+                  </ExitAppButton>
+                ) : (
+                  <></>
+                )}
                 <UpdateButton onPress={goToStore}>
                   <UpdateText>{`지금 업데이트`}</UpdateText>
                 </UpdateButton>
