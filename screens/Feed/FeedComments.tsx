@@ -50,6 +50,7 @@ const CommentInputView = styled.View<{ padding: number }>`
   border-top-color: #c4c4c4;
   align-items: flex-end;
   padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
+  margin-bottom: 10px;
 `;
 
 const RoundingView = styled.View`
@@ -292,12 +293,7 @@ const FeedComments = ({
             )}
           />
         )}
-        <FooterView
-          onLayout={(event: LayoutChangeEvent) => {
-            const { height } = event.nativeEvent.layout;
-            setCommentInputHeight(height + insets.bottom + 10);
-          }}
-        >
+        <FooterView>
           {parentUserName && parentCommentId ? (
             <ReplyStatusView padding={paddingSize}>
               <StatusText>{`${parentUserName}님에게 답글 남기는중`}</StatusText>
@@ -308,7 +304,13 @@ const FeedComments = ({
           ) : (
             <></>
           )}
-          <CommentInputView padding={paddingSize}>
+          <CommentInputView
+            padding={paddingSize}
+            onLayout={(event: LayoutChangeEvent) => {
+              const { height } = event.nativeEvent.layout;
+              setCommentInputHeight(height + insets.bottom - 10);
+            }}
+          >
             <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
             <RoundingView>
               <CommentInput
