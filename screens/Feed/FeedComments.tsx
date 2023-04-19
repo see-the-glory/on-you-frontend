@@ -308,7 +308,7 @@ const FeedComments = ({
             padding={paddingSize}
             onLayout={(event: LayoutChangeEvent) => {
               const { height } = event.nativeEvent.layout;
-              setCommentInputHeight(height + insets.bottom - 10);
+              setCommentInputHeight(height + insets.bottom);
             }}
           >
             <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
