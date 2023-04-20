@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		85F41C12A3BCB85A2C261A0E /* Pods_onyoufrontend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA314CFE7F0F72A7E84753F6 /* Pods_onyoufrontend.framework */; };
 		A73BE052296C3F3100D03683 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
+		A7739DA929F18CDD00645370 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7739DA829F18CDD00645370 /* AppDelegate.mm */; };
+		A7739DAD29F19C6700645370 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7739DAC29F19C6700645370 /* Launch Screen.storyboard */; };
 		A7D6A96729A4BA37002E796D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7D6A96629A4BA37002E796D /* GoogleService-Info.plist */; };
 		A7D6A96929A88FDF002E796D /* onyoufrontend.xcworkspace in Resources */ = {isa = PBXBuildFile; fileRef = A7D6A96829A88FDF002E796D /* onyoufrontend.xcworkspace */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
@@ -22,17 +22,17 @@
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* onyou.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = onyou.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = onyoufrontend/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = onyoufrontend/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = onyoufrontend/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = onyoufrontend/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = onyoufrontend/main.m; sourceTree = "<group>"; };
 		60EAE1CFF58CAD57BA2E3AFD /* Pods-onyoufrontend.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-onyoufrontend.debug.xcconfig"; path = "Target Support Files/Pods-onyoufrontend/Pods-onyoufrontend.debug.xcconfig"; sourceTree = "<group>"; };
 		868B1BE218428AB94C1BC0C8 /* Pods-onyoufrontend.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-onyoufrontend.release.xcconfig"; path = "Target Support Files/Pods-onyoufrontend/Pods-onyoufrontend.release.xcconfig"; sourceTree = "<group>"; };
+		A7739DA829F18CDD00645370 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = onyoufrontend/AppDelegate.mm; sourceTree = "<group>"; };
+		A7739DAC29F19C6700645370 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		A77E7A6929B87B1D00066757 /* onyoufrontend.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = onyoufrontend.xcodeproj; sourceTree = "<group>"; };
 		A7B81822296D772600AB1088 /* onyoufrontend.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = onyoufrontend.entitlements; path = onyoufrontend/onyoufrontend.entitlements; sourceTree = "<group>"; };
 		A7D6A96629A4BA37002E796D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A7D6A96829A88FDF002E796D /* onyoufrontend.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; path = onyoufrontend.xcworkspace; sourceTree = "<group>"; };
-		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = onyoufrontend/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		DA314CFE7F0F72A7E84753F6 /* Pods_onyoufrontend.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_onyoufrontend.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4F151ED0FB64A6770A649F6 /* Pods-onyoufrontend.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-onyoufrontend.staging.xcconfig"; path = "Target Support Files/Pods-onyoufrontend/Pods-onyoufrontend.staging.xcconfig"; sourceTree = "<group>"; };
@@ -59,11 +59,11 @@
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
+				A7739DA829F18CDD00645370 /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
+				A7739DAC29F19C6700645370 /* Launch Screen.storyboard */,
 			);
 			name = onyoufrontend;
 			sourceTree = "<group>";
@@ -222,11 +222,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7739DAD29F19C6700645370 /* Launch Screen.storyboard in Resources */,
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				A7D6A96929A88FDF002E796D /* onyoufrontend.xcworkspace in Resources */,
 				A7D6A96729A4BA37002E796D /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,8 +346,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				A7739DA929F18CDD00645370 /* AppDelegate.mm in Sources */,
 				A73BE052296C3F3100D03683 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
