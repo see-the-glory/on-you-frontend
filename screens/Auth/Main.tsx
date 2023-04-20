@@ -19,9 +19,28 @@ const BackgroundView = styled.ImageBackground`
   align-items: center;
 `;
 
+const ContentView = styled.View`
+  margin-bottom: 240px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ContentText = styled(CustomText)`
+  color: black;
+  font-size: 18px;
+  line-height: 24px;
+  margin-bottom: 10px;
+`;
+
+const ContentTitle = styled.Text`
+  font-weight: 900;
+  font-size: 34px;
+  color: black;
+`;
+
 const ButtonView = styled.View`
   position: absolute;
-  bottom: 8%;
+  bottom: 7%;
   width: 100%;
   flex-direction: row;
   justify-content: center;
@@ -34,8 +53,10 @@ const JoinButton = styled.TouchableOpacity`
   align-items: center;
   width: 40%;
   height: 48px;
-  background-color: white;
   margin-right: 25px;
+  border: 1px white solid;
+  border-radius: 30px;
+  background-color: black;
 `;
 
 const LoginButton = styled.TouchableOpacity`
@@ -44,19 +65,21 @@ const LoginButton = styled.TouchableOpacity`
   align-items: center;
   width: 40%;
   height: 48px;
-  background-color: #ff6534;
+  border: 1px white solid;
+  border-radius: 30px;
+  background-color: black;
 `;
 
 const JoinTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  color: #ff6534;
+  font-family: "NotoSansKR-Medium";
+  color: white;
   font-size: 20px;
   line-height: 26px;
   font-size: 20px;
 `;
 
 const LoginTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
+  font-family: "NotoSansKR-Medium";
   color: white;
   line-height: 26px;
   font-size: 20px;
@@ -83,8 +106,11 @@ const Main: React.FC<NativeStackScreenProps<any, "Main">> = ({ navigation: { nav
   return (
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
-      <BackgroundView source={require("../../assets/logo_background.jpg")} resizeMode="cover">
-        <Logo source={require("../../assets/logo_icon.png")} />
+      <BackgroundView source={require("../../assets/main_background.jpg")} resizeMode="cover">
+        <ContentView>
+          <ContentText>공동체와 함께하는 즐거운 시간</ContentText>
+          <ContentTitle>ON YOU</ContentTitle>
+        </ContentView>
         <ButtonView>
           <JoinButton onPress={goToJoinStepOne}>
             <JoinTitle>회원가입</JoinTitle>

@@ -8,7 +8,7 @@ import { ToastProvider } from "react-native-toast-notifications";
 import { Ionicons } from "@expo/vector-icons";
 import { LogBox, Platform, Text, TextInput, View } from "react-native";
 import * as Font from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
+import SplashScreen from "react-native-splash-screen";
 import moment from "moment";
 import "moment/locale/ko";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -114,7 +114,7 @@ const RootNavigation = () => {
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      await SplashScreen.hideAsync();
+      await SplashScreen.hide();
     }
   }, [appIsReady]);
 
@@ -130,7 +130,6 @@ const RootNavigation = () => {
 };
 
 function App() {
-  SplashScreen.preventAutoHideAsync();
   const queryClient = new QueryClient();
   const linking = {
     prefixes: ["https://onyou.page.link"],
