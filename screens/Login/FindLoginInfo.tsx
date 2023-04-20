@@ -26,65 +26,49 @@ const TitleView = styled.View`
   align-items: center;
 `;
 
-const IdButton = styled.TouchableHighlight`
+const Button = styled.TouchableHighlight`
   flex-direction: row;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 55px;
+  border-radius: 30px;
   border-width: 1px;
-  border-color: black;
+  border-color: #6b8bf7;
   background-color: #fff;
+  margin-bottom: 25px;
 `;
 
 const Title = styled.Text`
-  color: #000;
-  font-size: 18px;
-  font-weight: 700;
+  font-family: "AppleSDGothicNeoSB";
+  line-height: 26px;
+  font-size: 22px;
   padding-left: 5px;
-`;
-
-const PwButton = styled.TouchableHighlight`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 55px;
-  border-width: 1px;
-  border-color: black;
-  background-color: #fff;
-  margin-top: 25px;
 `;
 
 const FindLoginInfo: React.FC<NativeStackScreenProps<any, "FindLoginInfo">> = ({ navigation: { navigate } }) => {
   const goToFindId = () => {
-    navigate("LoginStack", {
-      screen: "FindId",
-    });
+    navigate("LoginStack", { screen: "FindId" });
   };
 
   const goToFindPw = () => {
-    navigate("LoginStack", {
-      screen: "FindPw",
-    });
+    navigate("LoginStack", { screen: "FindPw" });
   };
 
   return (
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <TopView>
-        <IdButton onPress={goToFindId} underlayColor="#ff6534">
+        <Button onPress={goToFindId} underlayColor="#6B8BF7">
           <TitleView>
-            <FontAwesome name="user-circle-o" size={15} color="black" />
-            <Title>아이디 찾기</Title>
+            <Title>E-mail 찾기</Title>
           </TitleView>
-        </IdButton>
-        <PwButton onPress={goToFindPw} underlayColor="#ff6534">
+        </Button>
+        <Button onPress={goToFindPw} underlayColor="#6B8BF7">
           <TitleView>
-            <FontAwesome name="lock" size={17} color="black" />
             <Title>비밀번호 찾기</Title>
           </TitleView>
-        </PwButton>
+        </Button>
       </TopView>
       <BottomView></BottomView>
     </Container>

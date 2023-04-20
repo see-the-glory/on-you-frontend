@@ -41,6 +41,7 @@ const RootNavigation = () => {
       "NotoSansKR-Regular": require("./assets/fonts/NotoSansKR/NotoSansKR-Regular.otf"),
       "NotoSansKR-Medium": require("./assets/fonts/NotoSansKR/NotoSansKR-Medium.otf"),
       AppleSDGothicNeoB: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoB.ttf"),
+      AppleSDGothicNeoSB: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoSB.ttf"),
       AppleSDGothicNeoL: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoL.ttf"),
       AppleSDGothicNeoM: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoM.ttf"),
       AppleSDGothicNeoR: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoR.ttf"),
@@ -173,7 +174,7 @@ function App() {
             offset={70}
             successColor="#295AF5"
             warningColor="#8E8E8E"
-            dangerColor="#FF6534"
+            dangerColor="#E7564F"
             duration={3000}
             animationType="zoom-in"
             style={{ borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8, fontFamily: "NotoSansKR-Regular" }}

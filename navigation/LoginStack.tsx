@@ -26,18 +26,7 @@ const LoginStack = ({
         headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
       }}
     >
-      <NativeStack.Screen
-        name="Login"
-        component={Login}
-        options={{
-          title: "로그인",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => popToTop()}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
-        }}
-      />
+      <NativeStack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <NativeStack.Screen
         name="FindLoginInfo"
         component={FindLoginInfo}
