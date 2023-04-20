@@ -1,9 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
-import { Image, StatusBar } from "react-native";
-import FastImage from "react-native-fast-image";
+import { StatusBar } from "react-native";
 import styled from "styled-components/native";
-import CustomText from "../../components/CustomText";
 
 const Container = styled.View`
   width: 100%;
@@ -25,17 +23,15 @@ const ContentView = styled.View`
   align-items: center;
 `;
 
-const ContentText = styled(CustomText)`
-  color: black;
+const ContentText = styled.Text`
+  font-family: "AppleSDGothicNeoM";
   font-size: 18px;
-  line-height: 24px;
   margin-bottom: 10px;
 `;
 
 const ContentTitle = styled.Text`
-  font-weight: 900;
-  font-size: 34px;
-  color: black;
+  font-family: "TT-Commons-Bold";
+  font-size: 40px;
 `;
 
 const ButtonView = styled.View`
@@ -70,19 +66,18 @@ const LoginButton = styled.TouchableOpacity`
   background-color: black;
 `;
 
-const JoinTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Medium";
+const JoinTitle = styled.Text`
+  font-family: "AppleSDGothicNeoM";
   color: white;
   font-size: 20px;
-  line-height: 26px;
-  font-size: 20px;
+  line-height: 21px;
 `;
 
-const LoginTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Medium";
+const LoginTitle = styled.Text`
+  font-family: "AppleSDGothicNeoM";
   color: white;
-  line-height: 26px;
   font-size: 20px;
+  line-height: 21px;
 `;
 
 const Logo = styled.Image`

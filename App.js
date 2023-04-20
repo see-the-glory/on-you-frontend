@@ -37,9 +37,21 @@ const RootNavigation = () => {
 
   const fontSetting = async () => {
     await Font.loadAsync({
-      "NotoSansKR-Bold": require("./assets/fonts/NotoSansKR-Bold.otf"),
-      "NotoSansKR-Regular": require("./assets/fonts/NotoSansKR-Regular.otf"),
-      "NotoSansKR-Medium": require("./assets/fonts/NotoSansKR-Medium.otf"),
+      "NotoSansKR-Bold": require("./assets/fonts/NotoSansKR/NotoSansKR-Bold.otf"),
+      "NotoSansKR-Regular": require("./assets/fonts/NotoSansKR/NotoSansKR-Regular.otf"),
+      "NotoSansKR-Medium": require("./assets/fonts/NotoSansKR/NotoSansKR-Medium.otf"),
+      AppleSDGothicNeoB: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoB.ttf"),
+      AppleSDGothicNeoL: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoL.ttf"),
+      AppleSDGothicNeoM: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoM.ttf"),
+      AppleSDGothicNeoR: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoR.ttf"),
+      "Roboto-Bold": require("./assets/fonts/Roboto/Roboto-Bold.ttf"),
+      "Roboto-Light": require("./assets/fonts/Roboto/Roboto-Light.ttf"),
+      "Roboto-Medium": require("./assets/fonts/Roboto/Roboto-Medium.ttf"),
+      "Roboto-Regular": require("./assets/fonts/Roboto/Roboto-Regular.ttf"),
+      "TT-Commons-Bold": require("./assets/fonts/TTCommons/TT-Commons-Bold.otf"),
+      "TT-Commons-Light": require("./assets/fonts/TTCommons/TT-Commons-Light.otf"),
+      "TT-Commons-Medium": require("./assets/fonts/TTCommons/TT-Commons-Medium.otf"),
+      "TT-Commons-Regular": require("./assets/fonts/TTCommons/TT-Commons-Regular.otf"),
     });
 
     const texts = [Text, TextInput];
