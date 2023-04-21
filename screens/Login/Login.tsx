@@ -2,7 +2,7 @@ import { useMutation } from "react-query";
 import { CommonApi, LoginRequest, LoginResponse } from "../../api";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, SafeAreaView, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
@@ -101,7 +101,7 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
   };
 
   return (
-    <>
+    <SafeAreaView>
       <TouchableWithoutFeedback
         onPress={() => {
           Keyboard.dismiss();
@@ -128,7 +128,7 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
         </Container>
       </TouchableWithoutFeedback>
       <BottomButton onPress={onSubmit} disabled={!(email.trim() && password)} backgroundColor="#6B8BF7" title={"확인"} />
-    </>
+    </SafeAreaView>
   );
 };
 
