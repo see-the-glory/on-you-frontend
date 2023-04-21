@@ -29,19 +29,20 @@ const Border = styled.View`
 `;
 
 const AskText = styled.Text`
-  color: #000000;
+  font-family: "AppleSDGothicNeoB";
   font-size: 20px;
-  font-weight: bold;
   margin-top: 24px;
 `;
 
 const SubText = styled.Text`
+  font-family: "AppleSDGothicNeoR";
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
 `;
 
 const Input = styled.TextInput<{ error: boolean }>`
+  font-family: "AppleSDGothicNeoR";
   border-bottom-width: 1px;
   border-bottom-color: ${(props: any) => (props.error ? "#ff6534" : "#b3b3b3")};
   margin-top: 47px;
@@ -49,7 +50,8 @@ const Input = styled.TextInput<{ error: boolean }>`
 `;
 
 const Error = styled.Text`
-  color: #ff6534;
+  font-family: "AppleSDGothicNeoR";
+  color: #e7564f;
   font-size: 12px;
 `;
 
@@ -59,7 +61,7 @@ const ValidationView = styled.View`
   margin-top: 7px;
 `;
 
-const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ navigation: { navigate } }) => {
+const SignUpName: React.FC<NativeStackScreenProps<any, "SignUpName">> = ({ navigation: { navigate } }) => {
   const [userName, setUserName] = useState("");
   const [error, setError] = useState<boolean>(false);
 
@@ -69,7 +71,7 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ nav
     if (!nameReg.test(userName)) {
       return;
     }
-    navigate("SignUpStack", { screen: "JoinStepThree", params: { name: userName } });
+    navigate("SignUpStack", { screen: "SignUpEmail", params: { name: userName } });
   };
 
   return (
@@ -97,7 +99,7 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ nav
           />
           {userName !== "" && !nameReg.test(userName) ? (
             <ValidationView>
-              <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />
+              <AntDesign name="exclamationcircleo" size={12} color="#E7564F" />
               <Error>{` 입력을 다시 한번 확인해주세요.`}</Error>
             </ValidationView>
           ) : (
@@ -110,4 +112,4 @@ const JoinStepTwo: React.FC<NativeStackScreenProps<any, "JoinStepTwo">> = ({ nav
   );
 };
 
-export default JoinStepTwo;
+export default SignUpName;

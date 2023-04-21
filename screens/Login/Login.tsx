@@ -4,70 +4,60 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
-import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
 import { login } from "../../redux/slices/auth";
-import { FontAwesome } from "@expo/vector-icons";
 import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
   width: 100%;
   height: 100%;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 30px;
+  padding: 20px 20px 0px 20px;
 `;
 
-const Wrap = styled.View`
-  width: 100%;
-  padding: 0px 20px;
-`;
-
-const Form = styled.View`
-  width: 100%;
+const Header = styled.View`
   margin-bottom: 30px;
 `;
 
-const FormTitleView = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 12px;
+const HeaderTitle = styled.Text`
+  font-family: "Roboto-Medium";
+  font-size: 40px;
 `;
 
-const IconWrap = styled.View`
-  width: 20px;
-  justify-content: center;
-  align-items: center;
-`;
+const Content = styled.View``;
 
-const Title = styled(CustomText)`
-  color: #1b1717;
+const ContentTitle = styled.Text`
+  font-family: "Roboto-Medium";
   font-size: 16px;
-  font-family: "NotoSansKR-Bold";
-  line-height: 22px;
-  padding-left: 5px;
+  color: #aeaeae;
+  margin-bottom: 8px;
 `;
 
-const Input = styled.TextInput`
+const EmailView = styled.View`
+  margin-bottom: 30px;
+`;
+
+const PasswordView = styled.View`
+  margin-bottom: 10px;
+`;
+
+const ContentInput = styled.TextInput`
+  font-family: "Roboto-Regular";
   border-bottom-width: 0.5px;
   border-bottom-color: #000000;
-  padding-bottom: 5px;
-  font-size: 16px;
+  padding-bottom: 2px;
+  font-size: 20px;
 `;
 
-const ForgetView = styled.TouchableOpacity`
+const InformationView = styled.TouchableOpacity`
   width: 100%;
-  margin-top: 15px;
-  padding: 0;
+  align-items: flex-end;
 `;
 
-const ForgetText = styled(CustomText)`
-  width: 100%;
-  color: #6f6f6f;
-  font-size: 12px;
-  line-height: 16px;
-  text-decoration: underline;
+const InformationText = styled.Text`
+  font-family: "AppleSDGothicNeoSB";
+  font-size: 14px;
+  color: #777777;
 `;
 
 const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { navigate } }) => {
@@ -98,9 +88,7 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
   });
 
   const goToFindLoginInfo = () => {
-    navigate("LoginStack", {
-      screen: "FindLoginInfo",
-    });
+    navigate("LoginStack", { screen: "FindLoginInfo" });
   };
 
   const onSubmit = () => {
@@ -113,39 +101,34 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
   };
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
-      <Container>
-        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
-        <Wrap>
-          <Form>
-            <FormTitleView>
-              <IconWrap>
-                <FontAwesome name="user-circle-o" size={15} color="black" />
-              </IconWrap>
-              <Title>아이디</Title>
-            </FormTitleView>
-            <Input placeholder="example@email.com" placeholderTextColor={"#B0B0B0"} onChangeText={(text: string) => setEmail(text)} />
-          </Form>
-          <Form>
-            <FormTitleView>
-              <IconWrap>
-                <FontAwesome name="lock" size={17} color="black" />
-              </IconWrap>
-              <Title>비밀번호</Title>
-            </FormTitleView>
-            <Input secureTextEntry={true} placeholder="비밀번호를 입력해주세요." placeholderTextColor={"#B0B0B0"} onChangeText={(text: string) => setPassword(text)} />
-            <ForgetView onPress={goToFindLoginInfo}>
-              <ForgetText>로그인 정보가 기억나지 않을 때</ForgetText>
-            </ForgetView>
-          </Form>
-        </Wrap>
-        <BottomButton onPress={onSubmit} disabled={!(email.trim() && password)} backgroundColor="#FF6534" title={"로그인"} />
-      </Container>
-    </TouchableWithoutFeedback>
+    <>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+        }}
+      >
+        <Container>
+          <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+          <Header>
+            <HeaderTitle>Log in</HeaderTitle>
+          </Header>
+          <Content>
+            <EmailView>
+              <ContentTitle>E-mail</ContentTitle>
+              <ContentInput value={email} placeholder="example@email.com" placeholderTextColor={"#D0D0D0"} onChangeText={(text: string) => setEmail(text)} />
+            </EmailView>
+            <PasswordView>
+              <ContentTitle>Password</ContentTitle>
+              <ContentInput value={password} secureTextEntry={true} placeholder="비밀번호를 입력해주세요." placeholderTextColor={"#D0D0D0"} onChangeText={(text: string) => setPassword(text)} />
+            </PasswordView>
+            <InformationView onPress={goToFindLoginInfo}>
+              <InformationText>로그인 정보가 기억나지 않나요?</InformationText>
+            </InformationView>
+          </Content>
+        </Container>
+      </TouchableWithoutFeedback>
+      <BottomButton onPress={onSubmit} disabled={!(email.trim() && password)} backgroundColor="#6B8BF7" title={"확인"} />
+    </>
   );
 };
 

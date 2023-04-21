@@ -4,10 +4,9 @@ import Login from "../screens/Login/Login";
 import FindLoginInfo from "../screens/Login/FindLoginInfo";
 import { TouchableOpacity, Text } from "react-native";
 import { Entypo } from "@expo/vector-icons";
-import FindId from "../screens/Login/FindId";
-import FindPw from "../screens/Login/FindPw";
-import FindIdResult from "../screens/Login/FindIdResult";
-import FindPwResult from "../screens/Login/FindPwResult";
+import FindEmail from "../screens/Login/FindEmail";
+import FindPassword from "../screens/Login/FindPassword";
+import FindResult from "../screens/Login/FindResult";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -26,18 +25,7 @@ const LoginStack = ({
         headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
       }}
     >
-      <NativeStack.Screen
-        name="Login"
-        component={Login}
-        options={{
-          title: "로그인",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => popToTop()}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
-        }}
-      />
+      <NativeStack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <NativeStack.Screen
         name="FindLoginInfo"
         component={FindLoginInfo}
@@ -51,11 +39,11 @@ const LoginStack = ({
         }}
       />
       <NativeStack.Screen
-        name="FindId"
-        component={FindId}
+        name="FindEmail"
+        component={FindEmail}
         initialParams={{ email }}
         options={{
-          title: "아이디 찾기",
+          title: "E-Mail 찾기",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "FindLoginInfo" })}>
               <Entypo name="chevron-thin-left" size={20} color="black" />
@@ -64,11 +52,11 @@ const LoginStack = ({
         }}
       />
       <NativeStack.Screen
-        name="FindIdResult"
-        component={FindIdResult}
+        name="FindResult"
+        component={FindResult}
         initialParams={{ email }}
         options={{
-          title: "아이디 찾기",
+          title: "E-Mail 찾기",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "FindId" })}>
               <Entypo name="chevron-thin-left" size={20} color="black" />
@@ -77,24 +65,12 @@ const LoginStack = ({
         }}
       />
       <NativeStack.Screen
-        name="FindPw"
-        component={FindPw}
+        name="FindPassword"
+        component={FindPassword}
         options={{
           title: "비밀번호 찾기",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "FindLoginInfo" })}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <NativeStack.Screen
-        name="FindPwResult"
-        component={FindPwResult}
-        options={{
-          title: "비밀번호 찾기",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("LoginStack", { screen: "FindPw" })}>
               <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),

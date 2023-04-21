@@ -3,7 +3,6 @@ import React, { useState, useEffect, useLayoutEffect } from "react";
 import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from "react-native";
 import styled from "styled-components/native";
 import { Entypo } from "@expo/vector-icons";
-import CustomText from "../../components/CustomText";
 import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
@@ -30,13 +29,13 @@ const Border = styled.View`
 `;
 
 const AskText = styled.Text`
-  color: #000000;
+  font-family: "AppleSDGothicNeoB";
   font-size: 20px;
-  font-weight: bold;
   margin-top: 24px;
 `;
 
 const SubText = styled.Text`
+  font-family: "AppleSDGothicNeoR";
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
@@ -44,7 +43,7 @@ const SubText = styled.Text`
 
 const Input = styled.TextInput`
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? "#ff6534" : "#b3b3b3")};
+  border-bottom-color: ${(props: any) => (props.error ? "#E7564F" : "#b3b3b3")};
   margin-top: 47px;
   font-size: 18px;
 `;
@@ -54,25 +53,27 @@ const ErrorView = styled.View`
 `;
 
 const Error = styled.Text`
-  color: #ff6534;
+  font-family: "AppleSDGothicNeoR";
+  color: #e7564f;
   font-size: 12px;
   margin-top: 7px;
-  margin-bottom: 20px;
 `;
 
 const FieldContentOptionLine = styled.View`
+  margin-top: 7px;
   justify-content: center;
   align-items: flex-end;
-  margin-bottom: 15px;
 `;
 
 const SkipButton = styled.TouchableOpacity``;
 
-const SkipText = styled(CustomText)`
+const SkipText = styled.Text`
+  font-family: "AppleSDGothicNeoR";
+  font-size: 12px;
   color: #8e8e8e;
 `;
 
-const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
+const SignUpPhone: React.FC<NativeStackScreenProps<any, "SignUpPhone">> = ({
   navigation: { navigate, setOptions, goBack },
   route: {
     params: { name, email, password, sex, birth },
@@ -99,7 +100,7 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
       return;
     }
     navigate("SignUpStack", {
-      screen: "JoinStepEight",
+      screen: "SignUpChurch",
       params: {
         name,
         email,
@@ -113,7 +114,7 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
 
   const goToNext = () => {
     navigate("SignUpStack", {
-      screen: "JoinStepEight",
+      screen: "SignUpChurch",
       params: {
         name,
         email,
@@ -150,12 +151,12 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
           <AskText>연락처는 어떻게 되시나요?</AskText>
           <SubText>연락처는 ID 찾기에 사용됩니다.</SubText>
           <Input
+            value={phoneNumber}
+            keyboardType="numeric"
             placeholder="010-1234-1234"
             placeholderTextColor={"#B0B0B0"}
-            keyboardType="numeric"
             maxLength={13}
             onChangeText={(phone: string) => setPhoneNumber(phone)}
-            value={phoneNumber}
             error={phoneNumber !== "" && !phoneReg.test(phoneNumber)}
           />
           <ErrorView>{phoneNumber !== "" && !phoneReg.test(phoneNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : <></>}</ErrorView>
@@ -171,4 +172,4 @@ const JoinStepSeven: React.FC<NativeStackScreenProps<any, "JoinStepSeven">> = ({
   );
 };
 
-export default JoinStepSeven;
+export default SignUpPhone;

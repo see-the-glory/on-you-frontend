@@ -6,39 +6,49 @@ import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
 import { login } from "../../redux/slices/auth";
-import CustomText from "../../components/CustomText";
-import { BackHandler, StatusBar } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { BackHandler, StatusBar, View } from "react-native";
 import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
   width: 100%;
   height: 100%;
-  align-items: center;
-  justify-content: space-between;
 `;
 
-const Wrap = styled.View`
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 68px;
+const Header = styled.View`
+  padding-left: 20px;
+  margin-top: 150px;
+  margin-bottom: 120px;
 `;
 
-const AskText = styled.Text`
-  color: #000000;
-  font-size: 20px;
-  font-weight: bold;
+const LineView = styled.View`
+  height: 1.5px;
+  background-color: #aeaeae;
 `;
 
-const SubText = styled.Text`
-  color: #a0a0a0;
-  font-size: 13px;
-  margin-top: 7px;
+const HeaderTitle = styled.Text`
+  font-family: "Roboto-Medium";
+  font-size: 40px;
+  line-height: 43px;
 `;
 
-const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "JoinStepSuccess">> = ({
+const HeaderText = styled.Text`
+  font-family: "AppleSDGothicNeoR";
+  font-size: 16px;
+  color: #aeaeae;
+  margin-top: 10px;
+`;
+
+const Content = styled.View`
+  flex-direction: row;
+  padding-right: 30px;
+`;
+
+const ContentText = styled.Text`
+  font-family: "AppleSDGothicNeoR";
+  font-size: 16px;
+`;
+
+const SignUpSuccess: React.FC<NativeStackScreenProps<any, "SignUpSuccess">> = ({
   navigation,
   route: {
     params: { email, password, token },
@@ -92,14 +102,21 @@ const JoinStepSuccess: React.FC<NativeStackScreenProps<any, "JoinStepSuccess">> 
   return (
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
-      <Wrap>
-        <Feather name="check" size={58} color="#CCCCCC" />
-        <AskText>가입이 완료되었습니다.</AskText>
-        <SubText>온유에 오신 것을 환영합니다 :&#41;</SubText>
-      </Wrap>
-      <BottomButton onPress={onSubmit} title={"시작하기"} />
+      <Header>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <HeaderTitle>{`Welcome to`}</HeaderTitle>
+          <LineView style={{ width: "100%", marginLeft: 20, marginBottom: 3 }} />
+        </View>
+        <HeaderTitle>{`Onyou :)`}</HeaderTitle>
+        <HeaderText>{`가입이 완료되었습니다.`}</HeaderText>
+      </Header>
+      <Content>
+        <LineView style={{ flex: 1, marginRight: 20, marginTop: 10 }} />
+        <ContentText>{`각종 모임을 통해\n공동체를 누려보세요!`}</ContentText>
+      </Content>
+      <BottomButton onPress={onSubmit} backgroundColor="#6B8BF7" title={"로그인하기"} />
     </Container>
   );
 };
 
-export default JoinStepSuccess;
+export default SignUpSuccess;

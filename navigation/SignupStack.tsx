@@ -1,26 +1,21 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import JoinStepOne from "../screens/SignUp/JoinStepOne";
-import JoinStepTwo from "../screens/SignUp/JoinStepTwo";
-import JoinStepThree from "../screens/SignUp/JoinStepThree";
-import JoinStepFour from "../screens/SignUp/JoinStepFour";
-import JoinStepFive from "../screens/SignUp/JoinStepFive";
-import JoinStepSix from "../screens/SignUp/JoinStepSix";
-import JoinStepSeven from "../screens/SignUp/JoinStepSeven";
-import JoinStepEight from "../screens/SignUp/JoinStepEight";
-import JoinConfirm from "../screens/SignUp/JoinConfirm";
-import JoinStepSuccess from "../screens/SignUp/JoinStepSuccess";
 import { TouchableOpacity } from "react-native";
 import { Entypo } from "@expo/vector-icons";
+import SignUpTerms from "../screens/SignUp/SignUpTerms";
+import SignUpName from "../screens/SignUp/SignUpName";
+import SignUpEmail from "../screens/SignUp/SignUpEmail";
+import SignUpPassword from "../screens/SignUp/SignUpPassword";
+import SignUpSex from "../screens/SignUp/SignUpSex";
+import SignUpBirth from "../screens/SignUp/SignUpBirth";
+import SignUpPhone from "../screens/SignUp/SignUpPhone";
+import SignUpChurch from "../screens/SignUp/SignUpChurch";
+import SignUpConfirm from "../screens/SignUp/SignUpConfirm";
+import SignUpSuccess from "../screens/SignUp/SignUpSuccess";
 
 const NativeStack = createNativeStackNavigator();
 
-const SignUpStack = ({
-  navigation: { navigate, goBack },
-  route: {
-    params: { name, email, password, sex, birth, phone, church, token },
-  },
-}) => {
+const SignUpStack = ({ navigation: { navigate, goBack }, route: { params } }) => {
   return (
     <NativeStack.Navigator
       screenOptions={{
@@ -28,11 +23,12 @@ const SignUpStack = ({
         contentStyle: { backgroundColor: "white" },
         headerTitleAlign: "center",
         headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
+        headerShadowVisible: false,
       }}
     >
       <NativeStack.Screen
-        name="JoinStepOne"
-        component={JoinStepOne}
+        name="SignUpTerms"
+        component={SignUpTerms}
         options={{
           title: "약관 동의",
           headerLeft: () => (
@@ -43,25 +39,25 @@ const SignUpStack = ({
         }}
       />
       <NativeStack.Screen
-        name="JoinStepTwo"
-        component={JoinStepTwo}
+        name="SignUpName"
+        component={SignUpName}
         options={{
           title: "회원가입",
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "JoinStepOne" })}>
+            <TouchableOpacity onPress={() => navigate("SignUpStack", { screen: "SignUpTerms" })}>
               <Entypo name="chevron-thin-left" size={20} color="black" />
             </TouchableOpacity>
           ),
         }}
       />
-      <NativeStack.Screen name="JoinStepThree" component={JoinStepThree} options={{ title: "회원가입" }} />
-      <NativeStack.Screen name="JoinStepFour" component={JoinStepFour} options={{ title: "회원가입" }} />
-      <NativeStack.Screen name="JoinStepFive" component={JoinStepFive} options={{ title: "회원가입" }} />
-      <NativeStack.Screen name="JoinStepSix" component={JoinStepSix} options={{ title: "회원가입" }} />
-      <NativeStack.Screen name="JoinStepSeven" component={JoinStepSeven} options={{ title: "회원가입" }} />
-      <NativeStack.Screen name="JoinStepEight" component={JoinStepEight} options={{ title: "회원가입" }} />
-      <NativeStack.Screen name="JoinConfirm" component={JoinConfirm} options={{ title: "회원가입" }} />
-      <NativeStack.Screen name="JoinStepSuccess" component={JoinStepSuccess} options={{ title: "회원가입", headerLeft: () => <></> }} />
+      <NativeStack.Screen name="SignUpEmail" component={SignUpEmail} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="SignUpPassword" component={SignUpPassword} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="SignUpSex" component={SignUpSex} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="SignUpBirth" component={SignUpBirth} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="SignUpPhone" component={SignUpPhone} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="SignUpChurch" component={SignUpChurch} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="SignUpConfirm" component={SignUpConfirm} options={{ title: "회원가입" }} />
+      <NativeStack.Screen name="SignUpSuccess" component={SignUpSuccess} options={{ headerShown: false }} />
     </NativeStack.Navigator>
   );
 };
