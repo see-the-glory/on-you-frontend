@@ -16,7 +16,7 @@ const Button = styled.TouchableOpacity<{ disabled: boolean; color: string }>`
   width: 100%;
   height: 68px;
   padding-bottom: ${Platform.OS === "ios" ? 8 : 0}px;
-  background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : props.color ?? "#295af5")};
+  background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : props.color ?? "#6B8BF7")};
 `;
 
 const Title = styled(CustomText)<{ color: string }>`

@@ -1,9 +1,8 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, useLayoutEffect } from "react";
-import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar, KeyboardAvoidingView, Platform, ScrollView, useWindowDimensions, View } from "react-native";
+import { TouchableOpacity, StatusBar, ScrollView, useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
-import CustomText from "../../components/CustomText";
 import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
@@ -32,12 +31,13 @@ const Border = styled.View`
 `;
 
 const AskText = styled.Text`
-  color: #000000;
+  font-family: "AppleSDGothicNeoB";
   font-size: 20px;
-  font-weight: bold;
+  margin-top: 24px;
 `;
 
 const SubText = styled.Text`
+  font-family: "AppleSDGothicNeoR";
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
@@ -51,7 +51,8 @@ const Input = styled.TextInput`
 `;
 
 const Error = styled.Text`
-  color: #ff6534;
+  font-family: "AppleSDGothicNeoR";
+  color: #e7564f;
   font-size: 12px;
 `;
 
@@ -68,11 +69,12 @@ const ValidationItem = styled.View`
 `;
 
 const ValidationText = styled.Text`
+  font-family: "AppleSDGothicNeoR";
   color: #8e8e8e;
   font-size: 12px;
 `;
 
-const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
+const SignUpPassword: React.FC<NativeStackScreenProps<any, "SignUpPassword">> = ({
   navigation: { navigate, setOptions, goBack },
   route: {
     params: { name, email },
@@ -91,7 +93,7 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
       return;
     }
     navigate("SignUpStack", {
-      screen: "JoinStepFive",
+      screen: "SignUpSex",
       params: {
         name,
         email,
@@ -165,4 +167,4 @@ const JoinStepFour: React.FC<NativeStackScreenProps<any, "JoinStepFour">> = ({
   );
 };
 
-export default JoinStepFour;
+export default SignUpPassword;

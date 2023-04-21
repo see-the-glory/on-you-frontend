@@ -1,7 +1,6 @@
-import { FontAwesome } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { StatusBar, View } from "react-native";
+import { StatusBar } from "react-native";
 import styled from "styled-components/native";
 
 const Container = styled.SafeAreaView`
@@ -39,34 +38,38 @@ const Button = styled.TouchableHighlight`
   margin-bottom: 25px;
 `;
 
-const Title = styled.Text`
+const Title = styled.Text<{ color: string }>`
   font-family: "AppleSDGothicNeoSB";
   line-height: 26px;
   font-size: 22px;
   padding-left: 5px;
+  color: ${(props: any) => props.color};
 `;
 
 const FindLoginInfo: React.FC<NativeStackScreenProps<any, "FindLoginInfo">> = ({ navigation: { navigate } }) => {
-  const goToFindId = () => {
-    navigate("LoginStack", { screen: "FindId" });
+  const [findEmailColor, setFindEmailColor] = useState<string>("black");
+  const [findPasswordColor, setFindPasswordColor] = useState<string>("black");
+
+  const goToFindEmail = () => {
+    navigate("LoginStack", { screen: "FindEmail" });
   };
 
-  const goToFindPw = () => {
-    navigate("LoginStack", { screen: "FindPw" });
+  const goToFindPasswrod = () => {
+    navigate("LoginStack", { screen: "FindPassword" });
   };
 
   return (
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <TopView>
-        <Button onPress={goToFindId} underlayColor="#6B8BF7">
+        <Button onPressIn={() => setFindEmailColor("white")} onPressOut={() => setFindEmailColor("black")} onPress={goToFindEmail} underlayColor="#6B8BF7">
           <TitleView>
-            <Title>E-mail 찾기</Title>
+            <Title color={findEmailColor}>E-mail 찾기</Title>
           </TitleView>
         </Button>
-        <Button onPress={goToFindPw} underlayColor="#6B8BF7">
+        <Button onPressIn={() => setFindPasswordColor("white")} onPressOut={() => setFindPasswordColor("black")} onPress={goToFindPasswrod} underlayColor="#6B8BF7">
           <TitleView>
-            <Title>비밀번호 찾기</Title>
+            <Title color={findPasswordColor}>비밀번호 찾기</Title>
           </TitleView>
         </Button>
       </TopView>

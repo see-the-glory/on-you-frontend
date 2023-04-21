@@ -30,13 +30,13 @@ const Border = styled.View`
 `;
 
 const AskText = styled.Text`
-  color: #000000;
+  font-family: "AppleSDGothicNeoB";
   font-size: 20px;
-  font-weight: bold;
   margin-top: 24px;
 `;
 
 const SubText = styled.Text`
+  font-family: "AppleSDGothicNeoR";
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
@@ -44,7 +44,7 @@ const SubText = styled.Text`
 
 const Input = styled.TextInput`
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? "#ff6534" : "#b3b3b3")};
+  border-bottom-color: ${(props: any) => (props.error ? "#E7564F" : "#b3b3b3")};
   margin-top: 47px;
   font-size: 18px;
 `;
@@ -54,24 +54,27 @@ const ErrorView = styled.View`
 `;
 
 const Error = styled.Text`
-  color: #ff6534;
+  font-family: "AppleSDGothicNeoR";
+  color: #e7564f;
   font-size: 12px;
   margin-top: 7px;
 `;
 
 const FieldContentOptionLine = styled.View`
-  margin-top: 15px;
+  margin-top: 7px;
   justify-content: center;
   align-items: flex-end;
 `;
 
 const SkipButton = styled.TouchableOpacity``;
 
-const SkipText = styled(CustomText)`
+const SkipText = styled.Text`
+  font-family: "AppleSDGothicNeoR";
+  font-size: 12px;
   color: #8e8e8e;
 `;
 
-const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
+const SignUpBirth: React.FC<NativeStackScreenProps<any, "SignUpBirth">> = ({
   navigation: { navigate, setOptions, goBack },
   route: {
     params: { name, email, password, sex },
@@ -99,7 +102,7 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
       return;
     }
     navigate("SignUpStack", {
-      screen: "JoinStepSeven",
+      screen: "SignUpPhone",
       params: {
         name,
         email,
@@ -112,7 +115,7 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
 
   const goToNext = () => {
     navigate("SignUpStack", {
-      screen: "JoinStepSeven",
+      screen: "SignUpPhone",
       params: {
         name,
         email,
@@ -148,14 +151,13 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
           <AskText>생년월일을 입력해주세요.</AskText>
           <SubText>정확한 생년월일을 입력해주세요.</SubText>
           <Input
+            value={birthNumber}
             keyboardType="numeric"
             placeholder="yyyy-mm-dd"
             placeholderTextColor={"#B0B0B0"}
             maxLength={10}
             onChangeText={(birth: string) => setBirthNumber(birth)}
-            value={birthNumber}
             error={birthNumber !== "" && !birthReg.test(birthNumber)}
-            clearButtonMode="always"
           />
           <ErrorView>{birthNumber !== "" && !birthReg.test(birthNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : <></>}</ErrorView>
           <FieldContentOptionLine>
@@ -170,4 +172,4 @@ const JoinStepSix: React.FC<NativeStackScreenProps<any, "JoinStepSix">> = ({
   );
 };
 
-export default JoinStepSix;
+export default SignUpBirth;

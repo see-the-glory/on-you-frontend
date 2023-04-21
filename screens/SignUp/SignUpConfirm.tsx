@@ -23,13 +23,13 @@ const Wrap = styled.View`
 `;
 
 const AskText = styled.Text`
-  color: #000000;
+  font-family: "AppleSDGothicNeoB";
   font-size: 20px;
-  font-weight: bold;
   margin-top: 24px;
 `;
 
 const SubText = styled.Text`
+  font-family: "AppleSDGothicNeoR";
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
@@ -72,7 +72,7 @@ const TextInfo = styled.Text`
   font-size: 14px;
 `;
 
-const JoinConfirm: React.FC<NativeStackScreenProps<any, "JoinConfirm">> = ({
+const SignUpConfirm: React.FC<NativeStackScreenProps<any, "SignUpConfirm">> = ({
   navigation: { navigate, setOptions, goBack },
   route: {
     params: { name, email, password, sex, birth, phone, church },
@@ -84,7 +84,7 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "JoinConfirm">> = ({
     onSuccess: (res) => {
       if (res.status === 200) {
         navigate("SignUpStack", {
-          screen: "JoinStepSuccess",
+          screen: "SignUpSuccess",
           params: {
             email,
             password,
@@ -180,4 +180,4 @@ const JoinConfirm: React.FC<NativeStackScreenProps<any, "JoinConfirm">> = ({
   );
 };
 
-export default JoinConfirm;
+export default SignUpConfirm;

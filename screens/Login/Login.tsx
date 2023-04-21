@@ -4,11 +4,9 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
-import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
 import { login } from "../../redux/slices/auth";
-import { FontAwesome } from "@expo/vector-icons";
 import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
@@ -90,9 +88,7 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
   });
 
   const goToFindLoginInfo = () => {
-    navigate("LoginStack", {
-      screen: "FindLoginInfo",
-    });
+    navigate("LoginStack", { screen: "FindLoginInfo" });
   };
 
   const onSubmit = () => {
@@ -105,12 +101,12 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
   };
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
-      <>
+    <>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+        }}
+      >
         <Container>
           <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
           <Header>
@@ -119,20 +115,20 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
           <Content>
             <EmailView>
               <ContentTitle>E-mail</ContentTitle>
-              <ContentInput placeholder="example@email.com" placeholderTextColor={"#D0D0D0"} onChangeText={(text: string) => setEmail(text)} />
+              <ContentInput value={email} placeholder="example@email.com" placeholderTextColor={"#D0D0D0"} onChangeText={(text: string) => setEmail(text)} />
             </EmailView>
             <PasswordView>
               <ContentTitle>Password</ContentTitle>
-              <ContentInput secureTextEntry={true} placeholder="비밀번호를 입력해주세요." placeholderTextColor={"#D0D0D0"} onChangeText={(text: string) => setPassword(text)} />
+              <ContentInput value={password} secureTextEntry={true} placeholder="비밀번호를 입력해주세요." placeholderTextColor={"#D0D0D0"} onChangeText={(text: string) => setPassword(text)} />
             </PasswordView>
             <InformationView onPress={goToFindLoginInfo}>
               <InformationText>로그인 정보가 기억나지 않나요?</InformationText>
             </InformationView>
           </Content>
         </Container>
-        <BottomButton onPress={onSubmit} disabled={!(email.trim() && password)} backgroundColor="#6B8BF7" title={"확인"} />
-      </>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+      <BottomButton onPress={onSubmit} disabled={!(email.trim() && password)} backgroundColor="#6B8BF7" title={"확인"} />
+    </>
   );
 };
 

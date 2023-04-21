@@ -1,8 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { Keyboard, Platform, StatusBar, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
-import CustomText from "../../components/CustomText";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import BottomButton from "../../components/BottomButton";
@@ -20,7 +19,8 @@ const Wrap = styled.View`
   padding: 0px 20px;
 `;
 
-const HeaderText = styled(CustomText)`
+const HeaderText = styled.Text`
+  font-family: "AppleSDGothicNeoM";
   color: #2b2b2b;
   font-size: 16px;
   line-height: 21px;
@@ -35,19 +35,19 @@ const Item = styled.TouchableOpacity`
   margin-bottom: 10px;
 `;
 
-const RedText = styled(CustomText)`
-  font-family: "NotoSansKR-Medium";
+const RedText = styled.Text`
+  font-family: "AppleSDGothicNeoM";
   margin-right: 5px;
   color: #ff6534;
   font-size: 16px;
-  line-height: 21px;
+  line-height: 17px;
 `;
 
-const ItemText = styled(CustomText)`
-  font-family: "NotoSansKR-Medium";
+const ItemText = styled.Text`
+  font-family: "AppleSDGothicNeoM";
   color: #6f6f6f;
   font-size: 16px;
-  line-height: 21px;
+  line-height: 17px;
 `;
 
 const LeftBox = styled.View`
@@ -60,7 +60,7 @@ const RightBox = styled.View`
   align-items: center;
 `;
 
-const JoinStepOne: React.FC<NativeStackScreenProps<any, "JoinStepOne">> = ({ navigation: { navigate } }) => {
+const SignUpTerms: React.FC<NativeStackScreenProps<any, "SignUpTerms">> = ({ navigation: { navigate } }) => {
   const [check, setCheck] = useState(false);
   const [check2, setCheck2] = useState(false);
 
@@ -70,7 +70,7 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "JoinStepOne">> = ({ nav
 
   const goToNext = () => {
     navigate("SignUpStack", {
-      screen: "JoinStepTwo",
+      screen: "SignUpName",
     });
   };
 
@@ -95,9 +95,9 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "JoinStepOne">> = ({ nav
           >
             <LeftBox>
               {!check ? (
-                <Ionicons name="checkmark-circle-outline" size={26} color={"#FF714B"} style={{ marginLeft: -1, marginRight: 5 }} />
+                <Ionicons name="checkmark-circle-outline" size={26} color={"#E7564F"} style={{ marginLeft: -1, marginRight: 5 }} />
               ) : (
-                <Ionicons name="checkmark-circle" size={26} color={"#FF714B"} style={{ marginLeft: -1, marginRight: 5 }} />
+                <Ionicons name="checkmark-circle" size={26} color={"#E7564F"} style={{ marginLeft: -1, marginRight: 5 }} />
               )}
               <RedText>{`(필수)`}</RedText>
               <ItemText>{`On You 서비스 이용약관`}</ItemText>
@@ -116,9 +116,9 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "JoinStepOne">> = ({ nav
           >
             <LeftBox>
               {!check2 ? (
-                <Ionicons name="checkmark-circle-outline" size={26} color={"#FF714B"} style={{ marginLeft: -1, marginRight: 5 }} />
+                <Ionicons name="checkmark-circle-outline" size={26} color={"#E7564F"} style={{ marginLeft: -1, marginRight: 5 }} />
               ) : (
-                <Ionicons name="checkmark-circle" size={26} color={"#FF714B"} style={{ marginLeft: -1, marginRight: 5 }} />
+                <Ionicons name="checkmark-circle" size={26} color={"#E7564F"} style={{ marginLeft: -1, marginRight: 5 }} />
               )}
               <RedText>{`(필수)`}</RedText>
               <ItemText>{`개인정보 수집 및 이용 동의서`}</ItemText>
@@ -134,4 +134,4 @@ const JoinStepOne: React.FC<NativeStackScreenProps<any, "JoinStepOne">> = ({ nav
   );
 };
 
-export default JoinStepOne;
+export default SignUpTerms;

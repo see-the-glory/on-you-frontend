@@ -433,12 +433,12 @@ export interface DuplicateClubNameCheckRequest {
   clubName: string;
 }
 
-export interface FindIdRequest {
+export interface FindEmailRequest {
   phoneNumber?: string;
   username?: string;
 }
 
-export interface FindPwRequest {
+export interface FindPasswordRequest {
   birthday?: string;
   email?: string;
   phoneNumber?: string;
@@ -718,7 +718,7 @@ const registerUserInfo = async (req: SignUp) => {
   return { status: res.status, ...(await res.json()) };
 };
 
-const FindUserId = async (req: FindIdRequest) => {
+const FindUserId = async (req: FindEmailRequest) => {
   const res = await fetch(`${BASE_URL}/api/user/findId`, {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -727,7 +727,7 @@ const FindUserId = async (req: FindIdRequest) => {
   return { status: res.status, ...(await res.json()) };
 };
 
-const FindUserPw = async (req: FindPwRequest) => {
+const FindUserPw = async (req: FindPasswordRequest) => {
   const res = await fetch(`${BASE_URL}/api/mail/findPw`, {
     method: "POST",
     headers: { "content-type": "application/json" },

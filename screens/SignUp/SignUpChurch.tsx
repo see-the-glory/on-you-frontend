@@ -2,9 +2,9 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState, useLayoutEffect } from "react";
 import { Keyboard, TouchableWithoutFeedback, TouchableOpacity, StatusBar } from "react-native";
 import styled from "styled-components/native";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomText from "../../components/CustomText";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useToast } from "react-native-toast-notifications";
 import BottomButton from "../../components/BottomButton";
 
 const Container = styled.View`
@@ -25,22 +25,29 @@ const BorderWrap = styled.View`
 `;
 
 const Border = styled.View`
-  width: 50%;
+  width: 80%;
   height: 2px;
   background-color: #295af5;
 `;
 
 const AskText = styled.Text`
-  color: #000000;
+  font-family: "AppleSDGothicNeoB";
   font-size: 20px;
-  font-weight: bold;
   margin-top: 24px;
 `;
 
 const SubText = styled.Text`
+  font-family: "AppleSDGothicNeoR";
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
+`;
+
+const Input = styled.TextInput`
+  border-bottom-width: 1px;
+  border-bottom-color: #b3b3b3;
+  margin-top: 47px;
+  font-size: 18px;
 `;
 
 const FieldContentView = styled.View`
@@ -59,17 +66,6 @@ const FieldContentOptionLine = styled.View`
   margin-bottom: 15px;
 `;
 
-const FieldContentText = styled.Text`
-  font-size: 18px;
-  margin-right: 10px;
-`;
-
-const SkipButton = styled.TouchableOpacity``;
-
-const SkipText = styled(CustomText)`
-  color: #8e8e8e;
-`;
-
 const ChoiceButton = styled.TouchableOpacity`
   width: 100%;
   flex-direction: row;
@@ -77,25 +73,34 @@ const ChoiceButton = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const JoinStepFive: React.FC<NativeStackScreenProps<any, "JoinStepFive">> = ({
+const FieldContentText = styled.Text`
+  font-family: "AppleSDGothicNeoR";
+  font-size: 18px;
+  margin-right: 10px;
+`;
+
+const SignUpChurch: React.FC<NativeStackScreenProps<any, "SignUpChurch">> = ({
   navigation: { navigate, setOptions, goBack },
   route: {
-    params: { name, email, password },
+    params: { name, email, password, sex, birth, phone },
   },
 }) => {
-  const [approvalMethod, setApprovalMethod] = useState<number>(0);
+  const toast = useToast();
+  const [check, setCheck] = useState(1);
 
-  const goToNext = () => {
-    let sex = null;
-    if (approvalMethod === 1) sex = "남성";
-    if (approvalMethod === 2) sex = "여성";
+  const validate = () => {
+    if (check !== 1) return;
+
     navigate("SignUpStack", {
-      screen: "JoinStepSix",
+      screen: "SignUpConfirm",
       params: {
         name,
         email,
         password,
         sex,
+        birth,
+        phone,
+        church: "시광교회",
       },
     });
   };
@@ -108,7 +113,7 @@ const JoinStepFive: React.FC<NativeStackScreenProps<any, "JoinStepFive">> = ({
         </TouchableOpacity>
       ),
     });
-  }, [name, email, password]);
+  }, [name, email, password, sex, birth, phone]);
 
   return (
     <TouchableWithoutFeedback
@@ -122,32 +127,33 @@ const JoinStepFive: React.FC<NativeStackScreenProps<any, "JoinStepFive">> = ({
           <Border />
         </BorderWrap>
         <Wrap>
-          <AskText>성별이 어떻게 되시나요?</AskText>
-          <SubText>멤버 관리와, 동명이인 구분을 위함 입니다.</SubText>
+          <AskText>출석중인 교회를 알려주세요.</AskText>
+          <SubText>{`시광교회 교인을 대상으로 사용되는 앱입니다.\n시광교회 교인만 가입 가능합니다.`}</SubText>
           <FieldContentView>
             <FieldContentLine>
-              <ChoiceButton onPress={() => setApprovalMethod((prev) => (prev === 1 ? 0 : 1))} activeOpacity={0.5}>
-                <FieldContentText> 남성</FieldContentText>
-                {approvalMethod === 1 ? <MaterialCommunityIcons name="radiobox-marked" size={22} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={22} color="#ABABAB" />}
+              <ChoiceButton onPress={() => setCheck(1)} activeOpacity={0.5}>
+                <FieldContentText>{`시광교회`}</FieldContentText>
+                {check === 1 ? <MaterialCommunityIcons name="radiobox-marked" size={22} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={22} color="#ABABAB" />}
               </ChoiceButton>
             </FieldContentLine>
             <FieldContentLine>
-              <ChoiceButton onPress={() => setApprovalMethod((prev) => (prev === 2 ? 0 : 2))} activeOpacity={0.5}>
-                <FieldContentText> 여성</FieldContentText>
-                {approvalMethod === 2 ? <MaterialCommunityIcons name="radiobox-marked" size={22} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={22} color="#ABABAB" />}
+              <ChoiceButton
+                onPress={() => {
+                  setCheck(2);
+                  toast.show(`타교인은 가입이 불가합니다.`, { type: "danger" });
+                }}
+                activeOpacity={0.5}
+              >
+                <FieldContentText>{`타교회`}</FieldContentText>
+                {check === 2 ? <MaterialCommunityIcons name="radiobox-marked" size={22} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={22} color="#ABABAB" />}
               </ChoiceButton>
             </FieldContentLine>
-            <FieldContentOptionLine>
-              <SkipButton onPress={goToNext}>
-                <SkipText>{`선택하지 않고 넘어가기 >`}</SkipText>
-              </SkipButton>
-            </FieldContentOptionLine>
           </FieldContentView>
         </Wrap>
-        <BottomButton onPress={goToNext} disabled={approvalMethod === 0} title={"다음"} />
+        <BottomButton onPress={validate} disabled={check !== 1} title={"다음"} />
       </Container>
     </TouchableWithoutFeedback>
   );
 };
 
-export default JoinStepFive;
+export default SignUpChurch;

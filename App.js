@@ -173,14 +173,15 @@ function App() {
           <ToastProvider
             offset={70}
             successColor="#295AF5"
-            warningColor="#8E8E8E"
+            warningColor="#6F6F6F"
             dangerColor="#E7564F"
             duration={3000}
             animationType="zoom-in"
-            style={{ borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8, fontFamily: "NotoSansKR-Regular" }}
-            successIcon={<Ionicons name="checkmark-circle" size={18} color="white" />}
-            warningIcon={<Ionicons name="checkmark-circle" size={18} color="white" />}
-            dangerIcon={<Ionicons name="close-circle" size={18} color="white" />}
+            style={{ borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8 }}
+            textStyle={{ fontFamily: "AppleSDGothicNeoR", lineHeight: 16 }}
+            successIcon={<Ionicons name="checkmark-circle" size={16} color="white" />}
+            warningIcon={<Ionicons name="close-circle" size={16} color="white" />}
+            dangerIcon={<Ionicons name="alert-circle" size={16} color="white" />}
           >
             <NavigationContainer linking={linking}>
               <RootNavigation />

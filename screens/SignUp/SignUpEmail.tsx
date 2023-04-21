@@ -48,30 +48,33 @@ const Border = styled.View`
 `;
 
 const AskText = styled.Text`
-  color: #000000;
+  font-family: "AppleSDGothicNeoB";
   font-size: 20px;
-  font-weight: bold;
   margin-top: 24px;
 `;
 
 const SubText = styled.Text`
+  font-family: "AppleSDGothicNeoR";
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
 `;
 
 const ItemText = styled.Text`
+  font-family: "Roboto-Regular";
   color: #a0a0a0;
   font-size: 13px;
   margin-bottom: 3px;
 `;
 
 const Input = styled.TextInput<{ error: boolean }>`
+  font-family: "Roboto-Regular";
   font-size: 18px;
 `;
 
 const Error = styled.Text`
-  color: #ff6534;
+  font-family: "AppleSDGothicNeoR";
+  color: #e7564f;
   font-size: 12px;
 `;
 
@@ -83,11 +86,11 @@ const ValidText = styled.Text<{ error: boolean }>`
 const ValidationView = styled.View<{ error: boolean }>`
   flex-direction: row;
   align-items: center;
-  margin-top: 7px;
+  margin-top: 8px;
   margin-bottom: ${(props: any) => (props.error ? 20 : 0)}px;
 `;
 
-const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
+const SignUpEmail: React.FC<NativeStackScreenProps<any, "SignUpEmail">> = ({
   navigation: { navigate, setOptions, goBack },
   route: {
     params: { name },
@@ -151,7 +154,7 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
       onSuccess: (res) => {
         if (res.status === 200) {
           navigate("SignUpStack", {
-            screen: "JoinStepFour",
+            screen: "SignUpPassword",
             params: {
               name,
               email,
@@ -230,4 +233,4 @@ const JoinStepThree: React.FC<NativeStackScreenProps<any, "JoinStepThree">> = ({
   );
 };
 
-export default JoinStepThree;
+export default SignUpEmail;
