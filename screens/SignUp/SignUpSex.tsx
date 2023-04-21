@@ -59,7 +59,7 @@ const FieldContentOptionLine = styled.View`
 `;
 
 const FieldContentText = styled.Text`
-  font-family: "AppleSDGothicNeo";
+  font-family: "AppleSDGothicNeoR";
   font-size: 18px;
   margin-right: 10px;
 `;
