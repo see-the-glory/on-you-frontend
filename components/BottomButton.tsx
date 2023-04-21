@@ -20,7 +20,7 @@ const Button = styled.TouchableOpacity<{ disabled: boolean; color: string }>`
 `;
 
 const Title = styled(CustomText)<{ color: string }>`
-  font-family: "AppleSDGothicSB";
+  font-family: "AppleSDGothicNeoSB";
   font-size: 22px;
   line-height: 30px;
   color: ${(props: any) => props.color ?? "white"};

@@ -23,6 +23,7 @@ const LoginStack = ({
         contentStyle: { backgroundColor: "white" },
         headerTitleAlign: "center",
         headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
+        headerShadowVisible: false,
       }}
     >
       <NativeStack.Screen name="Login" component={Login} options={{ headerShown: false }} />
