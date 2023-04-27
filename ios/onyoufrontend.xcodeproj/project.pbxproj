@@ -13,6 +13,7 @@
 		A73BE052296C3F3100D03683 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		A7739DA929F18CDD00645370 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7739DA829F18CDD00645370 /* AppDelegate.mm */; };
 		A7739DAD29F19C6700645370 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A7739DAC29F19C6700645370 /* Launch Screen.storyboard */; };
+		A7739DD629FA072F00645370 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A7739DD829FA072F00645370 /* InfoPlist.strings */; };
 		A7D6A96729A4BA37002E796D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A7D6A96629A4BA37002E796D /* GoogleService-Info.plist */; };
 		A7D6A96929A88FDF002E796D /* onyoufrontend.xcworkspace in Resources */ = {isa = PBXBuildFile; fileRef = A7D6A96829A88FDF002E796D /* onyoufrontend.xcworkspace */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
@@ -29,6 +30,8 @@
 		868B1BE218428AB94C1BC0C8 /* Pods-onyoufrontend.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-onyoufrontend.release.xcconfig"; path = "Target Support Files/Pods-onyoufrontend/Pods-onyoufrontend.release.xcconfig"; sourceTree = "<group>"; };
 		A7739DA829F18CDD00645370 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = onyoufrontend/AppDelegate.mm; sourceTree = "<group>"; };
 		A7739DAC29F19C6700645370 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		A7739DD729FA072F00645370 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A7739DD929FA073000645370 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A77E7A6929B87B1D00066757 /* onyoufrontend.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = onyoufrontend.xcodeproj; sourceTree = "<group>"; };
 		A7B81822296D772600AB1088 /* onyoufrontend.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = onyoufrontend.entitlements; path = onyoufrontend/onyoufrontend.entitlements; sourceTree = "<group>"; };
 		A7D6A96629A4BA37002E796D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -87,6 +90,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				A7739DD829FA072F00645370 /* InfoPlist.strings */,
 				A7D6A96829A88FDF002E796D /* onyoufrontend.xcworkspace */,
 				A7D6A96629A4BA37002E796D /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* onyoufrontend */,
@@ -200,6 +204,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -223,6 +228,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7739DAD29F19C6700645370 /* Launch Screen.storyboard in Resources */,
+				A7739DD629FA072F00645370 /* InfoPlist.strings in Resources */,
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				A7D6A96929A88FDF002E796D /* onyoufrontend.xcworkspace in Resources */,
 				A7D6A96729A4BA37002E796D /* GoogleService-Info.plist in Resources */,
@@ -353,6 +359,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		A7739DD829FA072F00645370 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A7739DD729FA072F00645370 /* ko */,
+				A7739DD929FA073000645370 /* en */,
+			);
+			name = InfoPlist.strings;
+			path = onyoufrontend;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
