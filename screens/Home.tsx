@@ -243,14 +243,14 @@ const Home = () => {
     if (feedIndex === undefined || feedId === undefined) return;
     const requestData: FeedLikeRequest = { feedId };
     likeFeedMutation.mutate(requestData, {
-      onSuccess: (res) => {
-        dispatch(feedSlice.actions.likeToggle(feedIndex));
-      },
+      onSuccess: (res) => {},
       onError: (error) => {
         console.log(`API ERROR | likeFeed ${error.code} ${error.status}`);
         toast.show(`${error.message ?? error.code}`, { type: "warning" });
       },
     });
+
+    dispatch(feedSlice.actions.likeToggle(feedIndex));
   }, []);
 
   const deleteFeed = () => {

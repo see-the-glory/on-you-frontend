@@ -154,14 +154,14 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     if (feedIndex === undefined || feedId === undefined) return;
     const requestData: FeedLikeRequest = { feedId };
     likeFeedMutation.mutate(requestData, {
-      onSuccess: (res) => {
-        dispatch(clubSlice.actions.likeToggle(feedIndex));
-      },
+      onSuccess: (res) => {},
       onError: (error) => {
         console.log(`API ERROR | likeFeed ${error.code} ${error.status}`);
         toast.show(`${error.message ?? error.code}`, { type: "warning" });
       },
     });
+
+    dispatch(clubSlice.actions.likeToggle(feedIndex));
   }, []);
 
   const blockUser = () => {
