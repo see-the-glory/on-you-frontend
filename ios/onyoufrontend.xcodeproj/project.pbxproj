@@ -364,7 +364,7 @@
 				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 23042101;
+				CURRENT_PROJECT_VERSION = 23043002;
 				DEVELOPMENT_TEAM = P83ZS7XR97;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -376,7 +376,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.2.1;
 				MODULE_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -403,14 +403,14 @@
 				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 23042101;
+				CURRENT_PROJECT_VERSION = 23043002;
 				DEVELOPMENT_TEAM = P83ZS7XR97;
 				INFOPLIST_FILE = onyoufrontend/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OnYou;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.2.1;
 				MODULE_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -605,14 +605,14 @@
 				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 23042101;
+				CURRENT_PROJECT_VERSION = 23043002;
 				DEVELOPMENT_TEAM = P83ZS7XR97;
 				INFOPLIST_FILE = onyoufrontend/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OnYou;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 1.2.1;
 				MODULE_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",

@@ -5,7 +5,7 @@ import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import { useSelector } from "react-redux";
-import { FeedComment, FeedApi, FeedCommentsResponse, ErrorResponse, BaseResponse, FeedCommentCreationRequest, FeedCommentDefaultRequest } from "../../api";
+import { FeedComment, FeedApi, FeedCommentsResponse, ErrorResponse, BaseResponse, FeedCommentCreationRequest, FeedCommentDefaultRequest, LikeUser } from "../../api";
 import CustomText from "../../components/CustomText";
 import Comment from "../../components/Comment";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -210,6 +210,11 @@ const FeedComments = ({
     deleteFeedCommentMutation.mutate(requestData);
   };
 
+  const goToFeedLikes = (likeUsers?: LikeUser[]) => {
+    if (!likeUsers || likeUsers.length === 0) return;
+    navigate("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
+  };
+
   /**
    *
    * @param commentId
@@ -284,7 +289,15 @@ const FeedComments = ({
             ListFooterComponent={<View />}
             ListFooterComponentStyle={{ marginBottom: 40 }}
             renderItem={({ item, index }: { item: FeedComment; index: number }) => (
-              <Comment commentData={item} parentIndex={index} parentId={item.commentId} deleteComment={deleteComment} likeComment={likeComment} setReplyStatus={setReplyStatus} />
+              <Comment
+                commentData={item}
+                parentIndex={index}
+                parentId={item.commentId}
+                deleteComment={deleteComment}
+                likeComment={likeComment}
+                setReplyStatus={setReplyStatus}
+                goToFeedLikes={goToFeedLikes}
+              />
             )}
             ListEmptyComponent={() => (
               <EmptyView>

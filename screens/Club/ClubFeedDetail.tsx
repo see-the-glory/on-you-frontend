@@ -201,7 +201,8 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         onPress: () => {
           selectFeedData?.imageUrls?.map((url) => {
             let fileName = url.split("/").pop();
-            let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}` : `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}`;
+            let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DownloadDir}` : `${RNFetchBlob.fs.dirs.CacheDir}`;
+            path += `/OnYou/${fileName}`;
             RNFetchBlob.config({
               addAndroidDownloads: {
                 useDownloadManager: true,
@@ -214,7 +215,10 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
               .then((res) => {
                 if (Platform.OS === "ios") {
                   const filePath = res.path();
-                  CameraRoll.save(filePath).then(() => {
+                  CameraRoll.save(filePath, {
+                    type: "photo",
+                    album: "OnYou",
+                  }).then(() => {
                     RNFetchBlob.fs.unlink(filePath);
                   });
                 }
