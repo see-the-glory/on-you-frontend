@@ -211,7 +211,10 @@ const FeedSelection = ({
               .then((res) => {
                 if (Platform.OS === "ios") {
                   const filePath = res.path();
-                  CameraRoll.save(filePath).then(() => {
+                  CameraRoll.save(filePath, {
+                    type: "photo",
+                    album: "OnYou",
+                  }).then(() => {
                     RNFetchBlob.fs.unlink(filePath);
                   });
                 }
