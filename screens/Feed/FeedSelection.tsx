@@ -198,7 +198,8 @@ const FeedSelection = ({
         onPress: () => {
           feedData?.imageUrls?.map((url) => {
             let fileName = url.split("/").pop();
-            let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}` : `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}`;
+            let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DownloadDir}` : `${RNFetchBlob.fs.dirs.CacheDir}`;
+            path += `/OnYou/${fileName}`;
             RNFetchBlob.config({
               addAndroidDownloads: {
                 useDownloadManager: true,
