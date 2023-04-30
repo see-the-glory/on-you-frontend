@@ -175,7 +175,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
       if (feedData?.likeYn) heartRef.current?.play(30, 30);
       else heartRef.current?.play(0, 0);
       isFirstRun.current = false;
-    } else {
+    } else {\
       bgHeartRef.current?.play(10, 25);
 
       if (feedData?.likeYn) heartRef.current?.play(10, 25);
