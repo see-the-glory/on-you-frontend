@@ -144,6 +144,7 @@ export interface FeedComment {
   likeCount: number;
   likeYn: boolean;
   replies: FeedComment[];
+  likeUserResponseList: LikeUser[];
 }
 
 export interface Reply {

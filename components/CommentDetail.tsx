@@ -3,7 +3,7 @@ import moment from "moment";
 import React from "react";
 import { useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
-import { FeedComment } from "../api";
+import { FeedComment, LikeUser } from "../api";
 import CircleIcon from "./CircleIcon";
 import CustomText from "./CustomText";
 
@@ -55,6 +55,8 @@ const ReplyButton = styled.TouchableOpacity``;
 
 const LikeButton = styled.TouchableOpacity``;
 
+const LikeUserButton = styled.TouchableOpacity``;
+
 interface CommentDetailProps {
   commentData: FeedComment;
   commentType: number; // 0 : 기본댓글 , 1: 답글
@@ -65,9 +67,10 @@ interface CommentDetailProps {
   thumbnailKerning: number;
   likeComment: (commentId: number, commentType: number, parentIndex: number, replyIndex?: number) => void;
   setReplyStatus: (parentId: number, userName: string) => void;
+  goToFeedLikes: (likeUsers?: LikeUser[]) => void;
 }
 
-const CommentDetail: React.FC<CommentDetailProps> = ({ commentData, commentType, parentIndex, replyIndex, parentId, thumbnailSize, thumbnailKerning, likeComment, setReplyStatus }) => {
+const CommentDetail: React.FC<CommentDetailProps> = ({ commentData, commentType, parentIndex, replyIndex, parentId, thumbnailSize, thumbnailKerning, likeComment, setReplyStatus, goToFeedLikes }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const paddingSize = 20;
   const sideWidth = 20;
@@ -87,7 +90,13 @@ const CommentDetail: React.FC<CommentDetailProps> = ({ commentData, commentType,
           <ContentText>{commentData.content.trim()}</ContentText>
         </Content>
         <Footer>
-          {commentData.likeCount > 0 ? <SubText style={{ marginRight: 8 }}>{`좋아요 ${commentData.likeCount}명`}</SubText> : <></>}
+          {commentData.likeCount > 0 ? (
+            <LikeUserButton activeOpacity={1} onPress={() => goToFeedLikes(commentData.likeUserResponseList)}>
+              <SubText style={{ marginRight: 8 }}>{`좋아요 ${commentData.likeCount}명`}</SubText>
+            </LikeUserButton>
+          ) : (
+            <></>
+          )}
           <ReplyButton onPress={() => setReplyStatus(parentId, commentData.userName)}>
             <SubText>{`답글달기`}</SubText>
           </ReplyButton>
