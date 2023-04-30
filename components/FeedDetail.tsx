@@ -175,8 +175,8 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
       if (feedData?.likeYn) heartRef.current?.play(30, 30);
       else heartRef.current?.play(0, 0);
       isFirstRun.current = false;
-    } else {
-      bgHeartRef.current?.play();
+    } else {\
+      bgHeartRef.current?.play(10, 25);
 
       if (feedData?.likeYn) heartRef.current?.play(10, 25);
       else heartRef.current?.play(45, 60);
@@ -200,7 +200,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
 
       if (feedData?.likeYn) {
         heartRef.current?.play(10, 25);
-        bgHeartRef.current?.play();
+        bgHeartRef.current?.play(10, 25);
       } else {
         if (likeFeed) likeFeed(feedIndex, feedData?.id);
       }
@@ -293,12 +293,13 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
       <AnimatedHeartView style={{ opacity }} pointerEvents="none">
         <Lottie
           ref={bgHeartRef}
-          source={require("../assets/lottie/1839-like-background.json")}
+          source={require("../assets/lottie/like-background.json")}
           autoPlay={false}
           loop={false}
-          speed={1.3}
-          colorFilters={[{ keypath: "skadls Outlines 2", color: "#FF551F" }]}
+          speed={1.5}
+          colorFilters={[{ keypath: "Filled", color: "#E7564F" }]}
           onAnimationFinish={onBgHeartAnimationFinish}
+          autoSize={true}
           style={{ width: 200, height: 200 }}
         />
       </AnimatedHeartView>
@@ -313,7 +314,10 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
                   autoPlay={false}
                   loop={false}
                   speed={1.5}
-                  colorFilters={[{ keypath: "Filled", color: "#FF551F" }]}
+                  colorFilters={[
+                    { keypath: "Filled", color: "#E7564F" },
+                    { keypath: "Empty", color: "#000000" },
+                  ]}
                   style={{ width: 35, height: 35, marginLeft: -3 }}
                 />
               </InformationIconButton>
