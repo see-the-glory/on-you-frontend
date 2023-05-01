@@ -25,6 +25,8 @@ import queryString from "query-string";
 import { getModel, getVersion } from "react-native-device-info";
 import styled from "styled-components/native";
 import CustomText from "../components/CustomText";
+import CodePush from "react-native-code-push";
+import packageInfo from "../package.json";
 
 const Nav = createNativeStackNavigator();
 
@@ -112,6 +114,8 @@ const Root = () => {
   const updateMetaInfo = async () => {
     let deviceInfo = await getModel();
     let currentVersion = await getVersion();
+    let codePushInfo = await CodePush.getUpdateMetadata();
+    if (currentVersion && codePushInfo) currentVersion = currentVersion.slice(0, -1) + packageInfo.version.split(".")[2];
     const requestData: MetaInfoRequest = { deviceInfo, currentVersion };
 
     updateMetaInfoMutation.mutate(requestData, {
