@@ -28,10 +28,17 @@ const HeaderLeftView = styled.View`
   flex-direction: row;
   align-items: center;
 `;
-const HeaderNameView = styled.View`
+const HeaderInformationView = styled.View`
   justify-content: center;
   align-items: flex-start;
 `;
+
+const HeaderNameView = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
 const HeaderRightView = styled.View`
   height: 100%;
   justify-content: flex-end;
@@ -42,6 +49,7 @@ const HeaderText = styled(CustomText)`
   font-family: "NotoSansKR-Medium";
   color: #2b2b2b;
   line-height: 25px;
+  margin-right: 5px;
 `;
 const ContentView = styled.View<{ padding: number }>`
   padding: 0px ${(props: any) => (props.padding ? props.padding : "0")}px;
@@ -72,7 +80,6 @@ const InformationNumberButton = styled.TouchableOpacity`
 const CountingNumber = styled(CustomText)`
   margin-left: 3px;
 `;
-const InformationRightView = styled.View``;
 const CreatedTime = styled(CustomText)`
   color: #9a9a9a;
 `;
@@ -175,7 +182,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
       if (feedData?.likeYn) heartRef.current?.play(30, 30);
       else heartRef.current?.play(0, 0);
       isFirstRun.current = false;
-    } else {\
+    } else {
       bgHeartRef.current?.play(10, 25);
 
       if (feedData?.likeYn) heartRef.current?.play(10, 25);
@@ -255,17 +262,20 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
     <Container>
       <HeaderView padding={10} height={headerHeight}>
         <HeaderLeftView>
-          <CircleIcon uri={feedData?.thumbnail} size={46} kerning={6} />
-          <HeaderNameView>
-            <HeaderText>{feedData?.userName}</HeaderText>
-            {showClubName ? (
-              <TouchableWithoutFeedback onPress={() => (goToClub ? goToClub(feedData?.clubId) : {})}>
-                <Tag name={feedData?.clubName ?? ""} textColor="white" backgroundColor="#C4C4C4" />
-              </TouchableWithoutFeedback>
-            ) : (
-              <></>
-            )}
-          </HeaderNameView>
+          <CircleIcon uri={feedData?.thumbnail} size={40} kerning={6} />
+          <HeaderInformationView>
+            <HeaderNameView>
+              <HeaderText>{feedData?.userName}</HeaderText>
+              {showClubName ? (
+                <TouchableWithoutFeedback onPress={() => (goToClub ? goToClub(feedData?.clubId) : {})}>
+                  <Tag name={feedData?.clubName ?? ""} textColor="#464646" backgroundColor="#E6E6E6" />
+                </TouchableWithoutFeedback>
+              ) : (
+                <></>
+              )}
+            </HeaderNameView>
+            <CreatedTime>{moment(feedData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
+          </HeaderInformationView>
         </HeaderLeftView>
         <HeaderRightView>
           <TouchableOpacity onPress={() => openFeedOption(feedData)} style={{ paddingLeft: 15, paddingTop: 15 }}>
@@ -331,9 +341,6 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
                 <CountingNumber>{feedData?.commentCount}</CountingNumber>
               </InformationNumberButton>
             </InformationLeftView>
-            <InformationRightView>
-              <CreatedTime>{moment(feedData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
-            </InformationRightView>
           </View>
         </InformationView>
         <ScrollView style={{ height: 0 }}>
