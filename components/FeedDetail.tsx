@@ -268,7 +268,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
               <HeaderText>{feedData?.userName}</HeaderText>
               {showClubName ? (
                 <TouchableWithoutFeedback onPress={() => (goToClub ? goToClub(feedData?.clubId) : {})}>
-                  <Tag name={feedData?.clubName ?? ""} textColor="#464646" backgroundColor="#E6E6E6" />
+                  <Tag name={feedData?.clubName ?? ""} contentContainerStyle={{ paddingLeft: 7, paddingRight: 7 }} textColor="#464646" backgroundColor="#E6E6E6" />
                 </TouchableWithoutFeedback>
               ) : (
                 <></>
