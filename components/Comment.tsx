@@ -73,11 +73,13 @@ const Comment: React.FC<CommentProps> = ({ commentData, parentIndex, parentId, d
           <AntDesign name="minus" size={11} color="#8e8e8e" />
           <ReplyText>{` 답글 ${commentData.replies.length}개 더보기`}</ReplyText>
         </ReplyShowButton>
-      ) : (
+      ) : commentData?.replies?.length && !collapsed ? (
         <ReplyShowButton activeOpacity={1} style={{ paddingLeft: paddingSize + thumbnailSize + thumbnailKerning }} onPress={() => setCollapsed(true)}>
           <AntDesign name="minus" size={11} color="#8e8e8e" />
           <ReplyText>{` 답글 감추기`}</ReplyText>
         </ReplyShowButton>
+      ) : (
+        <></>
       )}
       {/* Collapsible 에 minHeight 이 없으면 HiddenItemContainer의 배경색이 적용되지 않는 이슈가 있음. */}
       <Collapsible style={{ minHeight: commentData.replies.length ? 50 : 0 }} collapsed={collapsed}>

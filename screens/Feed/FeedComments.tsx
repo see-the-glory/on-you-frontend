@@ -6,7 +6,6 @@ import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import { FeedComment, FeedApi, FeedCommentsResponse, ErrorResponse, BaseResponse, FeedCommentCreationRequest, FeedCommentDefaultRequest } from "../../api";
-import CustomText from "../../components/CustomText";
 import Comment from "../../components/Comment";
 import CircleIcon from "../../components/CircleIcon";
 import { SwipeListView } from "react-native-swipe-list-view";

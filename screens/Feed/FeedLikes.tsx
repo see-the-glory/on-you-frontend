@@ -1,5 +1,5 @@
 import { Entypo } from "@expo/vector-icons";
-import React, { useCallback, useLayoutEffect, useState } from "react";
+import React, { useCallback, useLayoutEffect } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { LikeUser } from "../../api";
