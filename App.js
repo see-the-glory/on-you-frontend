@@ -50,6 +50,7 @@ const RootNavigation = () => {
       "Roboto-Medium": require("./assets/fonts/Roboto/Roboto-Medium.ttf"),
       "Roboto-Regular": require("./assets/fonts/Roboto/Roboto-Regular.ttf"),
       "TT-Commons-Bold": require("./assets/fonts/TTCommons/TT-Commons-Bold.otf"),
+      "TT-Commons-DemiBold": require("./assets/fonts/TTCommons/TT-Commons-DemiBold.otf"),
       "TT-Commons-Light": require("./assets/fonts/TTCommons/TT-Commons-Light.otf"),
       "TT-Commons-Medium": require("./assets/fonts/TTCommons/TT-Commons-Medium.otf"),
       "TT-Commons-Regular": require("./assets/fonts/TTCommons/TT-Commons-Regular.otf"),

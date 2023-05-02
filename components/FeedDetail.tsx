@@ -1,5 +1,5 @@
 import React, { PureComponent, useEffect, useRef, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import CustomText from "./CustomText";
@@ -278,8 +278,8 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
           </HeaderInformationView>
         </HeaderLeftView>
         <HeaderRightView>
-          <TouchableOpacity onPress={() => openFeedOption(feedData)} style={{ paddingLeft: 15, paddingTop: 15 }}>
-            <Ionicons name="ellipsis-vertical" size={15} color="black" style={{ marginRight: -5 }} />
+          <TouchableOpacity onPress={() => openFeedOption(feedData)} style={{ paddingLeft: 15, paddingTop: 15, marginRight: -10 }}>
+            <AntDesign name="ellipsis1" size={16} color="black" style={{ marginRight: 5 }} />
           </TouchableOpacity>
         </HeaderRightView>
       </HeaderView>
@@ -346,7 +346,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
         <ScrollView style={{ height: 0 }}>
           <ContentText onTextLayout={onTextLayout}>{feedData?.content}</ContentText>
         </ScrollView>
-        <TouchableWithoutFeedback onPress={contentTextTouch}>
+        <TouchableOpacity activeOpacity={1} onPress={contentTextTouch}>
           <ContentTextView height={contentHeight}>
             {contentState.moreContent && isCollapsed ? (
               <>
@@ -359,14 +359,14 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
               <ContentText>{contentState.collapsedText}</ContentText>
             )}
           </ContentTextView>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={contentTextTouch}>
+        </TouchableOpacity>
+        <TouchableOpacity activeOpacity={1} onPress={contentTextTouch}>
           <Collapsible collapsed={isCollapsed} style={{ height: contentState.textHeight }}>
             <ContentTextView>
               <ContentText>{contentState.remainedText}</ContentText>
             </ContentTextView>
           </Collapsible>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
       </ContentView>
     </Container>
   );
