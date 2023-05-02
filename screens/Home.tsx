@@ -2,7 +2,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Animated, DeviceEventEmitter, Platform, StatusBar, useWindowDimensions, View } from "react-native";
-import FastImage from "react-native-fast-image";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useMutation, useQuery } from "react-query";
@@ -39,7 +38,7 @@ const HeaderView = styled.View<{ height: number }>`
 `;
 
 const LogoText = styled.Text`
-  font-family: "TT-Commons-DemiBold";
+  font-family: ${(props: any) => props.theme.englishSecondaryFontDB};
   font-size: 30px;
 `;
 
@@ -86,7 +85,7 @@ const Home = () => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const homeHeaderHeight = 50;
   const modalOptionButtonHeight = 45;
-  const feedDetailHeaderHeight = 62;
+  const feedDetailHeaderHeight = 50;
   const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
   const itemSeparatorGap = 20;

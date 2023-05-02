@@ -1,8 +1,7 @@
-import React, { PureComponent, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
-import CustomText from "./CustomText";
 import CircleIcon from "./CircleIcon";
 import { Feed, LikeUser } from "../api";
 import { Alert, Animated, NativeSyntheticEvent, Platform, ScrollView, TextLayoutEventData, TouchableOpacity, View } from "react-native";
@@ -44,13 +43,14 @@ const HeaderRightView = styled.View`
   justify-content: flex-end;
   padding-bottom: 10px;
 `;
-const HeaderText = styled(CustomText)`
-  font-size: 16px;
-  font-family: "NotoSansKR-Medium";
+const HeaderText = styled.Text`
+  font-size: 13px;
+  line-height: 16px;
+  font-family: ${(props: any) => props.theme.koreanFontEB};
   color: #2b2b2b;
-  line-height: 25px;
   margin-right: 5px;
 `;
+
 const ContentView = styled.View<{ padding: number }>`
   padding: 0px ${(props: any) => (props.padding ? props.padding : "0")}px;
 `;
@@ -77,25 +77,30 @@ const InformationNumberButton = styled.TouchableOpacity`
   margin-right: 12px;
 `;
 
-const CountingNumber = styled(CustomText)`
+const CountingNumber = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
   margin-left: 3px;
 `;
-const CreatedTime = styled(CustomText)`
+const CreatedTime = styled.Text`
   color: #9a9a9a;
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 11px;
 `;
 const ContentTextView = styled.Text<{ height: number }>`
   ${(props: any) => (props.height ? `height: ${props.height}px` : "")};
 `;
-const ContentText = styled(CustomText)`
-  font-size: 14px;
-  line-height: 20px;
+const ContentText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 13px;
+  line-height: 18px;
   color: #2b2b2b;
 `;
 
-const ContentSubText = styled(CustomText)`
-  font-size: 14px;
-  line-height: 20px;
-  color: #9a9a9a;
+const ContentSubText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
+  line-height: 18px;
+  color: #5b5b5b;
 `;
 
 const HeartView = styled.View`
@@ -262,14 +267,14 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
     <Container>
       <HeaderView padding={10} height={headerHeight}>
         <HeaderLeftView>
-          <CircleIcon uri={feedData?.thumbnail} size={40} kerning={6} />
+          <CircleIcon uri={feedData?.thumbnail} size={36} kerning={6} />
           <HeaderInformationView>
             <HeaderNameView>
               <HeaderText>{feedData?.userName}</HeaderText>
               {showClubName ? (
-                <TouchableWithoutFeedback onPress={() => (goToClub ? goToClub(feedData?.clubId) : {})}>
+                <TouchableOpacity activeOpacity={1} onPress={() => (goToClub ? goToClub(feedData?.clubId) : {})}>
                   <Tag name={feedData?.clubName ?? ""} contentContainerStyle={{ paddingLeft: 7, paddingRight: 7 }} textColor="#464646" backgroundColor="#E6E6E6" />
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
               ) : (
                 <></>
               )}
@@ -307,7 +312,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
           autoPlay={false}
           loop={false}
           speed={1.5}
-          colorFilters={[{ keypath: "Filled", color: "#E7564F" }]}
+          colorFilters={[{ keypath: "Filled", color: "#EC5D56" }]}
           onAnimationFinish={onBgHeartAnimationFinish}
           autoSize={true}
           style={{ width: 200, height: 200 }}
@@ -325,7 +330,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
                   loop={false}
                   speed={1.5}
                   colorFilters={[
-                    { keypath: "Filled", color: "#E7564F" },
+                    { keypath: "Filled", color: "#EC5D56" },
                     { keypath: "Empty", color: "#000000" },
                   ]}
                   style={{ width: 35, height: 35, marginLeft: -3 }}
@@ -352,8 +357,8 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
               <>
                 <ContentText>{`${
                   contentState.collapsedTextList.length > 1 && contentState.collapsedTextList[1].length > 15 ? contentState.collapsedText.slice(0, -8) : contentState.collapsedText
-                }...`}</ContentText>
-                <ContentSubText>{` 더 보기`}</ContentSubText>
+                }  `}</ContentText>
+                <ContentSubText>{` 더보기`}</ContentSubText>
               </>
             ) : (
               <ContentText>{contentState.collapsedText}</ContentText>

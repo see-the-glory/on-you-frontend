@@ -2,7 +2,6 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import React from "react";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
 import styled from "styled-components/native";
-import CustomText from "./CustomText";
 
 const TagView = styled.View<{ backgroundColor: string; borderColor: string }>`
   flex-direction: row;
@@ -14,10 +13,10 @@ const TagView = styled.View<{ backgroundColor: string; borderColor: string }>`
   ${(props: any) => (props.borderColor ? `border: 1px solid ${props.borderColor};` : "")}
 `;
 
-const TagText = styled(CustomText)<{ color: string }>`
-  font-family: "NotoSansKR-Medium";
-  font-size: 11px;
-  line-height: 15px;
+const TagText = styled.Text<{ color: string }>`
+  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-size: 10px;
+  line-height: 13px;
   color: ${(props: any) => (props.color ? props.color : "white")};
 `;
 

@@ -1,4 +1,4 @@
-import { AntDesign, Entypo, EvilIcons } from "@expo/vector-icons";
+import { Entypo, EvilIcons } from "@expo/vector-icons";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ActivityIndicator, BackHandler, DeviceEventEmitter, KeyboardAvoidingView, LayoutChangeEvent, Platform, StatusBar, Text, TextInput, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
@@ -8,9 +8,8 @@ import { useSelector } from "react-redux";
 import { FeedComment, FeedApi, FeedCommentsResponse, ErrorResponse, BaseResponse, FeedCommentCreationRequest, FeedCommentDefaultRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import Comment from "../../components/Comment";
-import CustomTextInput from "../../components/CustomTextInput";
 import CircleIcon from "../../components/CircleIcon";
-import { SwipeListView, SwipeRow } from "react-native-swipe-list-view";
+import { SwipeListView } from "react-native-swipe-list-view";
 import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
 import feedSlice from "../../redux/slices/feed";
@@ -38,7 +37,9 @@ const ReplyStatusView = styled.View<{ padding: number }>`
   padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
 `;
 
-const StatusText = styled(CustomText)`
+const StatusText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-size: 12px;
   color: #8e8e8e;
 `;
 
@@ -62,7 +63,9 @@ const RoundingView = styled.View`
   border-color: rgba(0, 0, 0, 0.5);
   border-radius: 20px;
 `;
-const CommentInput = styled(CustomTextInput)`
+const CommentInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
   flex: 1;
   margin: 1px 0px;
 `;
@@ -80,7 +83,8 @@ const SubmitLoadingView = styled.View`
   padding-left: 8px;
   margin-bottom: 8px;
 `;
-const SubmitButtonText = styled(CustomText)<{ disabled: boolean }>`
+const SubmitButtonText = styled.Text<{ disabled: boolean }>`
+  font-family: ${(props: any) => props.theme.koreanFontM};
   font-size: 14px;
   line-height: 20px;
   color: #63abff;
@@ -93,10 +97,11 @@ const EmptyView = styled.View`
   align-items: center;
 `;
 
-const EmptyText = styled(CustomText)`
+const EmptyText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
-  color: #bdbdbd;
+  color: #acacac;
   justify-content: center;
   align-items: center;
   text-align: center;
