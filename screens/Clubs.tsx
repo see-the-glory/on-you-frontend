@@ -6,11 +6,11 @@ import ClubList from "../components/ClubList";
 import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
 import { Category, CategoryResponse, ClubApi, Club, ClubsResponse, ClubsParams, ErrorResponse } from "../api";
 import { ClubListScreenProps } from "../Types/Club";
-import CustomText from "../components/CustomText";
 import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { Slider } from "@miblanchard/react-native-slider";
 import { useToast } from "react-native-toast-notifications";
+import BottomButton from "../components/BottomButton";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -23,17 +23,17 @@ const CategoryButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
 `;
-const CategoryName = styled(CustomText)`
-  font-size: 17px;
-  color: gray;
-  line-height: 23px;
+const CategoryName = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 13px;
+  line-height: 16px;
+  color: #8e8e8e;
 `;
 
-const SelectedCategoryName = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  font-size: 17px;
-  color: black;
-  line-height: 23px;
+const SelectedCategoryName = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-size: 13px;
+  line-height: 16px;
 `;
 
 const Container = styled.SafeAreaView`
@@ -41,7 +41,7 @@ const Container = styled.SafeAreaView`
 `;
 
 const HeaderView = styled.View`
-  height: 90px;
+  height: 80px;
 `;
 
 const HeaderSection = styled.View`
@@ -63,9 +63,9 @@ const HeaderItem = styled.View`
   align-items: center;
 `;
 
-const HeaderItemText = styled(CustomText)`
-  font-size: 13px;
-  line-height: 18px;
+const HeaderItemText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 10px;
 `;
 
 const MainView = styled.View`
@@ -120,18 +120,18 @@ const ItemLeftView = styled.View`
 const ItemRightView = styled.View`
   flex: 0.77;
 `;
-const ItemNameText = styled(CustomText)`
-  font-family: "NotoSansKR-Medium";
+const ItemNameText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
   font-size: 16px;
-  line-height: 22px;
+  line-height: 18px;
 `;
-const ItemContentView = styled.View``;
-const ItemContentText = styled(CustomText)`
+const ItemContentText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
-  line-height: 20px;
 `;
-const ItemContentSubText = styled(CustomText)`
-  font-size: 13px;
+const ItemContentSubText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
 `;
 const ItemContentButton = styled.TouchableOpacity`
   flex-direction: row;
@@ -148,20 +148,6 @@ const CheckBox = styled.View`
   background-color: white;
 `;
 
-const SubmitButton = styled.TouchableOpacity`
-  height: 60px;
-  justify-content: center;
-  align-items: center;
-  background-color: #ff6534;
-`;
-const SubmitText = styled(CustomText)`
-  font-size: 23px;
-  line-height: 32px;
-  font-family: "NotoSansKR-Medium";
-  padding-bottom: 10px;
-  color: white;
-`;
-
 const SortingItemView = styled.View`
   justify-content: center;
   align-items: center;
@@ -170,11 +156,10 @@ const SortingItemButton = styled.TouchableOpacity`
   padding: 7px 0px;
   margin: 3px 0px;
 `;
-const SortingItemText = styled(CustomText)<{ selected: boolean }>`
-  font-size: 15px;
-  line-height: 22px;
-  color: ${(props: any) => (props.selected ? "#FF6534" : "#b0b0b0")};
-  font-family: ${(props: any) => (props.selected ? "NotoSansKR-Medium" : "NotoSansKR-Regular")};
+const SortingItemText = styled.Text<{ selected: boolean }>`
+  font-size: 14px;
+  color: ${(props: any) => (props.selected ? "#EC5D56" : "#b0b0b0")};
+  font-family: ${(props: any) => (props.selected ? props.theme.koreanFontM : props.theme.koreanFontR)};
 `;
 
 interface ClubSortItem {
@@ -370,7 +355,6 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   ) : (
     <>
       <Container>
-        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
         <HeaderView>
           <FlatList
             showsHorizontalScrollIndicator={false}
@@ -395,9 +379,11 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
           />
           <HeaderSection>
             <HeaderItem>
-              <HeaderItemText>상세 필터</HeaderItemText>
+              <TouchableOpacity activeOpacity={1} onPress={() => openFilteringSheet()}>
+                <HeaderItemText>상세 필터</HeaderItemText>
+              </TouchableOpacity>
               <TouchableOpacity style={{ height: 35, justifyContent: "center" }} onPress={() => openFilteringSheet()}>
-                <Feather name="filter" size={14} color={usingFilter ? "#FF6534" : "black"} />
+                <Feather name="filter" size={13} color={usingFilter ? "#EC5D56" : "black"} />
               </TouchableOpacity>
             </HeaderItem>
             <View
@@ -409,17 +395,11 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               }}
             ></View>
             <HeaderItem>
-              <HeaderItemText>{sortItem ? sortItem[selectedSortIndex].title : "최신순"}</HeaderItemText>
-              <TouchableOpacity
-                style={{
-                  height: 35,
-                  justifyContent: "center",
-                }}
-                onPress={() => {
-                  openSortingSheet();
-                }}
-              >
-                <MaterialCommunityIcons name="sort" size={14} color="black" />
+              <TouchableOpacity activeOpacity={1} onPress={() => openSortingSheet()}>
+                <HeaderItemText>{sortItem ? sortItem[selectedSortIndex].title : "최신순"}</HeaderItemText>
+              </TouchableOpacity>
+              <TouchableOpacity style={{ height: 35, justifyContent: "center" }} onPress={() => openSortingSheet()}>
+                <MaterialCommunityIcons name="sort" size={13} color="black" />
               </TouchableOpacity>
             </HeaderItem>
           </HeaderSection>
@@ -484,14 +464,13 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
           handleStyle={{ top: 14, height: 3, width: 35, backgroundColor: "#d4d4d4" }}
           modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
           FooterComponent={
-            <SubmitButton
+            <BottomButton
               onPress={() => {
                 closeFilteringSheet();
                 if (params.showRecruiting !== showRecruiting || params.showMy !== showMy || memberRange[0] !== params.minMember || memberRange[1] !== params.maxMember) setClubsFilterParams();
               }}
-            >
-              <SubmitText>모임 보기</SubmitText>
-            </SubmitButton>
+              title={"모임 보기"}
+            />
           }
           onOpen={() => {
             if (Platform.OS === "android") {
@@ -519,7 +498,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 >
                   <ItemContentText>멤버 모집중인 모임만 보기</ItemContentText>
                   <CheckBox>
-                    <Ionicons name="checkmark-sharp" size={15} color={showRecruiting ? "#FF6534" : "white"} />
+                    <Ionicons name="checkmark-sharp" size={15} color={showRecruiting ? "#EC5D56" : "white"} />
                   </CheckBox>
                 </ItemContentButton>
               </ItemRightView>
@@ -541,13 +520,13 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                   }}
                   onSlidingComplete={(value) => setMemberRange(value)}
                   minimumValue={filterMinNumber}
-                  minimumTrackTintColor="#FF6534"
+                  minimumTrackTintColor="#EC5D56"
                   maximumValue={filterMaxNumber}
                   maximumTrackTintColor="#E8E8E8"
                   step={5}
                   thumbTintColor="white"
                   trackStyle={{ height: 2 }}
-                  thumbStyle={{ width: 18, height: 18, borderWidth: 1, borderColor: "#FF6534" }}
+                  thumbStyle={{ width: 18, height: 18, borderWidth: 1, borderColor: "#EC5D56" }}
                 />
                 <ItemContentSubText>{Array.isArray(memberRange) ? `최소 ${memberRange[0]} 명 이상 최대 ${memberRange[1]} 명 이하` : ``}</ItemContentSubText>
               </ItemRightView>
@@ -565,7 +544,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 >
                   <ItemContentText>내가 가입된 모임만 보기</ItemContentText>
                   <CheckBox>
-                    <Ionicons name="checkmark-sharp" size={15} color={showMy ? "#FF6534" : "#e8e8e8"} />
+                    <Ionicons name="checkmark-sharp" size={15} color={showMy ? "#EC5D56" : "#e8e8e8"} />
                   </CheckBox>
                 </ItemContentButton>
               </ItemRightView>
