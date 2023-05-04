@@ -28,7 +28,7 @@ const ReplyShowButton = styled.TouchableOpacity`
 `;
 const ReplyText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 10px;
+  font-size: 11px;
   color: #8e8e8e;
 `;
 

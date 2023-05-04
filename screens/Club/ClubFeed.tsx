@@ -6,7 +6,6 @@ import { useInfiniteQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { ErrorResponse, Feed, FeedApi, FeedsResponse } from "../../api";
-import CustomText from "../../components/CustomText";
 import clubSlice from "../../redux/slices/club";
 import { useAppDispatch } from "../../redux/store";
 import { RootState } from "../../redux/store/reducers";
@@ -28,7 +27,7 @@ const EmptyView = styled.View`
   justify-content: flex-start;
   align-items: center;
   padding-top: 200px;
-  background-color: white;
+  background-color: #f5f5f5;
 `;
 
 const EmptyText = styled.Text`
@@ -139,7 +138,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       onScrollEndDrag={() => syncScrollOffset(screenName)}
       style={{
         flex: 1,
-        backgroundColor: "white",
+        backgroundColor: "#F5F5F5",
         transform: [
           {
             translateY: scrollY.interpolate({
@@ -152,7 +151,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       }}
       contentContainerStyle={{
         paddingTop: headerDiff,
-        backgroundColor: "white",
+        backgroundColor: "#F5F5F5",
         minHeight: SCREEN_HEIGHT + headerDiff,
         flexGrow: 1,
       }}

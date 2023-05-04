@@ -13,7 +13,7 @@ const Container = styled.View`
 
 const NameText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontM};
-  font-size: 13px;
+  font-size: 14px;
   line-height: 16px;
   color: #2b2b2b;
 `;

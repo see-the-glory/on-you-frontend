@@ -23,17 +23,17 @@ const HeaderTitleView = styled.View`
   justify-content: center;
   align-items: center;
 `;
-const HeaderClubName = styled(CustomText)`
-  font-size: 14px;
-  font-family: "NotoSansKR-Medium";
+const HeaderClubName = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-size: 13px;
   color: #8e8e8e;
-  line-height: 20px;
+  line-height: 21px;
 `;
 const HeaderText = styled(CustomText)`
-  font-size: 16px;
-  font-family: "NotoSansKR-Medium";
-  color: #2b2b2b;
+  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-size: 15px;
   line-height: 20px;
+  color: #2b2b2b;
 `;
 
 const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
@@ -47,12 +47,11 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   const feeds = useSelector((state: RootState) => state.club.feeds);
   const dispatch = useAppDispatch();
   const toast = useToast();
-  const { ref: myFeedOptionRef, open: openMyFeedOption, close: closeMyFeedOption } = useModalize();
-  const { ref: otherFeedOptionRef, open: openOtherFeedOption, close: closeOtherFeedOption } = useModalize();
+  const { ref: feedOptionRef, open: openFeedOption, close: closeFeedOption } = useModalize();
   const { ref: complainOptionRef, open: openComplainOption, close: closeComplainOption } = useModalize();
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const modalOptionButtonHeight = 45;
-  const feedDetailHeaderHeight = 50;
+  const feedDetailHeaderHeight = 52;
   const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
   const itemSeparatorGap = 20;
@@ -74,7 +73,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       toast.show(`게시글이 삭제되었습니다.`, { type: "success" });
       DeviceEventEmitter.emit("HomeAllRefetch");
       DeviceEventEmitter.emit("ClubFeedRefetch");
-      closeMyFeedOption();
+      closeFeedOption();
     },
     onError: (error) => {
       console.log(`API ERROR | deleteFeed ${error.code} ${error.status}`);
@@ -88,7 +87,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     onSuccess: (res) => {
       toast.show(`사용자를 차단했습니다.`, { type: "success" });
       DeviceEventEmitter.emit("ClubFeedRefetch");
-      closeOtherFeedOption();
+      closeFeedOption();
     },
     onError: (error) => {
       console.log(`API ERROR | blockUser ${error.code} ${error.status}`);
@@ -97,7 +96,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   });
 
   const goToComplain = () => {
-    closeOtherFeedOption();
+    closeFeedOption();
     openComplainOption();
   };
 
@@ -112,15 +111,14 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   };
 
   const goToUpdateFeed = () => {
-    closeMyFeedOption();
+    closeFeedOption();
     navigate("FeedStack", { screen: "FeedModification", params: { feedData: selectFeedData } });
   };
 
-  const openFeedOption = (feedData?: Feed) => {
+  const goToFeedOptionModal = (feedData?: Feed) => {
     if (!feedData) return;
     setSelectFeedData(feedData);
-    if (feedData?.userId === me?.id) openMyFeedOption();
-    else openOtherFeedOption();
+    openFeedOption();
   };
 
   const deleteFeed = () => {
@@ -220,7 +218,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
                 }
               });
           });
-          closeOtherFeedOption();
+          closeFeedOption();
         },
       },
     ]);
@@ -272,7 +270,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         headerHeight={feedDetailHeaderHeight}
         infoHeight={feedDetailInfoHeight}
         contentHeight={feedDetailContentHeight}
-        openFeedOption={openFeedOption}
+        goToFeedOptionModal={goToFeedOptionModal}
         goToFeedComments={goToFeedComments}
         goToFeedLikes={goToFeedLikes}
         likeFeed={likeFeed}
@@ -308,12 +306,13 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         removeClippedSubviews={true}
       />
 
-      <FeedOptionModal modalRef={myFeedOptionRef} buttonHeight={modalOptionButtonHeight} isMyFeed={true} goToUpdateFeed={goToUpdateFeed} deleteFeed={deleteFeed} />
       <FeedOptionModal
-        modalRef={otherFeedOptionRef}
+        modalRef={feedOptionRef}
         buttonHeight={modalOptionButtonHeight}
-        isMyFeed={false}
+        isMyFeed={selectFeedData?.userId === me?.id}
         isMyClubPost={["MASTER", "MANAGER", "MEMBER"].includes(myRole ?? "") ? true : false}
+        goToUpdateFeed={goToUpdateFeed}
+        deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
         downloadImages={downloadImages}

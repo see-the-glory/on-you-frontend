@@ -33,7 +33,7 @@ const Side = styled.View<{ width: number }>`
 
 const UserName = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontB};
-  font-size: 12px;
+  font-size: 13px;
   line-height: 21px;
   margin-right: 8px;
   color: #2b2b2b;
@@ -41,14 +41,14 @@ const UserName = styled.Text`
 
 const ContentText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 13px;
+  font-size: 14px;
   line-height: 21px;
   color: #2b2b2b;
 `;
 
 const SubText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 10px;
+  font-size: 11px;
   line-height: 14px;
   color: #8e8e8e;
 `;

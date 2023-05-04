@@ -39,7 +39,7 @@ const HeaderView = styled.View<{ height: number }>`
 
 const LogoText = styled.Text`
   font-family: ${(props: any) => props.theme.englishSecondaryFontDB};
-  font-size: 30px;
+  font-size: 31px;
 `;
 
 const HeaderRightView = styled.View`
@@ -72,20 +72,18 @@ const NotiBadgeText = styled.Text`
 `;
 
 const Home = () => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const me = useSelector((state: RootState) => state.auth.user);
   const feeds = useSelector((state: RootState) => state.feed.data);
   const dispatch = useAppDispatch();
   const toast = useToast();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [notiCount, setNotiCount] = useState<number>(0);
-  const { ref: myFeedOptionRef, open: openMyFeedOption, close: closeMyFeedOption } = useModalize();
-  const { ref: otherFeedOptionRef, open: openOtherFeedOption, close: closeOtherFeedOption } = useModalize();
+  const { ref: feedOptionRef, open: openFeedOption, close: closeFeedOption } = useModalize();
   const { ref: complainOptionRef, open: openComplainOption, close: closeComplainOption } = useModalize();
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const homeHeaderHeight = 50;
   const modalOptionButtonHeight = 45;
-  const feedDetailHeaderHeight = 50;
+  const feedDetailHeaderHeight = 52;
   const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
   const itemSeparatorGap = 20;
@@ -183,7 +181,7 @@ const Home = () => {
     onSuccess: (res) => {
       toast.show(`게시글이 삭제되었습니다.`, { type: "success" });
       onRefresh();
-      closeMyFeedOption();
+      closeFeedOption();
     },
     onError: (error) => {
       console.log(`API ERROR | deleteFeed ${error.code} ${error.status}`);
@@ -196,7 +194,7 @@ const Home = () => {
     onSuccess: (res) => {
       toast.show(`사용자를 차단했습니다.`, { type: "success" });
       onRefresh();
-      closeOtherFeedOption();
+      closeFeedOption();
     },
     onError: (error) => {
       console.log(`API ERROR | blockUser ${error.code} ${error.status}`);
@@ -218,7 +216,7 @@ const Home = () => {
   }, []);
 
   const goToUpdateFeed = () => {
-    closeMyFeedOption();
+    closeFeedOption();
     navigation.navigate("FeedStack", { screen: "FeedModification", params: { feedData: selectFeedData } });
   };
 
@@ -230,14 +228,13 @@ const Home = () => {
     navigation.navigate("FeedStack", { screen: "ClubSelection" });
   }, []);
 
-  const openFeedOption = (feedData?: Feed) => {
+  const goToFeedOptionModal = (feedData?: Feed) => {
     if (!feedData) return;
     setSelectFeedData(feedData);
-    if (feedData?.userId === me?.id) openMyFeedOption();
-    else openOtherFeedOption();
+    openFeedOption();
   };
   const goToComplain = () => {
-    closeOtherFeedOption();
+    closeFeedOption();
     openComplainOption();
   };
 
@@ -350,7 +347,7 @@ const Home = () => {
                 }
               });
           });
-          closeOtherFeedOption();
+          closeFeedOption();
         },
       },
     ]);
@@ -371,7 +368,7 @@ const Home = () => {
         contentHeight={feedDetailContentHeight}
         showClubName={true}
         goToClub={goToClub}
-        openFeedOption={openFeedOption}
+        goToFeedOptionModal={goToFeedOptionModal}
         goToFeedComments={goToFeedComments}
         goToFeedLikes={goToFeedLikes}
         likeFeed={likeFeed}
@@ -418,25 +415,16 @@ const Home = () => {
       />
 
       <FeedOptionModal
-        modalRef={myFeedOptionRef}
+        modalRef={feedOptionRef}
         buttonHeight={modalOptionButtonHeight}
-        isMyFeed={true}
+        isMyFeed={selectFeedData?.userId !== me?.id}
         goToUpdateFeed={goToUpdateFeed}
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
         downloadImages={downloadImages}
       />
-      <FeedOptionModal
-        modalRef={otherFeedOptionRef}
-        buttonHeight={modalOptionButtonHeight}
-        isMyFeed={false}
-        goToUpdateFeed={goToUpdateFeed}
-        deleteFeed={deleteFeed}
-        goToComplain={goToComplain}
-        blockUser={blockUser}
-        downloadImages={downloadImages}
-      />
+
       <FeedReportModal modalRef={complainOptionRef} buttonHeight={modalOptionButtonHeight} complainSubmit={complainSubmit} />
     </Container>
   );

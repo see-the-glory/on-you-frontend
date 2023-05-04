@@ -35,8 +35,8 @@ const RecruitView = styled.View`
 
 const RecruitText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontM};
-  font-size: 8px;
-  line-height: 9px;
+  font-size: 10px;
+  line-height: 11px;
   color: white;
 `;
 
@@ -45,14 +45,14 @@ const TitleView = styled.View`
   padding-bottom: 5px;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
 `;
 
 const ClubNameText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontB};
   flex: 5;
-  font-size: 14px;
-  line-height: 17px;
+  font-size: 16px;
+  line-height: 19px;
   color: white;
 `;
 
@@ -61,14 +61,13 @@ const TitleViewRight = styled.View`
   flex-direction: row;
   justify-content: flex-end;
   align-items: flex-end;
-  padding-bottom: 5px;
 `;
 
 const Number = styled.Text`
   font-family: ${(props: any) => props.theme.englishFontM};
   margin-left: 3px;
   color: white;
-  font-size: 9px;
+  font-size: 10px;
 `;
 
 const ClubInfo = styled.View<{ width: number }>`
@@ -91,7 +90,7 @@ const DescView = styled.View`
 const ShortDescText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
   color: #6f6f6f;
-  font-size: 10px;
+  font-size: 12px;
 `;
 
 interface ClubListProps {
@@ -139,9 +138,9 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
             backgroundColor="white"
             textColor="#A5A5A5"
             borderColor="#A5A5A5"
-            iconSize={6}
+            iconSize={7}
             contentContainerStyle={{ paddingTop: 1, paddingBottom: 1, paddingRight: 3, paddingLeft: 3 }}
-            textStyle={{ fontSize: 9, lineHeight: 11 }}
+            textStyle={{ fontSize: 11, lineHeight: 13 }}
           />
 
           {categories?.map((category, index) => (
@@ -152,7 +151,7 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
               textColor="white"
               borderColor="rgba(0,0,0,0)"
               contentContainerStyle={{ paddingTop: 1, paddingBottom: 1, paddingRight: 3, paddingLeft: 3 }}
-              textStyle={{ fontSize: 9, lineHeight: 11 }}
+              textStyle={{ fontSize: 11, lineHeight: 13 }}
             />
           ))}
         </TagView>

@@ -66,7 +66,7 @@ const TitleView = styled.View`
 
 const SectionTitle = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontB};
-  font-size: 14px;
+  font-size: 15px;
   color: ${(props: any) => props.theme.primaryColor};
 `;
 
@@ -78,15 +78,15 @@ const ContentView = styled.View<{ paddingSize?: number }>`
 
 const ContentText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 13px;
-  line-height: 18px;
+  font-size: 14px;
+  line-height: 20px;
   color: #0a0a0a;
 `;
 
 const ContentSubText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 13px;
-  line-height: 18px;
+  font-size: 14px;
+  line-height: 20px;
   color: #5b5b5b;
 `;
 
@@ -151,38 +151,6 @@ const ScheduleTitle = styled(CustomText)<{ index: number }>`
   color: ${(props: any) => (props.index === 0 ? "white" : "black")};
 `;
 
-const MemberView = styled.View`
-  margin-bottom: 150px;
-`;
-
-const MemberLineView = styled.View`
-  flex-direction: row;
-  justify-content: flex-start;
-  margin-bottom: 25px;
-  margin-top: 2px;
-`;
-
-const MemberSubTitleView = styled.View`
-  margin-left: 5px;
-  margin-bottom: 10px;
-`;
-
-const MemberSubTitle = styled(CustomText)`
-  font-size: 13px;
-  color: #bababa;
-`;
-
-const MemberTextView = styled.View`
-  margin-left: 5px;
-  margin-bottom: 20px;
-`;
-
-const MemberText = styled(CustomText)`
-  font-size: 11px;
-  line-height: 17px;
-  color: #b0b0b0;
-`;
-
 const GuestBookInfoView = styled.View`
   width: 100%;
   flex-direction: row;
@@ -200,16 +168,9 @@ const GuestCommentGuideText = styled.Text`
   color: #b0b0b0;
 `;
 
-const GuestCommentInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
-  width: 100%;
-  padding: 5px;
-  font-size: 14px;
-`;
-
 const InfoText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 10px;
+  font-size: 11px;
   color: #959595;
 `;
 
@@ -237,19 +198,20 @@ const GuestItemHeaderRight = styled.View``;
 
 const GuestName = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontB};
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 15px;
   color: #2b2b2b;
   margin-right: 5px;
 `;
 const GuestCreatedTime = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 10px;
+  font-size: 11px;
   color: #8e8e8e;
 `;
 const GuestItemContent = styled.View``;
 const GuestContentText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 14px;
+  font-size: 15px;
   color: #2b2b2b;
 `;
 
@@ -564,24 +526,20 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             decelerationRate="fast"
             onScroll={onScrollGuestBook}
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: SCREEN_PADDING_SIZE }}
             data={guestCommentBundle}
             keyExtractor={(item: GuestComment[], index: number) => String(index)}
-            ItemSeparatorComponent={() => <View style={{ width: 20 }} />}
             renderItem={({ item, index }: { item: GuestComment[]; index: number }) => (
-              <GusetPage style={{ width: SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2 }}>
+              <GusetPage style={{ width: SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2, marginHorizontal: SCREEN_PADDING_SIZE }}>
                 {item?.map((guest: GuestComment, index: number) => (
                   <GuestItem key={`guest_${index}`}>
-                    <CircleIcon size={25} uri={guest.thumbnail} kerning={5} />
+                    <CircleIcon size={28} uri={guest.thumbnail} kerning={5} />
                     <GuestItemInnerView>
                       <GuestItemHeader>
                         <GuestItemHeaderLeft>
                           <GuestName>{guest.userName}</GuestName>
                           <GuestCreatedTime>{moment(guest.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</GuestCreatedTime>
                         </GuestItemHeaderLeft>
-                        <GuestItemHeaderRight>
-                          <Ionicons name="close-outline" size={14} color="#8E8E8E" />
-                        </GuestItemHeaderRight>
+                        <GuestItemHeaderRight>{guest.userId === me?.id ? <Ionicons name="close-outline" size={14} color="#8E8E8E" /> : <></>}</GuestItemHeaderRight>
                       </GuestItemHeader>
                       <GuestItemContent>
                         <GuestContentText>{guest.content}</GuestContentText>
@@ -592,7 +550,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
               </GusetPage>
             )}
             ListEmptyComponent={() => (
-              <EmptyView style={{ width: SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2 }}>
+              <EmptyView style={{ width: SCREEN_WIDTH }}>
                 <EmptyText>{`아직 등록된 방명록이 없습니다.`}</EmptyText>
               </EmptyView>
             )}
@@ -601,9 +559,9 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           <GuestBookInfoView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
             {guestCommentBundle?.length > 0 ? (
               <>
-                <Ionicons name="caret-back-sharp" size={10} color={guestBookIndex > 0 ? "#959595" : "rgba(0, 0, 0, 0)"} />
+                <Ionicons name="caret-back-sharp" size={11} color={guestBookIndex > 0 ? "#959595" : "rgba(0, 0, 0, 0)"} />
                 <InfoText style={{ marginHorizontal: 6 }}>{`${guestBookIndex + 1} / ${guestCommentBundle?.length}`}</InfoText>
-                <Ionicons name="caret-forward-sharp" size={10} color={guestBookIndex < guestCommentBundle?.length - 1 ? "#959595" : "rgba(0, 0, 0, 0)"} />
+                <Ionicons name="caret-forward-sharp" size={11} color={guestBookIndex < guestCommentBundle?.length - 1 ? "#959595" : "rgba(0, 0, 0, 0)"} />
               </>
             ) : (
               <></>

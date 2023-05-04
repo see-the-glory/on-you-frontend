@@ -8,7 +8,6 @@ import { Alert, Animated, NativeSyntheticEvent, Platform, ScrollView, TextLayout
 import moment from "moment";
 import Carousel from "./Carousel";
 import Tag from "./Tag";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import Collapsible from "react-native-collapsible";
 import Pinchable from "react-native-pinchable";
 import RNFetchBlob from "rn-fetch-blob";
@@ -44,7 +43,7 @@ const HeaderRightView = styled.View`
   padding-bottom: 10px;
 `;
 const HeaderText = styled.Text`
-  font-size: 13px;
+  font-size: 14px;
   line-height: 16px;
   font-family: ${(props: any) => props.theme.koreanFontEB};
   color: #2b2b2b;
@@ -84,22 +83,22 @@ const CountingNumber = styled.Text`
 const CreatedTime = styled.Text`
   color: #9a9a9a;
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 11px;
+  font-size: 12px;
 `;
 const ContentTextView = styled.Text<{ height: number }>`
   ${(props: any) => (props.height ? `height: ${props.height}px` : "")};
 `;
 const ContentText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 13px;
-  line-height: 18px;
+  font-size: 14px;
+  line-height: 20px;
   color: #2b2b2b;
 `;
 
 const ContentSubText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 13px;
+  line-height: 19px;
   color: #5b5b5b;
 `;
 
@@ -123,7 +122,7 @@ interface FeedDetailProps {
   contentHeight: number;
   showClubName?: boolean;
   isMyClubPost?: boolean;
-  openFeedOption: (feedData?: Feed) => void;
+  goToFeedOptionModal: (feedData?: Feed) => void;
   goToFeedComments: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
   goToFeedLikes: (likeUsers: LikeUser[]) => void;
   goToClub?: (clubId?: number) => void;
@@ -147,7 +146,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
   contentHeight,
   showClubName,
   isMyClubPost,
-  openFeedOption,
+  goToFeedOptionModal,
   goToFeedComments,
   goToFeedLikes,
   goToClub,
@@ -267,7 +266,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
     <Container>
       <HeaderView padding={10} height={headerHeight}>
         <HeaderLeftView>
-          <CircleIcon uri={feedData?.thumbnail} size={36} kerning={6} />
+          <CircleIcon uri={feedData?.thumbnail} size={38} kerning={6} />
           <HeaderInformationView>
             <HeaderNameView>
               <HeaderText>{feedData?.userName}</HeaderText>
@@ -283,7 +282,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
           </HeaderInformationView>
         </HeaderLeftView>
         <HeaderRightView>
-          <TouchableOpacity onPress={() => openFeedOption(feedData)} style={{ paddingLeft: 15, paddingTop: 15, marginRight: -10 }}>
+          <TouchableOpacity onPress={() => goToFeedOptionModal(feedData)} style={{ paddingLeft: 15, paddingTop: 15, marginRight: -10 }}>
             <AntDesign name="ellipsis1" size={16} color="black" style={{ marginRight: 5 }} />
           </TouchableOpacity>
         </HeaderRightView>
