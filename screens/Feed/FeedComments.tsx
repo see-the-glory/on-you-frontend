@@ -271,7 +271,7 @@ const FeedComments = ({
 
   return (
     <Container>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={commentInputHeight - 10} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={commentInputHeight} style={{ flex: 1 }}>
         {isLoading ? (
           <Loader>
             <ActivityIndicator />

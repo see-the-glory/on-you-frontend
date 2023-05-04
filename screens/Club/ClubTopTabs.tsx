@@ -95,7 +95,7 @@ const FooterView = styled.View`
 
 const CommentInputView = styled.View<{ padding: number }>`
   flex-direction: row;
-  border-top-width: 1px;
+  border-top-width: 0.5px;
   border-top-color: #c4c4c4;
   align-items: flex-end;
   padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
