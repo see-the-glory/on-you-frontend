@@ -90,33 +90,12 @@ export interface ClubFeedParamList {
   screenScrollRefs: any;
 }
 
-// ClubHome Header
-export interface ClubHomeHaederProps extends ClubHomeParamList {
-  imageURI?: string | null;
-  name?: string;
-  shortDesc?: string | null;
-  categories?: Category[];
-  recruitStatus?: string | null;
-  schedules?: Schedule[] | undefined;
-  heightExpanded: number;
-  heightCollapsed: number;
-}
-
 // For TopTab Navigation
 export type TopTabParamList = {
   ClubTopTabs: { clubData: Club };
 };
 
 export type ClubTopTabProps = MaterialTopTabScreenProps<TopTabParamList, "ClubTopTabs">;
-
-export interface ClubHomeFloatingButtonProps {
-  role?: "MASTER" | "MANAGER" | "MEMBER" | "PENDING" | null;
-  recruitStatus?: "OPEN" | "CLOSE" | null;
-  goToClubEdit: Function;
-  goToClubJoin: Function;
-  goToFeedCreation: Function;
-  withdrawclub: Function;
-}
 
 export interface RefinedSchedule extends Schedule {
   year?: string;

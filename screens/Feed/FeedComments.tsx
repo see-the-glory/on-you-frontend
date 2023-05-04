@@ -26,7 +26,11 @@ const Container = styled.View`
   flex: 1;
 `;
 
-const FooterView = styled.View<{ padding: number }>``;
+const FooterView = styled.View`
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+`;
 
 const ReplyStatusView = styled.View<{ padding: number }>`
   flex-direction: row;

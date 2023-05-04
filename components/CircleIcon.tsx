@@ -12,14 +12,16 @@ const Container = styled.View<{ size: number; kerning: number; opacity: number }
   opacity: ${(props: any) => props.opacity};
 `;
 
-const BadgeIcon = styled.View`
+const BadgeIcon = styled.View<{ size: number }>`
   position: absolute;
   z-index: 2;
-  elevation: 3;
-  top: 0;
+  elevation: 2;
+  top: ${(props: any) => props.size * 0.58}px;
   right: 0%;
   background-color: white;
-  border-radius: 10px;
+  border-radius: ${(props: any) => props.size / 2}px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Backplate = styled.View<{ size: number }>`
@@ -37,11 +39,10 @@ const IconImage = styled(FastImage)<{ size: number }>`
   border: 0.2px solid #c4c4c4;
 `;
 
-const CircleName = styled(CustomText)`
-  font-size: 11px;
+const CircleName = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 10px;
   margin-top: 4px;
-  font-family: "NotoSansKR-Medium";
-  line-height: 15px;
 `;
 
 interface CircleIconProps {
@@ -57,8 +58,8 @@ const CircleIcon: React.FC<CircleIconProps> = ({ size, uri, name, badge, kerning
   return (
     <Container size={size} kerning={kerning ?? 0} opacity={opacity ?? 1}>
       {badge ? (
-        <BadgeIcon>
-          <MaterialIcons name={badge} size={18} color="#FF6534" />
+        <BadgeIcon size={size}>
+          <MaterialIcons name={badge} size={size * 0.4} color="#EC5D56" />
         </BadgeIcon>
       ) : (
         <></>

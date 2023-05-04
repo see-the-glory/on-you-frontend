@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Alert, Animated, BackHandler, DeviceEventEmitter, Platform, StatusBar, Text, TouchableOpacity, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Alert, Animated, BackHandler, DeviceEventEmitter, Keyboard, LayoutChangeEvent, Platform, StatusBar, Text, TouchableOpacity, useWindowDimensions } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
@@ -10,7 +10,19 @@ import ClubTabBar from "../../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
 import { useMutation, useQuery } from "react-query";
-import { BaseResponse, Club, ClubApi, ClubDeletionRequest, ClubResponse, ClubRoleResponse, ClubSchedulesResponse, ClubWithdrawRequest, ErrorResponse, NotificationsResponse } from "../../api";
+import {
+  BaseResponse,
+  Club,
+  ClubApi,
+  ClubDeletionRequest,
+  ClubResponse,
+  ClubRoleResponse,
+  ClubSchedulesResponse,
+  ClubWithdrawRequest,
+  ErrorResponse,
+  GuestCommentRequest,
+  NotificationsResponse,
+} from "../../api";
 import { useSelector } from "react-redux";
 import { useToast } from "react-native-toast-notifications";
 import { RefinedSchedule } from "../../Types/Club";
@@ -20,6 +32,7 @@ import { useAppDispatch } from "../../redux/store";
 import clubSlice from "../../redux/slices/club";
 import Share from "react-native-share";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
+import CircleIcon from "../../components/CircleIcon";
 
 const Container = styled.View`
   flex: 1;
@@ -62,11 +75,66 @@ const NotiBadgeText = styled.Text`
   font-size: 6px;
 `;
 
+const FooterView = styled.View`
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+  background-color: white;
+`;
+
+const CommentInputView = styled.View<{ padding: number }>`
+  flex-direction: row;
+  border-top-width: 1px;
+  border-top-color: #c4c4c4;
+  align-items: flex-end;
+  padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
+  margin-bottom: 10px;
+`;
+
+const RoundingView = styled.View`
+  flex-direction: row;
+  flex: 1;
+  height: 100%;
+  padding: 0px 10px;
+  border-width: 0.5px;
+  border-color: rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+`;
+const CommentInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
+  flex: 1;
+  margin: 1px 0px;
+`;
+const SubmitButton = styled.TouchableOpacity`
+  width: 40px;
+  justify-content: center;
+  align-items: center;
+  padding-left: 8px;
+  margin-bottom: 8px;
+`;
+const SubmitLoadingView = styled.View`
+  width: 40px;
+  justify-content: center;
+  align-items: center;
+  padding-left: 8px;
+  margin-bottom: 8px;
+`;
+const SubmitButtonText = styled.Text<{ disabled: boolean }>`
+  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-size: 14px;
+  line-height: 20px;
+  color: #63abff;
+  opacity: ${(props: any) => (props.disabled ? 0.3 : 1)};
+`;
+
 const TopTab = createMaterialTopTabNavigator();
 
 const HEADER_EXPANDED_HEIGHT = 270;
 const HEADER_HEIGHT = 100;
 const TAB_BUTTON_HEIGHT = 46;
+
+const AnimatedFooterView = Animated.createAnimatedComponent(FooterView);
 
 const ClubTopTabs = ({
   route: {
@@ -82,7 +150,7 @@ const ClubTopTabs = ({
   const [notiCount, setNotiCount] = useState<number>(0);
   const [isShareOpend, setIsShareOpend] = useState<boolean>(false);
   // Header Height Definition
-  const { top } = useSafeAreaInsets();
+  const { top, bottom } = useSafeAreaInsets();
   const { height: SCREEN_HEIGHT } = useWindowDimensions();
   const headerConfig = useMemo(
     () => ({
@@ -199,6 +267,38 @@ const ClubTopTabs = ({
     outputRange: [0, -headerDiff],
     extrapolate: "clamp",
   });
+
+  // guestbook keyboard
+  const guestCommentInputRef = useRef(null);
+  const [commentInputHeight, setCommentInputHeight] = useState<number>(0);
+  const [validation, setValidation] = useState<boolean>(false);
+  const [guestComment, setGuestComment] = useState<string>("");
+  const guestCommentOpacity = useRef(new Animated.Value(0)).current;
+  const [gusetCommentZIndex, setGuestCommentZIndex] = useState<number>(0);
+
+  const guestCommentMutation = useMutation<BaseResponse, ErrorResponse, GuestCommentRequest>(ClubApi.createGuestComment, {
+    onSuccess: (res) => {
+      setGuestComment("");
+      setValidation(false);
+      DeviceEventEmitter.emit("GuestCommentRefetch");
+      Keyboard.dismiss();
+    },
+    onError: (error) => {
+      console.log(`API ERROR | createGuestComment ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
+  const guestCommentSubmit = () => {
+    if (!validation) return toast.show(`글을 입력하세요.`, { type: "warning" });
+
+    let requestData: GuestCommentRequest = {
+      clubId: clubData.id,
+      content: guestComment.trim(),
+    };
+
+    guestCommentMutation.mutate(requestData);
+  };
 
   // Screen Scroll Sync
   const syncScrollOffset = (screenName: string) => {
@@ -340,6 +440,27 @@ const ClubTopTabs = ({
       clubRoleRefetch();
       clubNotiRefetch();
     });
+
+    const guestCommentSubscription = DeviceEventEmitter.addListener("ClubGuestCommentFocus", () => {
+      guestCommentInputRef?.current?.focus();
+    });
+
+    const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {
+      setGuestCommentZIndex(3);
+      Animated.timing(guestCommentOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    });
+
+    const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
+      Animated.timing(guestCommentOpacity, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true,
+      }).start(() => setGuestCommentZIndex(0));
+    });
     const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
       popToTop();
       return true;
@@ -349,6 +470,9 @@ const ClubTopTabs = ({
       scrollY.removeListener(scrollListener);
       scheduleSubscription.remove();
       clubSubscription.remove();
+      guestCommentSubscription.remove();
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
       backHandler.remove();
       dispatch(clubSlice.actions.deleteClub());
       console.log("ClubTopTabs - remove listner & delete clubslice");
@@ -407,18 +531,7 @@ const ClubTopTabs = ({
         </RightNavigationView>
       </NavigationView>
 
-      <ClubHeader
-        imageURI={data.thumbnail}
-        name={data.name}
-        shortDesc={data.clubShortDesc}
-        categories={data.categories}
-        recruitStatus={data.recruitStatus}
-        schedules={scheduleData}
-        heightExpanded={heightExpanded}
-        heightCollapsed={heightCollapsed}
-        headerDiff={headerDiff}
-        scrollY={scrollY}
-      />
+      <ClubHeader clubData={data} heightExpanded={heightExpanded} heightCollapsed={heightCollapsed} headerDiff={headerDiff} scrollY={scrollY} />
 
       <Animated.View
         style={{
@@ -442,17 +555,54 @@ const ClubTopTabs = ({
         </TopTab.Navigator>
       </Animated.View>
 
+      <AnimatedFooterView style={{ opacity: guestCommentOpacity, zIndex: gusetCommentZIndex }}>
+        <CommentInputView
+          padding={20}
+          onLayout={(event: LayoutChangeEvent) => {
+            const { height } = event.nativeEvent.layout;
+            setCommentInputHeight(height + bottom);
+          }}
+        >
+          <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
+          <RoundingView>
+            <CommentInput
+              ref={guestCommentInputRef}
+              placeholder="방명록을 작성해보세요. (최대 100자)"
+              placeholderTextColor="#B0B0B0"
+              value={guestComment}
+              textAlign="left"
+              multiline={true}
+              maxLength={100}
+              autoCapitalize="none"
+              autoCorrect={false}
+              autoComplete="off"
+              returnKeyType="done"
+              returnKeyLabel="done"
+              onChangeText={(value: string) => {
+                setGuestComment(value);
+                if (!validation && value.trim() !== "") setValidation(true);
+                if (validation && value.trim() === "") setValidation(false);
+              }}
+              onEndEditing={() => setGuestComment((prev) => prev.trim())}
+              includeFontPadding={false}
+            />
+          </RoundingView>
+          {guestCommentMutation.isLoading ? (
+            <SubmitLoadingView>
+              <ActivityIndicator />
+            </SubmitLoadingView>
+          ) : (
+            <SubmitButton disabled={!validation} onPress={guestCommentSubmit}>
+              <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
+            </SubmitButton>
+          )}
+        </CommentInputView>
+      </AnimatedFooterView>
+
       {clubRoleLoading ? (
         <></>
       ) : (
-        <FloatingActionButton
-          role={clubRole?.data?.role}
-          recruitStatus={data?.recruitStatus}
-          goToClubEdit={goToClubEdit}
-          goToClubJoin={goToClubJoin}
-          goToFeedCreation={goToFeedCreation}
-          withdrawclub={withdrawClub}
-        />
+        <FloatingActionButton role={clubRole?.data} recruitStatus={data?.recruitStatus} openShare={openShare} goToClubJoin={goToClubJoin} goToFeedCreation={goToFeedCreation} />
       )}
     </Container>
   );

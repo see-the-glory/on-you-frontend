@@ -1,13 +1,13 @@
 import React from "react";
 import { View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
 import { BlurView } from "expo-blur";
-import { ClubHomeHaederProps } from "../Types/Club";
-import CustomText from "./CustomText";
-import moment from "moment-timezone";
 import FastImage from "react-native-fast-image";
+import { Club } from "../api";
+import CircleIcon from "./CircleIcon";
+import Tag from "./Tag";
 
 const Header = styled.View`
   width: 100%;
@@ -34,43 +34,30 @@ const CategoryView = styled.View`
   margin-bottom: 5px;
 `;
 
-const CategoryBox = styled.View`
-  background-color: rgba(255, 255, 255, 0.5);
-  padding: 1px 3px;
-  border-radius: 3px;
-  margin-left: 3px;
-  margin-right: 3px;
-`;
-
-const CategoryNameText = styled(CustomText)`
-  font-size: 12px;
-  line-height: 16px;
-`;
-
 const ClubNameView = styled.View`
   align-items: center;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 `;
 
-const ClubNameText = styled(CustomText)`
+const ClubNameText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-size: 28px;
+  line-height: 33px;
   color: white;
-  font-size: 26px;
-  font-family: "NotoSansKR-Bold";
-  line-height: 35px;
 `;
 
 const ClubShortDescView = styled.View`
   align-items: center;
 `;
-const ClubShortDescText = styled(CustomText)`
+const ClubShortDescText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
   font-size: 14px;
-  line-height: 20px;
+  line-height: 15px;
   color: white;
 `;
 
 const Break = styled.View`
-  margin-bottom: 8px;
-  margin-top: 8px;
+  margin: 10px 0px;
   border-bottom-width: 1px;
   border-bottom-color: rgba(255, 255, 255, 0.5);
 `;
@@ -82,12 +69,25 @@ const DetailInfoView = styled.View`
   margin-bottom: 20px;
 `;
 
-const DetailInfoContent = styled.View`
+const DetailInfoItem = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
   margin-left: 5px;
   margin-right: 5px;
+`;
+
+const DetailItemTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 9px;
+  color: ${(props: any) => props.theme.secondaryColor};
+  margin-right: 3px;
+`;
+
+const DetailItemText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 10px;
+  color: white;
 `;
 
 const CollapsedView = styled.SafeAreaView<{ height: number }>`
@@ -96,16 +96,20 @@ const CollapsedView = styled.SafeAreaView<{ height: number }>`
   height: ${(props) => props.height}px;
 `;
 
-const ContentText = styled(CustomText)`
-  font-size: 13px;
-  line-height: 17px;
-  color: white;
-`;
-
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 const AnimatedFadeOutBox = Animated.createAnimatedComponent(View);
 
-const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, categories, recruitStatus, schedules, heightExpanded, heightCollapsed, headerDiff, scrollY }) => {
+// ClubHome Header
+export interface ClubHomeHaederProps {
+  clubData: Club;
+  heightExpanded: number;
+  heightCollapsed: number;
+  scrollY: Animated.Value;
+  headerDiff: number;
+}
+
+const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, heightExpanded, heightCollapsed, headerDiff, scrollY }) => {
+  const master = clubData.members?.find((member) => member.role === "MASTER");
   const fadeIn = scrollY.interpolate({
     inputRange: [0, headerDiff],
     outputRange: [-1, 1],
@@ -117,7 +121,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
   });
   return (
     <Header>
-      <FastImage style={{ width: "100%", height: heightExpanded }} source={imageURI ? { uri: imageURI } : require("../assets/basic.jpg")}>
+      <FastImage style={{ width: "100%", height: heightExpanded }} source={clubData.thumbnail ? { uri: clubData.thumbnail } : require("../assets/basic.jpg")}>
         <AnimatedBlurView
           intensity={70}
           tint="dark"
@@ -132,49 +136,48 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ imageURI, name, shortDesc, 
         >
           <CollapsedView height={heightCollapsed}>
             <ClubNameView>
-              <ClubNameText>{name}</ClubNameText>
+              <ClubNameText>{clubData.name}</ClubNameText>
             </ClubNameView>
             <ClubShortDescView>
-              <ClubShortDescText>{shortDesc}</ClubShortDescText>
+              <ClubShortDescText>{clubData.clubShortDesc}</ClubShortDescText>
             </ClubShortDescView>
           </CollapsedView>
         </AnimatedBlurView>
 
         <FilterView>
-          <AnimatedFadeOutBox style={{ opacity: fadeOut }}>
+          <AnimatedFadeOutBox style={{ opacity: fadeOut, width: "75%" }}>
             <InformationView>
               <CategoryView>
-                {categories && categories?.length > 0 ? (
-                  <CategoryBox>
-                    <CategoryNameText>{categories[0].name}</CategoryNameText>
-                  </CategoryBox>
-                ) : (
-                  <></>
-                )}
-                {categories && categories?.length > 1 ? (
-                  <CategoryBox>
-                    <CategoryNameText>{categories[1].name}</CategoryNameText>
-                  </CategoryBox>
-                ) : (
-                  <></>
-                )}
+                {clubData.categories?.map((category, index) => (
+                  <Tag key={`category_${index}`} name={category.name} backgroundColor={"rgba(255, 255, 255, 0.5)"} textColor={"black"} />
+                ))}
               </CategoryView>
               <ClubNameView>
-                <ClubNameText>{name}</ClubNameText>
+                <ClubNameText>{clubData.name}</ClubNameText>
               </ClubNameView>
               <ClubShortDescView>
-                <ClubShortDescText>{shortDesc}</ClubShortDescText>
+                <ClubShortDescText>{clubData.clubShortDesc}</ClubShortDescText>
               </ClubShortDescView>
-              <Break></Break>
+              <Break />
               <DetailInfoView>
-                <DetailInfoContent>
-                  <Ionicons name="calendar" size={15} color="yellow" style={{ marginRight: 5 }} />
-                  {schedules && schedules.length > 1 ? <ContentText>{moment(schedules[0].startDate).format("MMM Do  |  A hh:mm")}</ContentText> : <ContentText>일정 없음</ContentText>}
-                </DetailInfoContent>
-                <DetailInfoContent>
-                  <Ionicons name="md-person-circle-outline" size={15} color="yellow" style={{ marginRight: 5 }} />
-                  {recruitStatus && recruitStatus.toUpperCase() === "OPEN" ? <ContentText>멤버 모집 중!</ContentText> : <ContentText>멤버 모집 기간 아님</ContentText>}
-                </DetailInfoContent>
+                <DetailInfoItem>
+                  <MaterialIcons name="star" size={15} color="#FADF7D" style={{ marginRight: 2 }} />
+                  <DetailItemTitle>{`호스트`}</DetailItemTitle>
+                  {master ? (
+                    <>
+                      <CircleIcon size={16} uri={master.thumbnail} kerning={3} />
+                      <DetailItemText>{master.name}</DetailItemText>
+                    </>
+                  ) : (
+                    <DetailItemText>{`없음`}</DetailItemText>
+                  )}
+                </DetailInfoItem>
+                <DetailInfoItem>
+                  <MaterialIcons name="people" size={15} color="#FADF7D" style={{ marginRight: 2 }} />
+                  <DetailItemTitle>{`멤버`}</DetailItemTitle>
+                  <DetailItemText>{clubData.recruitNumber}</DetailItemText>
+                  <DetailItemText style={{ color: "#C0C0C0" }}>{` / ${clubData.maxNumber ? `${clubData.maxNumber} 명` : `무제한`}`}</DetailItemText>
+                </DetailInfoItem>
               </DetailInfoView>
             </InformationView>
           </AnimatedFadeOutBox>

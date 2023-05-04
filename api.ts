@@ -167,6 +167,14 @@ export interface ClubRole {
   applyStatus?: "APPLIED" | "APPROVED";
 }
 
+export interface GuestComment {
+  content: string;
+  created: string;
+  thumbnail: string;
+  userId: number;
+  userName: string;
+}
+
 export interface LoginResponse extends BaseResponse {
   token: string;
 }
@@ -260,6 +268,10 @@ export interface DuplicateCheckResponse extends BaseResponse {
   data: {
     isDuplicated: "Y" | "N";
   };
+}
+
+export interface GuestCommentResponse extends BaseResponse {
+  data: GuestComment[];
 }
 
 export interface SendCheckEmailResponse extends BaseResponse {
@@ -433,6 +445,11 @@ export interface DuplicateClubNameCheckRequest {
   clubName: string;
 }
 
+export interface GuestCommentRequest {
+  clubId: number;
+  content: string;
+}
+
 export interface FindEmailRequest {
   phoneNumber?: string;
   username?: string;
@@ -574,6 +591,13 @@ const updateClub = (req: ClubUpdateRequest) => {
 };
 const deleteClub = (req: ClubDeletionRequest) => axios.delete<string, BaseResponse>(`/api/clubs/${req.clubId}`);
 const duplicateClubNameCheck = (req: DuplicateClubNameCheckRequest) => axios.post<string, DuplicateCheckResponse>(`/api/clubs/duplicateCheck`, req);
+
+// Guest Comment
+const getGuestComment = ({ queryKey }: any) => {
+  const [_key, clubId]: [string, number] = queryKey;
+  return axios.get<string, GuestCommentResponse>(`/api/clubs/${clubId}/guestComment`);
+};
+const createGuestComment = (req: GuestCommentRequest) => axios.post<string, BaseResponse>(`/api/clubs/${req.clubId}/guestComment`, req);
 
 // Club Management
 const approveToClubJoin = (req: ClubApproveRequest) => axios.post<string, BaseResponse>(`/api/clubs/approve`, req);
@@ -756,6 +780,8 @@ export const ClubApi = {
   approveToClubJoin,
   rejectToClubJoin,
   duplicateClubNameCheck,
+  createGuestComment,
+  getGuestComment,
 };
 
 export const UserApi = {
