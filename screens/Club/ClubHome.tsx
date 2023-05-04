@@ -545,7 +545,14 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           </TitleView>
 
           <View style={{ width: "100%", marginBottom: 15 }}>
-            <GuestCommentButton activeOpacity={1} style={{ marginHorizontal: SCREEN_PADDING_SIZE }} onPress={() => DeviceEventEmitter.emit("ClubGuestCommentFocus")}>
+            <GuestCommentButton
+              activeOpacity={1}
+              style={{ marginHorizontal: SCREEN_PADDING_SIZE }}
+              onPress={() => {
+                DeviceEventEmitter.emit("ClubGuestCommentFocus");
+                screenScrollRefs.current[screenName]?.scrollToEnd({ animated: true });
+              }}
+            >
               <GuestCommentGuideText>{`방명록을 작성해보세요. (최대 100자)`}</GuestCommentGuideText>
             </GuestCommentButton>
           </View>
@@ -591,21 +598,17 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             )}
           />
 
-          {/* <GuestBookInfoView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
-              {guestCommentBundle?.length > 0 ? (
-                <>
-                  <Ionicons name="caret-back-sharp" size={10} color={guestBookIndex > 0 ? "#959595" : "rgba(0, 0, 0, 0)"} />
-                  <InfoText style={{ marginHorizontal: 6 }}>{`${guestBookIndex + 1} / ${guestCommentBundle?.length}`}</InfoText>
-                  <Ionicons name="caret-forward-sharp" size={10} color={guestBookIndex < guestCommentBundle?.length - 1 ? "#959595" : "rgba(0, 0, 0, 0)"} />
-                </>
-              ) : (
-                <></>
-              )}
-            </GuestBookInfoView> */}
-
-          {/* <GuestBookInfoView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
-              <InfoText>{`${comment.length}/200 자`}</InfoText>
-            </GuestBookInfoView> */}
+          <GuestBookInfoView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+            {guestCommentBundle?.length > 0 ? (
+              <>
+                <Ionicons name="caret-back-sharp" size={10} color={guestBookIndex > 0 ? "#959595" : "rgba(0, 0, 0, 0)"} />
+                <InfoText style={{ marginHorizontal: 6 }}>{`${guestBookIndex + 1} / ${guestCommentBundle?.length}`}</InfoText>
+                <Ionicons name="caret-forward-sharp" size={10} color={guestBookIndex < guestCommentBundle?.length - 1 ? "#959595" : "rgba(0, 0, 0, 0)"} />
+              </>
+            ) : (
+              <></>
+            )}
+          </GuestBookInfoView>
         </SectionView>
       </Animated.ScrollView>
       <ScheduleModal

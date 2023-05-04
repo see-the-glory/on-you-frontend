@@ -90,9 +90,6 @@ const NotiBadgeText = styled.Text`
 `;
 
 const FooterView = styled.View`
-  position: absolute;
-  width: 100%;
-  bottom: 0px;
   background-color: white;
 `;
 
@@ -109,10 +106,10 @@ const RoundingView = styled.View`
   flex-direction: row;
   flex: 1;
   height: 100%;
-  padding: 0px 10px;
   border-width: 0.5px;
   border-color: rgba(0, 0, 0, 0.5);
-  border-radius: 20px;
+  border-radius: 15px;
+  padding: 3px 10px;
 `;
 const CommentInput = styled.TextInput`
   font-family: ${(props: any) => props.theme.koreanFontR};
@@ -570,7 +567,7 @@ const ClubTopTabs = ({
         </TopTab.Navigator>
       </Animated.View>
 
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={commentInputHeight} pointerEvents="none" style={{ flex: 1, zIndex: 3 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={-10} pointerEvents="box-none" style={{ flex: 1, zIndex: 2, justifyContent: "flex-end" }}>
         <AnimatedFooterView style={{ opacity: guestCommentOpacity, zIndex: gusetCommentZIndex }}>
           <CommentInputView
             padding={20}

@@ -26,11 +26,7 @@ const Container = styled.View`
   flex: 1;
 `;
 
-const FooterView = styled.View`
-  position: absolute;
-  width: 100%;
-  bottom: 0px;
-`;
+const FooterView = styled.View``;
 
 const ReplyStatusView = styled.View<{ padding: number }>`
   flex-direction: row;
@@ -64,7 +60,7 @@ const RoundingView = styled.View`
   padding: 3px 10px;
   border-width: 0.5px;
   border-color: rgba(0, 0, 0, 0.5);
-  border-radius: 20px;
+  border-radius: 15px;
 `;
 const CommentInput = styled.TextInput`
   font-family: ${(props: any) => props.theme.koreanFontR};
@@ -275,7 +271,7 @@ const FeedComments = ({
 
   return (
     <Container>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={commentInputHeight} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={commentInputHeight - 10} style={{ flex: 1 }}>
         {isLoading ? (
           <Loader>
             <ActivityIndicator />
