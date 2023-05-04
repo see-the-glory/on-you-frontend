@@ -586,7 +586,7 @@ const ClubTopTabs = ({
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={-10}
+        keyboardVerticalOffset={-5}
         pointerEvents="box-none"
         style={{ flex: 1, zIndex: gusetCommentZIndex, justifyContent: "flex-end" }}
       >

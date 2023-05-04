@@ -283,7 +283,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
         </HeaderLeftView>
         <HeaderRightView>
           <TouchableOpacity onPress={() => goToFeedOptionModal(feedData)} style={{ paddingLeft: 15, paddingTop: 15, marginRight: -10 }}>
-            <AntDesign name="ellipsis1" size={16} color="black" style={{ marginRight: 5 }} />
+            <AntDesign name="ellipsis1" size={16} color="black" style={{ marginRight: 10 }} />
           </TouchableOpacity>
         </HeaderRightView>
       </HeaderView>
@@ -332,7 +332,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
                     { keypath: "Filled", color: "#EC5D56" },
                     { keypath: "Empty", color: "#000000" },
                   ]}
-                  style={{ width: 35, height: 35, marginLeft: -3 }}
+                  style={{ width: 35, height: 35, marginLeft: -2 }}
                 />
               </InformationIconButton>
               <InformationNumberButton activeOpacity={1} onPress={() => goToFeedLikes(feedData?.likeUserList ?? [])} style={{ marginLeft: -10 }}>
