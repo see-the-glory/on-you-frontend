@@ -1,11 +1,11 @@
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import React from "react";
 import styled from "styled-components/native";
-import CustomText from "./CustomText";
 
 const TabBarContainer = styled.View<{ height: number }>`
   width: 100%;
-  background-color: white;
+  background-color: #f5f5f5;
+  padding: 0px 20px;
   flex-direction: row;
   align-items: center;
   border-top-width: 1px;
@@ -19,8 +19,8 @@ const TabButton = styled.TouchableOpacity<{ isFocused: boolean; height: number }
   height: ${(props: any) => props.height}px;
   justify-content: center;
   align-items: center;
-  border-bottom-width: 2px;
-  border-bottom-color: ${(props: any) => (props.isFocused ? "black" : "transparent")};
+  border-bottom-width: 1.5px;
+  border-bottom-color: ${(props: any) => (props.isFocused ? props.theme.primaryColor : "transparent")};
 `;
 
 const TextWrap = styled.View<{ height: number }>`
@@ -28,11 +28,11 @@ const TextWrap = styled.View<{ height: number }>`
   justify-content: center;
 `;
 
-const TabText = styled(CustomText)<{ isFocused: boolean }>`
+const TabText = styled.Text<{ isFocused: boolean }>`
+  font-family: ${(props: any) => (props.isFocused ? props.theme.koreanFontM : props.theme.koreanFontR)};
   font-size: 14px;
-  line-height: 20px;
-  ${(props: any) => (props.isFocused ? "font-family: NotoSansKR-Medium" : "")};
-  color: ${(props: any) => (props.isFocused ? "black" : "gray")};
+  line-height: 15px;
+  color: ${(props: any) => (props.isFocused ? "black" : "#818181")};
 `;
 
 interface TabBarProps {

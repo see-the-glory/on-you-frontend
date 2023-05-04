@@ -2,7 +2,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Animated, DeviceEventEmitter, Platform, StatusBar, useWindowDimensions, View } from "react-native";
-import FastImage from "react-native-fast-image";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useMutation, useQuery } from "react-query";
@@ -30,17 +29,21 @@ const Container = styled.SafeAreaView`
 `;
 
 const HeaderView = styled.View<{ height: number }>`
+  flex-direction: row;
   height: ${(props: any) => props.height}px;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   background-color: white;
+  padding: 0px 10px;
+`;
+
+const LogoText = styled.Text`
+  font-family: ${(props: any) => props.theme.englishSecondaryFontDB};
+  font-size: 30px;
 `;
 
 const HeaderRightView = styled.View`
-  position: absolute;
   flex-direction: row;
-  right: 0%;
-  padding: 0px 10px;
   height: 50px;
 `;
 
@@ -48,7 +51,6 @@ const HeaderButton = styled.TouchableOpacity`
   height: 100%;
   align-items: center;
   justify-content: center;
-  padding: 0px 10px;
 `;
 
 const NotiView = styled.View``;
@@ -83,7 +85,7 @@ const Home = () => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const homeHeaderHeight = 50;
   const modalOptionButtonHeight = 45;
-  const feedDetailHeaderHeight = 62;
+  const feedDetailHeaderHeight = 50;
   const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
   const itemSeparatorGap = 20;
@@ -94,7 +96,7 @@ const Home = () => {
     inputRange: [0, 50],
     outputRange: [0, 1],
   });
-  const homeFlatlistRef = useRef<Animated.FlatList<Feed>>();
+  const homeFlatlistRef = useRef<Animated.FlatList<Feed>>(null);
 
   //getFeeds ( 무한 스크롤 )
   const {
@@ -386,15 +388,15 @@ const Home = () => {
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <HeaderView height={homeHeaderHeight}>
-        <FastImage source={require("../assets/home_logo.png")} style={{ width: 100, height: 30 }} />
+        <LogoText>{`ON YOU`}</LogoText>
         <HeaderRightView>
-          <HeaderButton onPress={goToUserNotification}>
+          <HeaderButton onPress={goToUserNotification} style={{ paddingHorizontal: 8 }}>
             <NotiView>
               {!notiLoading && notiCount > 0 ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
               <MaterialIcons name="notifications" size={23} color="black" />
             </NotiView>
           </HeaderButton>
-          <HeaderButton onPress={goToFeedCreation}>
+          <HeaderButton onPress={goToFeedCreation} style={{ paddingLeft: 8 }}>
             <MaterialIcons name="add-photo-alternate" size={23} color="black" />
           </HeaderButton>
         </HeaderRightView>

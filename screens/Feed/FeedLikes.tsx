@@ -1,10 +1,9 @@
 import { Entypo } from "@expo/vector-icons";
-import React, { useCallback, useLayoutEffect, useState } from "react";
+import React, { useCallback, useLayoutEffect } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { LikeUser } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
-import CustomText from "../../components/CustomText";
 
 const Container = styled.View`
   flex-direction: row;
@@ -12,10 +11,11 @@ const Container = styled.View`
   align-items: center;
 `;
 
-const NameText = styled(CustomText)`
-  font-family: "NotoSansKR-Medium";
-  font-size: 14px;
-  line-height: 20px;
+const NameText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-size: 13px;
+  line-height: 16px;
+  color: #2b2b2b;
 `;
 
 const FeedLikes = ({
@@ -29,7 +29,7 @@ const FeedLikes = ({
   const renderItem = useCallback(
     ({ item, index }: { item: LikeUser; index: number }) => (
       <Container>
-        <CircleIcon size={38} uri={item.thumbnail} kerning={8} />
+        <CircleIcon size={36} uri={item.thumbnail} kerning={8} />
         <NameText>{item.userName}</NameText>
       </Container>
     ),

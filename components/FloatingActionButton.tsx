@@ -1,137 +1,116 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components/native";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { Animated } from "react-native";
-import { ClubHomeFloatingButtonProps } from "../Types/Club";
-import { Item } from "react-native-paper/lib/typescript/components/List/List";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Platform, Text, View } from "react-native";
+import { ClubRole } from "../api";
+import Lottie from "lottie-react-native";
 
-const FloatingActionView = styled.View`
+const Container = styled.View`
   position: absolute;
-  align-items: center;
-  z-index: 2;
-  right: 20px;
-  bottom: 20px;
-  height: -100px;
-`;
-
-const FloatingMainButton = styled.TouchableOpacity<{ join?: boolean }>`
-  width: 50px;
-  height: 50px;
-  background-color: ${(props) => (props.join ? "#295af5" : "#FF551F")};
-  elevation: 5;
-  box-shadow: 1px 1px 3px gray;
-  border-radius: 25px;
-  justify-content: center;
-  align-items: center;
-  border: 1px;
-  border-color: white;
-`;
-
-const FloatingButton = styled.TouchableOpacity`
-  width: 40px;
-  height: 40px;
+  flex-direction: row;
   background-color: white;
-  elevation: 5;
-  box-shadow: 1px 1px 3px gray;
-  border-radius: 20px;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2;
+  width: 100%;
+  height: 65px;
+  bottom: 0px;
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom: ${Platform.OS === "ios" ? 8 : 0}px;
+`;
+
+const SectionLeft = styled.View`
+  flex-direction: row;
+`;
+const SectionRight = styled.View`
+  flex-direction: row;
   align-items: center;
 `;
 
-const AnimatedFloatingMainButton = Animated.createAnimatedComponent(FloatingMainButton);
+const LottieButton = styled.TouchableOpacity``;
+const IconButton = styled.TouchableOpacity`
+  padding: 5px;
+  margin-right: 8px;
+`;
 
-const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, recruitStatus, goToClubEdit, goToClubJoin, goToFeedCreation, withdrawclub }) => {
-  const [open, setOpen] = useState(0);
-  const animation = useRef(new Animated.Value(0)).current;
-  const rotation = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "45deg"],
-  });
-  const fade = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 1],
-  });
-  const onPressImagePlus = () => {
-    toggleMenu();
-    goToFeedCreation();
-  };
-  const onPressPencilOutline = () => {
-    toggleMenu();
-    goToClubEdit();
-  };
+const Button = styled.TouchableOpacity<{ isJoined: boolean }>`
+  padding: 10px 17px;
+  background-color: ${(props: any) => (props.isJoined ? props.theme.accentColor : props.theme.primaryColor)};
+  border-radius: 20px;
+`;
+const ButtonText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-size: 19px;
+  line-height: 22px;
+  color: white;
+`;
 
-  const onPressWithdrawClub = () => {
-    toggleMenu();
-    withdrawclub();
-  };
-  const toggleItem = [
-    {
-      iconName: "image-plus",
-      accessRole: ["MASTER", "MANAGER", "MEMBER"],
-      onPress: onPressImagePlus,
-    },
-    {
-      iconName: "pencil-outline",
-      accessRole: ["MASTER", "MANAGER"],
-      onPress: onPressPencilOutline,
-    },
-    {
-      iconName: "exit-to-app",
-      accessRole: ["MASTER", "MANAGER", "MEMBER"],
-      onPress: onPressWithdrawClub,
-    },
-  ];
+export interface ClubHomeFloatingButtonProps {
+  role?: ClubRole | null;
+  recruitStatus?: "OPEN" | "CLOSE" | null;
+  openShare: () => void;
+  goToClubJoin: () => void;
+  goToFeedCreation: () => void;
+}
 
-  const toggleMenu = () => {
-    Animated.spring(animation, {
-      toValue: open,
-      friction: 6,
-      useNativeDriver: true,
-    }).start();
-    setOpen((open + 1) % 2);
+const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, recruitStatus, openShare, goToClubJoin, goToFeedCreation }) => {
+  const [like, setLike] = useState<boolean>(false);
+  const heartRef = useRef<Lottie>(null);
+  const isJoined = role?.applyStatus === "APPROVED" ? true : false;
+
+  const onPressHeart = () => {
+    if (like) heartRef.current?.play(45, 60);
+    else heartRef.current?.play(10, 25);
+    setLike((prev) => !prev);
   };
 
-  return role && role !== "PENDING" ? (
-    <FloatingActionView>
-      {toggleItem
-        .filter((item) => item.accessRole.includes(role))
-        .map((item, index, items) => (
-          <Animated.View
-            key={index}
-            style={{
-              opacity: fade,
-              transform: [
-                {
-                  translateY: animation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [40 * items.length - index * 40, -(items.length * 10 + 5) + index * 10],
-                  }),
-                },
-              ],
-            }}
-          >
-            <FloatingButton onPress={item.onPress}>
-              <MaterialCommunityIcons name={item.iconName} size={18} color="#FF6534" />
-            </FloatingButton>
-          </Animated.View>
-        ))}
-      <AnimatedFloatingMainButton onPress={toggleMenu} activeOpacity={1} style={{ transform: [{ rotate: rotation }] }}>
-        <MaterialCommunityIcons name="plus" size={28} color="white" />
-      </AnimatedFloatingMainButton>
-    </FloatingActionView>
-  ) : recruitStatus?.toUpperCase() === "OPEN" ? (
-    <FloatingActionView>
-      <FloatingMainButton
-        onPress={() => {
-          goToClubJoin();
-        }}
-        join={true}
-      >
-        <MaterialIcons name="group-add" size={28} color="whitesmoke" />
-      </FloatingMainButton>
-    </FloatingActionView>
-  ) : (
-    <></>
+  const onPressAction = () => {
+    if (isJoined) goToFeedCreation();
+    else goToClubJoin();
+  };
+
+  return (
+    <Container>
+      <SectionLeft>
+        {isJoined ? (
+          <>
+            <IconButton>
+              <MaterialIcons name={"star"} size={26} color="#EC5D56" />
+            </IconButton>
+            <IconButton>
+              <MaterialIcons name="chat" size={26} color="#EC5D56" />
+            </IconButton>
+          </>
+        ) : (
+          <>
+            <LottieButton activeOpacity={1} onPress={onPressHeart}>
+              <Lottie
+                ref={heartRef}
+                source={require("../assets/lottie/70547-like.json")}
+                autoPlay={false}
+                loop={false}
+                speed={1.5}
+                colorFilters={[
+                  { keypath: "Filled", color: "#EC5D56" },
+                  { keypath: "Empty", color: "#E0E0E0" },
+                ]}
+                style={{ width: 35, height: 35, marginLeft: -3 }}
+              />
+            </LottieButton>
+            <IconButton onPress={openShare}>
+              <MaterialIcons name="ios-share" size={22} color="#6B8BF7" />
+            </IconButton>
+          </>
+        )}
+      </SectionLeft>
+      <SectionRight>
+        <View style={{ marginHorizontal: 18, borderWidth: 0.5, borderColor: "#B8B8B8", height: 16 }} />
+        <Button isJoined={isJoined} onPress={onPressAction}>
+          <ButtonText>{isJoined ? "피드쓰기" : "가입신청"}</ButtonText>
+        </Button>
+      </SectionRight>
+    </Container>
   );
 };
 

@@ -3,7 +3,6 @@ import { Platform, StatusBar, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import styled from "styled-components/native";
-import CustomText from "../../components/CustomText";
 
 const ModalContainer = styled.View`
   flex: 1;
@@ -14,12 +13,15 @@ const ModalHeader = styled.View<{ padding: number }>`
   padding: 0px ${(props: any) => (props.padding ? props.padding : 0)}px;
   margin-bottom: 15px;
 `;
-const ModalHeaderTitle = styled(CustomText)`
+const ModalHeaderTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 20px;
-  font-family: "NotoSansKR-Bold";
-  line-height: 28px;
+  line-height: 22px;
+  margin-bottom: 5px;
 `;
-const ModalHeaderText = styled(CustomText)`
+const ModalHeaderText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
   color: #a0a0a0;
 `;
 
@@ -29,8 +31,10 @@ const OptionButton = styled.TouchableOpacity<{ height: number; padding: number; 
   align-items: ${(props: any) => (props.alignItems ? props.alignItems : "center")};
   padding: 0px ${(props: any) => (props.padding ? props.padding : 0)}px;
 `;
-const OptionName = styled(CustomText)<{ warning: boolean }>`
+const OptionName = styled.Text<{ warning: boolean }>`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 16px;
+  line-height: 18px;
   color: ${(props: any) => (props.warning ? "#FF551F" : "#2b2b2b")};
 `;
 const Break = styled.View<{ sep: number }>`

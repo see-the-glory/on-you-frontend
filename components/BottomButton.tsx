@@ -16,13 +16,13 @@ const Button = styled.TouchableOpacity<{ disabled: boolean; color: string }>`
   width: 100%;
   height: 68px;
   padding-bottom: ${Platform.OS === "ios" ? 8 : 0}px;
-  background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : props.color ?? "#6B8BF7")};
+  background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : props.color ?? props.theme.primaryColor)};
 `;
 
-const Title = styled(CustomText)<{ color: string }>`
-  font-family: "AppleSDGothicNeoSB";
+const Title = styled.Text<{ color: string }>`
+  font-family: ${(props: any) => props.theme.koreanFontSB};
   font-size: 22px;
-  line-height: 30px;
+  line-height: 25px;
   color: ${(props: any) => props.color ?? "white"};
 `;
 

@@ -5,7 +5,6 @@ import { useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
 import { FeedComment } from "../api";
 import CircleIcon from "./CircleIcon";
-import CustomText from "./CustomText";
 
 const Container = styled.View`
   flex-direction: row;
@@ -32,22 +31,25 @@ const Side = styled.View<{ width: number }>`
   align-items: center;
 `;
 
-const UserName = styled(CustomText)`
-  font-size: 15px;
-  line-height: 22px;
-  color: #2b2b2b;
-  font-family: "NotoSansKR-Medium";
-  margin-right: 8px;
-`;
-
-const ContentText = styled(CustomText)`
-  font-size: 14px;
+const UserName = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-size: 12px;
   line-height: 21px;
+  margin-right: 8px;
+  color: #2b2b2b;
 `;
 
-const SubText = styled(CustomText)`
-  font-size: 11px;
-  line-height: 16px;
+const ContentText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 13px;
+  line-height: 21px;
+  color: #2b2b2b;
+`;
+
+const SubText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 10px;
+  line-height: 14px;
   color: #8e8e8e;
 `;
 
@@ -95,7 +97,7 @@ const CommentDetail: React.FC<CommentDetailProps> = ({ commentData, commentType,
       </View>
       <Side width={sideWidth}>
         <LikeButton onPress={() => likeComment(commentData.commentId, commentType, parentIndex, replyIndex)}>
-          {commentData.likeYn ? <Ionicons name="heart" size={16} color="#808080" /> : <Ionicons name="heart-outline" size={16} color="#BABABA" />}
+          {commentData.likeYn ? <Ionicons name="heart" size={16} color="#EC5D56" /> : <Ionicons name="heart-outline" size={16} color="#BABABA" />}
         </LikeButton>
       </Side>
     </Container>

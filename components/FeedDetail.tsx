@@ -1,8 +1,7 @@
-import React, { PureComponent, useEffect, useRef, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useRef, useState } from "react";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
-import CustomText from "./CustomText";
 import CircleIcon from "./CircleIcon";
 import { Feed, LikeUser } from "../api";
 import { Alert, Animated, NativeSyntheticEvent, Platform, ScrollView, TextLayoutEventData, TouchableOpacity, View } from "react-native";
@@ -28,21 +27,30 @@ const HeaderLeftView = styled.View`
   flex-direction: row;
   align-items: center;
 `;
-const HeaderNameView = styled.View`
+const HeaderInformationView = styled.View`
   justify-content: center;
   align-items: flex-start;
 `;
+
+const HeaderNameView = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
 const HeaderRightView = styled.View`
   height: 100%;
   justify-content: flex-end;
   padding-bottom: 10px;
 `;
-const HeaderText = styled(CustomText)`
-  font-size: 16px;
-  font-family: "NotoSansKR-Medium";
+const HeaderText = styled.Text`
+  font-size: 13px;
+  line-height: 16px;
+  font-family: ${(props: any) => props.theme.koreanFontEB};
   color: #2b2b2b;
-  line-height: 25px;
+  margin-right: 5px;
 `;
+
 const ContentView = styled.View<{ padding: number }>`
   padding: 0px ${(props: any) => (props.padding ? props.padding : "0")}px;
 `;
@@ -69,26 +77,30 @@ const InformationNumberButton = styled.TouchableOpacity`
   margin-right: 12px;
 `;
 
-const CountingNumber = styled(CustomText)`
+const CountingNumber = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
   margin-left: 3px;
 `;
-const InformationRightView = styled.View``;
-const CreatedTime = styled(CustomText)`
+const CreatedTime = styled.Text`
   color: #9a9a9a;
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 11px;
 `;
 const ContentTextView = styled.Text<{ height: number }>`
   ${(props: any) => (props.height ? `height: ${props.height}px` : "")};
 `;
-const ContentText = styled(CustomText)`
-  font-size: 14px;
-  line-height: 20px;
+const ContentText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 13px;
+  line-height: 18px;
   color: #2b2b2b;
 `;
 
-const ContentSubText = styled(CustomText)`
-  font-size: 14px;
-  line-height: 20px;
-  color: #9a9a9a;
+const ContentSubText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
+  line-height: 18px;
+  color: #5b5b5b;
 `;
 
 const HeartView = styled.View`
@@ -175,7 +187,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
       if (feedData?.likeYn) heartRef.current?.play(30, 30);
       else heartRef.current?.play(0, 0);
       isFirstRun.current = false;
-    } else {\
+    } else {
       bgHeartRef.current?.play(10, 25);
 
       if (feedData?.likeYn) heartRef.current?.play(10, 25);
@@ -255,21 +267,24 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
     <Container>
       <HeaderView padding={10} height={headerHeight}>
         <HeaderLeftView>
-          <CircleIcon uri={feedData?.thumbnail} size={46} kerning={6} />
-          <HeaderNameView>
-            <HeaderText>{feedData?.userName}</HeaderText>
-            {showClubName ? (
-              <TouchableWithoutFeedback onPress={() => (goToClub ? goToClub(feedData?.clubId) : {})}>
-                <Tag name={feedData?.clubName ?? ""} textColor="white" backgroundColor="#C4C4C4" />
-              </TouchableWithoutFeedback>
-            ) : (
-              <></>
-            )}
-          </HeaderNameView>
+          <CircleIcon uri={feedData?.thumbnail} size={36} kerning={6} />
+          <HeaderInformationView>
+            <HeaderNameView>
+              <HeaderText>{feedData?.userName}</HeaderText>
+              {showClubName ? (
+                <TouchableOpacity activeOpacity={1} onPress={() => (goToClub ? goToClub(feedData?.clubId) : {})}>
+                  <Tag name={feedData?.clubName ?? ""} contentContainerStyle={{ paddingLeft: 7, paddingRight: 7 }} textColor="#464646" backgroundColor="#E6E6E6" />
+                </TouchableOpacity>
+              ) : (
+                <></>
+              )}
+            </HeaderNameView>
+            <CreatedTime>{moment(feedData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
+          </HeaderInformationView>
         </HeaderLeftView>
         <HeaderRightView>
-          <TouchableOpacity onPress={() => openFeedOption(feedData)} style={{ paddingLeft: 15, paddingTop: 15 }}>
-            <Ionicons name="ellipsis-vertical" size={15} color="black" style={{ marginRight: -5 }} />
+          <TouchableOpacity onPress={() => openFeedOption(feedData)} style={{ paddingLeft: 15, paddingTop: 15, marginRight: -10 }}>
+            <AntDesign name="ellipsis1" size={16} color="black" style={{ marginRight: 5 }} />
           </TouchableOpacity>
         </HeaderRightView>
       </HeaderView>
@@ -297,7 +312,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
           autoPlay={false}
           loop={false}
           speed={1.5}
-          colorFilters={[{ keypath: "Filled", color: "#E7564F" }]}
+          colorFilters={[{ keypath: "Filled", color: "#EC5D56" }]}
           onAnimationFinish={onBgHeartAnimationFinish}
           autoSize={true}
           style={{ width: 200, height: 200 }}
@@ -315,7 +330,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
                   loop={false}
                   speed={1.5}
                   colorFilters={[
-                    { keypath: "Filled", color: "#E7564F" },
+                    { keypath: "Filled", color: "#EC5D56" },
                     { keypath: "Empty", color: "#000000" },
                   ]}
                   style={{ width: 35, height: 35, marginLeft: -3 }}
@@ -331,35 +346,32 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
                 <CountingNumber>{feedData?.commentCount}</CountingNumber>
               </InformationNumberButton>
             </InformationLeftView>
-            <InformationRightView>
-              <CreatedTime>{moment(feedData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
-            </InformationRightView>
           </View>
         </InformationView>
         <ScrollView style={{ height: 0 }}>
           <ContentText onTextLayout={onTextLayout}>{feedData?.content}</ContentText>
         </ScrollView>
-        <TouchableWithoutFeedback onPress={contentTextTouch}>
+        <TouchableOpacity activeOpacity={1} onPress={contentTextTouch}>
           <ContentTextView height={contentHeight}>
             {contentState.moreContent && isCollapsed ? (
               <>
                 <ContentText>{`${
                   contentState.collapsedTextList.length > 1 && contentState.collapsedTextList[1].length > 15 ? contentState.collapsedText.slice(0, -8) : contentState.collapsedText
-                }...`}</ContentText>
-                <ContentSubText>{` 더 보기`}</ContentSubText>
+                }  `}</ContentText>
+                <ContentSubText>{` 더보기`}</ContentSubText>
               </>
             ) : (
               <ContentText>{contentState.collapsedText}</ContentText>
             )}
           </ContentTextView>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={contentTextTouch}>
+        </TouchableOpacity>
+        <TouchableOpacity activeOpacity={1} onPress={contentTextTouch}>
           <Collapsible collapsed={isCollapsed} style={{ height: contentState.textHeight }}>
             <ContentTextView>
               <ContentText>{contentState.remainedText}</ContentText>
             </ContentTextView>
           </Collapsible>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
       </ContentView>
     </Container>
   );

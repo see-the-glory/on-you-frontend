@@ -3,7 +3,6 @@ import { Platform, StatusBar, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import styled from "styled-components/native";
-import CustomText from "../../components/CustomText";
 
 const ModalContainer = styled.View`
   flex: 1;
@@ -17,10 +16,12 @@ const OptionButton = styled.TouchableOpacity<{ height: number; padding: number; 
   padding: 0px ${(props: any) => (props.padding ? props.padding : 0)}px;
   opacity: ${(props: any) => (props.disabled ? 0.2 : 1)};
 `;
-const OptionName = styled(CustomText)<{ warning: boolean }>`
+const OptionName = styled.Text<{ warning: boolean }>`
+  font-family: ${(props: any) => props.theme.koreanFontM};
   font-size: 16px;
+  line-height: 18px;
+
   color: ${(props: any) => (props.warning ? "#FF551F" : "#2b2b2b")};
-  line-height: 22px;
 `;
 const Break = styled.View<{ sep: number }>`
   width: 100%;

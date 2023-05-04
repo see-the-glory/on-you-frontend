@@ -3,7 +3,6 @@ import styled from "styled-components/native";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Category } from "../api";
-import CustomText from "./CustomText";
 import FastImage from "react-native-fast-image";
 import Tag from "./Tag";
 
@@ -29,14 +28,16 @@ const Gradient = styled(LinearGradient)<{ size: number }>`
 
 const RecruitView = styled.View`
   background-color: #ff6534;
-  padding: 2px 4px;
-  border-radius: 5px;
+  padding: 1.5px 5px;
+  border-radius: 3px;
+  margin-bottom: 3px;
 `;
 
-const RecruitText = styled(CustomText)`
-  font-size: 10px;
+const RecruitText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-size: 8px;
+  line-height: 9px;
   color: white;
-  line-height: 14px;
 `;
 
 const TitleView = styled.View`
@@ -47,11 +48,11 @@ const TitleView = styled.View`
   align-items: flex-end;
 `;
 
-const ClubNameText = styled(CustomText)`
+const ClubNameText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
   flex: 5;
-  font-size: 16px;
-  font-family: "NotoSansKR-Bold";
-  line-height: 25px;
+  font-size: 14px;
+  line-height: 17px;
   color: white;
 `;
 
@@ -63,11 +64,11 @@ const TitleViewRight = styled.View`
   padding-bottom: 5px;
 `;
 
-const Number = styled(CustomText)`
+const Number = styled.Text`
+  font-family: ${(props: any) => props.theme.englishFontM};
   margin-left: 3px;
   color: white;
   font-size: 9px;
-  line-height: 12px;
 `;
 
 const ClubInfo = styled.View<{ width: number }>`
@@ -87,10 +88,10 @@ const DescView = styled.View`
   width: 100%;
   margin: 5px 0px;
 `;
-const ShortDescText = styled(CustomText)`
+const ShortDescText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   color: #6f6f6f;
-  font-size: 12px;
-  line-height: 19px;
+  font-size: 10px;
 `;
 
 interface ClubListProps {
@@ -138,9 +139,9 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
             backgroundColor="white"
             textColor="#A5A5A5"
             borderColor="#A5A5A5"
-            iconSize={7}
+            iconSize={6}
             contentContainerStyle={{ paddingTop: 1, paddingBottom: 1, paddingRight: 3, paddingLeft: 3 }}
-            textStyle={{ fontSize: 10, lineHeight: 14 }}
+            textStyle={{ fontSize: 9, lineHeight: 11 }}
           />
 
           {categories?.map((category, index) => (
@@ -149,9 +150,9 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
               name={category?.name ?? ""}
               backgroundColor="#B4B4B4"
               textColor="white"
-              borderColor="#B4B4B4"
+              borderColor="rgba(0,0,0,0)"
               contentContainerStyle={{ paddingTop: 1, paddingBottom: 1, paddingRight: 3, paddingLeft: 3 }}
-              textStyle={{ fontSize: 10, lineHeight: 14 }}
+              textStyle={{ fontSize: 9, lineHeight: 11 }}
             />
           ))}
         </TagView>
