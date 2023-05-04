@@ -26,11 +26,7 @@ const Container = styled.View`
   flex: 1;
 `;
 
-const FooterView = styled.View`
-  position: absolute;
-  width: 100%;
-  bottom: 0px;
-`;
+const FooterView = styled.View``;
 
 const ReplyStatusView = styled.View<{ padding: number }>`
   flex-direction: row;
@@ -61,10 +57,10 @@ const RoundingView = styled.View`
   flex-direction: row;
   flex: 1;
   height: 100%;
-  padding: 0px 10px;
+  padding: 3px 10px;
   border-width: 0.5px;
   border-color: rgba(0, 0, 0, 0.5);
-  border-radius: 20px;
+  border-radius: 15px;
 `;
 const CommentInput = styled.TextInput`
   font-family: ${(props: any) => props.theme.koreanFontR};
@@ -334,6 +330,7 @@ const FeedComments = ({
                 autoComplete="off"
                 returnKeyType="done"
                 returnKeyLabel="done"
+                textAlignVertical="top"
                 onChangeText={(value: string) => {
                   setComment(value);
                   if (!validation && value.trim() !== "") setValidation(true);

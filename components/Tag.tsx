@@ -13,10 +13,10 @@ const TagView = styled.View<{ backgroundColor: string; borderColor: string }>`
   ${(props: any) => (props.borderColor ? `border: 1px solid ${props.borderColor};` : "")}
 `;
 
-const TagText = styled.Text<{ color: string }>`
+const TagText = styled.Text<{ color: string; includeEmoji: boolean }>`
   font-family: ${(props: any) => props.theme.koreanFontSB};
   font-size: 10px;
-  line-height: 13px;
+  line-height: ${(props: any) => (props.includeEmoji ? 15 : 12)}px;
   color: ${(props: any) => (props.color ? props.color : "white")};
 `;
 
@@ -32,10 +32,11 @@ interface TagProps {
 }
 
 const Tag: React.FC<TagProps> = ({ name, iconName, textColor, backgroundColor, borderColor, contentContainerStyle, textStyle, iconSize }) => {
+  const includeEmoji = /\p{Extended_Pictographic}/u.test(name);
   return (
     <TagView backgroundColor={backgroundColor} borderColor={borderColor} style={contentContainerStyle}>
       {iconName ? <FontAwesome5 name={iconName} size={iconSize ?? 8} color={textColor} style={{ marginRight: 1 }} /> : <></>}
-      <TagText color={textColor} style={textStyle}>
+      <TagText color={textColor} includeEmoji={includeEmoji} style={textStyle}>
         {name}
       </TagText>
     </TagView>

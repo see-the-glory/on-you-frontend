@@ -1,6 +1,20 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { ActivityIndicator, Alert, Animated, BackHandler, DeviceEventEmitter, Keyboard, LayoutChangeEvent, Platform, StatusBar, Text, TouchableOpacity, useWindowDimensions } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Animated,
+  BackHandler,
+  DeviceEventEmitter,
+  Keyboard,
+  KeyboardAvoidingView,
+  LayoutChangeEvent,
+  Platform,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+} from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
@@ -76,15 +90,12 @@ const NotiBadgeText = styled.Text`
 `;
 
 const FooterView = styled.View`
-  position: absolute;
-  width: 100%;
-  bottom: 0px;
   background-color: white;
 `;
 
 const CommentInputView = styled.View<{ padding: number }>`
   flex-direction: row;
-  border-top-width: 1px;
+  border-top-width: 0.5px;
   border-top-color: #c4c4c4;
   align-items: flex-end;
   padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
@@ -95,10 +106,10 @@ const RoundingView = styled.View`
   flex-direction: row;
   flex: 1;
   height: 100%;
-  padding: 0px 10px;
   border-width: 0.5px;
   border-color: rgba(0, 0, 0, 0.5);
-  border-radius: 20px;
+  border-radius: 15px;
+  padding: 3px 10px;
 `;
 const CommentInput = styled.TextInput`
   font-family: ${(props: any) => props.theme.koreanFontR};
@@ -508,6 +519,7 @@ const ClubTopTabs = ({
   return (
     <Container>
       <StatusBar backgroundColor={"black"} barStyle={"light-content"} />
+
       <NavigationView height={HEADER_HEIGHT}>
         <LeftNavigationView>
           <TouchableOpacity onPress={() => popToTop()}>
@@ -555,49 +567,51 @@ const ClubTopTabs = ({
         </TopTab.Navigator>
       </Animated.View>
 
-      <AnimatedFooterView style={{ opacity: guestCommentOpacity, zIndex: gusetCommentZIndex }}>
-        <CommentInputView
-          padding={20}
-          onLayout={(event: LayoutChangeEvent) => {
-            const { height } = event.nativeEvent.layout;
-            setCommentInputHeight(height + bottom);
-          }}
-        >
-          <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
-          <RoundingView>
-            <CommentInput
-              ref={guestCommentInputRef}
-              placeholder="방명록을 작성해보세요. (최대 100자)"
-              placeholderTextColor="#B0B0B0"
-              value={guestComment}
-              textAlign="left"
-              multiline={true}
-              maxLength={100}
-              autoCapitalize="none"
-              autoCorrect={false}
-              autoComplete="off"
-              returnKeyType="done"
-              returnKeyLabel="done"
-              onChangeText={(value: string) => {
-                setGuestComment(value);
-                if (!validation && value.trim() !== "") setValidation(true);
-                if (validation && value.trim() === "") setValidation(false);
-              }}
-              onEndEditing={() => setGuestComment((prev) => prev.trim())}
-              includeFontPadding={false}
-            />
-          </RoundingView>
-          {guestCommentMutation.isLoading ? (
-            <SubmitLoadingView>
-              <ActivityIndicator />
-            </SubmitLoadingView>
-          ) : (
-            <SubmitButton disabled={!validation} onPress={guestCommentSubmit}>
-              <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
-            </SubmitButton>
-          )}
-        </CommentInputView>
-      </AnimatedFooterView>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={-10} pointerEvents="box-none" style={{ flex: 1, zIndex: 2, justifyContent: "flex-end" }}>
+        <AnimatedFooterView style={{ opacity: guestCommentOpacity, zIndex: gusetCommentZIndex }}>
+          <CommentInputView
+            padding={20}
+            onLayout={(event: LayoutChangeEvent) => {
+              const { height } = event.nativeEvent.layout;
+              setCommentInputHeight(height + bottom);
+            }}
+          >
+            <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
+            <RoundingView>
+              <CommentInput
+                ref={guestCommentInputRef}
+                placeholder="방명록을 작성해보세요. (최대 100자)"
+                placeholderTextColor="#B0B0B0"
+                value={guestComment}
+                textAlign="left"
+                multiline={true}
+                maxLength={100}
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="off"
+                returnKeyType="done"
+                returnKeyLabel="done"
+                onChangeText={(value: string) => {
+                  setGuestComment(value);
+                  if (!validation && value.trim() !== "") setValidation(true);
+                  if (validation && value.trim() === "") setValidation(false);
+                }}
+                onEndEditing={() => setGuestComment((prev) => prev.trim())}
+                includeFontPadding={false}
+              />
+            </RoundingView>
+            {guestCommentMutation.isLoading ? (
+              <SubmitLoadingView>
+                <ActivityIndicator />
+              </SubmitLoadingView>
+            ) : (
+              <SubmitButton disabled={!validation} onPress={guestCommentSubmit}>
+                <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
+              </SubmitButton>
+            )}
+          </CommentInputView>
+        </AnimatedFooterView>
+      </KeyboardAvoidingView>
 
       {clubRoleLoading ? (
         <></>
