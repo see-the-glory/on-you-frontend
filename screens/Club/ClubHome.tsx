@@ -249,17 +249,13 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const [selectedSchedule, setSelectedSchedule] = useState(-1);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const [memberLoading, setMemberLoading] = useState(true);
-  const [memberData, setMemberData] = useState<Member[][]>();
-  const [managerData, setManagerData] = useState<Member[][]>();
-  const [masterData, setMasterData] = useState<Member>();
-  const memberCountPerLine = Math.floor((SCREEN_WIDTH - SCREEN_PADDING_SIZE) / (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING));
+  const [members, setMembers] = useState<Member[]>([]);
   const dispatch = useAppDispatch();
   const myRole = useSelector((state: RootState) => state.club.role);
   const toast = useToast();
   const [clubLongDescLines, setClubLongDescLines] = useState<string[]>(typeof clubData?.clubLongDesc === "string" ? clubData?.clubLongDesc?.split("\n") : []);
   const [isCollapsedLongDesc, setIsCollapsedLongDesc] = useState<boolean>(true);
   const [guestCommentBundle, setGuestCommentBulde] = useState<GuestComment[][]>([]);
-  const [comment, setComment] = useState<string>("");
   const collapsed = 8;
   const guestCommentLine = 4;
   const [guestBookIndex, setGuestBookIndex] = useState<number>(0);
@@ -297,32 +293,13 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   });
 
   const getClubMembers = () => {
-    const members: Member[] = [];
-    const manager: Member[] = [];
-    const memberBundle: Member[][] = [];
-    const managerBundle: Member[][] = [];
-
-    if (clubData && clubData.members) {
-      for (let i = 0; i < clubData?.members?.length; ++i) {
-        if (clubData.members && clubData.members[i].role?.toUpperCase() === "MASTER") {
-          setMasterData(clubData.members[i]);
-        } else if (clubData.members && clubData.members[i].role?.toUpperCase() === "MANAGER") {
-          manager.push(clubData.members[i]);
-        } else if (clubData.members && clubData.members[i].role?.toUpperCase() === "MEMBER") {
-          members.push(clubData.members[i]);
-        }
-      }
-    }
-
-    for (var i = 0; i < members.length; i += memberCountPerLine) {
-      memberBundle.push(members.slice(i, i + memberCountPerLine));
-    }
-
-    for (var i = 0; i < manager.length; i += memberCountPerLine) {
-      managerBundle.push(manager.slice(i, i + memberCountPerLine));
-    }
-    setMemberData(memberBundle);
-    setManagerData(managerBundle);
+    const approved = clubData?.members?.filter((member) => member.applyStatus === "APPROVED");
+    const sorted = [
+      ...(approved?.filter((member) => member.role === "MASTER") ?? []),
+      ...(approved?.filter((member) => member.role === "MANAGER") ?? []),
+      ...(approved?.filter((member) => member.role === "MEMBER") ?? []),
+    ];
+    setMembers(sorted);
   };
 
   const getData = async () => {
@@ -366,7 +343,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         onScrollEndDrag={() => syncScrollOffset(screenName)}
         contentOffset={{ x: 0, y: offsetY ?? 0 }}
         style={{
-          flexGrow: 1,
+          flex: 1,
           paddingTop: 15,
           backgroundColor: "#F5F5F5",
           transform: [
@@ -381,6 +358,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         }}
         contentContainerStyle={{
           paddingTop: headerDiff,
+          paddingBottom: headerDiff * 2,
           minHeight: SCREEN_HEIGHT + headerDiff * 2,
           backgroundColor: "#F5F5F5",
         }}
@@ -490,7 +468,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingVertical: 6, paddingHorizontal: SCREEN_PADDING_SIZE }}
-            data={clubData?.members?.filter((member) => member.applyStatus === "APPROVED")}
+            data={members}
             keyExtractor={(item: Member, index: number) => String(index)}
             ItemSeparatorComponent={() => <View style={{ width: 15 }} />}
             renderItem={({ item, index }: { item: Member; index: number }) => (
