@@ -1,6 +1,20 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { ActivityIndicator, Alert, Animated, BackHandler, DeviceEventEmitter, Keyboard, LayoutChangeEvent, Platform, StatusBar, Text, TouchableOpacity, useWindowDimensions } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Animated,
+  BackHandler,
+  DeviceEventEmitter,
+  Keyboard,
+  KeyboardAvoidingView,
+  LayoutChangeEvent,
+  Platform,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+} from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
@@ -508,6 +522,7 @@ const ClubTopTabs = ({
   return (
     <Container>
       <StatusBar backgroundColor={"black"} barStyle={"light-content"} />
+
       <NavigationView height={HEADER_HEIGHT}>
         <LeftNavigationView>
           <TouchableOpacity onPress={() => popToTop()}>
@@ -555,49 +570,51 @@ const ClubTopTabs = ({
         </TopTab.Navigator>
       </Animated.View>
 
-      <AnimatedFooterView style={{ opacity: guestCommentOpacity, zIndex: gusetCommentZIndex }}>
-        <CommentInputView
-          padding={20}
-          onLayout={(event: LayoutChangeEvent) => {
-            const { height } = event.nativeEvent.layout;
-            setCommentInputHeight(height + bottom);
-          }}
-        >
-          <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
-          <RoundingView>
-            <CommentInput
-              ref={guestCommentInputRef}
-              placeholder="방명록을 작성해보세요. (최대 100자)"
-              placeholderTextColor="#B0B0B0"
-              value={guestComment}
-              textAlign="left"
-              multiline={true}
-              maxLength={100}
-              autoCapitalize="none"
-              autoCorrect={false}
-              autoComplete="off"
-              returnKeyType="done"
-              returnKeyLabel="done"
-              onChangeText={(value: string) => {
-                setGuestComment(value);
-                if (!validation && value.trim() !== "") setValidation(true);
-                if (validation && value.trim() === "") setValidation(false);
-              }}
-              onEndEditing={() => setGuestComment((prev) => prev.trim())}
-              includeFontPadding={false}
-            />
-          </RoundingView>
-          {guestCommentMutation.isLoading ? (
-            <SubmitLoadingView>
-              <ActivityIndicator />
-            </SubmitLoadingView>
-          ) : (
-            <SubmitButton disabled={!validation} onPress={guestCommentSubmit}>
-              <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
-            </SubmitButton>
-          )}
-        </CommentInputView>
-      </AnimatedFooterView>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={commentInputHeight} pointerEvents="none" style={{ flex: 1, zIndex: 3 }}>
+        <AnimatedFooterView style={{ opacity: guestCommentOpacity, zIndex: gusetCommentZIndex }}>
+          <CommentInputView
+            padding={20}
+            onLayout={(event: LayoutChangeEvent) => {
+              const { height } = event.nativeEvent.layout;
+              setCommentInputHeight(height + bottom);
+            }}
+          >
+            <CircleIcon uri={me?.thumbnail} size={35} kerning={10} />
+            <RoundingView>
+              <CommentInput
+                ref={guestCommentInputRef}
+                placeholder="방명록을 작성해보세요. (최대 100자)"
+                placeholderTextColor="#B0B0B0"
+                value={guestComment}
+                textAlign="left"
+                multiline={true}
+                maxLength={100}
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="off"
+                returnKeyType="done"
+                returnKeyLabel="done"
+                onChangeText={(value: string) => {
+                  setGuestComment(value);
+                  if (!validation && value.trim() !== "") setValidation(true);
+                  if (validation && value.trim() === "") setValidation(false);
+                }}
+                onEndEditing={() => setGuestComment((prev) => prev.trim())}
+                includeFontPadding={false}
+              />
+            </RoundingView>
+            {guestCommentMutation.isLoading ? (
+              <SubmitLoadingView>
+                <ActivityIndicator />
+              </SubmitLoadingView>
+            ) : (
+              <SubmitButton disabled={!validation} onPress={guestCommentSubmit}>
+                <SubmitButtonText disabled={!validation}>게시</SubmitButtonText>
+              </SubmitButton>
+            )}
+          </CommentInputView>
+        </AnimatedFooterView>
+      </KeyboardAvoidingView>
 
       {clubRoleLoading ? (
         <></>

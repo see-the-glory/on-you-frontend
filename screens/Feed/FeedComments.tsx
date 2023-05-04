@@ -61,7 +61,7 @@ const RoundingView = styled.View`
   flex-direction: row;
   flex: 1;
   height: 100%;
-  padding: 0px 10px;
+  padding: 3px 10px;
   border-width: 0.5px;
   border-color: rgba(0, 0, 0, 0.5);
   border-radius: 20px;
@@ -334,6 +334,7 @@ const FeedComments = ({
                 autoComplete="off"
                 returnKeyType="done"
                 returnKeyLabel="done"
+                textAlignVertical="top"
                 onChangeText={(value: string) => {
                   setComment(value);
                   if (!validation && value.trim() !== "") setValidation(true);
