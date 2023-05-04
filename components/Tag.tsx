@@ -15,8 +15,8 @@ const TagView = styled.View<{ backgroundColor: string; borderColor: string }>`
 
 const TagText = styled.Text<{ color: string; includeEmoji: boolean }>`
   font-family: ${(props: any) => props.theme.koreanFontSB};
-  font-size: 10px;
-  line-height: ${(props: any) => (props.includeEmoji ? 15 : 12)}px;
+  font-size: 11px;
+  line-height: ${(props: any) => (props.includeEmoji ? 15 : 13)}px;
   color: ${(props: any) => (props.color ? props.color : "white")};
 `;
 

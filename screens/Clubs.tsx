@@ -25,15 +25,15 @@ const CategoryButton = styled.TouchableOpacity`
 `;
 const CategoryName = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 13px;
-  line-height: 16px;
+  font-size: 15px;
+  line-height: 17px;
   color: #8e8e8e;
 `;
 
 const SelectedCategoryName = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontB};
-  font-size: 13px;
-  line-height: 16px;
+  font-size: 15px;
+  line-height: 18px;
 `;
 
 const Container = styled.SafeAreaView`
@@ -65,7 +65,7 @@ const HeaderItem = styled.View`
 
 const HeaderItemText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 10px;
+  font-size: 12px;
 `;
 
 const MainView = styled.View`
@@ -157,7 +157,7 @@ const SortingItemButton = styled.TouchableOpacity`
   margin: 3px 0px;
 `;
 const SortingItemText = styled.Text<{ selected: boolean }>`
-  font-size: 14px;
+  font-size: 15px;
   color: ${(props: any) => (props.selected ? "#EC5D56" : "#b0b0b0")};
   font-family: ${(props: any) => (props.selected ? props.theme.koreanFontM : props.theme.koreanFontR)};
 `;

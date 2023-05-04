@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 
 const TabBarContainer = styled.View<{ height: number }>`
   width: 100%;
-  background-color: #f5f5f5;
+  background-color: white;
   padding: 0px 20px;
   flex-direction: row;
   align-items: center;
@@ -19,7 +19,7 @@ const TabButton = styled.TouchableOpacity<{ isFocused: boolean; height: number }
   height: ${(props: any) => props.height}px;
   justify-content: center;
   align-items: center;
-  border-bottom-width: 1.5px;
+  border-bottom-width: 2px;
   border-bottom-color: ${(props: any) => (props.isFocused ? props.theme.primaryColor : "transparent")};
 `;
 
@@ -31,7 +31,7 @@ const TextWrap = styled.View<{ height: number }>`
 const TabText = styled.Text<{ isFocused: boolean }>`
   font-family: ${(props: any) => (props.isFocused ? props.theme.koreanFontM : props.theme.koreanFontR)};
   font-size: 14px;
-  line-height: 15px;
+  line-height: ${(props: any) => (props.isFocused ? 15 : 16)}px;
   color: ${(props: any) => (props.isFocused ? "black" : "#818181")};
 `;
 

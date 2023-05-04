@@ -47,6 +47,8 @@ import clubSlice from "../../redux/slices/club";
 import Share from "react-native-share";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
 import CircleIcon from "../../components/CircleIcon";
+import ClubOptionModal from "./ClubOptionModal";
+import { useModalize } from "react-native-modalize";
 
 const Container = styled.View`
   flex: 1;
@@ -91,14 +93,15 @@ const NotiBadgeText = styled.Text`
 
 const FooterView = styled.View`
   background-color: white;
+  height: 70px;
 `;
 
-const CommentInputView = styled.View<{ padding: number }>`
+const CommentInputView = styled.View`
   flex-direction: row;
   border-top-width: 0.5px;
   border-top-color: #c4c4c4;
   align-items: flex-end;
-  padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
+  padding: 15px 20px 0px 20px;
   margin-bottom: 10px;
 `;
 
@@ -160,6 +163,9 @@ const ClubTopTabs = ({
   const [scheduleData, setScheduleData] = useState<RefinedSchedule[]>();
   const [notiCount, setNotiCount] = useState<number>(0);
   const [isShareOpend, setIsShareOpend] = useState<boolean>(false);
+  const { ref: clubOptionRef, open: openClubOption, close: closeClubOption } = useModalize();
+  const modalOptionButtonHeight = 45;
+
   // Header Height Definition
   const { top, bottom } = useSafeAreaInsets();
   const { height: SCREEN_HEIGHT } = useWindowDimensions();
@@ -351,6 +357,7 @@ const ClubTopTabs = ({
 
   // Function in Modal
   const goToClubEdit = () => {
+    closeClubOption();
     navigate("ClubManagementStack", { screen: "ClubManagementMain", params: { clubData: data } });
   };
 
@@ -362,6 +369,7 @@ const ClubTopTabs = ({
       return toast.show("멤버 모집 기간이 아닙니다.", { type: "warning" });
     }
 
+    closeClubOption();
     navigate("ClubJoin", { clubData: data });
   };
 
@@ -382,6 +390,7 @@ const ClubTopTabs = ({
   };
 
   const openShare = async () => {
+    closeClubOption();
     setIsShareOpend(true);
     const link = await dynamicLinks().buildShortLink(
       {
@@ -412,6 +421,14 @@ const ClubTopTabs = ({
       await Share.open(options);
     } catch (e) {}
     setIsShareOpend(false);
+  };
+
+  const openShareJoin = () => {
+    closeClubOption();
+  };
+
+  const goToReportClub = () => {
+    closeClubOption();
   };
 
   const withdrawClub = () => {
@@ -523,7 +540,7 @@ const ClubTopTabs = ({
       <NavigationView height={HEADER_HEIGHT}>
         <LeftNavigationView>
           <TouchableOpacity onPress={() => popToTop()}>
-            <Entypo name="chevron-thin-left" size={20} color="white" />
+            <Entypo name="chevron-thin-left" size={18} color="white" />
           </TouchableOpacity>
         </LeftNavigationView>
         <RightNavigationView>
@@ -531,14 +548,14 @@ const ClubTopTabs = ({
             <TouchableOpacity onPress={goClubNotification} style={{ paddingHorizontal: 8 }}>
               <NotiView>
                 {notiCount > 0 && !notiLoading ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
-                <Ionicons name="mail-outline" size={24} color="white" />
+                <Ionicons name="mail-outline" size={22} color="white" />
               </NotiView>
             </TouchableOpacity>
           ) : (
             <></>
           )}
-          <TouchableOpacity disabled={isShareOpend} onPress={openShare} style={{ paddingLeft: 10, paddingRight: 1 }}>
-            <Ionicons name="ios-share-social-outline" size={24} color="white" />
+          <TouchableOpacity disabled={isShareOpend} onPress={() => openClubOption()} style={{ paddingLeft: 10, paddingRight: 1 }}>
+            <Ionicons name="ellipsis-vertical-sharp" size={22} color="white" />
           </TouchableOpacity>
         </RightNavigationView>
       </NavigationView>
@@ -567,10 +584,14 @@ const ClubTopTabs = ({
         </TopTab.Navigator>
       </Animated.View>
 
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={-10} pointerEvents="box-none" style={{ flex: 1, zIndex: 2, justifyContent: "flex-end" }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={-10}
+        pointerEvents="box-none"
+        style={{ flex: 1, zIndex: gusetCommentZIndex, justifyContent: "flex-end" }}
+      >
         <AnimatedFooterView style={{ opacity: guestCommentOpacity, zIndex: gusetCommentZIndex }}>
           <CommentInputView
-            padding={20}
             onLayout={(event: LayoutChangeEvent) => {
               const { height } = event.nativeEvent.layout;
               setCommentInputHeight(height + bottom);
@@ -591,6 +612,7 @@ const ClubTopTabs = ({
                 autoComplete="off"
                 returnKeyType="done"
                 returnKeyLabel="done"
+                textAlignVertical="center"
                 onChangeText={(value: string) => {
                   setGuestComment(value);
                   if (!validation && value.trim() !== "") setValidation(true);
@@ -618,6 +640,16 @@ const ClubTopTabs = ({
       ) : (
         <FloatingActionButton role={clubRole?.data} recruitStatus={data?.recruitStatus} openShare={openShare} goToClubJoin={goToClubJoin} goToFeedCreation={goToFeedCreation} />
       )}
+
+      <ClubOptionModal
+        modalRef={clubOptionRef}
+        buttonHeight={modalOptionButtonHeight}
+        isMyClub={clubRole?.data.applyStatus === "APPROVED" ? true : false}
+        goToClubEdit={goToClubEdit}
+        openShareJoin={openShareJoin}
+        goToReportClub={goToReportClub}
+        openShare={openShare}
+      />
     </Container>
   );
 };

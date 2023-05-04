@@ -30,13 +30,12 @@ const FeedSelection = ({
 }) => {
   const me = useSelector((state: RootState) => state.auth.user);
   const toast = useToast();
-  const { ref: myFeedOptionRef, open: openMyFeedOption, close: closeMyFeedOption } = useModalize();
-  const { ref: otherFeedOptionRef, open: openOtherFeedOption, close: closeOtherFeedOption } = useModalize();
+  const { ref: feedOptionRef, open: openFeedOption, close: closeFeedOption } = useModalize();
   const { ref: complainOptionRef, open: openComplainOption, close: closeComplainOption } = useModalize();
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const [feedData, setFeedData] = useState<Feed>();
   const modalOptionButtonHeight = 45;
-  const feedDetailHeaderHeight = 50;
+  const feedDetailHeaderHeight = 52;
   const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
   const itemSeparatorGap = 20;
@@ -66,7 +65,7 @@ const FeedSelection = ({
       toast.show(`게시글이 삭제되었습니다.`, { type: "success" });
       DeviceEventEmitter.emit("HomeAllRefetch");
       DeviceEventEmitter.emit("ClubFeedRefetch");
-      closeMyFeedOption();
+      closeFeedOption();
     },
     onError: (error) => {
       console.log(`API ERROR | deleteFeed ${error.code} ${error.status}`);
@@ -80,7 +79,7 @@ const FeedSelection = ({
     onSuccess: (res) => {
       toast.show(`사용자를 차단했습니다.`, { type: "success" });
       DeviceEventEmitter.emit("ClubFeedRefetch");
-      closeOtherFeedOption();
+      closeFeedOption();
     },
     onError: (error) => {
       console.log(`API ERROR | blockUser ${error.code} ${error.status}`);
@@ -93,7 +92,7 @@ const FeedSelection = ({
   };
 
   const goToComplain = () => {
-    closeOtherFeedOption();
+    closeFeedOption();
     openComplainOption();
   };
 
@@ -107,14 +106,13 @@ const FeedSelection = ({
   };
 
   const goToUpdateFeed = () => {
-    closeMyFeedOption();
+    closeFeedOption();
     navigate("FeedStack", { screen: "FeedModification", params: { feedData } });
   };
 
-  const openFeedOption = (feedData?: Feed) => {
+  const goToFeedOptionModal = (feedData?: Feed) => {
     if (!feedData) return;
-    if (feedData?.userId === me?.id) openMyFeedOption();
-    else openOtherFeedOption();
+    openFeedOption();
   };
 
   const deleteFeed = () => {
@@ -217,7 +215,7 @@ const FeedSelection = ({
                 }
               });
           });
-          closeOtherFeedOption();
+          closeFeedOption();
         },
       },
     ]);
@@ -269,7 +267,7 @@ const FeedSelection = ({
         headerHeight={feedDetailHeaderHeight}
         infoHeight={feedDetailInfoHeight}
         contentHeight={feedDetailContentHeight}
-        openFeedOption={openFeedOption}
+        goToFeedOptionModal={goToFeedOptionModal}
         goToFeedComments={goToFeedComments}
         goToFeedLikes={goToFeedLikes}
         likeFeed={likeFeed}
@@ -278,19 +276,9 @@ const FeedSelection = ({
       />
 
       <FeedOptionModal
-        modalRef={myFeedOptionRef}
+        modalRef={feedOptionRef}
         buttonHeight={modalOptionButtonHeight}
-        isMyFeed={true}
-        goToUpdateFeed={goToUpdateFeed}
-        deleteFeed={deleteFeed}
-        goToComplain={goToComplain}
-        blockUser={blockUser}
-        downloadImages={downloadImages}
-      />
-      <FeedOptionModal
-        modalRef={otherFeedOptionRef}
-        buttonHeight={modalOptionButtonHeight}
-        isMyFeed={false}
+        isMyFeed={feedData.userId === me?.id}
         goToUpdateFeed={goToUpdateFeed}
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}

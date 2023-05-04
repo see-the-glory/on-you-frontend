@@ -36,7 +36,7 @@ const CategoryView = styled.View`
 
 const ClubNameView = styled.View`
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 `;
 
 const ClubNameText = styled.Text`
@@ -52,7 +52,7 @@ const ClubShortDescView = styled.View`
 const ClubShortDescText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontM};
   font-size: 14px;
-  line-height: 15px;
+  line-height: 18px;
   color: white;
 `;
 
@@ -79,14 +79,14 @@ const DetailInfoItem = styled.View`
 
 const DetailItemTitle = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 9px;
+  font-size: 11px;
   color: ${(props: any) => props.theme.secondaryColor};
   margin-right: 3px;
 `;
 
 const DetailItemText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 10px;
+  font-size: 12px;
   color: white;
 `;
 
@@ -149,7 +149,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, heightExpanded, h
             <InformationView>
               <CategoryView>
                 {clubData.categories?.map((category, index) => (
-                  <Tag key={`category_${index}`} name={category.name} backgroundColor={"rgba(255, 255, 255, 0.5)"} textColor={"black"} />
+                  <Tag key={`category_${index}`} name={category.name} backgroundColor={"rgba(255, 255, 255, 0.5)"} textColor={"black"} textStyle={{ fontSize: 12, lineHeight: 14 }} />
                 ))}
               </CategoryView>
               <ClubNameView>
@@ -161,11 +161,11 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, heightExpanded, h
               <Break />
               <DetailInfoView>
                 <DetailInfoItem>
-                  <MaterialIcons name="star" size={15} color="#FADF7D" style={{ marginRight: 2 }} />
-                  <DetailItemTitle>{`호스트`}</DetailItemTitle>
+                  <MaterialIcons name="star" size={16} color="#FADF7D" style={{ marginRight: 2 }} />
+                  <DetailItemTitle>{`리더`}</DetailItemTitle>
                   {master ? (
                     <>
-                      <CircleIcon size={16} uri={master.thumbnail} kerning={3} />
+                      <CircleIcon size={18} uri={master.thumbnail} kerning={3} />
                       <DetailItemText>{master.name}</DetailItemText>
                     </>
                   ) : (
@@ -173,7 +173,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, heightExpanded, h
                   )}
                 </DetailInfoItem>
                 <DetailInfoItem>
-                  <MaterialIcons name="people" size={15} color="#FADF7D" style={{ marginRight: 2 }} />
+                  <MaterialIcons name="people" size={16} color="#FADF7D" style={{ marginRight: 2 }} />
                   <DetailItemTitle>{`멤버`}</DetailItemTitle>
                   <DetailItemText>{clubData.recruitNumber}</DetailItemText>
                   <DetailItemText style={{ color: "#C0C0C0" }}>{` / ${clubData.maxNumber ? `${clubData.maxNumber} 명` : `무제한`}`}</DetailItemText>

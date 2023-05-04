@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components/native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Platform, Text, View } from "react-native";
+import { Platform, View } from "react-native";
 import { ClubRole } from "../api";
 import Lottie from "lottie-react-native";
 
@@ -13,7 +13,7 @@ const Container = styled.View`
   justify-content: space-between;
   z-index: 2;
   width: 100%;
-  height: 65px;
+  height: 70px;
   bottom: 0px;
   padding-right: 20px;
   padding-left: 20px;
@@ -28,20 +28,22 @@ const SectionRight = styled.View`
   align-items: center;
 `;
 
-const LottieButton = styled.TouchableOpacity``;
+const LottieButton = styled.TouchableOpacity`
+  margin-right: 16px;
+`;
 const IconButton = styled.TouchableOpacity`
   padding: 5px;
-  margin-right: 8px;
+  margin-right: 16px;
 `;
 
 const Button = styled.TouchableOpacity<{ isJoined: boolean }>`
-  padding: 10px 17px;
+  padding: 8px 15px;
   background-color: ${(props: any) => (props.isJoined ? props.theme.accentColor : props.theme.primaryColor)};
   border-radius: 20px;
 `;
 const ButtonText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontSB};
-  font-size: 19px;
+  font-size: 18px;
   line-height: 22px;
   color: white;
 `;
@@ -76,10 +78,10 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, rec
         {isJoined ? (
           <>
             <IconButton>
-              <MaterialIcons name={"star"} size={26} color="#EC5D56" />
+              <MaterialIcons name={"star"} size={28} color="#EC5D56" />
             </IconButton>
             <IconButton>
-              <MaterialIcons name="chat" size={26} color="#EC5D56" />
+              <MaterialIcons name="chat" size={28} color="#EC5D56" />
             </IconButton>
           </>
         ) : (
@@ -95,11 +97,11 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, rec
                   { keypath: "Filled", color: "#EC5D56" },
                   { keypath: "Empty", color: "#E0E0E0" },
                 ]}
-                style={{ width: 35, height: 35, marginLeft: -3 }}
+                style={{ width: 38, height: 38 }}
               />
             </LottieButton>
             <IconButton onPress={openShare}>
-              <MaterialIcons name="ios-share" size={22} color="#6B8BF7" />
+              <MaterialIcons name="ios-share" size={25} color="#6B8BF7" />
             </IconButton>
           </>
         )}

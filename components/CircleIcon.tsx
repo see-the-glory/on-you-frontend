@@ -41,7 +41,7 @@ const IconImage = styled(FastImage)<{ size: number }>`
 
 const CircleName = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 10px;
+  font-size: 11px;
   margin-top: 4px;
 `;
 
