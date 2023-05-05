@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import styled from "styled-components/native";
 import { ClubCreationSuccessScreenProps } from "../../Types/Club";
 import { Feather } from "@expo/vector-icons";
-import CustomText from "../../components/CustomText";
 import BottomButton from "../../components/BottomButton";
 import { BackHandler } from "react-native";
 
@@ -25,14 +24,15 @@ const SectionView = styled.View`
   margin-bottom: 80px;
 `;
 
-const H1 = styled(CustomText)`
+const H1 = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 24px;
   line-height: 33px;
-  font-family: "NotoSansKR-Bold";
   margin-top: 15px;
 `;
 
-const H2 = styled(CustomText)`
+const H2 = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #5c5c5c;
@@ -72,7 +72,7 @@ const ClubCreationSuccess: React.FC<ClubCreationSuccessScreenProps> = ({
           <H2>{`개설된 모임의 홈화면으로 가셔서\n상세 설정을 하실 수 있습니다.`}</H2>
         </SectionView>
       </MainView>
-      <BottomButton onPress={goClubHome} backgroundColor={"#FF6534"} title={"완료"} />
+      <BottomButton onPress={goClubHome} title={"완료"} />
     </Container>
   );
 };

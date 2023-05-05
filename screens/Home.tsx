@@ -417,7 +417,7 @@ const Home = () => {
       <FeedOptionModal
         modalRef={feedOptionRef}
         buttonHeight={modalOptionButtonHeight}
-        isMyFeed={selectFeedData?.userId !== me?.id}
+        isMyFeed={selectFeedData?.userId === me?.id}
         goToUpdateFeed={goToUpdateFeed}
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}

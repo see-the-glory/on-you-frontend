@@ -3,8 +3,6 @@ import { Entypo } from "@expo/vector-icons";
 import { useLayoutEffect } from "react";
 import { StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
-import CustomText from "../../components/CustomText";
-import { useToast } from "react-native-toast-notifications";
 import moment from "moment";
 
 const SCREEN_PADDING_SIZE = 20;
@@ -19,12 +17,13 @@ const Header = styled.View`
   align-items: center;
 `;
 
-const HeaderText = styled(CustomText)`
+const HeaderText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 16px;
   line-height: 21px;
 `;
 const HeaderBoldText = styled(HeaderText)`
-  font-family: "NotoSansKR-Bold";
+  font-family: ${(props: any) => props.theme.koreanFontB};
 `;
 const Content = styled.View``;
 const MessageView = styled.ScrollView`
@@ -35,11 +34,15 @@ const MessageView = styled.ScrollView`
 const CreatedTimeView = styled.View`
   justify-content: center;
   align-items: flex-end;
+  padding: 5px 0px;
 `;
-const CreatedTimeText = styled(CustomText)`
+const CreatedTimeText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
   color: #8e8e8e;
 `;
-const ContentText = styled(CustomText)`
+const ContentText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   margin: 8px;
   color: #343434;
   font-size: 14px;

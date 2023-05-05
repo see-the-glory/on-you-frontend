@@ -5,8 +5,6 @@ import { useSelector } from "react-redux";
 import { useMutation, useQuery } from "react-query";
 import { FeedApi, FeedUpdateRequest, UserApi, MyClub, ErrorResponse, MyClubsResponse, BaseResponse } from "../../api";
 import { useNavigation } from "@react-navigation/native";
-import CustomTextInput from "../../components/CustomTextInput";
-import CustomText from "../../components/CustomText";
 import { Modalize } from "react-native-modalize";
 import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import Carousel from "../../components/Carousel";
@@ -24,14 +22,16 @@ const Loader = styled.View`
   align-items: center;
 `;
 
-const FeedUser = styled.View`
+const HeaderView = styled.View`
   flex-direction: row;
+  align-items: center;
   padding: 10px;
 `;
 
 const UserInfo = styled.View`
-  padding-left: 10px;
+  flex-direction: row;
   justify-content: center;
+  align-items: center;
 `;
 
 const UserInfoSubButton = styled.TouchableOpacity`
@@ -39,21 +39,22 @@ const UserInfoSubButton = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const UserId = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  font-size: 16px;
+const NameText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontEB};
+  font-size: 14px;
+  line-height: 16px;
   color: #2b2b2b;
-  margin-bottom: 2px;
-  line-height: 22px;
+  margin-right: 8px;
 `;
 
 const ContentInfo = styled.View`
-  padding: 10px 10px 0px 0px;
+  padding: 10px 10px 10px 0px;
   align-items: flex-end;
   justify-content: center;
 `;
 
-const InfoText = styled(CustomText)`
+const InfoText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 12px;
   color: #b5b5b5;
 `;
@@ -64,10 +65,10 @@ const ContentArea = styled.View`
   background-color: #f3f3f3;
 `;
 
-const Ment = styled(CustomTextInput)`
+const FeedTextInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   width: 100%;
-  height: 250px;
-  color: black;
+  height: 300px;
   font-size: 14px;
   line-height: 20px;
 `;
@@ -88,15 +89,16 @@ const HeaderNameView = styled.View`
   padding-left: 10px;
 `;
 
-const ModalClubName = styled(CustomText)<{ selected: boolean }>`
-  font-family: "NotoSansKR-Medium";
-  color: ${(props: any) => (props.selected ? "#B0B0B0" : "#2B2B2B")};
+const ModalClubName = styled.Text<{ selected: boolean }>`
+  font-family: ${(props: any) => props.theme.koreanFontM};
   font-size: 14px;
-  line-height: 22px;
+  line-height: 16px;
+  color: ${(props: any) => (props.selected ? "#B0B0B0" : "#2B2B2B")};
 `;
 
 const ModalClubNameArea = styled.View`
   flex-direction: row;
+  margin-bottom: 3px;
 `;
 const CommentRemainder = styled.View`
   flex-direction: row;
@@ -108,18 +110,18 @@ const ModalContainText = styled.View`
   background-color: white;
 `;
 
-const IntroTextLeft = styled(CustomText)`
+const IntroTextLeft = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   text-align: left;
-  line-height: 19px;
   font-size: 12px;
   padding-left: 20px;
   color: #b0b0b0;
 `;
 
-const IntroTextRight = styled(CustomText)`
+const IntroTextRight = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   text-align: right;
   font-size: 12px;
-  line-height: 19px;
   padding-right: 20px;
   color: #b0b0b0;
 `;
@@ -225,14 +227,22 @@ const FeedModification = ({
 
   const modalRenderItem = ({ item, index }: { item: MyClub; index: number }) => (
     <ClubArea key={`Club_${index}`} onPress={() => ChangeClub(item.id, item.name)}>
-      <CircleIcon size={45} uri={item.thumbnail} />
+      <CircleIcon size={36} uri={item.thumbnail} />
       <HeaderNameView>
         <ModalClubNameArea>
           <ModalClubName selected={item.id === clubId}>{item.name}</ModalClubName>
         </ModalClubNameArea>
         <CommentRemainder>
           {item.categories?.map((category, index) => (
-            <Tag key={`Category_${index}`} textColor="white" backgroundColor="#C4C4C4" name={category.name} />
+            <Tag
+              key={`Category_${index}`}
+              backgroundColor="#B4B4B4"
+              textColor="white"
+              borderColor="rgba(0,0,0,0)"
+              name={category.name}
+              contentContainerStyle={{ paddingTop: 1, paddingBottom: 1, paddingRight: 3, paddingLeft: 3 }}
+              textStyle={{ fontSize: 10, lineHeight: 13 }}
+            />
           ))}
         </CommentRemainder>
       </HeaderNameView>
@@ -249,16 +259,16 @@ const FeedModification = ({
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={90} style={{ flex: 1 }}>
       <ScrollView>
-        <FeedUser>
-          <CircleIcon size={45} uri={me?.thumbnail} />
+        <HeaderView>
+          <CircleIcon size={38} uri={me?.thumbnail} kerning={6} />
           <UserInfo>
-            <UserId>{feedData.userName}</UserId>
+            <NameText>{feedData.userName}</NameText>
             <UserInfoSubButton onPress={onOpen} activeOpacity={1}>
-              <Tag name={clubName} textColor="black" backgroundColor="#E0E0E0" />
-              <MaterialCommunityIcons name="pencil-outline" size={20} color="#C4C4C4" />
+              <Tag name={clubName} contentContainerStyle={{ paddingLeft: 7, paddingRight: 7 }} textColor="#464646" backgroundColor="#E6E6E6" />
+              <MaterialCommunityIcons name="pencil-outline" size={18} color="#C4C4C4" />
             </UserInfoSubButton>
           </UserInfo>
-        </FeedUser>
+        </HeaderView>
         <Carousel
           pages={feedData.imageUrls}
           pageWidth={feedSize}
@@ -274,10 +284,10 @@ const FeedModification = ({
         />
 
         <ContentInfo>
-          <InfoText>{`${content.length} / ${maxLength}`}</InfoText>
+          <InfoText>{`${content.length} / ${maxLength} 자`}</InfoText>
         </ContentInfo>
         <ContentArea>
-          <Ment
+          <FeedTextInput
             value={content}
             onChangeText={(content: string) => setContent(content)}
             placeholderTextColor="#B0B0B0"
@@ -307,7 +317,6 @@ const FeedModification = ({
                   ListHeaderComponent: modalListHeaderComponent,
                   keyExtractor: (item, index) => String(index),
                   showsVerticalScrollIndicator: false,
-                  stickyHeaderIndices: [0],
                 }
           }
         >

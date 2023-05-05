@@ -3,7 +3,6 @@ import { ActivityIndicator, DeviceEventEmitter, KeyboardAvoidingView, Platform, 
 import styled from "styled-components/native";
 import CustomText from "../../components/CustomText";
 import { Calendar } from "react-native-calendars";
-import CustomTextInput from "../../components/CustomTextInput";
 import Collapsible from "react-native-collapsible";
 import DatePicker from "react-native-date-picker";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
@@ -21,6 +20,17 @@ const MainView = styled.ScrollView``;
 const CalendarHeader = styled.View`
   align-items: center;
   padding: 10px 0px;
+`;
+
+const CalendarMonthText = styled.Text`
+  font-family: ${(props: any) => props.theme.englishFontB};
+  font-size: 18px;
+  line-height: 24px;
+`;
+const CalendarYearText = styled.Text`
+  font-family: ${(props: any) => props.theme.englishFontR};
+  font-size: 12px;
+  color: #737373;
 `;
 
 const Content = styled.View`
@@ -49,24 +59,28 @@ const InputItem = styled.View`
   padding: 15px 0px;
 `;
 
-const ItemTitle = styled(CustomText)`
+const ItemTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
 `;
-const ItemText = styled(CustomText)`
+const ItemText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 16px;
   line-height: 23px;
   color: #6f6f6f;
 `;
 
-const ItemTextInput = styled(CustomTextInput)`
+const ItemTextInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 16px;
-  line-height: 23px;
+  line-height: 18px;
   color: #6f6f6f;
   flex: 1;
 `;
 
-const InfoText = styled(CustomText)`
+const InfoText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 12px;
   color: #b5b5b5;
 `;
@@ -75,7 +89,8 @@ const MemoView = styled.View`
   padding: 15px 0px;
 `;
 
-const MemoInput = styled(CustomTextInput)`
+const MemoInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   margin-top: 15px;
   width: 100%;
   height: 300px;
@@ -197,8 +212,8 @@ const ClubScheduleEdit = ({
             onPressArrowRight={(addMonth) => addMonth()}
             renderHeader={(date) => (
               <CalendarHeader>
-                <CustomText style={{ fontFamily: "NotoSansKR-Bold", fontSize: 18, lineHeight: 24 }}>{date.getMonth() + 1}</CustomText>
-                <CustomText style={{ fontSize: 12, color: "#737373" }}>{date.getFullYear()}</CustomText>
+                <CalendarMonthText>{date.getMonth() + 1}</CalendarMonthText>
+                <CalendarYearText>{date.getFullYear()}</CalendarYearText>
               </CalendarHeader>
             )}
           />
@@ -247,7 +262,7 @@ const ClubScheduleEdit = ({
             <MemoView>
               <ItemTitleView>
                 <ItemTitle>메모</ItemTitle>
-                <InfoText>{`${memo.length} / ${memoMax}`}</InfoText>
+                <InfoText>{`${memo.length} / ${memoMax} 자`}</InfoText>
               </ItemTitleView>
               <MemoInput
                 placeholder="스케줄에 대한 메모를 남겨주세요."

@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components/native";
 import { ClubCreationFailScreenProps } from "../../Types/Club";
 import { Ionicons } from "@expo/vector-icons";
-import CustomText from "../../components/CustomText";
 import BottomButton from "../../components/BottomButton";
 
 const Container = styled.SafeAreaView`
@@ -25,14 +24,16 @@ const SectionView = styled.View`
   margin-bottom: 80px;
 `;
 
-const H1 = styled(CustomText)`
+const H1 = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 24px;
   line-height: 33px;
   font-family: "NotoSansKR-Bold";
   margin-top: 20px;
 `;
 
-const H2 = styled(CustomText)`
+const H2 = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 16px;
   line-height: 21px;
   color: #5c5c5c;
@@ -55,7 +56,7 @@ const ClubCreationFail: React.FC<ClubCreationFailScreenProps> = ({ navigation: {
           <H2>다시 시도해주세요.</H2>
         </SectionView>
       </MainView>
-      <BottomButton onPress={goClubs} backgroundColor={"#295AF5"} title={"완료"} />
+      <BottomButton onPress={goClubs} title={"완료"} />
     </Container>
   );
 };
