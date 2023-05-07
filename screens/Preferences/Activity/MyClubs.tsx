@@ -3,12 +3,12 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import { ActivityIndicator, FlatList, Platform, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
 import { useQuery } from "react-query";
-import { UserApi, Club, MyClubsResponse, ErrorResponse, MyClub } from "../../api";
-import CircleIcon from "../../components/CircleIcon";
-import CustomText from "../../components/CustomText";
+import { UserApi, Club, MyClubsResponse, ErrorResponse, MyClub } from "../../../api";
+import CircleIcon from "../../../components/CircleIcon";
+import CustomText from "../../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import { Entypo } from "@expo/vector-icons";
-import Tag from "../../components/Tag";
+import Tag from "../../../components/Tag";
 
 const Loader = styled.SafeAreaView`
   flex: 1;

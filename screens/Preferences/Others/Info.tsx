@@ -2,7 +2,7 @@ import React, { useLayoutEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import { Entypo, Feather } from "@expo/vector-icons";
-import CustomText from "../../components/CustomText";
+import CustomText from "../../../components/CustomText";
 import * as WebBrowser from "expo-web-browser";
 import { TouchableOpacity } from "react-native";
 

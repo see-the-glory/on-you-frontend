@@ -1,10 +1,10 @@
 import React, { useLayoutEffect, useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
-import CustomText from "../../components/CustomText";
+import CustomText from "../../../components/CustomText";
 import styled from "styled-components/native";
-import CustomTextInput from "../../components/CustomTextInput";
+import CustomTextInput from "../../../components/CustomTextInput";
 import { useMutation } from "react-query";
-import { BaseResponse, ErrorResponse, SuggestionSubmitRequest, UserApi } from "../../api";
+import { BaseResponse, ErrorResponse, SuggestionSubmitRequest, UserApi } from "../../../api";
 import { useToast } from "react-native-toast-notifications";
 import { Entypo } from "@expo/vector-icons";
 

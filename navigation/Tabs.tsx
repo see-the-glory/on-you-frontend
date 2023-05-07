@@ -2,12 +2,12 @@ import React, { useEffect, useRef } from "react";
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "../screens/Home";
 import Clubs from "../screens/Clubs";
-import Profile from "../screens/Profile";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated, DeviceEventEmitter, Platform, useWindowDimensions, View } from "react-native";
 import { MainBottomTabParamList } from "../Types/Club";
 import { Shadow } from "react-native-shadow-2";
+import ProfileStack from "./ProfileStack";
 
 const Container = styled.View`
   height: ${Platform.OS === "ios" ? 70 : 60}px;
@@ -134,7 +134,7 @@ const Tabs = () => (
   >
     <Tab.Screen name="Home" component={Home} initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }} options={{ headerShown: false }} />
     <Tab.Screen name="Clubs" component={Clubs} initialParams={{ activeIcon: "grid", inActiveIcon: "grid-outline" }} options={{}} />
-    <Tab.Screen name="Profile" component={Profile} initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }} options={{}} />
+    <Tab.Screen name="MyProfile" component={ProfileStack} initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }} options={{}} />
   </Tab.Navigator>
 );
 

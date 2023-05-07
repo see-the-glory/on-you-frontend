@@ -5,12 +5,12 @@ import { useSelector } from "react-redux";
 import { useMutation } from "react-query";
 import { Entypo, Feather } from "@expo/vector-icons";
 import { useToast } from "react-native-toast-notifications";
-import CustomText from "../../components/CustomText";
-import { RootState } from "../../redux/store/reducers";
-import { BaseResponse, ErrorResponse, UserApi } from "../../api";
+import CustomText from "../../../components/CustomText";
+import { RootState } from "../../../redux/store/reducers";
+import { BaseResponse, ErrorResponse, UserApi } from "../../../api";
 import { Alert, DeviceEventEmitter, TouchableOpacity } from "react-native";
-import { logout } from "../../redux/slices/auth";
-import { useAppDispatch } from "../../redux/store";
+import { logout } from "../../../redux/slices/auth";
+import { useAppDispatch } from "../../../redux/store";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -48,7 +48,7 @@ interface AccountItem {
   onPress?: () => void;
 }
 
-const Account: React.FC<NativeStackScreenProps<any, "Account">> = ({ navigation: { navigate, goBack, setOptions } }) => {
+const AccountSetting: React.FC<NativeStackScreenProps<any, "AccountSetting">> = ({ navigation: { navigate, goBack, setOptions } }) => {
   const toast = useToast();
   const fcmToken = useSelector((state: RootState) => state.auth.fcmToken);
   const dispatch = useAppDispatch();
@@ -128,4 +128,4 @@ const Account: React.FC<NativeStackScreenProps<any, "Account">> = ({ navigation:
   );
 };
 
-export default Account;
+export default AccountSetting;

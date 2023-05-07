@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
-import { TouchableOpacity, Text, Platform, KeyboardAvoidingView, StatusBar, ActivityIndicator } from "react-native";
+import { TouchableOpacity, StatusBar, ActivityIndicator } from "react-native";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { useMutation } from "react-query";
-import CustomText from "../../components/CustomText";
+import CustomText from "../../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
-import CustomTextInput from "../../components/CustomTextInput";
-import { UserApi, BaseResponse, ErrorResponse, PasswordChangeRequest } from "../../api";
+import CustomTextInput from "../../../components/CustomTextInput";
+import { UserApi, BaseResponse, ErrorResponse, PasswordChangeRequest } from "../../../api";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 
 const Container = styled.View`

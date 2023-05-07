@@ -103,7 +103,7 @@ const DateView = styled.View`
   margin: 5px 0px;
 `;
 
-const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ route: { params: userData }, navigation: { navigate, goBack, setOptions } }) => {
+const EditAccount: React.FC<NativeStackScreenProps<any, "EditAccount">> = ({ route: { params: userData }, navigation: { navigate, goBack, setOptions } }) => {
   const [imageURI, setImageURI] = useState<string | null>(userData?.thumbnail);
   const [name, setName] = useState<string>(userData?.name);
   const [nameErrorCheck, setNameErrorCheck] = useState<boolean>(false);
@@ -337,4 +337,4 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
   );
 };
 
-export default EditProfile;
+export default EditAccount;

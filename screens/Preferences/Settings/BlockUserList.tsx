@@ -5,10 +5,9 @@ import { ActivityIndicator, Alert, FlatList, Platform, StatusBar, TouchableOpaci
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import styled from "styled-components/native";
-import { BaseResponse, BlockUser, BlockUserListResponse, ErrorResponse, UserApi, UserBlockRequest } from "../../api";
-import CircleIcon from "../../components/CircleIcon";
-import CustomText from "../../components/CustomText";
-import Tag from "../../components/Tag";
+import { BaseResponse, BlockUser, BlockUserListResponse, ErrorResponse, UserApi, UserBlockRequest } from "../../../api";
+import CircleIcon from "../../../components/CircleIcon";
+import CustomText from "../../../components/CustomText";
 
 const Container = styled.SafeAreaView`
   flex: 1;

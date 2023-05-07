@@ -2,16 +2,16 @@ import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import React from "react";
 import styled from "styled-components/native";
 
-const TabBarContainer = styled.View<{ height: number }>`
+const TabBarContainer = styled.View<{ height: number; rounding: boolean }>`
   width: 100%;
   background-color: white;
   padding: 0px 20px;
   flex-direction: row;
   align-items: center;
-  border-top-width: 1px;
   border-bottom-width: 1px;
-  border-top-color: rgba(0, 0, 0, 0.2);
   border-bottom-color: rgba(0, 0, 0, 0.2);
+  border-top-left-radius: ${(props: any) => (props.rounding ? 40 : 0)}px;
+  border-top-right-radius: ${(props: any) => (props.rounding ? 40 : 0)}px;
 `;
 
 const TabButton = styled.TouchableOpacity<{ isFocused: boolean; height: number }>`
@@ -35,13 +35,14 @@ const TabText = styled.Text<{ isFocused: boolean }>`
   color: ${(props: any) => (props.isFocused ? "black" : "#818181")};
 `;
 
-interface TabBarProps {
+interface TabBarProps extends MaterialTopTabBarProps {
   height: number;
+  rounding?: boolean;
 }
 
-const ClubTabBar: React.FC<MaterialTopTabBarProps & TabBarProps> = ({ state, descriptors, navigation, height }) => {
+const TabBar: React.FC<TabBarProps> = ({ state, descriptors, navigation, height, rounding }) => {
   return (
-    <TabBarContainer height={height}>
+    <TabBarContainer height={height} rounding={rounding ?? false}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label = options.tabBarLabel !== undefined ? options.tabBarLabel : options.title !== undefined ? options.title : route.name;
@@ -81,4 +82,4 @@ const ClubTabBar: React.FC<MaterialTopTabBarProps & TabBarProps> = ({ state, des
   );
 };
 
-export default ClubTabBar;
+export default TabBar;
