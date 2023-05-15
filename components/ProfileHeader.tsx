@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
 import FastImage from "react-native-fast-image";
@@ -115,9 +115,24 @@ export interface ProfileHeaderProps {
   tabBarHeight: number;
   goToPreferences: () => void;
   goToEditProfile: () => void;
+  openOptionModal: () => void;
+  openShareProfile: () => void;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({ isMe, profile, headerHeight, heightExpanded, heightCollapsed, headerDiff, tabBarHeight, scrollY, goToPreferences, goToEditProfile }) => {
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({
+  isMe,
+  profile,
+  headerHeight,
+  heightExpanded,
+  heightCollapsed,
+  headerDiff,
+  tabBarHeight,
+  scrollY,
+  goToPreferences,
+  goToEditProfile,
+  openOptionModal,
+  openShareProfile,
+}) => {
   const navigation = useNavigation();
   const fadeIn = scrollY.interpolate({
     inputRange: [0, headerDiff],
@@ -143,14 +158,25 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ isMe, profile, headerHeig
           </TouchableOpacity>
         </LeftNavigationView>
         <RightNavigationView>
-          <TouchableOpacity style={{ paddingLeft: 10, paddingRight: 1 }}>
-            <Animated.View style={{ position: "absolute", paddingLeft: 10, paddingRight: 1 }}>
-              <Ionicons name="ellipsis-vertical-sharp" size={22} color="white" />
-            </Animated.View>
-            <Animated.View style={{ opacity: fadeIn }}>
-              <Ionicons name="ellipsis-vertical-sharp" size={22} color="black" />
-            </Animated.View>
-          </TouchableOpacity>
+          {isMe ? (
+            <TouchableOpacity onPress={openShareProfile} style={{ paddingLeft: 10, paddingRight: 1 }}>
+              <Animated.View style={{ position: "absolute", left: 10, paddingRight: 1 }}>
+                <Ionicons name="share-social-outline" size={22} color="white" />
+              </Animated.View>
+              <Animated.View style={{ opacity: fadeIn }}>
+                <Ionicons name="share-social-outline" size={22} color="black" />
+              </Animated.View>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={openOptionModal} style={{ paddingLeft: 10, paddingRight: 1 }}>
+              <Animated.View style={{ position: "absolute", left: 10, paddingRight: 1 }}>
+                <Ionicons name="ellipsis-vertical-sharp" size={22} color="white" />
+              </Animated.View>
+              <Animated.View style={{ opacity: fadeIn }}>
+                <Ionicons name="ellipsis-vertical-sharp" size={22} color="black" />
+              </Animated.View>
+            </TouchableOpacity>
+          )}
         </RightNavigationView>
       </NavigationView>
       <Header>
@@ -195,9 +221,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ isMe, profile, headerHeig
                       <InfoDetailNumber>{profile?.clubs.length}</InfoDetailNumber>
                     </InfoDetailItem>
                     {/* <InfoDetailItem>
-                      <InfoDetailText>{"작성 피드"}</InfoDetailText>
-                      <InfoDetailNumber>{profile?.clubs.length}</InfoDetailNumber>
-                    </InfoDetailItem> */}
+                    <InfoDetailText>{"작성 피드"}</InfoDetailText>
+                    <InfoDetailNumber>{profile?.clubs.length}</InfoDetailNumber>
+                  </InfoDetailItem> */}
                   </InfoDetailView>
                 )}
               </InfoView>

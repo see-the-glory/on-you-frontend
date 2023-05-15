@@ -135,17 +135,17 @@ const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
             <AboutText>{profile?.about ?? "인사말이 없습니다."}</AboutText>
           </About>
           <Personal>
-            {!profile?.emailPublic ? (
+            {profile?.emailPublic ? (
               <PersonalItem>
                 <PersonalText>{profile?.email}</PersonalText>
               </PersonalItem>
             ) : null}
-            {!profile?.contactPublic ? (
+            {profile?.contactPublic ? (
               <PersonalItem>
                 <PersonalText>{profile?.contact}</PersonalText>
               </PersonalItem>
             ) : null}
-            {!profile?.birthdayPublic ? (
+            {profile?.birthdayPublic ? (
               <PersonalItem>
                 <PersonalText>{profile?.birthday}</PersonalText>
               </PersonalItem>

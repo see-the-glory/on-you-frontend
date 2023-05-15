@@ -141,7 +141,9 @@ const Root = () => {
       case "club":
         navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: parsed.query.id } } });
         break;
-
+      case "user":
+        navigation.navigate("ProfileStack", { screen: "Profile", params: { userId: parsed.query.id } });
+        break;
       default:
         break;
     }

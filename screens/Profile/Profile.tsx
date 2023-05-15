@@ -1,17 +1,23 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useCallback, useMemo, useRef } from "react";
-import { View, useWindowDimensions, StatusBar, Animated } from "react-native";
-import { white } from "react-native-paper/lib/typescript/styles/colors";
+import { View, useWindowDimensions, StatusBar, Animated, Platform } from "react-native";
+import { useModalize } from "react-native-modalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useToast } from "react-native-toast-notifications";
 import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { ErrorResponse, ProfileResponse, UserApi } from "../../api";
 import ProfileHeader from "../../components/ProfileHeader";
 import TabBar from "../../components/TabBar";
+import { RootState } from "../../redux/store/reducers";
+import ProfileOptionModal from "./ProfileOptionModal";
 import UserFeed from "./UserFeed";
 import UserInstroduction from "./UserInstroduction";
+import dynamicLinks from "@react-native-firebase/dynamic-links";
+import Share from "react-native-share";
+import ProfileReportModal from "./ProfileReportModal";
 
 const Container = styled.View`
   flex: 1;
@@ -27,9 +33,13 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
   },
   navigation: { navigate, goBack, setOptions },
 }) => {
-  const isMe = userId ? false : true;
-  const toast = useToast();
   const TopTab = createMaterialTopTabNavigator();
+  const me = useSelector((state: RootState) => state.auth.user);
+  const isMe = !userId || userId === me?.id ? true : false;
+  const toast = useToast();
+  const { ref: profileOptionRef, open: openProfileOption, close: closeProfileOption } = useModalize();
+  const { ref: profileReportRef, open: openProfileReport, close: closeProfileReport } = useModalize();
+  const modalOptionButtonHeight = 45;
 
   // Header Height Definition
   const { top } = useSafeAreaInsets();
@@ -106,6 +116,52 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
 
   const goToEditProfile = () => {};
 
+  const openReportModal = () => {
+    closeProfileOption();
+    openProfileReport();
+  };
+
+  const openOptionModal = () => {
+    openProfileOption();
+  };
+
+  const openShareProfile = async () => {
+    if (userId === undefined && (me?.id === undefined || me?.id === null)) {
+      toast.show(`공유 링크 생성에 실패했습니다.`, { type: "warning" });
+      return;
+    }
+    closeProfileOption();
+    const link = await dynamicLinks().buildShortLink(
+      {
+        link: `https://onyou.page.link/user?id=${userId ?? me?.id}`,
+        domainUriPrefix: "https://onyou.page.link",
+        android: { packageName: "com.onyoufrontend" },
+        ios: { bundleId: "com.onyou.project", appStoreId: "1663717005" },
+        otherPlatform: { fallbackUrl: "https://thin-helium-f6d.notion.site/e33250ceb44c428cb881d6ac7d163e69" },
+        social: {
+          title: profile?.data.name ?? "",
+          descriptionText: profile?.data.about ?? "",
+          imageUrl: profile?.data.thumbnail ?? "",
+        },
+
+        // navigation: { forcedRedirectEnabled: true }, // iOS에서 preview page를 스킵하는 옵션. 이걸 사용하면 온유앱이 꺼져있을 때는 제대로 navigation이 되질 않는 버그가 있음.
+      },
+      dynamicLinks.ShortLinkType.SHORT
+    );
+
+    const title = profile?.data.name ?? "";
+    const options = Platform.select({
+      default: {
+        title,
+        subject: title,
+        message: `${link}`,
+      },
+    });
+    try {
+      await Share.open(options);
+    } catch (e) {}
+  };
+
   return (
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
@@ -120,6 +176,8 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
         scrollY={scrollY}
         goToPreferences={goToPreferences}
         goToEditProfile={goToEditProfile}
+        openOptionModal={openOptionModal}
+        openShareProfile={openShareProfile}
       />
 
       <Animated.View
@@ -144,6 +202,17 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
           <TopTab.Screen options={{ tabBarLabel: "작성한 피드" }} name="UserFeed" component={UserFeed} />
         </TopTab.Navigator>
       </Animated.View>
+
+      <ProfileOptionModal
+        modalRef={profileOptionRef}
+        userId={userId}
+        userName={profile?.data.name}
+        buttonHeight={modalOptionButtonHeight}
+        openShareProfile={openShareProfile}
+        openReportModal={openReportModal}
+      />
+
+      <ProfileReportModal modalRef={profileReportRef} userId={userId} userName={profile?.data.name} buttonHeight={modalOptionButtonHeight} />
     </Container>
   );
 };
