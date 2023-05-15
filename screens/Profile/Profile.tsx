@@ -23,7 +23,7 @@ const Container = styled.View`
   flex: 1;
 `;
 
-const HEADER_EXPANDED_HEIGHT = 270;
+const HEADER_EXPANDED_HEIGHT = 300;
 const HEADER_HEIGHT = 56;
 const TAB_BAR_HEIGHT = 46;
 
@@ -164,7 +164,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <ProfileHeader
         isMe={isMe}
         profile={profile?.data}

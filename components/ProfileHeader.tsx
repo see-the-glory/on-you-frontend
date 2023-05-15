@@ -7,6 +7,7 @@ import CircleIcon from "./CircleIcon";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { Profile } from "../api";
 import { useNavigation } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const NavigationView = styled.SafeAreaView<{ height: number }>`
   position: absolute;
@@ -16,14 +17,15 @@ const NavigationView = styled.SafeAreaView<{ height: number }>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 16px;
 `;
 
 const LeftNavigationView = styled.View`
   flex-direction: row;
+  padding-left: 16px;
 `;
 const RightNavigationView = styled.View`
   flex-direction: row;
+  padding-right: 16px;
 `;
 
 const Header = styled.View`
@@ -41,7 +43,7 @@ const FilterView = styled.View`
 const InfoView = styled.View`
   justify-content: center;
   align-items: center;
-  margin-top: 60px;
+  margin-top: 90px;
 `;
 
 const CollapsedNameView = styled.View`
@@ -134,6 +136,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   openShareProfile,
 }) => {
   const navigation = useNavigation();
+  const { top } = useSafeAreaInsets();
   const fadeIn = scrollY.interpolate({
     inputRange: [0, headerDiff],
     outputRange: [-3, 1],
@@ -146,7 +149,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   return (
     <>
-      <NavigationView height={headerHeight}>
+      <NavigationView height={headerHeight} style={{ marginTop: top }}>
         <LeftNavigationView>
           <TouchableOpacity onPress={navigation.goBack}>
             <Animated.View style={{ position: "absolute" }}>
