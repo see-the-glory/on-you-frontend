@@ -178,6 +178,11 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, heightExpanded, h
                   <DetailItemText>{clubData.recruitNumber}</DetailItemText>
                   <DetailItemText style={{ color: "#C0C0C0" }}>{` / ${clubData.maxNumber ? `${clubData.maxNumber} 명` : `무제한`}`}</DetailItemText>
                 </DetailInfoItem>
+                <DetailInfoItem>
+                  <MaterialIcons name="description" size={14} color="#FADF7D" style={{ marginRight: 2 }} />
+                  <DetailItemTitle>{`피드`}</DetailItemTitle>
+                  <DetailItemText>{clubData.feedNumber}</DetailItemText>
+                </DetailInfoItem>
               </DetailInfoView>
             </InformationView>
           </AnimatedFadeOutBox>

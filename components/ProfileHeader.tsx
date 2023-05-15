@@ -5,6 +5,8 @@ import { Animated } from "react-native";
 import FastImage from "react-native-fast-image";
 import CircleIcon from "./CircleIcon";
 import { Entypo, Ionicons } from "@expo/vector-icons";
+import { Profile } from "../api";
+import { useNavigation } from "@react-navigation/native";
 
 const NavigationView = styled.SafeAreaView<{ height: number }>`
   position: absolute;
@@ -36,7 +38,7 @@ const FilterView = styled.View`
   background-color: rgba(0, 0, 0, 0.6);
   align-items: center;
 `;
-const InformationView = styled.View`
+const InfoView = styled.View`
   justify-content: center;
   align-items: center;
   margin-top: 60px;
@@ -57,14 +59,33 @@ const NameText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 22px;
   color: white;
-  margin: 10px 0px;
+  margin: 13px 0px;
+`;
+
+const InfoDetailView = styled.View`
+  flex-direction: row;
+`;
+const InfoDetailItem = styled.View`
+  flex-direction: row;
+  margin: 0px 5px;
+`;
+const InfoDetailText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
+  color: white;
+  margin: 0px 5px;
+`;
+const InfoDetailNumber = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
+  color: ${(props: any) => props.theme.secondaryColor};
 `;
 
 const OptionView = styled.View`
   flex-direction: row;
 `;
 const OptionButton = styled.TouchableOpacity`
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 0.15);
   padding: 5px 20px;
   border: 1px solid white;
   border-radius: 30px;
@@ -84,6 +105,8 @@ const CollapsedView = styled.SafeAreaView<{ height: number }>`
 
 // ClubHome Header
 export interface ProfileHeaderProps {
+  isMe: boolean;
+  profile?: Profile;
   heightExpanded: number;
   heightCollapsed: number;
   scrollY: Animated.Value;
@@ -94,7 +117,8 @@ export interface ProfileHeaderProps {
   goToEditProfile: () => void;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({ headerHeight, heightExpanded, heightCollapsed, headerDiff, tabBarHeight, scrollY, goToPreferences, goToEditProfile }) => {
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({ isMe, profile, headerHeight, heightExpanded, heightCollapsed, headerDiff, tabBarHeight, scrollY, goToPreferences, goToEditProfile }) => {
+  const navigation = useNavigation();
   const fadeIn = scrollY.interpolate({
     inputRange: [0, headerDiff],
     outputRange: [-3, 1],
@@ -109,7 +133,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ headerHeight, heightExpan
     <>
       <NavigationView height={headerHeight}>
         <LeftNavigationView>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={navigation.goBack}>
             <Animated.View style={{ position: "absolute" }}>
               <Entypo name="chevron-thin-left" size={20} color="white" />
             </Animated.View>
@@ -130,7 +154,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ headerHeight, heightExpan
         </RightNavigationView>
       </NavigationView>
       <Header>
-        <FastImage style={{ width: "100%", height: heightExpanded + tabBarHeight }} source={require("../assets/basic.jpg")}>
+        <FastImage style={{ width: "100%", height: heightExpanded + tabBarHeight }} source={profile?.backgroundImage ? { uri: profile?.backgroundImage } : require("../assets/basic.jpg")}>
           <Animated.View
             pointerEvents="box-none"
             style={{
@@ -145,25 +169,38 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ headerHeight, heightExpan
           >
             <CollapsedView height={heightCollapsed}>
               <CollapsedNameView>
-                <CollapsedNameText>{"Name"}</CollapsedNameText>
+                <CollapsedNameText>{profile?.name ?? "이름"}</CollapsedNameText>
               </CollapsedNameView>
             </CollapsedView>
           </Animated.View>
 
           <FilterView>
             <Animated.View style={{ opacity: fadeOut, width: "75%" }}>
-              <InformationView>
-                <CircleIcon size={100} />
-                <NameText>{"Name"}</NameText>
-                <OptionView>
-                  <OptionButton onPress={goToEditProfile}>
-                    <OptionText>{"프로필 수정"}</OptionText>
-                  </OptionButton>
-                  <OptionButton onPress={goToPreferences}>
-                    <OptionText>{"내 정보 설정"}</OptionText>
-                  </OptionButton>
-                </OptionView>
-              </InformationView>
+              <InfoView>
+                <CircleIcon size={100} uri={profile?.thumbnail} />
+                <NameText>{profile?.name}</NameText>
+                {isMe ? (
+                  <OptionView>
+                    <OptionButton onPress={goToEditProfile}>
+                      <OptionText>{"프로필 수정"}</OptionText>
+                    </OptionButton>
+                    <OptionButton onPress={goToPreferences}>
+                      <OptionText>{"내 정보 설정"}</OptionText>
+                    </OptionButton>
+                  </OptionView>
+                ) : (
+                  <InfoDetailView>
+                    <InfoDetailItem>
+                      <InfoDetailText>{"가입 모임"}</InfoDetailText>
+                      <InfoDetailNumber>{profile?.clubs.length}</InfoDetailNumber>
+                    </InfoDetailItem>
+                    {/* <InfoDetailItem>
+                      <InfoDetailText>{"작성 피드"}</InfoDetailText>
+                      <InfoDetailNumber>{profile?.clubs.length}</InfoDetailNumber>
+                    </InfoDetailItem> */}
+                  </InfoDetailView>
+                )}
+              </InfoView>
             </Animated.View>
           </FilterView>
         </FastImage>

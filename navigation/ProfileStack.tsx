@@ -27,7 +27,7 @@ const ProfileStack = ({ route: { params }, navigation: { navigate, goBack } }) =
         headerShadowVisible: false,
       }}
     >
-      <NativeStack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
+      <NativeStack.Screen name="Profile" component={Profile} initialParams={{}} options={{ headerShown: false }} />
       <NativeStack.Screen name="Preferences" component={Preferences} options={{ title: "설정" }} />
       <NativeStack.Screen name="EditAccount" component={EditAccount} options={{ title: "프로필 수정" }} />
       <NativeStack.Screen name="MyClubs" component={MyClubs} options={{ title: "나의 모임" }} />

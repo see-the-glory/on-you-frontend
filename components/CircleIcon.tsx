@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import CustomText from "./CustomText";
 import FastImage from "react-native-fast-image";
 
-const Container = styled.View<{ size: number; kerning: number; opacity: number }>`
+const Container = styled.TouchableOpacity<{ size: number; kerning: number; opacity: number }>`
   position: relative;
   justify-content: center;
   align-items: center;
@@ -52,11 +52,12 @@ interface CircleIconProps {
   badge?: "check-circle" | "stars";
   kerning?: number;
   opacity?: number;
+  onPress?: () => void;
 }
 
-const CircleIcon: React.FC<CircleIconProps> = ({ size, uri, name, badge, kerning, opacity }) => {
+const CircleIcon: React.FC<CircleIconProps> = ({ size, uri, name, badge, kerning, opacity, onPress }) => {
   return (
-    <Container size={size} kerning={kerning ?? 0} opacity={opacity ?? 1}>
+    <Container size={size} kerning={kerning ?? 0} opacity={opacity ?? 1} activeOpacity={1} onPress={onPress}>
       {badge ? (
         <BadgeIcon size={size}>
           <MaterialIcons name={badge} size={size * 0.4} color="#EC5D56" />

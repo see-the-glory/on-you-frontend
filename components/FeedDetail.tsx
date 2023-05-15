@@ -13,6 +13,7 @@ import Pinchable from "react-native-pinchable";
 import RNFetchBlob from "rn-fetch-blob";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import Lottie from "lottie-react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -165,6 +166,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
     collapsedTextList: [],
     remainedText: "",
   });
+  const navigation = useNavigation();
 
   // prettier-ignore
   const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
@@ -220,6 +222,8 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
     }
   };
 
+  const goToProfile = (userId?: number) => navigation.navigate("ProfileStack", { screen: "Profile", params: { userId } });
+
   const onBgHeartAnimationFinish = () => {
     Animated.timing(opacity, {
       toValue: 0,
@@ -266,10 +270,12 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
     <Container>
       <HeaderView padding={10} height={headerHeight}>
         <HeaderLeftView>
-          <CircleIcon uri={feedData?.thumbnail} size={38} kerning={6} />
+          <CircleIcon uri={feedData?.thumbnail} size={38} kerning={6} onPress={() => goToProfile(feedData?.userId)} />
           <HeaderInformationView>
             <HeaderNameView>
-              <HeaderText>{feedData?.userName}</HeaderText>
+              <TouchableOpacity activeOpacity={1} onPress={() => goToProfile(feedData?.userId)}>
+                <HeaderText>{feedData?.userName}</HeaderText>
+              </TouchableOpacity>
               {showClubName ? (
                 <TouchableOpacity activeOpacity={1} onPress={() => (goToClub ? goToClub(feedData?.clubId) : {})}>
                   <Tag name={feedData?.clubName ?? ""} contentContainerStyle={{ paddingLeft: 7, paddingRight: 7 }} textColor="#464646" backgroundColor="#E6E6E6" />

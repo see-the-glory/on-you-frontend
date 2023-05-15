@@ -3,7 +3,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import { ActivityIndicator, FlatList, Platform, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
 import { useQuery } from "react-query";
-import { UserApi, Club, MyClubsResponse, ErrorResponse, MyClub } from "../../../api";
+import { UserApi, Club, MyClubsResponse, ErrorResponse } from "../../../api";
 import CircleIcon from "../../../components/CircleIcon";
 import CustomText from "../../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
@@ -122,7 +122,7 @@ const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation:
   );
   const itemSeparatorComponent = useCallback(() => <Break />, []);
   const renderItem = useCallback(
-    ({ item, index }: { item: MyClub; index: number }) => (
+    ({ item, index }: { item: Club; index: number }) => (
       <Item key={index} onPress={() => goToClubStack(item)}>
         <CircleIcon size={37} uri={item.thumbnail} />
         <ItemInfo>
@@ -164,7 +164,7 @@ const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation:
       contentContainerStyle={{ flexGrow: 1 }}
       refreshing={refreshing}
       onRefresh={onRefresh}
-      keyExtractor={(item: MyClub, index: number) => String(index)}
+      keyExtractor={(item: Club, index: number) => String(index)}
       data={myClubs?.data.filter((item) => item.applyStatus === "APPROVED")}
       ItemSeparatorComponent={itemSeparatorComponent}
       ListFooterComponent={myClubs?.data?.length ? itemSeparatorComponent : null}

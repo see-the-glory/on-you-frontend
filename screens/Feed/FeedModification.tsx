@@ -3,7 +3,7 @@ import styled from "styled-components/native";
 import { ActivityIndicator, Alert, DeviceEventEmitter, Dimensions, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { useMutation, useQuery } from "react-query";
-import { FeedApi, FeedUpdateRequest, UserApi, MyClub, ErrorResponse, MyClubsResponse, BaseResponse } from "../../api";
+import { FeedApi, FeedUpdateRequest, UserApi, Club, ErrorResponse, MyClubsResponse, BaseResponse } from "../../api";
 import { useNavigation } from "@react-navigation/native";
 import { Modalize } from "react-native-modalize";
 import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -225,7 +225,7 @@ const FeedModification = ({
     modalizeRef.current?.close();
   };
 
-  const modalRenderItem = ({ item, index }: { item: MyClub; index: number }) => (
+  const modalRenderItem = ({ item, index }: { item: Club; index: number }) => (
     <ClubArea key={`Club_${index}`} onPress={() => ChangeClub(item.id, item.name)}>
       <CircleIcon size={36} uri={item.thumbnail} />
       <HeaderNameView>

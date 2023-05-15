@@ -320,6 +320,8 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     }
   };
 
+  const goToProfile = (userId: number) => navigate("ProfileStack", { screen: "Profile", params: { userId } });
+
   const clubLongDescTouch = () => {
     setIsCollapsedLongDesc((prev) => !prev);
   };
@@ -472,7 +474,13 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             keyExtractor={(item: Member, index: number) => String(index)}
             ItemSeparatorComponent={() => <View style={{ width: 15 }} />}
             renderItem={({ item, index }: { item: Member; index: number }) => (
-              <CircleIcon size={MEMBER_ICON_SIZE} uri={item?.thumbnail} name={item?.name} badge={item.role === "MASTER" ? "stars" : item.role === "MANAGER" ? "check-circle" : undefined} />
+              <CircleIcon
+                onPress={() => goToProfile(item.id)}
+                size={MEMBER_ICON_SIZE}
+                uri={item?.thumbnail}
+                name={item?.name}
+                badge={item.role === "MASTER" ? "stars" : item.role === "MANAGER" ? "check-circle" : undefined}
+              />
             )}
           />
         </SectionView>

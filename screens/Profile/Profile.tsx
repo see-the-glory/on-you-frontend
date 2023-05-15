@@ -2,8 +2,12 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useCallback, useMemo, useRef } from "react";
 import { View, useWindowDimensions, StatusBar, Animated } from "react-native";
+import { white } from "react-native-paper/lib/typescript/styles/colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useToast } from "react-native-toast-notifications";
+import { useQuery } from "react-query";
 import styled from "styled-components/native";
+import { ErrorResponse, ProfileResponse, UserApi } from "../../api";
 import ProfileHeader from "../../components/ProfileHeader";
 import TabBar from "../../components/TabBar";
 import UserFeed from "./UserFeed";
@@ -17,7 +21,14 @@ const HEADER_EXPANDED_HEIGHT = 270;
 const HEADER_HEIGHT = 56;
 const TAB_BAR_HEIGHT = 46;
 
-const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ route: { params }, navigation: { navigate, goBack, setOptions } }) => {
+const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
+  route: {
+    params: { userId },
+  },
+  navigation: { navigate, goBack, setOptions },
+}) => {
+  const isMe = userId ? false : true;
+  const toast = useToast();
   const TopTab = createMaterialTopTabNavigator();
 
   // Header Height Definition
@@ -42,6 +53,20 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ route: { pa
 
   const screenScrollRefs = useRef<any>({});
 
+  const {
+    data: profile,
+    isLoading: isProfileLoading,
+    refetch: profileRefetch,
+  } = useQuery<ProfileResponse, ErrorResponse>(userId ? ["getProfile", userId] : ["getMyProfile"], userId ? UserApi.getProfile : UserApi.getMyProfile, {
+    onSuccess: (res) => {
+      console.log(res);
+    },
+    onError: (error) => {
+      console.log(`API ERROR | getProfile ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
   const renderUserInstroduction = useCallback(
     (props: any) => {
       return (
@@ -65,13 +90,14 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ route: { pa
             paddingTop: headerDiff,
             paddingBottom: headerDiff,
             minHeight: SCREEN_HEIGHT + headerDiff,
+            backgroundColor: "white",
           }}
         >
-          <UserInstroduction />
+          <UserInstroduction profile={profile?.data} />
         </Animated.ScrollView>
       );
     },
-    [headerDiff]
+    [headerDiff, profile]
   );
 
   const goToPreferences = () => {
@@ -84,6 +110,8 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ route: { pa
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <ProfileHeader
+        isMe={isMe}
+        profile={profile?.data}
         headerHeight={HEADER_HEIGHT}
         tabBarHeight={TAB_BAR_HEIGHT}
         heightExpanded={heightExpanded}
