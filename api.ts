@@ -41,10 +41,13 @@ export interface Club {
   categories?: Category[];
   contactPhone?: string | null;
   customCursor?: string;
-}
+  feedNumber?: number;
 
-export interface MyClub extends Club {
-  applyStatus: string;
+  // For MyClub
+  applyStatus?: string;
+
+  // For Profile
+  role?: string;
 }
 
 export interface Notification {
@@ -101,6 +104,22 @@ export interface User {
   thumbnail: string | null;
   phoneNumber: string | null;
   interests: [];
+}
+
+export interface Profile {
+  name: string;
+  about: string;
+  birthday: string;
+  birthdayPublic: boolean;
+  clubs: Club[];
+  clubPublic: boolean;
+  contact: string;
+  contactPublic: boolean;
+  email: string;
+  emailPublic: boolean;
+  feedPublic: boolean;
+  thumbnail: string | null;
+  backgroundImage: string | null;
 }
 
 export interface BlockUser {
@@ -188,7 +207,7 @@ export interface ClubResponse extends BaseResponse {
 }
 
 export interface MyClubsResponse extends BaseResponse {
-  data: MyClub[];
+  data: Club[];
 }
 
 export interface ClubUpdateResponse extends BaseResponse {
@@ -233,6 +252,11 @@ export interface FeedsLikeReponse extends BaseResponse {
 export interface UserInfoResponse extends BaseResponse {
   data: User;
 }
+
+export interface ProfileResponse extends BaseResponse {
+  data: Profile;
+}
+
 export interface BlockUserListResponse extends BaseResponse {
   data: BlockUser[];
 }
@@ -652,7 +676,7 @@ const createFeedComment = (req: FeedCommentCreationRequest) => axios.post<string
 const deleteFeedComment = (req: FeedCommentDefaultRequest) => axios.delete<string, BaseResponse>(`/api/comments/${req.commentId}`);
 const likeFeedComment = (req: FeedCommentDefaultRequest) => axios.post<string, BaseResponse>(`/api/comments/${req.commentId}/likes`);
 
-// Profile
+// Account Info
 const getUserInfo = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
   return axios.get<string, UserInfoResponse>(`/api/user`, { headers: { Authorization: token } });
@@ -669,6 +693,12 @@ const updateUserInfo = (req: UserUpdateRequest) => {
   return axios.put<string, BaseResponse>(`/api/user`, body, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+};
+
+const getMyProfile = ({ queryKey }: any) => axios.get<String, ProfileResponse>(`/api/user/myProfile`);
+const getProfile = ({ queryKey }: any) => {
+  const [_key, userId]: [string, number] = queryKey;
+  return axios.get<String, ProfileResponse>(`/api/user/${userId}/profile`);
 };
 
 const changePassword = (req: PasswordChangeRequest) => axios.post<string, BaseResponse>(`/api/user/changePassword`, req);
@@ -802,6 +832,8 @@ export const UserApi = {
   submitSuggestion,
   getUserNotifications,
   metaInfo,
+  getMyProfile,
+  getProfile,
 };
 
 export const FeedApi = {

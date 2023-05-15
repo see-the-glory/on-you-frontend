@@ -3,8 +3,8 @@ import { Entypo } from "@expo/vector-icons";
 import { useLayoutEffect } from "react";
 import { StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
-import CustomText from "../../components/CustomText";
-import BottomButton from "../../components/BottomButton";
+import CustomText from "../../../components/CustomText";
+import BottomButton from "../../../components/BottomButton";
 
 const SCREEN_PADDING_SIZE = 20;
 

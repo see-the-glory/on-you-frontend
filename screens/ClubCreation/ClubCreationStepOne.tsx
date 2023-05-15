@@ -4,7 +4,6 @@ import styled from "styled-components/native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { ClubCreationStepOneScreenProps } from "../../Types/Club";
 import { Category } from "../../api";
-import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import BottomButton from "../../components/BottomButton";
 
@@ -25,13 +24,14 @@ const HeaderView = styled.View`
   padding-top: 20px;
 `;
 
-const H1 = styled(CustomText)`
+const H1 = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 18px;
   line-height: 25px;
-  font-family: "NotoSansKR-Bold";
 `;
 
-const H2 = styled(CustomText)`
+const H2 = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #5c5c5c;
@@ -44,7 +44,9 @@ const HeaderSubView = styled.View`
   justify-content: center;
 `;
 
-const H3 = styled(CustomText)`
+const H3 = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
   color: #8b8b8b;
 `;
 
@@ -65,7 +67,8 @@ const CategoryItem = styled.TouchableOpacity<{ selected: boolean }>`
   border: 0.5px solid #c3c3c3;
   padding: 0px 15px 0px 15px;
 `;
-const CategoryText = styled(CustomText)<{ selected: boolean }>`
+const CategoryText = styled.Text<{ selected: boolean }>`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: ${(props: any) => (props.selected ? "white" : "black")};
@@ -176,7 +179,7 @@ const ClubCreationStepOne: React.FC<ClubCreationStepOneScreenProps> = ({
           </CategoryView>
         )}
       />
-      <BottomButton onPress={goToNext} disabled={selectCategory1 === -1 && selectCategory2 === -1} backgroundColor={"#FF6534"} title={"다음 1/3"} />
+      <BottomButton onPress={goToNext} disabled={selectCategory1 === -1 && selectCategory2 === -1} title={"다음 1/3"} />
     </Container>
   );
 };

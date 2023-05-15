@@ -74,8 +74,8 @@ const CommentDetail: React.FC<CommentDetailProps> = ({ commentData, commentType,
   const paddingSize = 20;
   const sideWidth = 20;
   const contentWidth = SCREEN_WIDTH - paddingSize * 2 - thumbnailSize - thumbnailKerning - sideWidth;
-  const replyPaddingLeft = paddingSize + thumbnailSize;
-  const replyContentWidth = contentWidth - thumbnailSize;
+  const replyPaddingLeft = paddingSize + thumbnailSize + thumbnailKerning;
+  const replyContentWidth = contentWidth - thumbnailSize - thumbnailKerning;
 
   return (
     <Container style={{ paddingVertical: 10, paddingLeft: commentType === 1 ? replyPaddingLeft : paddingSize, paddingRight: paddingSize }}>
@@ -97,7 +97,7 @@ const CommentDetail: React.FC<CommentDetailProps> = ({ commentData, commentType,
       </View>
       <Side width={sideWidth}>
         <LikeButton onPress={() => likeComment(commentData.commentId, commentType, parentIndex, replyIndex)}>
-          {commentData.likeYn ? <Ionicons name="heart" size={16} color="#EC5D56" /> : <Ionicons name="heart-outline" size={16} color="#BABABA" />}
+          {commentData.likeYn ? <Ionicons name="heart" size={20} color="#EC5D56" /> : <Ionicons name="heart-outline" size={20} color="#BABABA" />}
         </LikeButton>
       </Side>
     </Container>

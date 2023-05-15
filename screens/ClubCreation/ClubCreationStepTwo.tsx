@@ -4,9 +4,7 @@ import styled from "styled-components/native";
 import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
 import { ClubCreationStepTwoScreenProps } from "../../Types/Club";
-import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
-import CustomTextInput from "../../components/CustomTextInput";
 import { useMutation } from "react-query";
 import { ClubApi, DuplicateCheckResponse, DuplicateClubNameCheckRequest, ErrorResponse } from "../../api";
 import BottomButton from "../../components/BottomButton";
@@ -17,13 +15,14 @@ const HeaderView = styled.View`
   padding: 20px 0px;
 `;
 
-const H1 = styled(CustomText)`
+const H1 = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 18px;
   line-height: 25px;
-  font-family: "NotoSansKR-Bold";
 `;
 
-const H2 = styled(CustomText)`
+const H2 = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #5c5c5c;
@@ -42,7 +41,8 @@ const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
   margin-bottom: 10px;
 `;
 
-const ImagePickerText = styled(CustomText)`
+const ImagePickerText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 15px;
   color: #2995fa;
   line-height: 22px;
@@ -74,7 +74,8 @@ const ValidationItem = styled.View`
   margin-right: 8px;
 `;
 
-const ValidationText = styled(CustomText)`
+const ValidationText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   color: #ff6534;
   font-size: 10px;
   line-height: 15px;
@@ -90,7 +91,9 @@ const ErrorView = styled.View`
   flex-direction: row;
   align-items: center;
 `;
-const ErrorText = styled(CustomText)`
+const ErrorText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
   color: #ff6534;
 `;
 
@@ -102,20 +105,23 @@ const Item = styled.View`
   justify-content: space-between;
 `;
 
-const ItemTitle = styled(CustomText)`
+const ItemTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 13px;
   line-height: 19px;
   color: #b0b0b0;
   margin-bottom: 5px;
 `;
 
-const ItemText = styled(CustomText)`
+const ItemText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   margin-right: 5px;
 `;
 
-const ItemTextInput = styled(CustomTextInput)`
+const ItemTextInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 15px;
   line-height: 22px;
   padding: 0px 5px;
@@ -403,7 +409,6 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
       <BottomButton
         onPress={goToNext}
         disabled={nameErrorCheck || clubName === "" || maxNumber === "" || phoneNumber === "" || organizationName === "" || !imageURI}
-        backgroundColor={"#FF6534"}
         title={"다음 2/3"}
         contentContainerStyle={Platform.OS === "android" ? { position: "relative" } : {}}
       />

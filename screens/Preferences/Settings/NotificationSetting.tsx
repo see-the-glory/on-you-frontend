@@ -4,8 +4,8 @@ import { Switch, Platform, TouchableOpacity, ActivityIndicator, PermissionsAndro
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import styled from "styled-components/native";
-import { BaseResponse, ErrorResponse, PushAlarmResponse, UserApi, UserPushAlarmRequest } from "../../api";
-import CustomText from "../../components/CustomText";
+import { BaseResponse, ErrorResponse, PushAlarmResponse, UserApi, UserPushAlarmRequest } from "../../../api";
+import CustomText from "../../../components/CustomText";
 import messaging from "@react-native-firebase/messaging";
 
 const Loader = styled.SafeAreaView`

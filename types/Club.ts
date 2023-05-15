@@ -45,7 +45,7 @@ export type MainBottomTabParamList = {
   Home: {};
   Search: {};
   Clubs: {};
-  Profile: {};
+  MyProfile: {};
 };
 
 // For Screens

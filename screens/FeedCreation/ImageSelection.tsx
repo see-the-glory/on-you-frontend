@@ -23,7 +23,8 @@ const ContentInfo = styled.View`
   justify-content: center;
 `;
 
-const InfoText = styled(CustomText)`
+const InfoText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 12px;
   color: #b5b5b5;
 `;
@@ -34,7 +35,8 @@ const ContentView = styled.View`
   padding: 10px;
 `;
 
-const FeedTextInput = styled(CustomTextInput)`
+const FeedTextInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   width: 100%;
   height: 300px;
   font-size: 14px;
@@ -45,12 +47,6 @@ const HeaderView = styled.View`
   background-color: #f5f5f5;
   width: 100%;
   padding: 0px 20px 10px 20px;
-`;
-
-const ImageSelectionView = styled.View`
-  align-items: center;
-  flex-direction: row;
-  justify-content: center;
 `;
 
 const ImageSelectionButton = styled.TouchableOpacity<{ size: number }>`
@@ -66,7 +62,9 @@ const PlusText = styled.Text`
   text-align: center;
 `;
 
-const HeaderText = styled(CustomText)`
+const HeaderText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
   color: #979797;
 `;
 
@@ -277,7 +275,7 @@ const ImageSelection: React.FC<NativeStackScreenProps<any, "ImageSelection">> = 
           </HeaderView>
 
           <ContentInfo>
-            <InfoText>{`${content.length} / ${maxLength}`}</InfoText>
+            <InfoText>{`${content.length} / ${maxLength} 자`}</InfoText>
           </ContentInfo>
           <ContentView>
             <FeedTextInput

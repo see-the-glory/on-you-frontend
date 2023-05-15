@@ -20,7 +20,6 @@ import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
 import styled from "styled-components/native";
 import ClubHeader from "../../components/ClubHeader";
-import ClubTabBar from "../../components/ClubTabBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FloatingActionButton from "../../components/FloatingActionButton";
 import { useMutation, useQuery } from "react-query";
@@ -49,6 +48,7 @@ import dynamicLinks from "@react-native-firebase/dynamic-links";
 import CircleIcon from "../../components/CircleIcon";
 import ClubOptionModal from "./ClubOptionModal";
 import { useModalize } from "react-native-modalize";
+import TabBar from "../../components/TabBar";
 
 const Container = styled.View`
   flex: 1;
@@ -62,15 +62,14 @@ const NavigationView = styled.SafeAreaView<{ height: number }>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  padding: 5px 16px;
 `;
 
 const LeftNavigationView = styled.View`
   flex-direction: row;
-  padding: 5px 10px 5px 10px;
 `;
 const RightNavigationView = styled.View`
   flex-direction: row;
-  padding: 5px 10px 5px 10px;
 `;
 
 const NotiView = styled.View``;
@@ -162,7 +161,6 @@ const ClubTopTabs = ({
   const [data, setData] = useState<Club>(clubData);
   const [scheduleData, setScheduleData] = useState<RefinedSchedule[]>();
   const [notiCount, setNotiCount] = useState<number>(0);
-  const [isShareOpend, setIsShareOpend] = useState<boolean>(false);
   const { ref: clubOptionRef, open: openClubOption, close: closeClubOption } = useModalize();
   const modalOptionButtonHeight = 45;
 
@@ -391,7 +389,6 @@ const ClubTopTabs = ({
 
   const openShare = async () => {
     closeClubOption();
-    setIsShareOpend(true);
     const link = await dynamicLinks().buildShortLink(
       {
         link: `https://onyou.page.link/club?id=${data.id}`,
@@ -420,7 +417,6 @@ const ClubTopTabs = ({
     try {
       await Share.open(options);
     } catch (e) {}
-    setIsShareOpend(false);
   };
 
   const openShareJoin = () => {
@@ -554,7 +550,7 @@ const ClubTopTabs = ({
           ) : (
             <></>
           )}
-          <TouchableOpacity disabled={isShareOpend} onPress={() => openClubOption()} style={{ paddingLeft: 10, paddingRight: 1 }}>
+          <TouchableOpacity onPress={() => openClubOption()} style={{ paddingLeft: 10, paddingRight: 1 }}>
             <Ionicons name="ellipsis-vertical-sharp" size={22} color="white" />
           </TouchableOpacity>
         </RightNavigationView>
@@ -576,7 +572,7 @@ const ClubTopTabs = ({
         <TopTab.Navigator
           initialRouteName="ClubHome"
           screenOptions={{ swipeEnabled: false }}
-          tabBar={(props) => <ClubTabBar {...props} height={TAB_BUTTON_HEIGHT} />}
+          tabBar={(props) => <TabBar {...props} height={TAB_BUTTON_HEIGHT} />}
           sceneContainerStyle={{ position: "absolute", zIndex: 1 }}
         >
           <TopTab.Screen options={{ tabBarLabel: "모임 정보" }} name="ClubHome" component={renderClubHome} initialParams={{ clubData: data }} />
@@ -586,7 +582,7 @@ const ClubTopTabs = ({
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={-10}
+        keyboardVerticalOffset={-5}
         pointerEvents="box-none"
         style={{ flex: 1, zIndex: gusetCommentZIndex, justifyContent: "flex-end" }}
       >

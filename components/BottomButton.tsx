@@ -1,7 +1,6 @@
 import React from "react";
 import { Platform, StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
-import CustomText from "./CustomText";
 
 const Container = styled.View`
   position: absolute;

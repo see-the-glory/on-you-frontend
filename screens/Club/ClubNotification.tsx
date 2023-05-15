@@ -5,7 +5,6 @@ import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import styled from "styled-components/native";
 import { BaseResponse, ClubApi, CommonApi, ErrorResponse, Notification, NotificationsResponse, ReadActionRequest } from "../../api";
-import CustomText from "../../components/CustomText";
 import NotificationItem from "../../components/NotificationItem";
 
 const SCREEN_PADDING_SIZE = 20;

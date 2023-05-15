@@ -3,15 +3,15 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
-import { ErrorResponse, UserApi, UserInfoResponse } from "../api";
-import { MaterialCommunityIcons, Feather, MaterialIcons } from "@expo/vector-icons";
-import { DeviceEventEmitter, StatusBar } from "react-native";
+import { ErrorResponse, UserApi, UserInfoResponse } from "../../api";
+import { MaterialCommunityIcons, Feather, MaterialIcons, Entypo } from "@expo/vector-icons";
+import { DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-toast-notifications";
-import CustomText from "../components/CustomText";
-import CircleIcon from "../components/CircleIcon";
-import { RootState } from "../redux/store/reducers";
-import { useAppDispatch } from "../redux/store";
-import { updateUser } from "../redux/slices/auth";
+import CustomText from "../../components/CustomText";
+import CircleIcon from "../../components/CircleIcon";
+import { RootState } from "../../redux/store/reducers";
+import { useAppDispatch } from "../../redux/store";
+import { updateUser } from "../../redux/slices/auth";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -114,7 +114,7 @@ interface ProfileEditItem {
   onPress?: () => void;
 }
 
-const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation: { navigate } }) => {
+const Preferences: React.FC<NativeStackScreenProps<any, "Preferences">> = ({ navigation: { navigate, setOptions, goBack } }) => {
   const token = useSelector((state: RootState) => state.auth.token);
   const fcmToken = useSelector((state: RootState) => state.auth.fcmToken);
   const dispatch = useAppDispatch();
@@ -135,8 +135,16 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   });
 
   useEffect(() => {
+    setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => goBack()}>
+          <Entypo name="chevron-thin-left" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+
     let subscription = DeviceEventEmitter.addListener("ProfileRefresh", () => {
-      console.log("Profile - Refresh Event");
+      console.log("Account - Refresh Event");
       userInfoRefetch();
     });
     return () => subscription.remove();
@@ -161,7 +169,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
     {
       icon: <MaterialIcons name="lock" color="#2E2E2E" size={iconSize} />,
       title: "계정",
-      screen: "Account",
+      screen: "AccountSetting",
     },
     {
       icon: <MaterialIcons name="star" color="#2E2E2E" size={iconSize} />,
@@ -220,4 +228,4 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({ navigation:
   );
 };
 
-export default Profile;
+export default Preferences;

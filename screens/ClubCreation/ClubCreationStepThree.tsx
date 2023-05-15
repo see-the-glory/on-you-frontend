@@ -6,8 +6,6 @@ import { useMutation } from "react-query";
 import styled from "styled-components/native";
 import { ClubApi, ClubCreationData, ClubCreationRequest, ClubCreationResponse, ErrorResponse } from "../../api";
 import BottomButton from "../../components/BottomButton";
-import CustomText from "../../components/CustomText";
-import CustomTextInput from "../../components/CustomTextInput";
 import { ClubCreationStepThreeScreenProps } from "../../Types/Club";
 
 const MainView = styled.View`
@@ -20,13 +18,14 @@ const HeaderView = styled.View`
   padding: 20px 0px;
 `;
 
-const H1 = styled(CustomText)`
+const H1 = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 18px;
   line-height: 25px;
-  font-family: "NotoSansKR-Bold";
 `;
 
-const H2 = styled(CustomText)`
+const H2 = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #5c5c5c;
@@ -38,13 +37,15 @@ const ContentItem = styled.View`
   margin-bottom: 20px;
 `;
 
-const ItemTitle = styled(CustomText)`
+const ItemTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 13px;
   line-height: 19px;
   margin-bottom: 8px;
 `;
 
-const ItemText = styled(CustomText)`
+const ItemText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 11px;
   line-height: 15px;
   padding: 6px 0px;
@@ -57,12 +58,14 @@ const ItemTitleView = styled.View`
   justify-content: space-between;
 `;
 
-const InfoText = styled(CustomText)`
+const InfoText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 12px;
   color: #b5b5b5;
 `;
 
-const ShortDescInput = styled(CustomTextInput)`
+const ShortDescInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   width: 100%;
   font-size: 14px;
   line-height: 20px;
@@ -71,7 +74,8 @@ const ShortDescInput = styled(CustomTextInput)`
   text-align: center;
 `;
 
-const LongDescInput = styled(CustomTextInput)`
+const LongDescInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   width: 100%;
   height: 250px;
   font-size: 14px;
@@ -141,8 +145,6 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
 
     if (category2 !== -1) data.category2Id = category2;
 
-    console.log(data);
-
     const splitedURI = new String(imageURI).split("/");
     const requestData: ClubCreationRequest = {
       image: {
@@ -173,7 +175,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
             <ContentItem>
               <ItemTitleView>
                 <ItemTitle>간단 소개</ItemTitle>
-                <InfoText>{`${clubShortDesc.length} / ${shortDescMax}`}</InfoText>
+                <InfoText>{`${clubShortDesc.length} / ${shortDescMax} 자`}</InfoText>
               </ItemTitleView>
               <ShortDescInput
                 placeholder="20자 이내로 간단 소개글을 적어주세요."
@@ -191,7 +193,7 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
             <ContentItem>
               <ItemTitleView>
                 <ItemTitle>상세 소개</ItemTitle>
-                <InfoText>{`${clubLongDesc.length} / ${longDescMax}`}</InfoText>
+                <InfoText>{`${clubLongDesc.length} / ${longDescMax} 자`}</InfoText>
               </ItemTitleView>
               <LongDescInput
                 placeholder="모임의 상세 소개글을 적어주세요."
@@ -213,7 +215,6 @@ const ClubCreationStepThree: React.FC<ClubCreationStepThreeScreenProps> = ({
       <BottomButton
         onPress={onSubmit}
         disabled={clubShortDesc === "" || clubLongDesc === "" || disableSubmit}
-        backgroundColor={"#FF6534"}
         title={"완료"}
         contentContainerStyle={Platform.OS === "android" ? { position: "relative" } : {}}
       />

@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components/native";
-import CustomText from "./CustomText";
 import { Club, Notification } from "../api";
 import moment from "moment";
 
@@ -10,10 +9,14 @@ const Header = styled.View`
   justify-content: space-between;
   align-items: center;
 `;
-const ItemTitle = styled(CustomText)`
+const ItemTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
   color: #8e8e8e;
+  margin-bottom: 3px;
 `;
-const ItemDateText = styled(CustomText)`
+const ItemDateText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 11px;
   line-height: 15px;
   color: #9a9a9a;
@@ -21,13 +24,14 @@ const ItemDateText = styled(CustomText)`
 const TextView = styled.View`
   flex-direction: row;
 `;
-const ItemText = styled(CustomText)<{ read: boolean }>`
+const ItemText = styled.Text<{ read: boolean }>`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 15px;
   line-height: 22px;
-  ${(props: any) => (props.read ? "color: #8E8E8E" : "")};
+  color: ${(props: any) => (props.read ? "#8E8E8E" : "black")};
 `;
 const ItemBoldText = styled(ItemText)`
-  font-family: "NotoSansKR-Bold";
+  font-family: ${(props: any) => props.theme.koreanFontB};
 `;
 
 interface NotificationItemProps {
@@ -50,10 +54,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notificationData, n
             <ItemDateText>{moment(notificationData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</ItemDateText>
           </Header>
           <TextView>
-            <ItemBoldText read={notificationData?.read}>{notificationData?.actionerName}</ItemBoldText>
-            <ItemText read={notificationData?.read}>{`님이 `}</ItemText>
-            <ItemBoldText read={notificationData?.read}>{clubData?.name}</ItemBoldText>
-            <ItemText read={notificationData?.read}>{` 가입을 희망합니다.`}</ItemText>
+            <ItemBoldText read={notificationData?.done || notificationData?.processDone}>{notificationData?.actionerName}</ItemBoldText>
+            <ItemText read={notificationData?.done || notificationData?.processDone}>{`님이 `}</ItemText>
+            <ItemBoldText read={notificationData?.done || notificationData?.processDone}>{clubData?.name}</ItemBoldText>
+            <ItemText read={notificationData?.done || notificationData?.processDone}>{` 가입을 희망합니다.`}</ItemText>
           </TextView>
         </Item>
       );

@@ -1,10 +1,10 @@
 import React, { useLayoutEffect, useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
-import CustomText from "../../components/CustomText";
+import CustomText from "../../../components/CustomText";
 import styled from "styled-components/native";
-import CustomTextInput from "../../components/CustomTextInput";
+import CustomTextInput from "../../../components/CustomTextInput";
 import { useMutation } from "react-query";
-import { BaseResponse, ErrorResponse, SuggestionSubmitRequest, UserApi } from "../../api";
+import { BaseResponse, ErrorResponse, SuggestionSubmitRequest, UserApi } from "../../../api";
 import { useToast } from "react-native-toast-notifications";
 import { Entypo } from "@expo/vector-icons";
 
@@ -105,7 +105,7 @@ const Suggestion = ({ navigation: { navigate, goBack, setOptions } }) => {
             <HeaderText>{`개발자에게 의견이 전송됩니다.`}</HeaderText>
           </Header>
           <MemoInfo>
-            <InfoText>{`${content.length} / ${maxLength}`}</InfoText>
+            <InfoText>{`${content.length} / ${maxLength} 자`}</InfoText>
           </MemoInfo>
           <MemoTextInput
             placeholder="온유의 유저니까 온유한 마음으로 적어주기"

@@ -1,8 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { ActivityIndicator, DeviceEventEmitter, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
+import { ActivityIndicator, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
 import CustomText from "../../components/CustomText";
 import styled from "styled-components/native";
-import CustomTextInput from "../../components/CustomTextInput";
 import { useMutation } from "react-query";
 import { BaseResponse, ClubApi, ClubApplyRequest, ErrorResponse } from "../../api";
 import { useToast } from "react-native-toast-notifications";
@@ -24,25 +23,30 @@ const Header = styled.View`
 const MemoInfo = styled.View`
   align-items: flex-end;
   justify-content: center;
+  padding: 5px 0px;
 `;
 
-const InfoText = styled(CustomText)`
+const InfoText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 12px;
   color: #b5b5b5;
 `;
 
-const HeaderTitle = styled(CustomText)`
+const HeaderTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 16px;
   line-height: 23px;
 `;
 
-const HeaderText = styled(CustomText)`
+const HeaderText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 12px;
   color: #b5b5b5;
   margin: 5px 0px;
 `;
 
-const MemoTextInput = styled(CustomTextInput)`
+const MemoTextInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   width: 100%;
   height: 300px;
   background-color: #f3f3f3;
@@ -116,7 +120,7 @@ const ClubJoin = ({
           <HeaderText>{`ex) 이름, 연락처, 교회명과 소속부서명, 함께하고 싶은 이유 등`}</HeaderText>
         </Header>
         <MemoInfo>
-          <InfoText>{`${memo.length} / ${maxLength}`}</InfoText>
+          <InfoText>{`${memo.length} / ${maxLength} 자`}</InfoText>
         </MemoInfo>
         <MemoTextInput
           placeholder="신청서를 작성해보세요."

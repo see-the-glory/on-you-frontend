@@ -162,7 +162,9 @@ function App() {
         case "club":
           state.routes.push({ name: "ClubStack", state: { routes: [{ name: "ClubTopTabs", params: { clubData: { id: parsed.query.id } } }] } });
           break;
-
+        case "user":
+          state.routes.push({ name: "ProfileStack", state: { routes: [{ name: "Profile", params: { userId: parsed.query.id } }] } });
+          break;
         default:
           break;
       }
