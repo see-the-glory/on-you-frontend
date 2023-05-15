@@ -10,8 +10,8 @@ const TabBarContainer = styled.View<{ height: number; rounding: boolean }>`
   align-items: center;
   border-bottom-width: 1px;
   border-bottom-color: rgba(0, 0, 0, 0.2);
-  border-top-left-radius: ${(props: any) => (props.rounding ? 40 : 0)}px;
-  border-top-right-radius: ${(props: any) => (props.rounding ? 40 : 0)}px;
+  border-top-left-radius: ${(props: any) => (props.rounding ? 80 : 0)}px;
+  border-top-right-radius: ${(props: any) => (props.rounding ? 80 : 0)}px;
 `;
 
 const TabButton = styled.TouchableOpacity<{ isFocused: boolean; height: number }>`
