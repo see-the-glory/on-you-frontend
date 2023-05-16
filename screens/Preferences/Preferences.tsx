@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
 import { ErrorResponse, UserApi, UserInfoResponse } from "../../api";
 import { Entypo } from "@expo/vector-icons";
-import { DeviceEventEmitter, StatusBar, TouchableOpacity, View } from "react-native";
+import { DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import CircleIcon from "../../components/CircleIcon";
 import { RootState } from "../../redux/store/reducers";

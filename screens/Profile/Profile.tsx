@@ -22,7 +22,6 @@ import { useFocusEffect } from "@react-navigation/native";
 
 const Container = styled.View`
   flex: 1;
-  background-color: orange;
 `;
 
 const HEADER_EXPANDED_HEIGHT = 300;
@@ -167,6 +166,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
   useFocusEffect(() => {
     // Android만 지원
     StatusBar.setTranslucent(true);
+    StatusBar.setBackgroundColor("transparent");
   });
 
   return (

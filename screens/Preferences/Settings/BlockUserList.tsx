@@ -1,13 +1,12 @@
 import { Entypo } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, Platform, StatusBar, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Alert, FlatList, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import styled from "styled-components/native";
 import { BaseResponse, BlockUser, BlockUserListResponse, ErrorResponse, UserApi, UserBlockRequest } from "../../../api";
 import CircleIcon from "../../../components/CircleIcon";
-import CustomText from "../../../components/CustomText";
 
 const Container = styled.SafeAreaView`
   flex: 1;

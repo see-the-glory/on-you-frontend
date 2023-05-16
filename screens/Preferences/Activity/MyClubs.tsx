@@ -5,7 +5,6 @@ import { ActivityIndicator, Alert, DeviceEventEmitter, FlatList, Platform, Statu
 import { useMutation, useQuery } from "react-query";
 import { UserApi, Club, MyClubsResponse, ErrorResponse, BaseResponse, ClubWithdrawRequest, ClubApi } from "../../../api";
 import CircleIcon from "../../../components/CircleIcon";
-import CustomText from "../../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import { Entypo } from "@expo/vector-icons";
 import Tag from "../../../components/Tag";

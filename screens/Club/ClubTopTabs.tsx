@@ -1,21 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import {
-  ActivityIndicator,
-  Alert,
-  Animated,
-  BackHandler,
-  DeviceEventEmitter,
-  Keyboard,
-  KeyboardAvoidingView,
-  LayoutChangeEvent,
-  Platform,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-} from "react-native";
-import { Entypo, Ionicons } from "@expo/vector-icons";
+import { ActivityIndicator, Alert, Animated, BackHandler, DeviceEventEmitter, Keyboard, KeyboardAvoidingView, LayoutChangeEvent, Platform, StatusBar, useWindowDimensions } from "react-native";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
 import styled from "styled-components/native";
@@ -52,42 +37,6 @@ import TabBar from "../../components/TabBar";
 
 const Container = styled.View`
   flex: 1;
-`;
-
-const NavigationView = styled.SafeAreaView<{ height: number }>`
-  position: absolute;
-  z-index: 3;
-  width: 100%;
-  height: ${(props: any) => props.height}px;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 16px;
-`;
-
-const LeftNavigationView = styled.View`
-  flex-direction: row;
-`;
-const RightNavigationView = styled.View`
-  flex-direction: row;
-`;
-
-const NotiView = styled.View``;
-const NotiBadge = styled.View`
-  position: absolute;
-  top: 0px;
-  right: -4px;
-  width: 5px;
-  height: 5px;
-  border-radius: 5px;
-  z-index: 1;
-  background-color: #ff6534;
-  justify-content: center;
-  align-items: center;
-`;
-const NotiBadgeText = styled.Text`
-  color: white;
-  font-size: 6px;
 `;
 
 const FooterView = styled.View`
@@ -143,8 +92,8 @@ const SubmitButtonText = styled.Text<{ disabled: boolean }>`
 
 const TopTab = createMaterialTopTabNavigator();
 
-const HEADER_EXPANDED_HEIGHT = 270;
-const HEADER_HEIGHT = 100;
+const HEADER_EXPANDED_HEIGHT = 300;
+const HEADER_HEIGHT = 56;
 const TAB_BUTTON_HEIGHT = 46;
 
 const AnimatedFooterView = Animated.createAnimatedComponent(FooterView);
@@ -383,14 +332,6 @@ const ClubTopTabs = ({
     navigate("FeedStack", { screen: "ImageSelection", params: { clubId: data.id } });
   };
 
-  const goClubNotification = () => {
-    const clubNotificationProps = {
-      clubData: data,
-      clubRole: clubRole?.data,
-    };
-    navigate("ClubNotification", clubNotificationProps);
-  };
-
   const openShare = async () => {
     closeClubOption();
     const link = await dynamicLinks().buildShortLink(
@@ -429,6 +370,10 @@ const ClubTopTabs = ({
 
   const goToReportClub = () => {
     closeClubOption();
+  };
+
+  const openClubOptionModal = () => {
+    openClubOption();
   };
 
   const withdrawClub = () => {
@@ -535,40 +480,27 @@ const ClubTopTabs = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"black"} barStyle={"light-content"} />
-
-      <NavigationView height={HEADER_HEIGHT}>
-        <LeftNavigationView>
-          <TouchableOpacity onPress={() => popToTop()}>
-            <Entypo name="chevron-thin-left" size={18} color="white" />
-          </TouchableOpacity>
-        </LeftNavigationView>
-        <RightNavigationView>
-          {clubRole?.data?.role && clubRole.data.role !== "PENDING" ? (
-            <TouchableOpacity onPress={goClubNotification} style={{ paddingHorizontal: 8 }}>
-              <NotiView>
-                {notiCount > 0 && !notiLoading ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
-                <Ionicons name="mail-outline" size={22} color="white" />
-              </NotiView>
-            </TouchableOpacity>
-          ) : (
-            <></>
-          )}
-          <TouchableOpacity onPress={() => openClubOption()} style={{ paddingLeft: 10, paddingRight: 1 }}>
-            <Ionicons name="ellipsis-vertical-sharp" size={22} color="white" />
-          </TouchableOpacity>
-        </RightNavigationView>
-      </NavigationView>
-
-      <ClubHeader clubData={data} heightExpanded={heightExpanded} heightCollapsed={heightCollapsed} headerDiff={headerDiff} scrollY={scrollY} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
+      <ClubHeader
+        clubData={data}
+        clubRole={clubRole?.data}
+        notiCount={notiCount}
+        openClubOptionModal={openClubOptionModal}
+        headerHeight={HEADER_HEIGHT}
+        heightExpanded={heightExpanded}
+        heightCollapsed={heightCollapsed}
+        headerDiff={headerDiff}
+        scrollY={scrollY}
+      />
 
       <Animated.View
+        pointerEvents="box-none"
         style={{
           position: "absolute",
           zIndex: 2,
           flex: 1,
           width: "100%",
-          height: SCREEN_HEIGHT + headerDiff,
+          height: SCREEN_HEIGHT + HEADER_EXPANDED_HEIGHT - HEADER_HEIGHT,
           paddingTop: heightExpanded,
           transform: [{ translateY }],
         }}

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Alert, Animated, BackHandler, DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
+import { Alert, Animated, BackHandler, DeviceEventEmitter, Platform, StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Feather, AntDesign, FontAwesome5, Entypo, Ionicons } from "@expo/vector-icons";
 import { ClubManagementMainProps, ClubStackParamList } from "../../types/Club";
@@ -15,6 +15,7 @@ import { RootState } from "../../redux/store/reducers";
 import Tag from "../../components/Tag";
 
 const Container = styled.SafeAreaView`
+  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
   flex: 1;
 `;
 

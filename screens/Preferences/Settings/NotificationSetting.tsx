@@ -1,11 +1,10 @@
 import { Entypo } from "@expo/vector-icons";
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Switch, Platform, TouchableOpacity, ActivityIndicator, PermissionsAndroid, Linking, Alert } from "react-native";
+import { Switch, Platform, TouchableOpacity, ActivityIndicator, Linking, Alert } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import styled from "styled-components/native";
 import { BaseResponse, ErrorResponse, PushAlarmResponse, UserApi, UserPushAlarmRequest } from "../../../api";
-import CustomText from "../../../components/CustomText";
 import messaging from "@react-native-firebase/messaging";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 

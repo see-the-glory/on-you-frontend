@@ -1,5 +1,5 @@
 import React from "react";
-import { Platform, StatusBar, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
 import FastImage from "react-native-fast-image";
@@ -37,7 +37,7 @@ const Header = styled.View`
 const FilterView = styled.View`
   flex: 1;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.5);
   align-items: center;
 `;
 const InfoView = styled.View`
