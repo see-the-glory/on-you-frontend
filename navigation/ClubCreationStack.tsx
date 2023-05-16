@@ -18,7 +18,8 @@ const ClubCreationStack: React.FC<ClubCreationStackProps> = ({ navigation: { nav
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
         headerTitleAlign: "center",
-        headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
+        headerTitleStyle: { fontFamily: "AppleSDGothicNeoB", fontSize: 16 },
+        headerShadowVisible: false,
       }}
     >
       <NativeStack.Screen name="ClubCreationStepOne" component={ClubCreationStepOne} options={{ title: "모임 개설" }} />

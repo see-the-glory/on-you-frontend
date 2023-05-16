@@ -23,7 +23,8 @@ const ClubManagementStack: React.FC<ClubManagementStackProps> = ({
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
         headerTitleAlign: "center",
-        headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
+        headerTitleStyle: { fontFamily: "AppleSDGothicNeoB", fontSize: 16 },
+        headerShadowVisible: false,
       }}
     >
       <NativeStack.Screen name="ClubManagementMain" component={ClubManagementMain} options={{ headerShown: false }} />

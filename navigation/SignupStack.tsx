@@ -22,7 +22,7 @@ const SignUpStack = ({ navigation: { navigate, goBack }, route: { params } }) =>
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
         headerTitleAlign: "center",
-        headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
+        headerTitleStyle: { fontFamily: "AppleSDGothicNeoB", fontSize: 16 },
         headerShadowVisible: false,
       }}
     >

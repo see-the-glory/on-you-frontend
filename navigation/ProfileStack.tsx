@@ -23,6 +23,7 @@ const ProfileStack = ({ route: { params }, navigation: { navigate, goBack } }) =
       screenOptions={{
         presentation: "card",
         headerTitleAlign: "center",
+        contentStyle: { backgroundColor: "white" },
         headerTitleStyle: { fontFamily: "AppleSDGothicNeoB", fontSize: 16 },
         headerShadowVisible: false,
       }}

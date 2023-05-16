@@ -16,7 +16,8 @@ const FeedStack = ({ route: { params }, navigation: { navigate } }) => {
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
         headerTitleAlign: "center",
-        headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
+        headerTitleStyle: { fontFamily: "AppleSDGothicNeoB", fontSize: 16 },
+        headerShadowVisible: false,
       }}
     >
       <NativeStack.Screen name="FeedComments" component={FeedComments} options={{ title: "댓글" }} />
