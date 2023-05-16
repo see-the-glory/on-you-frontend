@@ -19,6 +19,7 @@ import dynamicLinks from "@react-native-firebase/dynamic-links";
 import Share from "react-native-share";
 import ProfileReportModal from "./ProfileReportModal";
 import { useFocusEffect } from "@react-navigation/native";
+import { lightTheme } from "../../theme";
 
 const Container = styled.View`
   flex: 1;
@@ -202,7 +203,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
         <TopTab.Navigator
           initialRouteName="UserInstroduction"
           screenOptions={{ swipeEnabled: false }}
-          tabBar={(props) => <TabBar {...props} height={TAB_BAR_HEIGHT} rounding={true} />}
+          tabBar={(props) => <TabBar {...props} height={TAB_BAR_HEIGHT} rounding={true} focusColor={lightTheme.accentColor} />}
           sceneContainerStyle={{ position: "absolute", zIndex: 1 }}
         >
           <TopTab.Screen options={{ tabBarLabel: "소개" }} name="UserInstroduction" component={renderUserInstroduction} />
