@@ -109,7 +109,7 @@ const ApplyButton = styled.TouchableOpacity<{ participation: boolean }>`
   align-items: center;
   background-color: ${(props: any) => (props.participation ? "white" : "#FF6534")};
   padding: 9px 0px;
-  border: 1px solid #ff6534;
+  border: 1px solid ${(props: any) => props.theme.accentColor};
   border-radius: 20px;
 `;
 

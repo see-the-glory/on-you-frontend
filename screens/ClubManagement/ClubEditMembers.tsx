@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { useMutation } from "react-query";
 import { ClubApi } from "../../api";
 import { RootState } from "../../redux/store/reducers";
+import { lightTheme } from "../../theme";
 
 const Container = styled.View`
   flex: 1;
@@ -285,41 +286,41 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
                       item.role === "MASTER" ? (
                         <>
                           <MenuItem onPress={() => changeRole(item, "MEMBER")} style={{ margin: -10 }}>
-                            <AntDesign name="closecircleo" size={12} color="#FF6534" />
+                            <AntDesign name="closecircleo" size={12} color={lightTheme.accentColor} />
                             <ItemText>{` 리더 지정 취소`}</ItemText>
                           </MenuItem>
                           <MenuDivider />
                           <MenuItem onPress={() => changeRole(item, "MANAGER")} style={{ margin: -10 }}>
-                            <AntDesign name="checkcircle" size={12} color="#FF6534" />
+                            <AntDesign name="checkcircle" size={12} color={lightTheme.accentColor} />
                             <ItemText>{` 매니저 지정`}</ItemText>
                           </MenuItem>
                         </>
                       ) : item.role === "MANAGER" ? (
                         <>
                           <MenuItem onPress={() => changeRole(item, "MASTER")} style={{ margin: -10 }}>
-                            <AntDesign name="star" size={12} color="#FF6534" />
+                            <AntDesign name="star" size={12} color={lightTheme.accentColor} />
                             <ItemText>{` 리더 지정`}</ItemText>
                           </MenuItem>
                           <MenuDivider />
                           <MenuItem onPress={() => changeRole(item, "MEMBER")} style={{ margin: -10 }}>
-                            <AntDesign name="closecircleo" size={12} color="#FF6534" />
+                            <AntDesign name="closecircleo" size={12} color={lightTheme.accentColor} />
                             <ItemText>{` 매니저 지정 취소`}</ItemText>
                           </MenuItem>
                         </>
                       ) : (
                         <>
                           <MenuItem onPress={() => changeRole(item, "MASTER")} style={{ margin: -10 }}>
-                            <AntDesign name="star" size={12} color="#FF6534" />
+                            <AntDesign name="star" size={12} color={lightTheme.accentColor} />
                             <ItemText>{` 리더 지정`}</ItemText>
                           </MenuItem>
                           <MenuDivider />
                           <MenuItem onPress={() => changeRole(item, "MANAGER")} style={{ margin: -10 }}>
-                            <AntDesign name="checkcircle" size={12} color="#FF6534" />
+                            <AntDesign name="checkcircle" size={12} color={lightTheme.accentColor} />
                             <ItemText>{` 매니저 지정`}</ItemText>
                           </MenuItem>
                           <MenuDivider />
                           <MenuItem onPress={() => kickOut(item.id)} style={{ margin: -10 }}>
-                            <AntDesign name="deleteuser" size={12} color="#FF6534" />
+                            <AntDesign name="deleteuser" size={12} color={lightTheme.accentColor} />
                             <ItemText>{` 강제 탈퇴`}</ItemText>
                           </MenuItem>
                         </>
@@ -327,7 +328,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
                     ) : (
                       <>
                         <MenuItem onPress={() => cancelKickOut(item.id)} style={{ margin: -10 }}>
-                          <AntDesign name="deleteuser" size={12} color="#FF6534" />
+                          <AntDesign name="deleteuser" size={12} color={lightTheme.accentColor} />
                           <ItemText>{` 강제 탈퇴 취소`}</ItemText>
                         </MenuItem>
                       </>

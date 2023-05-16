@@ -40,7 +40,7 @@ const NotiBadge = styled.View`
   height: 5px;
   border-radius: 5px;
   z-index: 1;
-  background-color: #ff6534;
+  background-color: ${(props: any) => props.theme.accentColor};
   justify-content: center;
   align-items: center;
 `;

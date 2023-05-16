@@ -27,7 +27,7 @@ const Gradient = styled(LinearGradient)<{ size: number }>`
 `;
 
 const RecruitView = styled.View`
-  background-color: #ff6534;
+  background-color: ${(props: any) => props.theme.accentColor};
   padding: 1.5px 5px;
   border-radius: 3px;
   margin-bottom: 3px;

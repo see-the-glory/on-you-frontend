@@ -4,6 +4,7 @@ import { TouchableOpacity, StatusBar, ScrollView, useWindowDimensions } from "re
 import styled from "styled-components/native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import BottomButton from "../../components/BottomButton";
+import { lightTheme } from "../../theme";
 
 const Container = styled.View`
   flex: 1;
@@ -154,7 +155,7 @@ const SignUpPassword: React.FC<NativeStackScreenProps<any, "SignUpPassword">> = 
           />
           {password !== checkPassword && password !== "" && checkPassword !== "" ? (
             <ValidationView>
-              <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />
+              <AntDesign name="exclamationcircleo" size={12} color={lightTheme.accentColor} />
               <Error>{` 입력을 다시 한번 확인해주세요.`}</Error>
             </ValidationView>
           ) : (

@@ -12,6 +12,7 @@ import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import CircleIcon from "../../components/CircleIcon";
 import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
+import { lightTheme } from "../../theme";
 
 const HeaderView = styled.View`
   align-items: center;
@@ -27,7 +28,7 @@ const ContentItem = styled.View<{ error?: boolean }>`
   width: 100%;
   flex: 1;
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? "#FF6534" : "#cecece")};
+  border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#cecece")};
   margin: 10px 0px;
 `;
 
@@ -68,7 +69,7 @@ const ValidationItem = styled.View`
 
 const ValidationText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  color: #ff6534;
+  color: ${(props: any) => props.theme.accentColor};
   font-size: 10px;
 `;
 
@@ -247,7 +248,7 @@ const AccountEdit: React.FC<NativeStackScreenProps<any, "AccountEdit">> = ({ rou
             <ValidationView>
               {specialChar.test(name) ? (
                 <ValidationItem>
-                  <AntDesign name="check" size={12} color={"#ff6534"} />
+                  <AntDesign name="check" size={12} color={lightTheme.accentColor} />
                   <ValidationText>{` 특수문자 불가능`}</ValidationText>
                 </ValidationItem>
               ) : (
@@ -261,7 +262,7 @@ const AccountEdit: React.FC<NativeStackScreenProps<any, "AccountEdit">> = ({ rou
                   <Ionicons
                     name={sex === "M" ? "radio-button-on" : "radio-button-off"}
                     size={16}
-                    color={sex !== "M" || !shouldSelectSex ? "rgba(0, 0, 0, 0.3)" : "#FF6534"}
+                    color={sex !== "M" || !shouldSelectSex ? "rgba(0, 0, 0, 0.3)" : lightTheme.accentColor}
                     style={{ marginRight: 5 }}
                   />
                   <ItemText disabled={!shouldSelectSex}>{`남`}</ItemText>
@@ -270,7 +271,7 @@ const AccountEdit: React.FC<NativeStackScreenProps<any, "AccountEdit">> = ({ rou
                   <Ionicons
                     name={sex === "F" ? "radio-button-on" : "radio-button-off"}
                     size={16}
-                    color={sex !== "F" || !shouldSelectSex ? "rgba(0, 0, 0, 0.3)" : "#FF6534"}
+                    color={sex !== "F" || !shouldSelectSex ? "rgba(0, 0, 0, 0.3)" : lightTheme.accentColor}
                     style={{ marginRight: 5 }}
                   />
                   <ItemText disabled={!shouldSelectSex}>{`여`}</ItemText>
