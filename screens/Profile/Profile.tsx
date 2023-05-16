@@ -1,6 +1,6 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { View, useWindowDimensions, StatusBar, Animated, Platform } from "react-native";
 import { useModalize } from "react-native-modalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,9 +18,11 @@ import UserInstroduction from "./UserInstroduction";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
 import Share from "react-native-share";
 import ProfileReportModal from "./ProfileReportModal";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Container = styled.View`
   flex: 1;
+  background-color: orange;
 `;
 
 const HEADER_EXPANDED_HEIGHT = 300;
@@ -162,6 +164,11 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
     } catch (e) {}
   };
 
+  useFocusEffect(() => {
+    // Android만 지원
+    StatusBar.setTranslucent(true);
+  });
+
   return (
     <Container>
       <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
@@ -187,7 +194,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
           zIndex: 2,
           flex: 1,
           width: "100%",
-          height: SCREEN_HEIGHT + headerDiff,
+          height: SCREEN_HEIGHT + HEADER_EXPANDED_HEIGHT - HEADER_HEIGHT,
           paddingTop: heightExpanded,
           transform: [{ translateY }],
         }}

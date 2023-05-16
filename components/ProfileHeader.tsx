@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { Platform, StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
 import FastImage from "react-native-fast-image";
@@ -196,7 +196,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               backgroundColor: "white",
             }}
           >
-            <CollapsedView height={heightCollapsed}>
+            <CollapsedView height={headerHeight} style={{ marginTop: top }}>
               <CollapsedNameView>
                 <CollapsedNameText>{profile?.name ?? "이름"}</CollapsedNameText>
               </CollapsedNameView>

@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "../screens/Profile/Profile";
-import EditAccount from "../screens/Preferences/EditAccount";
+import AccountEdit from "../screens/Preferences/AccountEdit";
 import MyClubs from "../screens/Preferences/Activity/MyClubs";
 import AccountSetting from "../screens/Preferences/Settings/AccountSetting";
 import ChangePassword from "../screens/Preferences/Settings/ChangePassword";
@@ -29,7 +29,7 @@ const ProfileStack = ({ route: { params }, navigation: { navigate, goBack } }) =
     >
       <NativeStack.Screen name="Profile" component={Profile} initialParams={{}} options={{ headerShown: false }} />
       <NativeStack.Screen name="Preferences" component={Preferences} options={{ title: "설정" }} />
-      <NativeStack.Screen name="EditAccount" component={EditAccount} options={{ title: "프로필 수정" }} />
+      <NativeStack.Screen name="AccountEdit" component={AccountEdit} options={{ title: "프로필 수정" }} />
       <NativeStack.Screen name="MyClubs" component={MyClubs} options={{ title: "나의 모임" }} />
       <NativeStack.Screen name="AccountSetting" component={AccountSetting} options={{ title: "계정" }} />
       <NativeStack.Screen name="ChangePassword" component={ChangePassword} options={{ title: "비밀번호 변경" }} />

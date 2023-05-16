@@ -25,6 +25,7 @@ const Loader = styled.SafeAreaView`
 `;
 
 const Container = styled.SafeAreaView`
+  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
   flex: 1;
 `;
 
@@ -383,7 +384,7 @@ const Home = () => {
     </Loader>
   ) : (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"white"} barStyle={"dark-content"} />
       <HeaderView height={homeHeaderHeight}>
         <LogoText>{`ON YOU`}</LogoText>
         <HeaderRightView>

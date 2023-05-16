@@ -37,6 +37,7 @@ const SelectedCategoryName = styled.Text`
 `;
 
 const Container = styled.SafeAreaView`
+  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
   flex: 1;
 `;
 
@@ -355,6 +356,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   ) : (
     <>
       <Container>
+        <StatusBar translucent backgroundColor={"white"} barStyle={"dark-content"} />
         <HeaderView>
           <FlatList
             showsHorizontalScrollIndicator={false}

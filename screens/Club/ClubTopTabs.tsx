@@ -317,10 +317,14 @@ const ClubTopTabs = ({
 
   // Screen Scroll Sync
   const syncScrollOffset = (screenName: string) => {
-    screenScrollOffset.current[screenName] = scrollY._value;
+    screenScrollOffset.current[screenName] = scrollY._value; // 현재 탭의 y 값 저장.
+
+    // 다른 탭들의 scroll 위치 조절
     for (const [key, ref] of Object.entries(screenScrollRefs.current)) {
       if (key === screenName) continue;
       const offsetY = screenScrollOffset.current[key] ?? 0;
+
+      // 현재 탭의 y 값과 헤더가 접히는 정도를 기준으로 다른 탭들의 스크롤 위치를 변경한다.
       if (scrollY._value < headerDiff) {
         if (ref.scrollTo) {
           ref.scrollTo({
