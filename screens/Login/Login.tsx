@@ -2,7 +2,7 @@ import { useMutation } from "react-query";
 import { CommonApi, LoginRequest, LoginResponse } from "../../api";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { Keyboard, SafeAreaView, StatusBar, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, Platform, SafeAreaView, StatusBar, TouchableWithoutFeedback } from "react-native";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useAppDispatch } from "../../redux/store";
@@ -20,14 +20,14 @@ const Header = styled.View`
 `;
 
 const HeaderTitle = styled.Text`
-  font-family: "Roboto-Medium";
+  font-family: ${(props: any) => props.theme.englishFontM};
   font-size: 40px;
 `;
 
 const Content = styled.View``;
 
 const ContentTitle = styled.Text`
-  font-family: "Roboto-Medium";
+  font-family: ${(props: any) => props.theme.englishFontM};
   font-size: 16px;
   color: #aeaeae;
   margin-bottom: 8px;
@@ -42,7 +42,7 @@ const PasswordView = styled.View`
 `;
 
 const ContentInput = styled.TextInput`
-  font-family: "Roboto-Regular";
+  font-family: ${(props: any) => props.theme.englishFontR};
   border-bottom-width: 0.5px;
   border-bottom-color: #000000;
   padding-bottom: 2px;
@@ -55,7 +55,7 @@ const InformationView = styled.TouchableOpacity`
 `;
 
 const InformationText = styled.Text`
-  font-family: "AppleSDGothicNeoSB";
+  font-family: ${(props: any) => props.theme.koreanFontSB};
   font-size: 14px;
   color: #777777;
 `;
@@ -101,7 +101,7 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0 }}>
       <TouchableWithoutFeedback
         onPress={() => {
           Keyboard.dismiss();

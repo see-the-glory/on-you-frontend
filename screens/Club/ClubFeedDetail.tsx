@@ -100,16 +100,6 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     openComplainOption();
   };
 
-  const goToFeedComments = (feedIndex?: number, feedId?: number) => {
-    if (feedIndex === undefined || feedId === undefined) return;
-    navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId, clubId: clubData.id } });
-  };
-
-  const goToFeedLikes = (likeUsers?: LikeUser[]) => {
-    if (!likeUsers || likeUsers.length === 0) return;
-    navigate("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
-  };
-
   const goToUpdateFeed = () => {
     closeFeedOption();
     navigate("FeedStack", { screen: "FeedModification", params: { feedData: selectFeedData } });
@@ -271,8 +261,6 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         infoHeight={feedDetailInfoHeight}
         contentHeight={feedDetailContentHeight}
         goToFeedOptionModal={goToFeedOptionModal}
-        goToFeedComments={goToFeedComments}
-        goToFeedLikes={goToFeedLikes}
         likeFeed={likeFeed}
         isMyClubPost={["MASTER", "MANAGER", "MEMBER"].includes(myRole ?? "") ? true : false}
       />

@@ -133,6 +133,7 @@ export interface LikeUser {
   thumbnail: string;
   userName: string;
   likeDate: string;
+  userId: number;
 }
 
 export interface Feed {

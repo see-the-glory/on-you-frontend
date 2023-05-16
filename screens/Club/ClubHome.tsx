@@ -231,7 +231,7 @@ const EmptyText = styled.Text`
 `;
 
 const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
-  navigation: { navigate },
+  navigation: { navigate, push },
   route: {
     name: screenName,
     params: { clubData },
@@ -272,6 +272,8 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
 
     return () => {
       guestCommentSubscription.remove();
+      dispatch(clubSlice.actions.deleteClub());
+      console.log("ClubHome - remove listner");
     };
   }, []);
 
@@ -320,7 +322,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     }
   };
 
-  const goToProfile = (userId: number) => navigate("ProfileStack", { screen: "Profile", params: { userId } });
+  const goToProfile = (userId: number) => push("ProfileStack", { screen: "Profile", params: { userId } });
 
   const clubLongDescTouch = () => {
     setIsCollapsedLongDesc((prev) => !prev);

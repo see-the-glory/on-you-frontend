@@ -1,7 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import moment from "moment";
 import React from "react";
 import { useWindowDimensions, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import { FeedComment } from "../api";
 import CircleIcon from "./CircleIcon";
@@ -70,6 +73,7 @@ interface CommentDetailProps {
 }
 
 const CommentDetail: React.FC<CommentDetailProps> = ({ commentData, commentType, parentIndex, replyIndex, parentId, thumbnailSize, thumbnailKerning, likeComment, setReplyStatus }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const paddingSize = 20;
   const sideWidth = 20;
@@ -77,12 +81,16 @@ const CommentDetail: React.FC<CommentDetailProps> = ({ commentData, commentType,
   const replyPaddingLeft = paddingSize + thumbnailSize + thumbnailKerning;
   const replyContentWidth = contentWidth - thumbnailSize - thumbnailKerning;
 
+  const goToProfile = (userId: number) => navigation.push("ProfileStack", { screen: "Profile", params: { userId } });
+
   return (
     <Container style={{ paddingVertical: 10, paddingLeft: commentType === 1 ? replyPaddingLeft : paddingSize, paddingRight: paddingSize }}>
-      <CircleIcon uri={commentData.thumbnail} size={thumbnailSize} kerning={thumbnailKerning} />
+      <CircleIcon uri={commentData.thumbnail} size={thumbnailSize} kerning={thumbnailKerning} onPress={() => goToProfile(commentData.userId)} />
       <View>
         <Header>
-          <UserName>{commentData.userName.trim()}</UserName>
+          <TouchableOpacity activeOpacity={1} onPress={() => goToProfile(commentData.userId)}>
+            <UserName>{commentData.userName.trim()}</UserName>
+          </TouchableOpacity>
           <SubText>{moment(commentData.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</SubText>
         </Header>
         <Content width={commentType === 1 ? replyContentWidth : contentWidth}>

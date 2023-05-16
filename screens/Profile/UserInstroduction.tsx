@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import { ActivityIndicator } from "react-native";
 import FastImage from "react-native-fast-image";
@@ -118,8 +119,8 @@ interface UserInstroductionProps {
 }
 
 const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
-  const navigation = useNavigation();
-  const goToClub = (clubId: number) => navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const goToClub = (clubId: number) => navigation.push("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
   return !profile ? (
     <Loader>
       <ActivityIndicator />

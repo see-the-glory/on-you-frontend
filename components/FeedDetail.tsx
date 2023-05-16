@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
@@ -14,6 +14,7 @@ import RNFetchBlob from "rn-fetch-blob";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import Lottie from "lottie-react-native";
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -124,9 +125,6 @@ interface FeedDetailProps {
   showClubName?: boolean;
   isMyClubPost?: boolean;
   goToFeedOptionModal: (feedData?: Feed) => void;
-  goToFeedComments: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
-  goToFeedLikes: (likeUsers: LikeUser[]) => void;
-  goToClub?: (clubId?: number) => void;
   likeFeed?: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
 }
 
@@ -138,21 +136,7 @@ interface FeedDetailState {
   remainedText: string;
 }
 
-const FeedDetail: React.FC<FeedDetailProps> = ({
-  feedData,
-  feedIndex,
-  feedSize,
-  headerHeight,
-  infoHeight,
-  contentHeight,
-  showClubName,
-  isMyClubPost,
-  goToFeedOptionModal,
-  goToFeedComments,
-  goToFeedLikes,
-  goToClub,
-  likeFeed,
-}) => {
+const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, headerHeight, infoHeight, contentHeight, showClubName, isMyClubPost, goToFeedOptionModal, likeFeed }) => {
   let lastTapTime: number | undefined = undefined;
   const heartRef = useRef<Lottie>(null);
   const bgHeartRef = useRef<Lottie>(null);
@@ -166,7 +150,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
     collapsedTextList: [],
     remainedText: "",
   });
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   // prettier-ignore
   const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
@@ -222,7 +206,21 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
     }
   };
 
-  const goToProfile = (userId?: number) => navigation.navigate("ProfileStack", { screen: "Profile", params: { userId } });
+  const goToProfile = useCallback((userId?: number) => navigation.push("ProfileStack", { screen: "Profile", params: { userId } }), []);
+
+  const goToClub = useCallback((clubId?: number) => {
+    if (clubId) navigation.push("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
+  }, []);
+
+  const goToFeedComments = useCallback((feedIndex?: number, feedId?: number) => {
+    if (feedIndex === undefined || feedId === undefined) return;
+    navigation.push("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId } });
+  }, []);
+
+  const goToFeedLikes = useCallback((likeUsers?: LikeUser[]) => {
+    if (!likeUsers || likeUsers.length === 0) return;
+    navigation.push("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
+  }, []);
 
   const onBgHeartAnimationFinish = () => {
     Animated.timing(opacity, {
@@ -277,7 +275,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
                 <HeaderText>{feedData?.userName}</HeaderText>
               </TouchableOpacity>
               {showClubName ? (
-                <TouchableOpacity activeOpacity={1} onPress={() => (goToClub ? goToClub(feedData?.clubId) : {})}>
+                <TouchableOpacity activeOpacity={1} onPress={() => goToClub(feedData?.clubId)}>
                   <Tag name={feedData?.clubName ?? ""} contentContainerStyle={{ paddingLeft: 7, paddingRight: 7 }} textColor="#464646" backgroundColor="#E6E6E6" />
                 </TouchableOpacity>
               ) : (
