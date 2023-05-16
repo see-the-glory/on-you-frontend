@@ -7,6 +7,7 @@ import { Entypo } from "@expo/vector-icons";
 import FindEmail from "../screens/Login/FindEmail";
 import FindPassword from "../screens/Login/FindPassword";
 import FindResult from "../screens/Login/FindResult";
+import { lightTheme } from "../theme";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -22,7 +23,7 @@ const LoginStack = ({
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
         headerTitleAlign: "center",
-        headerTitleStyle: { fontFamily: "AppleSDGothicNeoB", fontSize: 16 },
+        headerTitleStyle: { fontFamily: lightTheme.koreanFontB, fontSize: 16 },
         headerShadowVisible: false,
       }}
     >

@@ -178,13 +178,13 @@ function App() {
         <Provider store={store}>
           <ToastProvider
             offset={70}
-            successColor="#295AF5"
-            warningColor="#6F6F6F"
-            dangerColor="#E7564F"
+            successColor={lightTheme.primaryColor}
+            warningColor={lightTheme.errorColor}
+            dangerColor={lightTheme.accentColor}
             duration={3000}
             animationType="zoom-in"
             style={{ borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8 }}
-            textStyle={{ fontFamily: "AppleSDGothicNeoR", lineHeight: 16 }}
+            textStyle={{ fontFamily: lightTheme.koreanFontR, lineHeight: 16 }}
             successIcon={<Ionicons name="checkmark-circle" size={16} color="white" />}
             warningIcon={<Ionicons name="close-circle" size={16} color="white" />}
             dangerIcon={<Ionicons name="alert-circle" size={16} color="white" />}

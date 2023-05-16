@@ -30,13 +30,13 @@ const Border = styled.View`
 `;
 
 const AskText = styled.Text`
-  font-family: "AppleSDGothicNeoB";
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 20px;
   margin-top: 24px;
 `;
 
 const SubText = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
@@ -44,7 +44,7 @@ const SubText = styled.Text`
 
 const Input = styled.TextInput`
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? "#E7564F" : "#b3b3b3")};
+  border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#b3b3b3")};
   margin-top: 47px;
   font-size: 18px;
 `;
@@ -54,7 +54,7 @@ const ErrorView = styled.View`
 `;
 
 const Error = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   color: #e7564f;
   font-size: 12px;
   margin-top: 7px;
@@ -69,7 +69,7 @@ const FieldContentOptionLine = styled.View`
 const SkipButton = styled.TouchableOpacity``;
 
 const SkipText = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 12px;
   color: #8e8e8e;
 `;

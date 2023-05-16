@@ -6,6 +6,7 @@ import FeedModification from "../screens/Feed/FeedModification";
 import ClubSelection from "../screens/FeedCreation/ClubSelection";
 import FeedSelection from "../screens/Feed/FeedSelection";
 import FeedLikes from "../screens/Feed/FeedLikes";
+import { lightTheme } from "../theme";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -16,7 +17,7 @@ const FeedStack = ({ route: { params }, navigation: { navigate } }) => {
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
         headerTitleAlign: "center",
-        headerTitleStyle: { fontFamily: "AppleSDGothicNeoB", fontSize: 16 },
+        headerTitleStyle: { fontFamily: lightTheme.koreanFontB, fontSize: 16 },
         headerShadowVisible: false,
       }}
     >

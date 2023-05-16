@@ -29,7 +29,7 @@ const Content = styled.View``;
 const ContentTitle = styled.Text`
   font-family: ${(props: any) => props.theme.englishFontM};
   font-size: 16px;
-  color: #aeaeae;
+  color: ${(props: any) => props.theme.infoColor};
   margin-bottom: 8px;
 `;
 
@@ -127,7 +127,7 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
           </Content>
         </Container>
       </TouchableWithoutFeedback>
-      <BottomButton onPress={onSubmit} disabled={!(email.trim() && password)} backgroundColor="#6B8BF7" title={"확인"} />
+      <BottomButton onPress={onSubmit} disabled={!(email.trim() && password)} title={"확인"} />
     </SafeAreaView>
   );
 };

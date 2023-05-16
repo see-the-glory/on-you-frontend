@@ -8,6 +8,7 @@ import ClubCreationStepThree from "../screens/ClubCreation/ClubCreationStepThree
 import { ClubCreationStackProps, ClubStackParamList } from "../Types/Club";
 import ClubCreationSuccess from "../screens/ClubCreation/ClubCreationSuccess";
 import ClubCreationFail from "../screens/ClubCreation/ClubCreationFail";
+import { lightTheme } from "../theme";
 
 const NativeStack = createNativeStackNavigator<ClubStackParamList>();
 
@@ -18,7 +19,7 @@ const ClubCreationStack: React.FC<ClubCreationStackProps> = ({ navigation: { nav
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
         headerTitleAlign: "center",
-        headerTitleStyle: { fontFamily: "AppleSDGothicNeoB", fontSize: 16 },
+        headerTitleStyle: { fontFamily: lightTheme.koreanFontB, fontSize: 16 },
         headerShadowVisible: false,
       }}
     >

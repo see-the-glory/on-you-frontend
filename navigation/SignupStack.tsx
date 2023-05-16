@@ -12,6 +12,7 @@ import SignUpPhone from "../screens/SignUp/SignUpPhone";
 import SignUpChurch from "../screens/SignUp/SignUpChurch";
 import SignUpConfirm from "../screens/SignUp/SignUpConfirm";
 import SignUpSuccess from "../screens/SignUp/SignUpSuccess";
+import { lightTheme } from "../theme";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -22,7 +23,7 @@ const SignUpStack = ({ navigation: { navigate, goBack }, route: { params } }) =>
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
         headerTitleAlign: "center",
-        headerTitleStyle: { fontFamily: "AppleSDGothicNeoB", fontSize: 16 },
+        headerTitleStyle: { fontFamily: lightTheme.koreanFontB, fontSize: 16 },
         headerShadowVisible: false,
       }}
     >

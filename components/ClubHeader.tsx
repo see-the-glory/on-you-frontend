@@ -10,6 +10,7 @@ import CircleIcon from "./CircleIcon";
 import Tag from "./Tag";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { lightTheme } from "../theme";
 
 const NavigationView = styled.SafeAreaView<{ height: number }>`
   position: absolute;
@@ -262,7 +263,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, clubRole, notiCou
                 <Break />
                 <DetailInfoView>
                   <DetailInfoItem>
-                    <MaterialIcons name="star" size={16} color="#FADF7D" style={{ marginRight: 2 }} />
+                    <MaterialIcons name="star" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
                     <DetailItemTitle>{`리더`}</DetailItemTitle>
                     {master ? (
                       <>
@@ -274,13 +275,13 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, clubRole, notiCou
                     )}
                   </DetailInfoItem>
                   <DetailInfoItem>
-                    <MaterialIcons name="people" size={16} color="#FADF7D" style={{ marginRight: 2 }} />
+                    <MaterialIcons name="people" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
                     <DetailItemTitle>{`멤버`}</DetailItemTitle>
                     <DetailItemText>{clubData.recruitNumber}</DetailItemText>
                     <DetailItemText style={{ color: "#C0C0C0" }}>{` / ${clubData.maxNumber ? `${clubData.maxNumber} 명` : `무제한`}`}</DetailItemText>
                   </DetailInfoItem>
                   <DetailInfoItem>
-                    <MaterialIcons name="description" size={14} color="#FADF7D" style={{ marginRight: 2 }} />
+                    <MaterialIcons name="description" size={14} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
                     <DetailItemTitle>{`피드`}</DetailItemTitle>
                     <DetailItemText>{clubData.feedNumber}</DetailItemText>
                   </DetailInfoItem>

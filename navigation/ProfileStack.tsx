@@ -13,6 +13,7 @@ import Notice from "../screens/Preferences/Others/Notice";
 import Info from "../screens/Preferences/Others/Info";
 import UserNotification from "../screens/Profile/UserNotification";
 import Preferences from "../screens/Preferences/Preferences";
+import { lightTheme } from "../theme";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -24,7 +25,7 @@ const ProfileStack = ({ route: { params }, navigation: { navigate, goBack } }) =
         presentation: "card",
         headerTitleAlign: "center",
         contentStyle: { backgroundColor: "white" },
-        headerTitleStyle: { fontFamily: "AppleSDGothicNeoB", fontSize: 16 },
+        headerTitleStyle: { fontFamily: lightTheme.koreanFontB, fontSize: 16 },
         headerShadowVisible: false,
       }}
     >

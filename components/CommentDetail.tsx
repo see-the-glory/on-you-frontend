@@ -8,6 +8,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import { FeedComment } from "../api";
 import CircleIcon from "./CircleIcon";
+import { lightTheme } from "../theme";
 
 const Container = styled.View`
   flex-direction: row;
@@ -105,7 +106,7 @@ const CommentDetail: React.FC<CommentDetailProps> = ({ commentData, commentType,
       </View>
       <Side width={sideWidth}>
         <LikeButton onPress={() => likeComment(commentData.commentId, commentType, parentIndex, replyIndex)}>
-          {commentData.likeYn ? <Ionicons name="heart" size={20} color="#EC5D56" /> : <Ionicons name="heart-outline" size={20} color="#BABABA" />}
+          {commentData.likeYn ? <Ionicons name="heart" size={20} color={lightTheme.accentColor} /> : <Ionicons name="heart-outline" size={20} color="#BABABA" />}
         </LikeButton>
       </Side>
     </Container>

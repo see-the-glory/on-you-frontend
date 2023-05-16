@@ -11,6 +11,7 @@ import { Portal } from "react-native-portalize";
 import { Slider } from "@miblanchard/react-native-slider";
 import { useToast } from "react-native-toast-notifications";
 import BottomButton from "../components/BottomButton";
+import { lightTheme } from "../theme";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -159,7 +160,7 @@ const SortingItemButton = styled.TouchableOpacity`
 `;
 const SortingItemText = styled.Text<{ selected: boolean }>`
   font-size: 15px;
-  color: ${(props: any) => (props.selected ? "#EC5D56" : "#b0b0b0")};
+  color: ${(props: any) => (props.selected ? props.theme.accentColor : "#b0b0b0")};
   font-family: ${(props: any) => (props.selected ? props.theme.koreanFontM : props.theme.koreanFontR)};
 `;
 
@@ -385,7 +386,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 <HeaderItemText>상세 필터</HeaderItemText>
               </TouchableOpacity>
               <TouchableOpacity style={{ height: 35, justifyContent: "center" }} onPress={() => openFilteringSheet()}>
-                <Feather name="filter" size={13} color={usingFilter ? "#EC5D56" : "black"} />
+                <Feather name="filter" size={13} color={usingFilter ? lightTheme.accentColor : "black"} />
               </TouchableOpacity>
             </HeaderItem>
             <View
@@ -500,7 +501,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 >
                   <ItemContentText>멤버 모집중인 모임만 보기</ItemContentText>
                   <CheckBox>
-                    <Ionicons name="checkmark-sharp" size={15} color={showRecruiting ? "#EC5D56" : "white"} />
+                    <Ionicons name="checkmark-sharp" size={15} color={showRecruiting ? lightTheme.accentColor : "white"} />
                   </CheckBox>
                 </ItemContentButton>
               </ItemRightView>
@@ -522,13 +523,13 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                   }}
                   onSlidingComplete={(value) => setMemberRange(value)}
                   minimumValue={filterMinNumber}
-                  minimumTrackTintColor="#EC5D56"
+                  minimumTrackTintColor={lightTheme.accentColor}
                   maximumValue={filterMaxNumber}
                   maximumTrackTintColor="#E8E8E8"
                   step={5}
                   thumbTintColor="white"
                   trackStyle={{ height: 2 }}
-                  thumbStyle={{ width: 18, height: 18, borderWidth: 1, borderColor: "#EC5D56" }}
+                  thumbStyle={{ width: 18, height: 18, borderWidth: 1, borderColor: lightTheme.accentColor }}
                 />
                 <ItemContentSubText>{Array.isArray(memberRange) ? `최소 ${memberRange[0]} 명 이상 최대 ${memberRange[1]} 명 이하` : ``}</ItemContentSubText>
               </ItemRightView>
@@ -546,7 +547,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 >
                   <ItemContentText>내가 가입된 모임만 보기</ItemContentText>
                   <CheckBox>
-                    <Ionicons name="checkmark-sharp" size={15} color={showMy ? "#EC5D56" : "#e8e8e8"} />
+                    <Ionicons name="checkmark-sharp" size={15} color={showMy ? lightTheme.accentColor : "#e8e8e8"} />
                   </CheckBox>
                 </ItemContentButton>
               </ItemRightView>

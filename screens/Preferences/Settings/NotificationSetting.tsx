@@ -7,6 +7,7 @@ import styled from "styled-components/native";
 import { BaseResponse, ErrorResponse, PushAlarmResponse, UserApi, UserPushAlarmRequest } from "../../../api";
 import messaging from "@react-native-firebase/messaging";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { lightTheme } from "../../../theme";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -163,7 +164,7 @@ const NotificationSetting: React.FC<NativeStackScreenProps<any, "NotificationSet
           <ItemSub>
             <ItemTitle>{`개인 알람`}</ItemTitle>
             <Switch
-              trackColor={{ false: "#D4D4D4", true: "#6B8BF7" }}
+              trackColor={{ false: "#D4D4D4", true: lightTheme.primaryColor }}
               thumbColor={"white"}
               onValueChange={() => onValueChange("USER")}
               value={userPush}
@@ -176,7 +177,7 @@ const NotificationSetting: React.FC<NativeStackScreenProps<any, "NotificationSet
           <ItemSub>
             <ItemTitle>{`모임 알람`}</ItemTitle>
             <Switch
-              trackColor={{ false: "#D4D4D4", true: "#6B8BF7" }}
+              trackColor={{ false: "#D4D4D4", true: lightTheme.primaryColor }}
               thumbColor={"white"}
               onValueChange={() => onValueChange("CLUB")}
               value={clubPush}

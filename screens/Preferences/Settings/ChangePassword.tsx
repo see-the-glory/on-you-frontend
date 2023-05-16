@@ -8,6 +8,7 @@ import { useToast } from "react-native-toast-notifications";
 import { UserApi, BaseResponse, ErrorResponse, PasswordChangeRequest } from "../../../api";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import BottomButton from "../../../components/BottomButton";
+import { lightTheme } from "../../../theme";
 
 const Container = styled.View`
   flex: 1;
@@ -22,7 +23,7 @@ const Item = styled.View`
 const ItemText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontSB};
   font-size: 16px;
-  color: #aeaeae;
+  color: ${(props: any) => props.theme.infoColor};
   margin-bottom: 10px;
 `;
 
@@ -117,19 +118,19 @@ const ChangePassword: React.FC<NativeStackScreenProps<any, "ChangePassword">> = 
 
             <ValidationView>
               <ValidationItem>
-                <AntDesign name="check" size={12} color={engReg.test(password) ? "#6B8BF7" : "#8e8e8e"} />
+                <AntDesign name="check" size={12} color={engReg.test(password) ? lightTheme.primaryColor : "#8e8e8e"} />
                 <ValidationText>{` 영문 포함`}</ValidationText>
               </ValidationItem>
               <ValidationItem>
-                <AntDesign name="check" size={12} color={numReg.test(password) ? "#6B8BF7" : "#8e8e8e"} />
+                <AntDesign name="check" size={12} color={numReg.test(password) ? lightTheme.primaryColor : "#8e8e8e"} />
                 <ValidationText>{` 숫자 포함`}</ValidationText>
               </ValidationItem>
               <ValidationItem>
-                <AntDesign name="check" size={12} color={specialReg.test(password) ? "#6B8BF7" : "#8e8e8e"} />
+                <AntDesign name="check" size={12} color={specialReg.test(password) ? lightTheme.primaryColor : "#8e8e8e"} />
                 <ValidationText>{` 특수문자 포함`}</ValidationText>
               </ValidationItem>
               <ValidationItem>
-                <AntDesign name="check" size={12} color={password.length > 7 ? "#6B8BF7" : "#8e8e8e"} />
+                <AntDesign name="check" size={12} color={password.length > 7 ? lightTheme.primaryColor : "#8e8e8e"} />
                 <ValidationText>{` 8자리 이상`}</ValidationText>
               </ValidationItem>
             </ValidationView>
@@ -147,7 +148,7 @@ const ChangePassword: React.FC<NativeStackScreenProps<any, "ChangePassword">> = 
             />
             {password !== checkPassword && password !== "" && checkPassword !== "" ? (
               <ValidationView>
-                <AntDesign name="exclamationcircleo" size={12} color="#EC5D56" />
+                <AntDesign name="exclamationcircleo" size={12} color={lightTheme.accentColor} />
                 <ErrorText>{` 입력을 다시 한번 확인해주세요.`}</ErrorText>
               </ValidationView>
             ) : (

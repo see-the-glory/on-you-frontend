@@ -3,6 +3,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import CustomText from "./CustomText";
 import FastImage from "react-native-fast-image";
+import { lightTheme } from "../theme";
 
 const Container = styled.TouchableOpacity<{ size: number; kerning: number; opacity: number }>`
   position: relative;
@@ -60,7 +61,7 @@ const CircleIcon: React.FC<CircleIconProps> = ({ size, uri, name, badge, kerning
     <Container size={size} kerning={kerning ?? 0} opacity={opacity ?? 1} activeOpacity={1} onPress={onPress}>
       {badge ? (
         <BadgeIcon size={size}>
-          <MaterialIcons name={badge} size={size * 0.4} color="#EC5D56" />
+          <MaterialIcons name={badge} size={size * 0.4} color={lightTheme.accentColor} />
         </BadgeIcon>
       ) : (
         <></>

@@ -17,6 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store/reducers";
+import { lightTheme } from "../theme";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -329,7 +330,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
           autoPlay={false}
           loop={false}
           speed={1.0}
-          colorFilters={[{ keypath: "Filled", color: "#EC5D56" }]}
+          colorFilters={[{ keypath: "Filled", color: lightTheme.accentColor }]}
           onAnimationFinish={onBgHeartAnimationFinish}
           autoSize={true}
           style={{ width: 200, height: 200 }}
@@ -347,7 +348,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
                   loop={false}
                   speed={1.5}
                   colorFilters={[
-                    { keypath: "Filled", color: "#EC5D56" },
+                    { keypath: "Filled", color: lightTheme.accentColor },
                     { keypath: "Empty", color: "#000000" },
                   ]}
                   style={{ width: 35, height: 35, marginLeft: -2 }}
