@@ -6,7 +6,7 @@ import { ClubRole } from "../api";
 import Lottie from "lottie-react-native";
 import { lightTheme } from "../theme";
 
-const Container = styled.View`
+const Container = styled.View<{ height: number }>`
   position: absolute;
   flex-direction: row;
   background-color: white;
@@ -14,7 +14,7 @@ const Container = styled.View`
   justify-content: space-between;
   z-index: 2;
   width: 100%;
-  height: 70px;
+  height: ${(props: any) => props.height}px;
   bottom: 0px;
   padding-right: 20px;
   padding-left: 20px;
@@ -50,6 +50,7 @@ const ButtonText = styled.Text`
 `;
 
 export interface ClubHomeFloatingButtonProps {
+  height: number;
   role?: ClubRole | null;
   recruitStatus?: "OPEN" | "CLOSE" | null;
   openShare: () => void;
@@ -57,7 +58,7 @@ export interface ClubHomeFloatingButtonProps {
   goToFeedCreation: () => void;
 }
 
-const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, recruitStatus, openShare, goToClubJoin, goToFeedCreation }) => {
+const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ height, role, recruitStatus, openShare, goToClubJoin, goToFeedCreation }) => {
   const [like, setLike] = useState<boolean>(false);
   const heartRef = useRef<Lottie>(null);
   const isJoined = role?.applyStatus === "APPROVED" ? true : false;
@@ -74,7 +75,7 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, rec
   };
 
   return (
-    <Container>
+    <Container height={height}>
       <SectionLeft>
         {isJoined ? (
           <>

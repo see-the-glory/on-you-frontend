@@ -95,6 +95,7 @@ const TopTab = createMaterialTopTabNavigator();
 const HEADER_EXPANDED_HEIGHT = 300;
 const HEADER_HEIGHT = 56;
 const TAB_BUTTON_HEIGHT = 46;
+const ACTION_BUTTON_HEIGHT = 70;
 
 const AnimatedFooterView = Animated.createAnimatedComponent(FooterView);
 
@@ -224,8 +225,6 @@ const ClubTopTabs = ({
   const screenScrollRefs = useRef<any>({});
   const screenScrollOffset = useRef<any>({});
   const scrollY = useRef(new Animated.Value(0)).current;
-  const offsetY = useSelector((state: RootState) => state.club.homeScrollY);
-  const scheduleOffsetX = useSelector((state: RootState) => state.club.scheduleScrollX);
   const translateY = scrollY.interpolate({
     inputRange: [0, headerDiff],
     outputRange: [0, -headerDiff],
@@ -459,9 +458,9 @@ const ClubTopTabs = ({
         <ClubHome
           {...props}
           scrollY={scrollY}
-          offsetY={offsetY}
-          scheduleOffsetX={scheduleOffsetX}
           headerDiff={headerDiff}
+          headerCollapsedHeight={heightCollapsed}
+          actionButtonHeight={ACTION_BUTTON_HEIGHT}
           schedules={scheduleData}
           syncScrollOffset={syncScrollOffset}
           screenScrollRefs={screenScrollRefs}
@@ -473,7 +472,17 @@ const ClubTopTabs = ({
   const renderClubFeed = useCallback(
     (props: any) => {
       props.route.params.clubData = data;
-      return <ClubFeed {...props} offsetY={offsetY} scrollY={scrollY} headerDiff={headerDiff} syncScrollOffset={syncScrollOffset} screenScrollRefs={screenScrollRefs} />;
+      return (
+        <ClubFeed
+          {...props}
+          scrollY={scrollY}
+          headerDiff={headerDiff}
+          headerCollapsedHeight={heightCollapsed}
+          actionButtonHeight={ACTION_BUTTON_HEIGHT}
+          syncScrollOffset={syncScrollOffset}
+          screenScrollRefs={screenScrollRefs}
+        />
+      );
     },
     [headerDiff, data]
   );
@@ -570,7 +579,14 @@ const ClubTopTabs = ({
       {clubRoleLoading ? (
         <></>
       ) : (
-        <FloatingActionButton role={clubRole?.data} recruitStatus={data?.recruitStatus} openShare={openShare} goToClubJoin={goToClubJoin} goToFeedCreation={goToFeedCreation} />
+        <FloatingActionButton
+          height={ACTION_BUTTON_HEIGHT}
+          role={clubRole?.data}
+          recruitStatus={data?.recruitStatus}
+          openShare={openShare}
+          goToClubJoin={goToClubJoin}
+          goToFeedCreation={goToFeedCreation}
+        />
       )}
 
       <ClubOptionModal

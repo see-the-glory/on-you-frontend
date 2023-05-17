@@ -11,7 +11,7 @@ export type ClubStackParamList = {
   ClubTopTabs: { clubData: Club };
   ClubHome: { clubData: Club };
   ClubFeed: { clubData: Club };
-  ClubFeedDetail: { clubData: Club; feedData: Feed[]; targetIndex: number };
+  ClubFeedDetail: { clubData: Club; targetIndex: number };
 
   ClubCreationStack: {};
   ClubCreationStepOne: { category: CategoryResponse };
@@ -70,25 +70,6 @@ export type ClubEditBasicsProps = NativeStackScreenProps<ClubStackParamList, "Cl
 export type ClubEditIntroductionProps = NativeStackScreenProps<ClubStackParamList, "ClubEditIntroduction">;
 export type ClubEditMembersProps = NativeStackScreenProps<ClubStackParamList, "ClubEditMembers">;
 export type ClubDeleteProps = NativeStackScreenProps<ClubStackParamList, "ClubDelete">;
-
-// ClubHome Param For Collapsed Scroll Animation
-export interface ClubHomeParamList {
-  scrollY: Animated.Value;
-  headerDiff: number;
-  offsetY?: number;
-  scheduleOffsetX?: number;
-  schedules?: RefinedSchedule[];
-  syncScrollOffset: (screenName: string) => void;
-  screenScrollRefs: any;
-}
-
-export interface ClubFeedParamList {
-  scrollY: Animated.Value;
-  offsetY?: number;
-  headerDiff: number;
-  syncScrollOffset: (screenName: string) => void;
-  screenScrollRefs: any;
-}
 
 // For TopTab Navigation
 export type TopTabParamList = {

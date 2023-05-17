@@ -5,34 +5,22 @@ interface ClubState {
   feeds: Feed[];
   role?: "MASTER" | "MANAGER" | "MEMBER" | "PENDING" | null;
   applyStatus?: "APPLIED" | "APPROVED" | null;
-  homeScrollY: number;
-  scheduleScrollX: number;
 }
 
 const initialState: ClubState = {
   feeds: [],
   role: null,
   applyStatus: null,
-  homeScrollY: 0,
-  scheduleScrollX: 0,
 };
 
 const clubSlice = createSlice({
   name: "club",
   initialState,
   reducers: {
-    updateClubHomeScrollY(state, action) {
-      state.homeScrollY = action.payload.scrollY;
-    },
-    updateClubHomeScheduleScrollX(state, action) {
-      state.scheduleScrollX = action.payload.scrollX;
-    },
     deleteClub(state) {
       state.feeds = [];
       state.role = null;
       state.applyStatus = null;
-      state.homeScrollY = 0;
-      state.scheduleScrollX = 0;
     },
     refreshFeed(state, action) {
       state.feeds = [].concat(action.payload);
