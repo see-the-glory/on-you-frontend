@@ -116,7 +116,9 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
     navigate("Preferences");
   };
 
-  const goToEditProfile = () => {};
+  const goToEditProfile = () => {
+    navigate("ProfileEdit", { profile: profile?.data });
+  };
 
   const openReportModal = () => {
     closeProfileOption();
