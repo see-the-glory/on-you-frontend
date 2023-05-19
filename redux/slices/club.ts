@@ -32,7 +32,7 @@ const clubSlice = createSlice({
     },
     addFeed(state, action) {
       const { clubId, feeds } = action.payload;
-      state[clubId].feeds = [...state[clubId].feeds, ...feeds];
+      state[clubId].feeds = [...state[clubId]?.feeds, ...feeds];
     },
     likeToggle(state, action) {
       const { clubId, feedIndex } = action.payload;

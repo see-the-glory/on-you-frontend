@@ -396,7 +396,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             <FlatList
               horizontal
               showsHorizontalScrollIndicator={false}
-              onMomentumScrollEnd={(event) => dispatch(clubSlice.actions.updateClubHomeScheduleScrollX({ scrollX: event.nativeEvent.contentOffset.x }))}
               contentOffset={{ x: 0, y: 0 }}
               contentContainerStyle={{ paddingVertical: 6, paddingHorizontal: SCREEN_PADDING_SIZE }}
               data={schedules}
