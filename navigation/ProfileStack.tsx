@@ -14,6 +14,7 @@ import Info from "../screens/Preferences/Others/Info";
 import UserNotification from "../screens/Profile/UserNotification";
 import Preferences from "../screens/Preferences/Preferences";
 import { lightTheme } from "../theme";
+import ProfileEdit from "../screens/Profile/ProfileEdit";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ const ProfileStack = ({ route: { params }, navigation: { navigate, goBack } }) =
       }}
     >
       <NativeStack.Screen name="Profile" component={Profile} initialParams={{}} options={{ headerShown: false }} />
+      <NativeStack.Screen name="ProfileEdit" component={ProfileEdit} options={{ headerShown: false }} />
       <NativeStack.Screen name="Preferences" component={Preferences} options={{ title: "설정" }} />
       <NativeStack.Screen name="AccountEdit" component={AccountEdit} options={{ title: "프로필 수정" }} />
       <NativeStack.Screen name="MyClubs" component={MyClubs} options={{ title: "나의 모임" }} />

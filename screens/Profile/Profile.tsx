@@ -116,7 +116,9 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
     navigate("Preferences");
   };
 
-  const goToEditProfile = () => {};
+  const goToEditProfile = () => {
+    navigate("ProfileEdit", { profile: profile?.data });
+  };
 
   const openReportModal = () => {
     closeProfileOption();
@@ -166,8 +168,10 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
 
   useFocusEffect(() => {
     // Android만 지원
-    StatusBar.setTranslucent(true);
-    StatusBar.setBackgroundColor("transparent");
+    if (Platform.OS === "android") {
+      StatusBar.setTranslucent(true);
+      StatusBar.setBackgroundColor("transparent");
+    }
   });
 
   return (
