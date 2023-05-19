@@ -1,22 +1,9 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  useWindowDimensions,
-  Animated,
-  FlatList,
-  DeviceEventEmitter,
-  TouchableWithoutFeedback,
-  View,
-  Text,
-  KeyboardAvoidingView,
-  Platform,
-  LayoutChangeEvent,
-  Keyboard,
-} from "react-native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter, TouchableWithoutFeedback, View } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Ionicons } from "@expo/vector-icons";
-import { ClubHomeScreenProps, ClubHomeParamList, RefinedSchedule } from "../../Types/Club";
-import { BaseResponse, ClubApi, ErrorResponse, GuestComment, GuestCommentRequest, GuestCommentResponse, Member } from "../../api";
+import { ClubHomeScreenProps, RefinedSchedule } from "../../Types/Club";
+import { ClubApi, ErrorResponse, GuestComment, GuestCommentResponse, Member } from "../../api";
 import ScheduleModal from "./ClubScheduleModal";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
@@ -26,10 +13,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
 import Collapsible from "react-native-collapsible";
-import { useMutation, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import moment from "moment";
-import Carousel from "../../components/Carousel";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const MEMBER_ICON_KERNING = 20;
 const MEMBER_ICON_SIZE = 40;
@@ -131,7 +116,7 @@ const ScheduleDetailItemView = styled.View`
   margin: 3px 5px;
 `;
 
-const ScheduleText = styled(CustomText)<{ index: number }>`
+const ScheduleText = styled(CustomText)<{ index?: number }>`
   font-size: 11px;
   line-height: 15px;
   color: ${(props: any) => (props.index === 0 ? "white" : "black")};
@@ -230,16 +215,27 @@ const EmptyText = styled.Text`
   text-align: center;
 `;
 
+// ClubHome Param For Collapsed Scroll Animation
+export interface ClubHomeParamList {
+  scrollY: Animated.Value;
+  headerDiff: number;
+  headerCollapsedHeight: number;
+  actionButtonHeight: number;
+  schedules?: RefinedSchedule[];
+  syncScrollOffset: (screenName: string) => void;
+  screenScrollRefs: any;
+}
+
 const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
-  navigation: { navigate },
+  navigation: { navigate, push },
   route: {
     name: screenName,
     params: { clubData },
   },
   scrollY,
-  offsetY,
-  scheduleOffsetX,
   headerDiff,
+  headerCollapsedHeight,
+  actionButtonHeight,
   schedules,
   syncScrollOffset,
   screenScrollRefs,
@@ -251,7 +247,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const [memberLoading, setMemberLoading] = useState(true);
   const [members, setMembers] = useState<Member[]>([]);
   const dispatch = useAppDispatch();
-  const myRole = useSelector((state: RootState) => state.club.role);
+  const myRole = useSelector((state: RootState) => state.club[clubData.id]?.role);
   const toast = useToast();
   const [clubLongDescLines, setClubLongDescLines] = useState<string[]>(typeof clubData?.clubLongDesc === "string" ? clubData?.clubLongDesc?.split("\n") : []);
   const [isCollapsedLongDesc, setIsCollapsedLongDesc] = useState<boolean>(true);
@@ -272,6 +268,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
 
     return () => {
       guestCommentSubscription.remove();
+      console.log("ClubHome - remove listner");
     };
   }, []);
 
@@ -320,7 +317,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     }
   };
 
-  const goToProfile = (userId: number) => navigate("ProfileStack", { screen: "Profile", params: { userId } });
+  const goToProfile = (userId: number) => push("ProfileStack", { screen: "Profile", params: { userId } });
 
   const clubLongDescTouch = () => {
     setIsCollapsedLongDesc((prev) => !prev);
@@ -338,12 +335,9 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           screenScrollRefs.current[screenName] = ref;
         }}
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
-        onMomentumScrollEnd={(event) => {
-          dispatch(clubSlice.actions.updateClubHomeScrollY({ scrollY: event.nativeEvent.contentOffset.y }));
-          syncScrollOffset(screenName);
-        }}
+        onMomentumScrollEnd={(event) => syncScrollOffset(screenName)}
         onScrollEndDrag={() => syncScrollOffset(screenName)}
-        contentOffset={{ x: 0, y: offsetY ?? 0 }}
+        contentOffset={{ x: 0, y: 0 }}
         style={{
           flex: 1,
           paddingTop: 15,
@@ -361,7 +355,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         contentContainerStyle={{
           paddingTop: headerDiff,
           paddingBottom: headerDiff * 2,
-          minHeight: SCREEN_HEIGHT + headerDiff * 2,
+          minHeight: SCREEN_HEIGHT + headerCollapsedHeight,
           backgroundColor: "#F5F5F5",
         }}
       >
@@ -403,7 +397,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
               horizontal
               showsHorizontalScrollIndicator={false}
               onMomentumScrollEnd={(event) => dispatch(clubSlice.actions.updateClubHomeScheduleScrollX({ scrollX: event.nativeEvent.contentOffset.x }))}
-              contentOffset={{ x: scheduleOffsetX ?? 0, y: 0 }}
+              contentOffset={{ x: 0, y: 0 }}
               contentContainerStyle={{ paddingVertical: 6, paddingHorizontal: SCREEN_PADDING_SIZE }}
               data={schedules}
               keyExtractor={(item: RefinedSchedule, index: number) => String(index)}

@@ -4,10 +4,9 @@ import styled from "styled-components/native";
 import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
 import { ErrorResponse, UserApi, UserInfoResponse } from "../../api";
-import { MaterialCommunityIcons, Feather, MaterialIcons, Entypo } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import { DeviceEventEmitter, StatusBar, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-toast-notifications";
-import CustomText from "../../components/CustomText";
 import CircleIcon from "../../components/CircleIcon";
 import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
@@ -15,64 +14,61 @@ import { updateUser } from "../../redux/slices/auth";
 
 const Container = styled.SafeAreaView`
   flex: 1;
+  background-color: white;
 `;
-const UserInfoSection = styled.View`
-  background-color: #fff;
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-  border-bottom-width: 1px;
-  border-bottom-color: #dbdbdb;
-  padding: 0px 20px;
-  height: 100px;
+const Header = styled.TouchableOpacity`
+  margin: 10px 20px;
+  padding: 18px;
+  background-color: #f5f5f5;
+  border-radius: 20px;
   flex-direction: row;
   align-items: center;
-  elevation: 10;
 `;
 
-const InfoBox = styled.View`
+const UserInfo = styled.View`
   align-items: flex-start;
   justify-content: center;
 `;
 
-const Title = styled(CustomText)`
-  font-family: "NotoSansKR-Medium";
+const UserInfoName = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 18px;
   line-height: 24px;
 `;
 
-const Email = styled(CustomText)`
+const UserInfoEmail = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
-  line-height: 18px;
-  color: #878787;
-  margin-top: 3px;
-  margin-bottom: 5px;
   line-height: 20px;
+  color: #7d7d7d;
 `;
 
-const MenuWrapper = styled.View`
-  margin-top: 3px;
+const Content = styled.View`
+  padding: 20px;
 `;
 
-const MenuItem = styled.TouchableOpacity`
+const MenuBundle = styled.View`
+  margin-bottom: 15px;
+`;
+
+const MenuBundleTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-size: 14px;
+  line-height: 20px;
+  color: #8e8e8e;
+  margin-bottom: 13px;
+`;
+
+const MenuButton = styled.TouchableOpacity`
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  padding: 10px 17px 10px 20px;
-  justify-content: center;
-  align-items: center;
+  margin-bottom: 13px;
 `;
-
-const MenuItemText = styled(CustomText)`
-  color: #2e2e2e;
-  font-family: "NotoSansKR-Medium";
+const MenuTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
   font-size: 16px;
-  line-height: 22px;
-  margin-left: 10px;
-`;
-
-const TouchMenu = styled.View`
-  height: 50px;
-  border-bottom-width: 1px;
-  border-bottom-color: #dbdbdb;
-  justify-content: center;
+  line-height: 17px;
 `;
 
 const LogoutButton = styled.TouchableOpacity`
@@ -86,16 +82,12 @@ const LogoutButton = styled.TouchableOpacity`
   background-color: #000;
 `;
 
-const LogoutText = styled(CustomText)`
+const LogoutText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
   text-align: center;
   font-size: 15px;
   line-height: 22px;
-  color: #fff;
-`;
-
-const ChevronBox = styled.View`
-  flex: 1;
-  align-items: flex-end;
+  color: white;
 `;
 
 const EditBox = styled.View`
@@ -107,8 +99,12 @@ const EditBox = styled.View`
 
 const EditButton = styled.TouchableWithoutFeedback``;
 
+interface ProfileEditBundle {
+  title: string;
+  items: ProfileEditItem[];
+}
+
 interface ProfileEditItem {
-  icon: React.ReactNode;
   title: string;
   screen?: string;
   onPress?: () => void;
@@ -119,7 +115,6 @@ const Preferences: React.FC<NativeStackScreenProps<any, "Preferences">> = ({ nav
   const fcmToken = useSelector((state: RootState) => state.auth.fcmToken);
   const dispatch = useAppDispatch();
   const toast = useToast();
-  const iconSize = 18;
   const {
     isLoading: userInfoLoading, // true or false
     refetch: userInfoRefetch,
@@ -158,71 +153,79 @@ const Preferences: React.FC<NativeStackScreenProps<any, "Preferences">> = ({ nav
     if (screen) navigate("ProfileStack", { screen });
   };
 
-  const goToEditProfile = () => {
+  const goToAccountEdit = () => {
     navigate("ProfileStack", {
-      screen: "EditProfile",
+      screen: "AccountEdit",
       params: userInfo?.data,
     });
   };
 
-  const items: ProfileEditItem[] = [
+  const itemBundle: ProfileEditBundle[] = [
     {
-      icon: <MaterialIcons name="lock" color="#2E2E2E" size={iconSize} />,
-      title: "계정",
-      screen: "AccountSetting",
+      title: "나의 활동",
+      items: [
+        {
+          title: "나의 모임",
+          screen: "MyClubs",
+        },
+      ],
     },
     {
-      icon: <MaterialIcons name="star" color="#2E2E2E" size={iconSize} />,
-      title: "나의 모임",
-      screen: "MyClubs",
+      title: "설정",
+      items: [
+        {
+          title: "계정",
+          screen: "AccountSetting",
+        },
+        {
+          title: "알림 설정",
+          screen: "NotificationSetting",
+        },
+      ],
     },
     {
-      icon: <MaterialIcons name="notifications" size={iconSize} color="#2E2E2E" />,
-      title: "알림 설정",
-      screen: "NotificationSetting",
-    },
-    {
-      icon: <MaterialIcons name="textsms" color="#2E2E2E" size={iconSize} />,
-      title: "건의사항 요청",
-      screen: "Suggestion",
-    },
-    {
-      icon: <MaterialIcons name="info" color="#2E2E2E" size={iconSize} />,
-      title: "정보",
-      screen: "Info",
+      title: "기타",
+      items: [
+        {
+          title: "건의사항 요청",
+          screen: "Suggestion",
+        },
+        {
+          title: "정보",
+          screen: "Info",
+        },
+      ],
     },
   ];
 
   return (
     <Container>
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
-      <UserInfoSection>
-        <CircleIcon size={65} uri={userInfo?.data?.thumbnail} kerning={15} />
-        <InfoBox>
-          <Email>{userInfo?.data?.email}</Email>
-          <Title>{userInfo?.data?.name}</Title>
-        </InfoBox>
+      <Header onPress={goToAccountEdit}>
+        <CircleIcon size={55} uri={userInfo?.data?.thumbnail} kerning={15} />
+        <UserInfo>
+          <UserInfoName>{userInfo?.data?.name}</UserInfoName>
+          <UserInfoEmail>{userInfo?.data?.email}</UserInfoEmail>
+        </UserInfo>
         <EditBox>
-          <EditButton onPress={goToEditProfile}>
-            <MaterialCommunityIcons name="pencil-outline" color="#295AF5" size={20} />
-          </EditButton>
+          <Entypo name="chevron-thin-right" size={20} color="#CFCFCF" />
         </EditBox>
-      </UserInfoSection>
-      <MenuWrapper>
-        {items?.map((item: ProfileEditItem, index: number) => (
-          <TouchMenu key={index}>
-            <MenuItem onPress={() => goToScreen(item.screen)}>
-              {item.icon}
-              <MenuItemText>{item.title}</MenuItemText>
-              <ChevronBox>
-                <Feather name="chevron-right" color="#CCCCCC" size={22} />
-              </ChevronBox>
-            </MenuItem>
-          </TouchMenu>
+      </Header>
+      <Content>
+        {itemBundle?.map((bundle: ProfileEditBundle, index: number) => (
+          <MenuBundle key={`Bundle_${index}`}>
+            <MenuBundleTitle>{bundle.title}</MenuBundleTitle>
+            {bundle.items.map((item: ProfileEditItem, index: number) => (
+              <MenuButton key={`Item_${index}`} onPress={() => goToScreen(item.screen)}>
+                <MenuTitle>{item.title}</MenuTitle>
+                <Entypo name="chevron-thin-right" size={20} color="#CFCFCF" />
+              </MenuButton>
+            ))}
+          </MenuBundle>
         ))}
-      </MenuWrapper>
+      </Content>
       <LogoutButton onPress={goLogout}>
-        <LogoutText>Logout</LogoutText>
+        <LogoutText>{`로그아웃`}</LogoutText>
       </LogoutButton>
     </Container>
   );

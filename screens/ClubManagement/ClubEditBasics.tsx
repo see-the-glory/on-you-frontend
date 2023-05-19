@@ -9,6 +9,7 @@ import { Category, CategoryResponse, ClubApi, ClubUpdateRequest, ClubUpdateRespo
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
+import { lightTheme } from "../../theme";
 
 const Container = styled.View`
   flex: 1;
@@ -49,7 +50,7 @@ const ContentItem = styled.View`
   width: 100%;
   flex: 1;
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? "#FF6534" : "#cecece")};
+  border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#cecece")};
   padding-bottom: 3px;
   margin: 10px 0px;
 `;
@@ -68,7 +69,7 @@ const ValidationItem = styled.View`
 `;
 
 const ValidationText = styled(CustomText)`
-  color: #ff6534;
+  color: ${(props: any) => props.theme.accentColor};
   font-size: 10px;
   line-height: 15px;
 `;
@@ -84,7 +85,7 @@ const ErrorView = styled.View`
   align-items: center;
 `;
 const ErrorText = styled(CustomText)`
-  color: #ff6534;
+  color: ${(props: any) => props.theme.accentColor};
 `;
 
 const Item = styled.View`
@@ -348,7 +349,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
 
                 {isDuplicatedName ? (
                   <ErrorView>
-                    <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />
+                    <AntDesign name="exclamationcircleo" size={12} color={lightTheme.accentColor} />
                     <ErrorText>{` 이미 사용 중인 이름입니다.`}</ErrorText>
                   </ErrorView>
                 ) : (
@@ -360,7 +361,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
             <ValidationView>
               {specialChar.test(clubName) ? (
                 <ValidationItem>
-                  <AntDesign name="check" size={12} color={"#ff6534"} />
+                  <AntDesign name="check" size={12} color={lightTheme.accentColor} />
                   <ValidationText>{` 특수문자 불가능`}</ValidationText>
                 </ValidationItem>
               ) : (
@@ -368,7 +369,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
               )}
               {clubName.length - (clubName.split(" ").length - 1) > lengthLimit ? (
                 <ValidationItem>
-                  <AntDesign name="check" size={12} color={"#ff6534"} />
+                  <AntDesign name="check" size={12} color={lightTheme.accentColor} />
                   <ValidationText>{` ${lengthLimit}자 초과`}</ValidationText>
                 </ValidationItem>
               ) : (
@@ -413,7 +414,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                 >
                   <ItemText>인원 수 무제한으로 받기</ItemText>
                   <CheckBox check={maxNumberInfinity}>
-                    <Ionicons name="checkmark-sharp" size={13} color={maxNumberInfinity ? "#FF6534" : "#e8e8e8"} />
+                    <Ionicons name="checkmark-sharp" size={13} color={maxNumberInfinity ? lightTheme.accentColor : "#e8e8e8"} />
                   </CheckBox>
                 </CheckButton>
               </Item>
@@ -425,7 +426,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                   <Ionicons
                     name={isApproveRequired === "Y" ? "radio-button-on" : "radio-button-off"}
                     size={16}
-                    color={isApproveRequired === "Y" ? "#FF6534" : "rgba(0, 0, 0, 0.3)"}
+                    color={isApproveRequired === "Y" ? lightTheme.accentColor : "rgba(0, 0, 0, 0.3)"}
                     style={{ marginRight: 3 }}
                   />
                   <ItemText>관리자 승인 후 가입</ItemText>
@@ -434,7 +435,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                   <Ionicons
                     name={isApproveRequired === "N" ? "radio-button-on" : "radio-button-off"}
                     size={16}
-                    color={isApproveRequired === "N" ? "#FF6534" : "rgba(0, 0, 0, 0.3)"}
+                    color={isApproveRequired === "N" ? lightTheme.accentColor : "rgba(0, 0, 0, 0.3)"}
                     style={{ marginRight: 3 }}
                   />
                   <ItemText>누구나 바로 가입</ItemText>

@@ -1,35 +1,39 @@
 import { Entypo } from "@expo/vector-icons";
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Switch, Platform, TouchableOpacity, ActivityIndicator, PermissionsAndroid, Linking, Alert } from "react-native";
+import { Switch, Platform, TouchableOpacity, ActivityIndicator, Linking, Alert } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import styled from "styled-components/native";
 import { BaseResponse, ErrorResponse, PushAlarmResponse, UserApi, UserPushAlarmRequest } from "../../../api";
-import CustomText from "../../../components/CustomText";
 import messaging from "@react-native-firebase/messaging";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { lightTheme } from "../../../theme";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
+  background-color: white;
 `;
 
 const Container = styled.ScrollView`
   flex: 1;
+  background-color: white;
 `;
 const Header = styled.View`
   padding: 10px 20px;
   margin-top: 3px;
 `;
-const HeaderTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
+const HeaderTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 18px;
   line-height: 22px;
   color: #2b2b2b;
   margin-bottom: 5px;
 `;
 
-const HeaderText = styled(CustomText)`
+const HeaderText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 12px;
-  line-height: 16px;
+  line-height: 18px;
   color: #b0b0b0;
   margin-top: 1px;
 `;
@@ -50,19 +54,20 @@ const ItemSub = styled.View`
   height: 30px;
 `;
 
-const ItemTitle = styled(CustomText)`
+const ItemTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 18px;
-  line-height: 28px;
+  line-height: 21px;
   color: #2b2b2b;
-  margin-bottom: 5px;
 `;
 
-const ItemText = styled(CustomText)`
+const ItemText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 12px;
   color: #b0b0b0;
 `;
 
-const NotificationSetting = ({ navigation: { navigate, goBack, setOptions } }) => {
+const NotificationSetting: React.FC<NativeStackScreenProps<any, "NotificationSetting">> = ({ navigation: { navigate, goBack, setOptions } }) => {
   const toast = useToast();
   const [permission, setPermission] = useState<boolean>(false);
   const [userPush, setUserPush] = useState<boolean>(false);
@@ -159,7 +164,7 @@ const NotificationSetting = ({ navigation: { navigate, goBack, setOptions } }) =
           <ItemSub>
             <ItemTitle>{`개인 알람`}</ItemTitle>
             <Switch
-              trackColor={{ false: "#D4D4D4", true: "#FF6534" }}
+              trackColor={{ false: "#D4D4D4", true: lightTheme.primaryColor }}
               thumbColor={"white"}
               onValueChange={() => onValueChange("USER")}
               value={userPush}
@@ -172,7 +177,7 @@ const NotificationSetting = ({ navigation: { navigate, goBack, setOptions } }) =
           <ItemSub>
             <ItemTitle>{`모임 알람`}</ItemTitle>
             <Switch
-              trackColor={{ false: "#D4D4D4", true: "#FF6534" }}
+              trackColor={{ false: "#D4D4D4", true: lightTheme.primaryColor }}
               thumbColor={"white"}
               onValueChange={() => onValueChange("CLUB")}
               value={clubPush}

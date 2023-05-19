@@ -24,13 +24,13 @@ const ContentView = styled.View`
 `;
 
 const ContentText = styled.Text`
-  font-family: "AppleSDGothicNeoM";
+  font-family: ${(props: any) => props.theme.koreanFontM};
   font-size: 18px;
   margin-bottom: 10px;
 `;
 
 const ContentTitle = styled.Text`
-  font-family: "TT-Commons-Bold";
+  font-family: ${(props: any) => props.theme.englishSecondaryFontB};
   font-size: 40px;
 `;
 
@@ -55,7 +55,7 @@ const Button = styled.TouchableHighlight`
 `;
 
 const Title = styled.Text<{ color: string }>`
-  font-family: "AppleSDGothicNeoM";
+  font-family: ${(props: any) => props.theme.koreanFontM};
   color: ${(props: any) => props.color};
   font-size: 20px;
   line-height: 21px;

@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { useMutation } from "react-query";
 import { Entypo, Feather } from "@expo/vector-icons";
 import { useToast } from "react-native-toast-notifications";
-import CustomText from "../../../components/CustomText";
 import { RootState } from "../../../redux/store/reducers";
 import { BaseResponse, ErrorResponse, UserApi } from "../../../api";
 import { Alert, DeviceEventEmitter, TouchableOpacity } from "react-native";
@@ -14,6 +13,7 @@ import { useAppDispatch } from "../../../redux/store";
 
 const Container = styled.SafeAreaView`
   flex: 1;
+  background-color: white;
 `;
 
 const MenuItem = styled.TouchableOpacity`
@@ -24,16 +24,16 @@ const MenuItem = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const MenuItemText = styled(CustomText)`
+const MenuItemText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
   color: #2e2e2e;
-  font-family: "NotoSansKR-Medium";
   font-size: 16px;
   line-height: 22px;
 `;
 
 const TouchMenu = styled.View`
   height: 50px;
-  border-bottom-width: 1px;
+  border-bottom-width: 0.5px;
   border-bottom-color: #dbdbdb;
   justify-content: center;
 `;
@@ -82,7 +82,7 @@ const AccountSetting: React.FC<NativeStackScreenProps<any, "AccountSetting">> = 
   const withdrawUser = () => {
     Alert.alert(
       "탈퇴",
-      "탈퇴 후 계정 복구는 불가합니다. 정말로 탈퇴하시겠습니까?",
+      "탈퇴 후 계정 복구는 불가합니다.\n정말로 탈퇴하시겠습니까?",
       [
         {
           text: "네",
@@ -103,7 +103,7 @@ const AccountSetting: React.FC<NativeStackScreenProps<any, "AccountSetting">> = 
       onPress: () => goToScreen("ChangePassword"),
     },
     {
-      title: "차단된 계정",
+      title: "차단 계정 관리",
       onPress: () => goToScreen("BlockUserList"),
     },
     {
@@ -119,7 +119,7 @@ const AccountSetting: React.FC<NativeStackScreenProps<any, "AccountSetting">> = 
           <MenuItem onPress={item.onPress}>
             <MenuItemText>{item.title}</MenuItemText>
             <ChevronBox>
-              <Feather name="chevron-right" color="#CCCCCC" size={22} />
+              <Entypo name="chevron-thin-right" size={20} color="#CFCFCF" />
             </ChevronBox>
           </MenuItem>
         </TouchMenu>

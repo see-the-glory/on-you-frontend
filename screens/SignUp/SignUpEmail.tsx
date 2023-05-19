@@ -8,6 +8,7 @@ import { useMutation } from "react-query";
 import { CommonApi, DuplicateCheckResponse, EmailCheckRequest, EmailValidRequest, SendCheckEmailResponse, ValidCheckEmailResponse } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import BottomButton from "../../components/BottomButton";
+import { lightTheme } from "../../theme";
 
 const Container = styled.View`
   width: 100%;
@@ -26,7 +27,7 @@ const Header = styled.View`
 
 const Item = styled.View<{ error: boolean }>`
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? "#ff6534" : "#b3b3b3")};
+  border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#b3b3b3")};
   margin-bottom: ${(props: any) => (props.error ? 0 : 43)}px;
 `;
 
@@ -48,32 +49,32 @@ const Border = styled.View`
 `;
 
 const AskText = styled.Text`
-  font-family: "AppleSDGothicNeoB";
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 20px;
   margin-top: 24px;
 `;
 
 const SubText = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
 `;
 
 const ItemText = styled.Text`
-  font-family: "Roboto-Regular";
+  font-family: ${(props: any) => props.theme.englishFontR};
   color: #a0a0a0;
   font-size: 13px;
   margin-bottom: 3px;
 `;
 
 const Input = styled.TextInput<{ error: boolean }>`
-  font-family: "Roboto-Regular";
+  font-family: ${(props: any) => props.theme.englishFontR};
   font-size: 18px;
 `;
 
 const Error = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   color: #e7564f;
   font-size: 12px;
 `;
@@ -216,7 +217,7 @@ const SignUpEmail: React.FC<NativeStackScreenProps<any, "SignUpEmail">> = ({
           </Item>
           {email !== "" && !emailReg.test(email) ? (
             <ValidationView error={email !== "" && !emailReg.test(email)}>
-              <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />
+              <AntDesign name="exclamationcircleo" size={12} color={lightTheme.accentColor} />
               <Error>{` 입력을 다시 한번 확인해주세요.`}</Error>
             </ValidationView>
           ) : (

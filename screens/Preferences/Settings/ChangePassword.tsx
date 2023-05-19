@@ -1,39 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
-import { TouchableOpacity, StatusBar, ActivityIndicator } from "react-native";
+import { TouchableOpacity, StatusBar } from "react-native";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { useMutation } from "react-query";
-import CustomText from "../../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
-import CustomTextInput from "../../../components/CustomTextInput";
 import { UserApi, BaseResponse, ErrorResponse, PasswordChangeRequest } from "../../../api";
 import { AntDesign, Entypo } from "@expo/vector-icons";
+import BottomButton from "../../../components/BottomButton";
+import { lightTheme } from "../../../theme";
 
 const Container = styled.View`
   flex: 1;
   padding: 20px 20px;
+  background-color: white;
 `;
 
 const Item = styled.View`
   margin-bottom: 30px;
 `;
 
-const ItemText = styled(CustomText)`
-  color: #8e8e8e;
+const ItemText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-size: 16px;
+  color: ${(props: any) => props.theme.infoColor};
   margin-bottom: 10px;
 `;
 
-const Input = styled(CustomTextInput)<{ error: boolean }>`
-  font-size: 16px;
-  line-height: 21px;
+const Input = styled.TextInput<{ error: boolean }>`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 20px;
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? "#ff6534" : "#b3b3b3")};
+  border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#b3b3b3")};
 `;
 
-const ErrorText = styled(CustomText)`
-  color: #ff6534;
+const ErrorText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  color: ${(props: any) => props.theme.accentColor};
   font-size: 12px;
+  line-height: 14px;
 `;
 
 const ValidationView = styled.View`
@@ -49,8 +54,10 @@ const ValidationItem = styled.View`
 `;
 
 const ValidationText = styled.Text`
+  font-family: ${(props: any) => props.theme.englishFontL};
   color: #8e8e8e;
   font-size: 10px;
+  line-height: 14px;
 `;
 
 const ChangePassword: React.FC<NativeStackScreenProps<any, "ChangePassword">> = ({ navigation: { navigate, setOptions, goBack } }) => {
@@ -80,25 +87,8 @@ const ChangePassword: React.FC<NativeStackScreenProps<any, "ChangePassword">> = 
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),
-      headerRight: () =>
-        mutation.isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <TouchableOpacity onPress={onSubmit} disabled={!numReg.test(password) || !engReg.test(password) || !specialReg.test(password) || password !== checkPassword || password.length < 8}>
-            <CustomText
-              style={{
-                color: "#2995FA",
-                fontSize: 14,
-                lineHeight: 20,
-                opacity: !numReg.test(password) || !engReg.test(password) || !specialReg.test(password) || password !== checkPassword || password.length < 8 ? 0.3 : 1,
-              }}
-            >
-              저장
-            </CustomText>
-          </TouchableOpacity>
-        ),
     });
-  }, [password, checkPassword, mutation.isLoading]);
+  }, []);
 
   const onSubmit = () => {
     if (password.length < 8) return toast.show(`변경불가: 8자리 이상이어야 합니다.`, { type: "danger" });
@@ -111,61 +101,68 @@ const ChangePassword: React.FC<NativeStackScreenProps<any, "ChangePassword">> = 
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Container>
-        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
-        <Item>
-          <ItemText>{`비밀번호 재설정`}</ItemText>
-          <Input
-            placeholder="영문, 숫자, 특수문자 포함 8자 이상"
-            placeholderTextColor={"#B0B0B0"}
-            secureTextEntry={true}
-            autoCorrect={false}
-            onChangeText={(value: string) => setPassword(value)}
-            includeFontPadding={false}
-          />
+    <>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Container>
+          <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+          <Item>
+            <ItemText>{`비밀번호 재설정`}</ItemText>
+            <Input
+              placeholder="영문, 숫자, 특수문자 포함 8자 이상"
+              placeholderTextColor={"#B0B0B0"}
+              secureTextEntry={true}
+              autoCorrect={false}
+              onChangeText={(value: string) => setPassword(value)}
+              includeFontPadding={false}
+            />
 
-          <ValidationView>
-            <ValidationItem>
-              <AntDesign name="check" size={12} color={engReg.test(password) ? "#295AF5" : "#8e8e8e"} />
-              <ValidationText>{` 영문 포함`}</ValidationText>
-            </ValidationItem>
-            <ValidationItem>
-              <AntDesign name="check" size={12} color={numReg.test(password) ? "#295AF5" : "#8e8e8e"} />
-              <ValidationText>{` 숫자 포함`}</ValidationText>
-            </ValidationItem>
-            <ValidationItem>
-              <AntDesign name="check" size={12} color={specialReg.test(password) ? "#295AF5" : "#8e8e8e"} />
-              <ValidationText>{` 특수문자 포함`}</ValidationText>
-            </ValidationItem>
-            <ValidationItem>
-              <AntDesign name="check" size={12} color={password.length > 7 ? "#295AF5" : "#8e8e8e"} />
-              <ValidationText>{` 8자리 이상`}</ValidationText>
-            </ValidationItem>
-          </ValidationView>
-        </Item>
-        <Item>
-          <ItemText>{`비밀번호 재입력`}</ItemText>
-          <Input
-            placeholder="영문, 숫자, 특수문자 포함 8자 이상"
-            placeholderTextColor={"#B0B0B0"}
-            secureTextEntry={true}
-            autoCorrect={false}
-            onChangeText={(value: string) => setCheckPassword(value)}
-            includeFontPadding={false}
-            error={password !== checkPassword && password !== "" && checkPassword !== ""}
-          />
-          {password !== checkPassword && password !== "" && checkPassword !== "" ? (
             <ValidationView>
-              <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />
-              <ErrorText>{` 입력을 다시 한번 확인해주세요.`}</ErrorText>
+              <ValidationItem>
+                <AntDesign name="check" size={12} color={engReg.test(password) ? lightTheme.primaryColor : "#8e8e8e"} />
+                <ValidationText>{` 영문 포함`}</ValidationText>
+              </ValidationItem>
+              <ValidationItem>
+                <AntDesign name="check" size={12} color={numReg.test(password) ? lightTheme.primaryColor : "#8e8e8e"} />
+                <ValidationText>{` 숫자 포함`}</ValidationText>
+              </ValidationItem>
+              <ValidationItem>
+                <AntDesign name="check" size={12} color={specialReg.test(password) ? lightTheme.primaryColor : "#8e8e8e"} />
+                <ValidationText>{` 특수문자 포함`}</ValidationText>
+              </ValidationItem>
+              <ValidationItem>
+                <AntDesign name="check" size={12} color={password.length > 7 ? lightTheme.primaryColor : "#8e8e8e"} />
+                <ValidationText>{` 8자리 이상`}</ValidationText>
+              </ValidationItem>
             </ValidationView>
-          ) : (
-            <></>
-          )}
-        </Item>
-      </Container>
-    </TouchableWithoutFeedback>
+          </Item>
+          <Item>
+            <ItemText>{`비밀번호 재입력`}</ItemText>
+            <Input
+              placeholder="영문, 숫자, 특수문자 포함 8자 이상"
+              placeholderTextColor={"#B0B0B0"}
+              secureTextEntry={true}
+              autoCorrect={false}
+              onChangeText={(value: string) => setCheckPassword(value)}
+              includeFontPadding={false}
+              error={password !== checkPassword && password !== "" && checkPassword !== ""}
+            />
+            {password !== checkPassword && password !== "" && checkPassword !== "" ? (
+              <ValidationView>
+                <AntDesign name="exclamationcircleo" size={12} color={lightTheme.accentColor} />
+                <ErrorText>{` 입력을 다시 한번 확인해주세요.`}</ErrorText>
+              </ValidationView>
+            ) : (
+              <></>
+            )}
+          </Item>
+        </Container>
+      </TouchableWithoutFeedback>
+      <BottomButton
+        title={"제출"}
+        onPress={onSubmit}
+        disabled={mutation.isLoading || !numReg.test(password) || !engReg.test(password) || !specialReg.test(password) || password !== checkPassword || password.length < 8}
+      />
+    </>
   );
 };
 

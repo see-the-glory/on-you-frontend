@@ -37,7 +37,7 @@ const Header = styled.View`
 const FilterView = styled.View`
   flex: 1;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.5);
   align-items: center;
 `;
 const InfoView = styled.View`
@@ -196,7 +196,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               backgroundColor: "white",
             }}
           >
-            <CollapsedView height={heightCollapsed}>
+            <CollapsedView height={headerHeight} style={{ marginTop: top }}>
               <CollapsedNameView>
                 <CollapsedNameText>{profile?.name ?? "이름"}</CollapsedNameText>
               </CollapsedNameView>

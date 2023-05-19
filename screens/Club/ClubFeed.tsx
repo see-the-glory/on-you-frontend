@@ -9,7 +9,7 @@ import { ErrorResponse, Feed, FeedApi, FeedsResponse } from "../../api";
 import clubSlice from "../../redux/slices/club";
 import { useAppDispatch } from "../../redux/store";
 import { RootState } from "../../redux/store/reducers";
-import { ClubFeedParamList, ClubFeedScreenProps } from "../../Types/Club";
+import { ClubFeedScreenProps } from "../../Types/Club";
 
 const Loader = styled.View`
   flex: 1;
@@ -39,20 +39,29 @@ const EmptyText = styled.Text`
   align-items: center;
 `;
 
+export interface ClubFeedParamList {
+  scrollY: Animated.Value;
+  headerDiff: number;
+  headerCollapsedHeight: number;
+  actionButtonHeight: number;
+  syncScrollOffset: (screenName: string) => void;
+  screenScrollRefs: any;
+}
+
 const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
-  navigation: { navigate },
+  navigation: { navigate, push },
   route: {
     name: screenName,
     params: { clubData },
   },
   scrollY,
-  offsetY,
   headerDiff,
+  headerCollapsedHeight,
+  actionButtonHeight,
   syncScrollOffset,
   screenScrollRefs,
 }) => {
-  const feeds = useSelector((state: RootState) => state.club.feeds);
-  const myRole = useSelector((state: RootState) => state.club.role);
+  const feeds = useSelector((state: RootState) => state.club[clubData.id]?.feeds);
   const toast = useToast();
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
@@ -74,7 +83,8 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       }
     },
     onSuccess: (res) => {
-      if (res.pages[res.pages.length - 1].responses) dispatch(clubSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
+      if (res.pages[res.pages.length - 1].responses) dispatch(clubSlice.actions.addFeed({ clubId: clubData.id, feeds: res.pages[res.pages.length - 1].responses.content }));
+      console.log("dispatch update!");
     },
     onError: (error) => {
       console.log(`API ERROR | getClubFeeds ${error.code} ${error.status}`);
@@ -89,7 +99,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   const onRefresh = async () => {
     setRefreshing(true);
     const result = await feedsRefetch();
-    dispatch(clubSlice.actions.refreshFeed(result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? []));
+    dispatch(clubSlice.actions.refreshFeed({ clubId: clubData.id, feeds: result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? [] }));
     setRefreshing(false);
   };
 
@@ -99,15 +109,10 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       console.log("ClubFeed - Club Feed Refetch Event");
       onRefresh();
     });
-    let ClubFeedLoadmoreSub = DeviceEventEmitter.addListener("ClubFeedLoadmore", () => {
-      console.log("ClubFeed - Load more!");
-      loadMore();
-    });
 
     return () => {
       console.log("ClubFeed - remove listner");
       clubFeedRefetchSub.remove();
-      ClubFeedLoadmoreSub.remove();
       queryClient.removeQueries({ queryKey: ["getClubFeeds"] });
     };
   }, []);
@@ -116,8 +121,9 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     const clubFeedDetailProps = {
       clubData,
       targetIndex: index,
+      fetchNextPage,
     };
-    return navigate("ClubFeedDetail", clubFeedDetailProps);
+    return push("ClubFeedDetail", clubFeedDetailProps);
   };
 
   return feedsLoading || refreshing ? (
@@ -130,11 +136,8 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
         screenScrollRefs.current[screenName] = ref;
       }}
       onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
-      contentOffset={{ x: 0, y: offsetY ?? 0 }}
-      onMomentumScrollEnd={(event) => {
-        dispatch(clubSlice.actions.updateClubHomeScrollY({ scrollY: event.nativeEvent.contentOffset.y }));
-        syncScrollOffset(screenName);
-      }}
+      contentOffset={{ x: 0, y: 0 }}
+      onMomentumScrollEnd={(event) => syncScrollOffset(screenName)}
       onScrollEndDrag={() => syncScrollOffset(screenName)}
       style={{
         flex: 1,
@@ -151,8 +154,9 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       }}
       contentContainerStyle={{
         paddingTop: headerDiff,
+        paddingBottom: actionButtonHeight,
         backgroundColor: "#F5F5F5",
-        minHeight: SCREEN_HEIGHT + headerDiff,
+        minHeight: SCREEN_HEIGHT + headerCollapsedHeight,
         flexGrow: 1,
       }}
       onEndReached={loadMore}

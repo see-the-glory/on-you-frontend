@@ -1,21 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import {
-  ActivityIndicator,
-  Alert,
-  Animated,
-  BackHandler,
-  DeviceEventEmitter,
-  Keyboard,
-  KeyboardAvoidingView,
-  LayoutChangeEvent,
-  Platform,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-} from "react-native";
-import { Entypo, Ionicons } from "@expo/vector-icons";
+import { ActivityIndicator, Alert, Animated, BackHandler, DeviceEventEmitter, Keyboard, KeyboardAvoidingView, LayoutChangeEvent, Platform, StatusBar, useWindowDimensions } from "react-native";
 import ClubHome from "../Club/ClubHome";
 import ClubFeed from "../Club/ClubFeed";
 import styled from "styled-components/native";
@@ -52,42 +37,6 @@ import TabBar from "../../components/TabBar";
 
 const Container = styled.View`
   flex: 1;
-`;
-
-const NavigationView = styled.SafeAreaView<{ height: number }>`
-  position: absolute;
-  z-index: 3;
-  width: 100%;
-  height: ${(props: any) => props.height}px;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 16px;
-`;
-
-const LeftNavigationView = styled.View`
-  flex-direction: row;
-`;
-const RightNavigationView = styled.View`
-  flex-direction: row;
-`;
-
-const NotiView = styled.View``;
-const NotiBadge = styled.View`
-  position: absolute;
-  top: 0px;
-  right: -4px;
-  width: 5px;
-  height: 5px;
-  border-radius: 5px;
-  z-index: 1;
-  background-color: #ff6534;
-  justify-content: center;
-  align-items: center;
-`;
-const NotiBadgeText = styled.Text`
-  color: white;
-  font-size: 6px;
 `;
 
 const FooterView = styled.View`
@@ -143,9 +92,10 @@ const SubmitButtonText = styled.Text<{ disabled: boolean }>`
 
 const TopTab = createMaterialTopTabNavigator();
 
-const HEADER_EXPANDED_HEIGHT = 270;
-const HEADER_HEIGHT = 100;
+const HEADER_EXPANDED_HEIGHT = 300;
+const HEADER_HEIGHT = 56;
 const TAB_BUTTON_HEIGHT = 46;
+const ACTION_BUTTON_HEIGHT = 70;
 
 const AnimatedFooterView = Animated.createAnimatedComponent(FooterView);
 
@@ -217,7 +167,7 @@ const ClubTopTabs = ({
     refetch: clubRoleRefetch,
   } = useQuery<ClubRoleResponse, ErrorResponse>(["getClubRole", data.id], ClubApi.getClubRole, {
     onSuccess: (res) => {
-      dispatch(clubSlice.actions.updateClubRole({ role: res.data.role, applyStatus: res.data.applyStatus }));
+      dispatch(clubSlice.actions.updateClubRole({ clubId: data.id, role: res.data.role, applyStatus: res.data.applyStatus }));
     },
     onError: (error) => {
       console.log(`API ERROR | getClubRole ${error.code} ${error.status}`);
@@ -275,8 +225,6 @@ const ClubTopTabs = ({
   const screenScrollRefs = useRef<any>({});
   const screenScrollOffset = useRef<any>({});
   const scrollY = useRef(new Animated.Value(0)).current;
-  const offsetY = useSelector((state: RootState) => state.club.homeScrollY);
-  const scheduleOffsetX = useSelector((state: RootState) => state.club.scheduleScrollX);
   const translateY = scrollY.interpolate({
     inputRange: [0, headerDiff],
     outputRange: [0, -headerDiff],
@@ -317,10 +265,14 @@ const ClubTopTabs = ({
 
   // Screen Scroll Sync
   const syncScrollOffset = (screenName: string) => {
-    screenScrollOffset.current[screenName] = scrollY._value;
+    screenScrollOffset.current[screenName] = scrollY._value; // 현재 탭의 y 값 저장.
+
+    // 다른 탭들의 scroll 위치 조절
     for (const [key, ref] of Object.entries(screenScrollRefs.current)) {
       if (key === screenName) continue;
       const offsetY = screenScrollOffset.current[key] ?? 0;
+
+      // 현재 탭의 y 값과 헤더가 접히는 정도를 기준으로 다른 탭들의 스크롤 위치를 변경한다.
       if (scrollY._value < headerDiff) {
         if (ref.scrollTo) {
           ref.scrollTo({
@@ -379,14 +331,6 @@ const ClubTopTabs = ({
     navigate("FeedStack", { screen: "ImageSelection", params: { clubId: data.id } });
   };
 
-  const goClubNotification = () => {
-    const clubNotificationProps = {
-      clubData: data,
-      clubRole: clubRole?.data,
-    };
-    navigate("ClubNotification", clubNotificationProps);
-  };
-
   const openShare = async () => {
     closeClubOption();
     const link = await dynamicLinks().buildShortLink(
@@ -427,6 +371,10 @@ const ClubTopTabs = ({
     closeClubOption();
   };
 
+  const openClubOptionModal = () => {
+    openClubOption();
+  };
+
   const withdrawClub = () => {
     const requestData = { clubId: data.id };
     Alert.alert("모임 탈퇴", "정말로 모임에서 탈퇴하시겠습니까?", [
@@ -451,6 +399,8 @@ const ClubTopTabs = ({
   };
 
   useEffect(() => {
+    dispatch(clubSlice.actions.initClub({ clubId: data.id }));
+
     const scrollListener = scrollY.addListener(({ value }) => {});
 
     console.log("ClubTopTabs - add listner");
@@ -498,7 +448,7 @@ const ClubTopTabs = ({
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
       backHandler.remove();
-      dispatch(clubSlice.actions.deleteClub());
+      dispatch(clubSlice.actions.deleteClub({ clubId: data.id }));
       console.log("ClubTopTabs - remove listner & delete clubslice");
     };
   }, []);
@@ -510,9 +460,9 @@ const ClubTopTabs = ({
         <ClubHome
           {...props}
           scrollY={scrollY}
-          offsetY={offsetY}
-          scheduleOffsetX={scheduleOffsetX}
           headerDiff={headerDiff}
+          headerCollapsedHeight={heightCollapsed}
+          actionButtonHeight={ACTION_BUTTON_HEIGHT}
           schedules={scheduleData}
           syncScrollOffset={syncScrollOffset}
           screenScrollRefs={screenScrollRefs}
@@ -524,47 +474,44 @@ const ClubTopTabs = ({
   const renderClubFeed = useCallback(
     (props: any) => {
       props.route.params.clubData = data;
-      return <ClubFeed {...props} offsetY={offsetY} scrollY={scrollY} headerDiff={headerDiff} syncScrollOffset={syncScrollOffset} screenScrollRefs={screenScrollRefs} />;
+      return (
+        <ClubFeed
+          {...props}
+          scrollY={scrollY}
+          headerDiff={headerDiff}
+          headerCollapsedHeight={heightCollapsed}
+          actionButtonHeight={ACTION_BUTTON_HEIGHT}
+          syncScrollOffset={syncScrollOffset}
+          screenScrollRefs={screenScrollRefs}
+        />
+      );
     },
     [headerDiff, data]
   );
 
   return (
     <Container>
-      <StatusBar backgroundColor={"black"} barStyle={"light-content"} />
-
-      <NavigationView height={HEADER_HEIGHT}>
-        <LeftNavigationView>
-          <TouchableOpacity onPress={() => popToTop()}>
-            <Entypo name="chevron-thin-left" size={18} color="white" />
-          </TouchableOpacity>
-        </LeftNavigationView>
-        <RightNavigationView>
-          {clubRole?.data?.role && clubRole.data.role !== "PENDING" ? (
-            <TouchableOpacity onPress={goClubNotification} style={{ paddingHorizontal: 8 }}>
-              <NotiView>
-                {notiCount > 0 && !notiLoading ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
-                <Ionicons name="mail-outline" size={22} color="white" />
-              </NotiView>
-            </TouchableOpacity>
-          ) : (
-            <></>
-          )}
-          <TouchableOpacity onPress={() => openClubOption()} style={{ paddingLeft: 10, paddingRight: 1 }}>
-            <Ionicons name="ellipsis-vertical-sharp" size={22} color="white" />
-          </TouchableOpacity>
-        </RightNavigationView>
-      </NavigationView>
-
-      <ClubHeader clubData={data} heightExpanded={heightExpanded} heightCollapsed={heightCollapsed} headerDiff={headerDiff} scrollY={scrollY} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
+      <ClubHeader
+        clubData={data}
+        clubRole={clubRole?.data}
+        notiCount={notiCount}
+        openClubOptionModal={openClubOptionModal}
+        headerHeight={HEADER_HEIGHT}
+        heightExpanded={heightExpanded}
+        heightCollapsed={heightCollapsed}
+        headerDiff={headerDiff}
+        scrollY={scrollY}
+      />
 
       <Animated.View
+        pointerEvents="box-none"
         style={{
           position: "absolute",
           zIndex: 2,
           flex: 1,
           width: "100%",
-          height: SCREEN_HEIGHT + headerDiff,
+          height: SCREEN_HEIGHT + HEADER_EXPANDED_HEIGHT - HEADER_HEIGHT,
           paddingTop: heightExpanded,
           transform: [{ translateY }],
         }}
@@ -634,7 +581,14 @@ const ClubTopTabs = ({
       {clubRoleLoading ? (
         <></>
       ) : (
-        <FloatingActionButton role={clubRole?.data} recruitStatus={data?.recruitStatus} openShare={openShare} goToClubJoin={goToClubJoin} goToFeedCreation={goToFeedCreation} />
+        <FloatingActionButton
+          height={ACTION_BUTTON_HEIGHT}
+          role={clubRole?.data}
+          recruitStatus={data?.recruitStatus}
+          openShare={openShare}
+          goToClubJoin={goToClubJoin}
+          goToFeedCreation={goToFeedCreation}
+        />
       )}
 
       <ClubOptionModal

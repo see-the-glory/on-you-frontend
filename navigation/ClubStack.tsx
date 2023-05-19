@@ -10,6 +10,7 @@ import ClubFeedDetail from "../screens/Club/ClubFeedDetail";
 import ClubJoinReject from "../screens/Club/ClubJoinReject";
 import ClubJoinRejectMessage from "../screens/Club/ClubJoinRejectMessage";
 import ClubInvitation from "../screens/Club/ClubInvitation";
+import { lightTheme } from "../theme";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -20,7 +21,8 @@ const ClubStack = ({ route: { params }, navigation: { navigate, goBack } }) => {
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
         headerTitleAlign: "center",
-        headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
+        headerTitleStyle: { fontFamily: lightTheme.koreanFontB, fontSize: 16 },
+        headerShadowVisible: false,
       }}
     >
       <NativeStack.Screen name="ClubTopTabs" component={ClubTopTabs} options={{ headerShown: false }} />

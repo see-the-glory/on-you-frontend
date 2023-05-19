@@ -1,6 +1,6 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { View, useWindowDimensions, StatusBar, Animated, Platform } from "react-native";
 import { useModalize } from "react-native-modalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,6 +18,8 @@ import UserInstroduction from "./UserInstroduction";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
 import Share from "react-native-share";
 import ProfileReportModal from "./ProfileReportModal";
+import { useFocusEffect } from "@react-navigation/native";
+import { lightTheme } from "../../theme";
 
 const Container = styled.View`
   flex: 1;
@@ -162,6 +164,12 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
     } catch (e) {}
   };
 
+  useFocusEffect(() => {
+    // Android만 지원
+    StatusBar.setTranslucent(true);
+    StatusBar.setBackgroundColor("transparent");
+  });
+
   return (
     <Container>
       <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
@@ -187,7 +195,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
           zIndex: 2,
           flex: 1,
           width: "100%",
-          height: SCREEN_HEIGHT + headerDiff,
+          height: SCREEN_HEIGHT + HEADER_EXPANDED_HEIGHT - HEADER_HEIGHT,
           paddingTop: heightExpanded,
           transform: [{ translateY }],
         }}
@@ -195,7 +203,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
         <TopTab.Navigator
           initialRouteName="UserInstroduction"
           screenOptions={{ swipeEnabled: false }}
-          tabBar={(props) => <TabBar {...props} height={TAB_BAR_HEIGHT} rounding={true} />}
+          tabBar={(props) => <TabBar {...props} height={TAB_BAR_HEIGHT} rounding={true} focusColor={lightTheme.accentColor} />}
           sceneContainerStyle={{ position: "absolute", zIndex: 1 }}
         >
           <TopTab.Screen options={{ tabBarLabel: "소개" }} name="UserInstroduction" component={renderUserInstroduction} />

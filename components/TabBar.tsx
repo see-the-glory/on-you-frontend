@@ -14,13 +14,13 @@ const TabBarContainer = styled.View<{ height: number; rounding: boolean }>`
   border-top-right-radius: ${(props: any) => (props.rounding ? 80 : 0)}px;
 `;
 
-const TabButton = styled.TouchableOpacity<{ isFocused: boolean; height: number }>`
+const TabButton = styled.TouchableOpacity<{ isFocused: boolean; height: number; focusColor?: string }>`
   flex: 1;
   height: ${(props: any) => props.height}px;
   justify-content: center;
   align-items: center;
   border-bottom-width: 2px;
-  border-bottom-color: ${(props: any) => (props.isFocused ? props.theme.primaryColor : "transparent")};
+  border-bottom-color: ${(props: any) => (props.isFocused ? props.focusColor ?? props.theme.primaryColor : "transparent")};
 `;
 
 const TextWrap = styled.View<{ height: number }>`
@@ -38,9 +38,10 @@ const TabText = styled.Text<{ isFocused: boolean }>`
 interface TabBarProps extends MaterialTopTabBarProps {
   height: number;
   rounding?: boolean;
+  focusColor?: string;
 }
 
-const TabBar: React.FC<TabBarProps> = ({ state, descriptors, navigation, height, rounding }) => {
+const TabBar: React.FC<TabBarProps> = ({ state, descriptors, navigation, height, rounding, focusColor }) => {
   return (
     <TabBarContainer height={height} rounding={rounding ?? false}>
       {state.routes.map((route, index) => {
@@ -71,6 +72,7 @@ const TabBar: React.FC<TabBarProps> = ({ state, descriptors, navigation, height,
             onPress={onPress}
             height={height}
             isFocused={isFocused}
+            focusColor={focusColor}
           >
             <TextWrap height={height}>
               <TabText isFocused={isFocused}>{label}</TabText>

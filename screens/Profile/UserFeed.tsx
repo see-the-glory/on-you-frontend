@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text } from "react-native";
+import { StatusBar, Text } from "react-native";
 import styled from "styled-components/native";
 
 const Container = styled.SafeAreaView`
@@ -9,6 +9,7 @@ const Container = styled.SafeAreaView`
 const UserFeed = () => {
   return (
     <Container>
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <Text>TEST</Text>
     </Container>
   );

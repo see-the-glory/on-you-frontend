@@ -4,8 +4,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Platform, View } from "react-native";
 import { ClubRole } from "../api";
 import Lottie from "lottie-react-native";
+import { lightTheme } from "../theme";
 
-const Container = styled.View`
+const Container = styled.View<{ height: number }>`
   position: absolute;
   flex-direction: row;
   background-color: white;
@@ -13,7 +14,7 @@ const Container = styled.View`
   justify-content: space-between;
   z-index: 2;
   width: 100%;
-  height: 70px;
+  height: ${(props: any) => props.height}px;
   bottom: 0px;
   padding-right: 20px;
   padding-left: 20px;
@@ -49,6 +50,7 @@ const ButtonText = styled.Text`
 `;
 
 export interface ClubHomeFloatingButtonProps {
+  height: number;
   role?: ClubRole | null;
   recruitStatus?: "OPEN" | "CLOSE" | null;
   openShare: () => void;
@@ -56,7 +58,7 @@ export interface ClubHomeFloatingButtonProps {
   goToFeedCreation: () => void;
 }
 
-const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, recruitStatus, openShare, goToClubJoin, goToFeedCreation }) => {
+const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ height, role, recruitStatus, openShare, goToClubJoin, goToFeedCreation }) => {
   const [like, setLike] = useState<boolean>(false);
   const heartRef = useRef<Lottie>(null);
   const isJoined = role?.applyStatus === "APPROVED" ? true : false;
@@ -73,15 +75,15 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, rec
   };
 
   return (
-    <Container>
+    <Container height={height}>
       <SectionLeft>
         {isJoined ? (
           <>
             <IconButton>
-              <MaterialIcons name={"star"} size={28} color="#EC5D56" />
+              <MaterialIcons name={"star"} size={28} color={lightTheme.accentColor} />
             </IconButton>
             <IconButton>
-              <MaterialIcons name="chat" size={28} color="#EC5D56" />
+              <MaterialIcons name="chat" size={28} color={lightTheme.accentColor} />
             </IconButton>
           </>
         ) : (
@@ -94,14 +96,14 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ role, rec
                 loop={false}
                 speed={1.5}
                 colorFilters={[
-                  { keypath: "Filled", color: "#EC5D56" },
+                  { keypath: "Filled", color: lightTheme.accentColor },
                   { keypath: "Empty", color: "#E0E0E0" },
                 ]}
                 style={{ width: 38, height: 38 }}
               />
             </LottieButton>
             <IconButton onPress={openShare}>
-              <MaterialIcons name="ios-share" size={25} color="#6B8BF7" />
+              <MaterialIcons name="ios-share" size={25} color={lightTheme.primaryColor} />
             </IconButton>
           </>
         )}

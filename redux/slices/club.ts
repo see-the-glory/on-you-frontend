@@ -1,58 +1,53 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { ClubRole, Feed } from "../../api";
 
-interface ClubState {
+interface ClubData {
   feeds: Feed[];
   role?: "MASTER" | "MANAGER" | "MEMBER" | "PENDING" | null;
   applyStatus?: "APPLIED" | "APPROVED" | null;
-  homeScrollY: number;
-  scheduleScrollX: number;
 }
 
-const initialState: ClubState = {
-  feeds: [],
-  role: null,
-  applyStatus: null,
-  homeScrollY: 0,
-  scheduleScrollX: 0,
-};
+interface ClubState {
+  [index: number]: ClubData;
+}
+
+const initialState: ClubState = {};
 
 const clubSlice = createSlice({
   name: "club",
   initialState,
   reducers: {
-    updateClubHomeScrollY(state, action) {
-      state.homeScrollY = action.payload.scrollY;
+    initClub(state, action) {
+      state[action.payload.clubId] = {
+        feeds: [],
+        role: null,
+        applyStatus: null,
+      };
     },
-    updateClubHomeScheduleScrollX(state, action) {
-      state.scheduleScrollX = action.payload.scrollX;
-    },
-    deleteClub(state) {
-      state.feeds = [];
-      state.role = null;
-      state.applyStatus = null;
-      state.homeScrollY = 0;
-      state.scheduleScrollX = 0;
+    deleteClub(state, action) {
+      delete state[action.payload.clubId];
     },
     refreshFeed(state, action) {
-      state.feeds = [].concat(action.payload);
+      state[action.payload.clubId].feeds = [...action.payload.feeds];
     },
     addFeed(state, action) {
-      state.feeds = state.feeds.concat(action.payload);
+      const { clubId, feeds } = action.payload;
+      state[clubId].feeds = [...state[clubId].feeds, ...feeds];
     },
     likeToggle(state, action) {
-      if (state.feeds[action.payload].likeYn) state.feeds[action.payload].likesCount--;
-      else state.feeds[action.payload].likesCount++;
-      state.feeds[action.payload].likeYn = !state.feeds[action.payload].likeYn;
+      const { clubId, feedIndex } = action.payload;
+      if (state[clubId].feeds[feedIndex].likeYn) state[clubId].feeds[feedIndex].likesCount--;
+      else state[clubId].feeds[feedIndex].likesCount++;
+      state[clubId].feeds[feedIndex].likeYn = !state[clubId].feeds[feedIndex].likeYn;
     },
     updateCommentCount(state, action) {
-      if (state.feeds.length > action.payload.feedIndex) {
-        state.feeds[action.payload.feedIndex].commentCount = action.payload.count;
-      }
+      const { clubId, feedIndex, count } = action.payload;
+      if (state[clubId].feeds.length > feedIndex) state[clubId].feeds[feedIndex].commentCount = count;
     },
     updateClubRole(state, action) {
-      state.role = action.payload.role;
-      state.applyStatus = action.payload.applyStatus;
+      const { clubId, role, applyStatus } = action.payload;
+      state[clubId].role = role;
+      state[clubId].applyStatus = applyStatus;
     },
   },
   // extraReducer는 비동기 액션 생성시 필요

@@ -22,19 +22,19 @@ const Header = styled.View`
 
 const LineView = styled.View`
   height: 1.5px;
-  background-color: #aeaeae;
+  background-color: ${(props: any) => props.theme.infoColor};
 `;
 
 const HeaderTitle = styled.Text`
-  font-family: "Roboto-Medium";
+  font-family: ${(props: any) => props.theme.englishFontM};
   font-size: 40px;
   line-height: 43px;
 `;
 
 const HeaderText = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 16px;
-  color: #aeaeae;
+  color: ${(props: any) => props.theme.infoColor};
   margin-top: 10px;
 `;
 
@@ -44,7 +44,7 @@ const Content = styled.View`
 `;
 
 const ContentText = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 16px;
 `;
 
@@ -114,7 +114,7 @@ const SignUpSuccess: React.FC<NativeStackScreenProps<any, "SignUpSuccess">> = ({
         <LineView style={{ flex: 1, marginRight: 20, marginTop: 10 }} />
         <ContentText>{`각종 모임을 통해\n공동체를 누려보세요!`}</ContentText>
       </Content>
-      <BottomButton onPress={onSubmit} backgroundColor="#6B8BF7" title={"로그인하기"} />
+      <BottomButton onPress={onSubmit} title={"로그인하기"} />
     </Container>
   );
 };

@@ -109,7 +109,7 @@ const ApplyButton = styled.TouchableOpacity<{ participation: boolean }>`
   align-items: center;
   background-color: ${(props: any) => (props.participation ? "white" : "#FF6534")};
   padding: 9px 0px;
-  border: 1px solid #ff6534;
+  border: 1px solid ${(props: any) => props.theme.accentColor};
   border-radius: 20px;
 `;
 
@@ -161,7 +161,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
   const toast = useToast();
   const navigation = useNavigation();
   const me = useSelector((state: RootState) => state.auth.user);
-  const myRole = useSelector((state: RootState) => state.club.role);
+  const myRole = useSelector((state: RootState) => state.club[clubId]?.role);
   const [showModal, setShowModal] = useState<boolean>(visible);
   const [showMember, setShowMember] = useState<boolean>(false);
   const [menuVisibleMap, setMenuVisibleMap] = useState(new Map(scheduleData?.slice(0, -1).map((schedule) => [schedule.id, false])));

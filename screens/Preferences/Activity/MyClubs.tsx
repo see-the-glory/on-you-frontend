@@ -1,11 +1,10 @@
 import React, { useCallback, useLayoutEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
-import { ActivityIndicator, FlatList, Platform, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
-import { useQuery } from "react-query";
-import { UserApi, Club, MyClubsResponse, ErrorResponse } from "../../../api";
+import { ActivityIndicator, Alert, DeviceEventEmitter, FlatList, Platform, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
+import { useMutation, useQuery } from "react-query";
+import { UserApi, Club, MyClubsResponse, ErrorResponse, BaseResponse, ClubWithdrawRequest, ClubApi } from "../../../api";
 import CircleIcon from "../../../components/CircleIcon";
-import CustomText from "../../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import { Entypo } from "@expo/vector-icons";
 import Tag from "../../../components/Tag";
@@ -15,15 +14,7 @@ const Loader = styled.SafeAreaView`
   justify-content: center;
   align-items: center;
   padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
-`;
-
-const Header = styled.View`
   background-color: white;
-  padding: 10px 20px;
-`;
-
-const Title = styled(CustomText)`
-  color: #b0b0b0;
 `;
 
 const Break = styled.View`
@@ -31,16 +22,32 @@ const Break = styled.View`
   border-bottom-color: #e9e9e9;
 `;
 
-const Item = styled.TouchableOpacity`
+const Item = styled.View`
   flex-direction: row;
   width: 100%;
+  justify-content: space-between;
   align-items: center;
   background-color: white;
   padding: 8px 20px;
 `;
 
-const ItemInfo = styled.View`
-  padding-left: 10px;
+const ItemInfo = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ItemInfoDetail = styled.View``;
+
+const WithdrawButton = styled.TouchableOpacity`
+  background-color: ${(props: any) => props.theme.accentColor};
+  border-radius: 8px;
+`;
+
+const WithdrawText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
+  padding: 6px 12px;
+  color: white;
 `;
 
 const ClubNameView = styled.View``;
@@ -49,10 +56,10 @@ const CategoryView = styled.View`
   margin-top: 2px;
 `;
 
-const ItemTitle = styled(CustomText)`
-  font-size: 14px;
-  line-height: 20px;
-  font-family: "NotoSansKR-Medium";
+const ItemTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
+  color: #2b2b2b;
+  font-size: 16px;
 `;
 
 const EmptyView = styled.View`
@@ -79,9 +86,22 @@ const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation:
     data: myClubs,
     refetch: myClubRefetch,
   } = useQuery<MyClubsResponse, ErrorResponse>(["getMyClubs"], UserApi.getMyClubs, {
-    onSuccess: (res) => {},
+    onSuccess: (res) => {
+      onRefresh();
+    },
     onError: (error) => {
       console.log(`API ERROR | getMyClubs ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
+  const withdrawClubMutation = useMutation<BaseResponse, ErrorResponse, ClubWithdrawRequest>(ClubApi.withdrawClub, {
+    onSuccess: (res) => {
+      toast.show(`모임에서 탈퇴하셨습니다.`, { type: "success" });
+      DeviceEventEmitter.emit("ClubRefetch");
+    },
+    onError: (error) => {
+      console.log(`API ERROR | withdrawClub ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
@@ -102,6 +122,19 @@ const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation:
     });
   };
 
+  const withdrawClub = (clubId: number) => {
+    const requestData = { clubId };
+    Alert.alert("모임 탈퇴", "정말로 모임에서 탈퇴하시겠습니까?", [
+      { text: "아니요" },
+      {
+        text: "예",
+        onPress: () => {
+          withdrawClubMutation.mutate(requestData);
+        },
+      },
+    ]);
+  };
+
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
@@ -112,36 +145,33 @@ const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation:
     });
   }, []);
 
-  const listHeaderComponent = useCallback(
-    () => (
-      <Header>
-        <Title>가입한 모임 리스트</Title>
-      </Header>
-    ),
-    []
-  );
   const itemSeparatorComponent = useCallback(() => <Break />, []);
   const renderItem = useCallback(
     ({ item, index }: { item: Club; index: number }) => (
-      <Item key={index} onPress={() => goToClubStack(item)}>
-        <CircleIcon size={37} uri={item.thumbnail} />
-        <ItemInfo>
-          <ClubNameView>
-            <ItemTitle>{item.name}</ItemTitle>
-          </ClubNameView>
-          <CategoryView>
-            {item.categories?.map((category, index) => (
-              <Tag
-                key={`Category_${index}`}
-                textColor="white"
-                backgroundColor="#C4C4C4"
-                name={category.name}
-                textStyle={{ fontSize: 10 }}
-                contentContainerStyle={{ paddingTop: 1, paddingBottom: 1 }}
-              />
-            ))}
-          </CategoryView>
+      <Item key={index}>
+        <ItemInfo onPress={() => goToClubStack(item)}>
+          <CircleIcon size={35} uri={item.thumbnail} kerning={10} />
+          <ItemInfoDetail>
+            <ClubNameView>
+              <ItemTitle>{item.name}</ItemTitle>
+            </ClubNameView>
+            <CategoryView>
+              {item.categories?.map((category, index) => (
+                <Tag
+                  key={`Category_${index}`}
+                  textColor="white"
+                  backgroundColor="#C4C4C4"
+                  name={category.name}
+                  textStyle={{ fontSize: 10 }}
+                  contentContainerStyle={{ paddingTop: 1, paddingBottom: 1 }}
+                />
+              ))}
+            </CategoryView>
+          </ItemInfoDetail>
         </ItemInfo>
+        <WithdrawButton onPress={() => withdrawClub(item.id)}>
+          <WithdrawText>{`탈퇴`}</WithdrawText>
+        </WithdrawButton>
       </Item>
     ),
     []
@@ -161,14 +191,13 @@ const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation:
     </Loader>
   ) : (
     <FlatList
-      contentContainerStyle={{ flexGrow: 1 }}
+      contentContainerStyle={{ flexGrow: 1, backgroundColor: "white" }}
       refreshing={refreshing}
       onRefresh={onRefresh}
       keyExtractor={(item: Club, index: number) => String(index)}
       data={myClubs?.data.filter((item) => item.applyStatus === "APPROVED")}
       ItemSeparatorComponent={itemSeparatorComponent}
       ListFooterComponent={myClubs?.data?.length ? itemSeparatorComponent : null}
-      ListHeaderComponent={listHeaderComponent}
       ListEmptyComponent={listEmptyComponent}
       stickyHeaderIndices={[0]}
       renderItem={renderItem}

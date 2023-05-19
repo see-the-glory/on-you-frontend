@@ -20,7 +20,7 @@ const Wrap = styled.View`
 `;
 
 const HeaderText = styled.Text`
-  font-family: "AppleSDGothicNeoM";
+  font-family: ${(props: any) => props.theme.koreanFontM};
   color: #2b2b2b;
   font-size: 16px;
   line-height: 21px;
@@ -36,15 +36,15 @@ const Item = styled.TouchableOpacity`
 `;
 
 const RedText = styled.Text`
-  font-family: "AppleSDGothicNeoM";
+  font-family: ${(props: any) => props.theme.koreanFontM};
   margin-right: 5px;
-  color: #ff6534;
+  color: ${(props: any) => props.theme.accentColor};
   font-size: 16px;
   line-height: 17px;
 `;
 
 const ItemText = styled.Text`
-  font-family: "AppleSDGothicNeoM";
+  font-family: ${(props: any) => props.theme.koreanFontM};
   color: #6f6f6f;
   font-size: 16px;
   line-height: 17px;

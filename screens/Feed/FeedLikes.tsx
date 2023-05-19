@@ -1,11 +1,12 @@
 import { Entypo } from "@expo/vector-icons";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useCallback, useLayoutEffect } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { LikeUser } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 
-const Container = styled.View`
+const Container = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
@@ -18,8 +19,8 @@ const NameText = styled.Text`
   color: #2b2b2b;
 `;
 
-const FeedLikes = ({
-  navigation: { setOptions, navigate, goBack },
+const FeedLikes: React.FC<NativeStackScreenProps<any, "FeedLikes">> = ({
+  navigation: { setOptions, navigate, goBack, push },
   route: {
     params: { likeUsers },
   },
@@ -28,8 +29,8 @@ const FeedLikes = ({
   const ItemSeparatorComponent = useCallback(() => <View style={{ height: 10 }} />, []);
   const renderItem = useCallback(
     ({ item, index }: { item: LikeUser; index: number }) => (
-      <Container>
-        <CircleIcon size={36} uri={item.thumbnail} kerning={8} />
+      <Container activeOpacity={1} onPress={() => goToProfile(item.userId)}>
+        <CircleIcon size={36} uri={item.thumbnail} kerning={8} onPress={() => goToProfile(item.userId)} />
         <NameText>{item.userName}</NameText>
       </Container>
     ),
@@ -45,6 +46,8 @@ const FeedLikes = ({
       ),
     });
   }, []);
+
+  const goToProfile = (userId: number) => push("ProfileStack", { screen: "Profile", params: { userId } });
 
   return (
     <FlatList

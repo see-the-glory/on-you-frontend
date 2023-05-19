@@ -2,10 +2,10 @@ import React, { useCallback, useLayoutEffect, useState } from "react";
 import { Alert, DeviceEventEmitter, FlatList, Platform, StatusBar, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
-import { useMutation } from "react-query";
+import { InfiniteData, useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, LikeUser, UserApi, UserBlockRequest } from "../../api";
+import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, LikeUser, UserApi, UserBlockRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import FeedDetail from "../../components/FeedDetail";
 import { ClubFeedDetailScreenProps } from "../../Types/Club";
@@ -39,12 +39,13 @@ const HeaderText = styled(CustomText)`
 const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   navigation: { setOptions, navigate, goBack },
   route: {
-    params: { clubData, targetIndex },
+    params: { clubData, targetIndex, fetchNextPage },
   },
 }) => {
   const me = useSelector((state: RootState) => state.auth.user);
-  const myRole = useSelector((state: RootState) => state.club.role);
-  const feeds = useSelector((state: RootState) => state.club.feeds);
+  const myRole = useSelector((state: RootState) => state.club[clubData.id]?.role);
+  const feeds = useSelector((state: RootState) => state.club[clubData.id]?.feeds);
+  const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
   const toast = useToast();
   const { ref: feedOptionRef, open: openFeedOption, close: closeFeedOption } = useModalize();
@@ -100,16 +101,6 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     openComplainOption();
   };
 
-  const goToFeedComments = (feedIndex?: number, feedId?: number) => {
-    if (feedIndex === undefined || feedId === undefined) return;
-    navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId, clubId: clubData.id } });
-  };
-
-  const goToFeedLikes = (likeUsers?: LikeUser[]) => {
-    if (!likeUsers || likeUsers.length === 0) return;
-    navigate("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
-  };
-
   const goToUpdateFeed = () => {
     closeFeedOption();
     navigate("FeedStack", { screen: "FeedModification", params: { feedData: selectFeedData } });
@@ -159,7 +150,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       },
     });
 
-    dispatch(clubSlice.actions.likeToggle(feedIndex));
+    dispatch(clubSlice.actions.likeToggle({ clubId: clubData.id, feedIndex }));
   }, []);
 
   const blockUser = () => {
@@ -238,8 +229,8 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   };
 
   const loadMore = () => {
-    console.log("ClubFeedDetail - Load more club feed!");
-    DeviceEventEmitter.emit("ClubFeedLoadmore");
+    const query = queryClient.getQueryData<InfiniteData<FeedsResponse>>(["getClubFeeds", clubData.id]);
+    if (query?.pages[query?.pages.length - 1].hasData) fetchNextPage();
   };
 
   useLayoutEffect(() => {
@@ -271,8 +262,6 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         infoHeight={feedDetailInfoHeight}
         contentHeight={feedDetailContentHeight}
         goToFeedOptionModal={goToFeedOptionModal}
-        goToFeedComments={goToFeedComments}
-        goToFeedLikes={goToFeedLikes}
         likeFeed={likeFeed}
         isMyClubPost={["MASTER", "MANAGER", "MEMBER"].includes(myRole ?? "") ? true : false}
       />

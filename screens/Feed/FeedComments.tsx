@@ -132,7 +132,7 @@ const FeedComments = ({
       setIsLoading(false);
       if (feedIndex !== undefined) {
         const count = res.data.length + res.data.reduce((acc, comment) => acc + comment.replies.length, 0);
-        if (clubId) dispatch(clubSlice.actions.updateCommentCount({ feedIndex, count }));
+        if (clubId) dispatch(clubSlice.actions.updateCommentCount({ clubId, feedIndex, count }));
         else dispatch(feedSlice.actions.updateCommentCount({ feedIndex, count }));
       } else {
         DeviceEventEmitter.emit("SelectFeedRefetch");

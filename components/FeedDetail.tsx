@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
@@ -14,6 +14,10 @@ import RNFetchBlob from "rn-fetch-blob";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import Lottie from "lottie-react-native";
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store/reducers";
+import { lightTheme } from "../theme";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -86,7 +90,7 @@ const CreatedTime = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 12px;
 `;
-const ContentTextView = styled.Text<{ height: number }>`
+const ContentTextView = styled.Text<{ height?: number }>`
   ${(props: any) => (props.height ? `height: ${props.height}px` : "")};
 `;
 const ContentText = styled.Text`
@@ -124,9 +128,6 @@ interface FeedDetailProps {
   showClubName?: boolean;
   isMyClubPost?: boolean;
   goToFeedOptionModal: (feedData?: Feed) => void;
-  goToFeedComments: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
-  goToFeedLikes: (likeUsers: LikeUser[]) => void;
-  goToClub?: (clubId?: number) => void;
   likeFeed?: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
 }
 
@@ -138,21 +139,8 @@ interface FeedDetailState {
   remainedText: string;
 }
 
-const FeedDetail: React.FC<FeedDetailProps> = ({
-  feedData,
-  feedIndex,
-  feedSize,
-  headerHeight,
-  infoHeight,
-  contentHeight,
-  showClubName,
-  isMyClubPost,
-  goToFeedOptionModal,
-  goToFeedComments,
-  goToFeedLikes,
-  goToClub,
-  likeFeed,
-}) => {
+const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, headerHeight, infoHeight, contentHeight, showClubName, isMyClubPost, goToFeedOptionModal, likeFeed }) => {
+  const me = useSelector((state: RootState) => state.auth.user);
   let lastTapTime: number | undefined = undefined;
   const heartRef = useRef<Lottie>(null);
   const bgHeartRef = useRef<Lottie>(null);
@@ -166,7 +154,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
     collapsedTextList: [],
     remainedText: "",
   });
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   // prettier-ignore
   const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
@@ -197,7 +185,9 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
   }, [feedData?.likeYn]);
 
   const onPressHeart = () => {
-    if (likeFeed) likeFeed(feedIndex, feedData?.id);
+    if (likeFeed) {
+      likeFeed(feedIndex, feedData?.id);
+    }
   };
 
   const doubleTap = () => {
@@ -215,14 +205,39 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
         heartRef.current?.play(10, 25);
         bgHeartRef.current?.play(10, 25);
       } else {
-        if (likeFeed) likeFeed(feedIndex, feedData?.id);
+        if (likeFeed) {
+          likeFeed(feedIndex, feedData?.id);
+        }
       }
     } else {
       lastTapTime = now;
     }
   };
 
-  const goToProfile = (userId?: number) => navigation.navigate("ProfileStack", { screen: "Profile", params: { userId } });
+  const goToProfile = useCallback((userId?: number) => navigation.push("ProfileStack", { screen: "Profile", params: { userId } }), []);
+
+  const goToClub = useCallback((clubId?: number) => {
+    if (clubId) navigation.push("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
+  }, []);
+
+  const goToFeedComments = useCallback((feedIndex?: number, feedId?: number) => {
+    if (feedIndex === undefined || feedId === undefined) return;
+    navigation.push("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId } });
+  }, []);
+
+  const goToFeedLikes = useCallback(
+    (likeUsers?: LikeUser[]) => {
+      // 로그인 되어있다면, likeYn에 따라 likeUsers 목록에 내 정보를 넣거나 뺀다.
+      if (me?.thumbnail && me?.name && me?.id) {
+        likeUsers = likeUsers?.filter((user) => user.userId != me?.id);
+        if (feedData?.likeYn) likeUsers?.push({ thumbnail: me?.thumbnail, userName: me?.name, likeDate: moment().tz("Asia/Seoul").format("YYYY-MM-DDThh:mm:ss"), userId: me?.id });
+      }
+
+      if (!likeUsers || likeUsers.length === 0) return;
+      navigation.push("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
+    },
+    [feedData?.likeYn]
+  );
 
   const onBgHeartAnimationFinish = () => {
     Animated.timing(opacity, {
@@ -277,12 +292,10 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
                 <HeaderText>{feedData?.userName}</HeaderText>
               </TouchableOpacity>
               {showClubName ? (
-                <TouchableOpacity activeOpacity={1} onPress={() => (goToClub ? goToClub(feedData?.clubId) : {})}>
+                <TouchableOpacity activeOpacity={1} onPress={() => goToClub(feedData?.clubId)}>
                   <Tag name={feedData?.clubName ?? ""} contentContainerStyle={{ paddingLeft: 7, paddingRight: 7 }} textColor="#464646" backgroundColor="#E6E6E6" />
                 </TouchableOpacity>
-              ) : (
-                <></>
-              )}
+              ) : null}
             </HeaderNameView>
             <CreatedTime>{moment(feedData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
           </HeaderInformationView>
@@ -316,8 +329,8 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
           source={require("../assets/lottie/like-background.json")}
           autoPlay={false}
           loop={false}
-          speed={1.5}
-          colorFilters={[{ keypath: "Filled", color: "#EC5D56" }]}
+          speed={1.0}
+          colorFilters={[{ keypath: "Filled", color: lightTheme.accentColor }]}
           onAnimationFinish={onBgHeartAnimationFinish}
           autoSize={true}
           style={{ width: 200, height: 200 }}
@@ -335,7 +348,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({
                   loop={false}
                   speed={1.5}
                   colorFilters={[
-                    { keypath: "Filled", color: "#EC5D56" },
+                    { keypath: "Filled", color: lightTheme.accentColor },
                     { keypath: "Empty", color: "#000000" },
                   ]}
                   style={{ width: 35, height: 35, marginLeft: -2 }}

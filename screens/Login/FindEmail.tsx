@@ -16,9 +16,9 @@ const Container = styled.View`
 const Content = styled.View``;
 
 const ContentTitle = styled.Text`
-  font-family: "AppleSDGothicNeoSB";
+  font-family: ${(props: any) => props.theme.koreanFontSB};
   font-size: 16px;
-  color: #aeaeae;
+  color: ${(props: any) => props.theme.infoColor};
   margin-bottom: 8px;
 `;
 
@@ -31,7 +31,7 @@ const PhoneNumberView = styled.View`
 `;
 
 const ContentInput = styled.TextInput`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   border-bottom-width: 0.5px;
   border-bottom-color: #000000;
   padding-bottom: 2px;
@@ -121,7 +121,7 @@ const FindEmail: React.FC<NativeStackScreenProps<any, "FindEmail">> = ({ navigat
           </Content>
         </Container>
       </TouchableWithoutFeedback>
-      <BottomButton onPress={onSubmit} backgroundColor="#6B8BF7" disabled={!(userName.trim() && phoneNumber.trim())} title={"확인"} />
+      <BottomButton onPress={onSubmit} disabled={!(userName.trim() && phoneNumber.trim())} title={"확인"} />
     </>
   );
 };

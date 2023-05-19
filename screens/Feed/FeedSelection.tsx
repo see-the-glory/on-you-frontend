@@ -87,22 +87,9 @@ const FeedSelection = ({
     },
   });
 
-  const goToClub = (clubId?: number) => {
-    if (clubId) navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
-  };
-
   const goToComplain = () => {
     closeFeedOption();
     openComplainOption();
-  };
-
-  const goToFeedComments = (feedIndex?: number, feedId?: number) => {
-    navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId: feedId ?? selectFeedId, clubId: feedData?.clubId } });
-  };
-
-  const goToFeedLikes = (likeUsers?: LikeUser[]) => {
-    if (!likeUsers || likeUsers.length === 0) return;
-    navigate("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
   };
 
   const goToUpdateFeed = () => {
@@ -268,10 +255,7 @@ const FeedSelection = ({
         infoHeight={feedDetailInfoHeight}
         contentHeight={feedDetailContentHeight}
         goToFeedOptionModal={goToFeedOptionModal}
-        goToFeedComments={goToFeedComments}
-        goToFeedLikes={goToFeedLikes}
         likeFeed={likeFeed}
-        goToClub={goToClub}
         showClubName={true}
       />
 
