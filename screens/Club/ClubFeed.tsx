@@ -61,8 +61,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   syncScrollOffset,
   screenScrollRefs,
 }) => {
-  const feeds = useSelector((state: RootState) => state.club.feeds);
-  const myRole = useSelector((state: RootState) => state.club.role);
+  const feeds = useSelector((state: RootState) => state.club[clubData.id]?.feeds);
   const toast = useToast();
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
@@ -84,7 +83,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       }
     },
     onSuccess: (res) => {
-      if (res.pages[res.pages.length - 1].responses) dispatch(clubSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
+      if (res.pages[res.pages.length - 1].responses) dispatch(clubSlice.actions.addFeed({ clubId: clubData.id, feeds: res.pages[res.pages.length - 1].responses.content }));
       console.log("dispatch update!");
     },
     onError: (error) => {
@@ -100,7 +99,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   const onRefresh = async () => {
     setRefreshing(true);
     const result = await feedsRefetch();
-    dispatch(clubSlice.actions.refreshFeed(result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? []));
+    dispatch(clubSlice.actions.refreshFeed({ clubId: clubData.id, feeds: result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? [] }));
     setRefreshing(false);
   };
 

@@ -167,7 +167,7 @@ const ClubTopTabs = ({
     refetch: clubRoleRefetch,
   } = useQuery<ClubRoleResponse, ErrorResponse>(["getClubRole", data.id], ClubApi.getClubRole, {
     onSuccess: (res) => {
-      dispatch(clubSlice.actions.updateClubRole({ role: res.data.role, applyStatus: res.data.applyStatus }));
+      dispatch(clubSlice.actions.updateClubRole({ clubId: data.id, role: res.data.role, applyStatus: res.data.applyStatus }));
     },
     onError: (error) => {
       console.log(`API ERROR | getClubRole ${error.code} ${error.status}`);
@@ -399,6 +399,8 @@ const ClubTopTabs = ({
   };
 
   useEffect(() => {
+    dispatch(clubSlice.actions.initClub({ clubId: data.id }));
+
     const scrollListener = scrollY.addListener(({ value }) => {});
 
     console.log("ClubTopTabs - add listner");
@@ -446,7 +448,7 @@ const ClubTopTabs = ({
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
       backHandler.remove();
-      dispatch(clubSlice.actions.deleteClub());
+      dispatch(clubSlice.actions.deleteClub({ clubId: data.id }));
       console.log("ClubTopTabs - remove listner & delete clubslice");
     };
   }, []);

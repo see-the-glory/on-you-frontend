@@ -43,8 +43,8 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   },
 }) => {
   const me = useSelector((state: RootState) => state.auth.user);
-  const myRole = useSelector((state: RootState) => state.club.role);
-  const feeds = useSelector((state: RootState) => state.club.feeds);
+  const myRole = useSelector((state: RootState) => state.club[clubData.id]?.role);
+  const feeds = useSelector((state: RootState) => state.club[clubData.id]?.feeds);
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
   const toast = useToast();
@@ -150,7 +150,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       },
     });
 
-    dispatch(clubSlice.actions.likeToggle(feedIndex));
+    dispatch(clubSlice.actions.likeToggle({ clubId: clubData.id, feedIndex }));
   }, []);
 
   const blockUser = () => {

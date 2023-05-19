@@ -247,7 +247,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const [memberLoading, setMemberLoading] = useState(true);
   const [members, setMembers] = useState<Member[]>([]);
   const dispatch = useAppDispatch();
-  const myRole = useSelector((state: RootState) => state.club.role);
+  const myRole = useSelector((state: RootState) => state.club[clubData.id]?.role);
   const toast = useToast();
   const [clubLongDescLines, setClubLongDescLines] = useState<string[]>(typeof clubData?.clubLongDesc === "string" ? clubData?.clubLongDesc?.split("\n") : []);
   const [isCollapsedLongDesc, setIsCollapsedLongDesc] = useState<boolean>(true);
@@ -268,7 +268,6 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
 
     return () => {
       guestCommentSubscription.remove();
-      dispatch(clubSlice.actions.deleteClub());
       console.log("ClubHome - remove listner");
     };
   }, []);

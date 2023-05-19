@@ -161,7 +161,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
   const toast = useToast();
   const navigation = useNavigation();
   const me = useSelector((state: RootState) => state.auth.user);
-  const myRole = useSelector((state: RootState) => state.club.role);
+  const myRole = useSelector((state: RootState) => state.club[clubId]?.role);
   const [showModal, setShowModal] = useState<boolean>(visible);
   const [showMember, setShowMember] = useState<boolean>(false);
   const [menuVisibleMap, setMenuVisibleMap] = useState(new Map(scheduleData?.slice(0, -1).map((schedule) => [schedule.id, false])));

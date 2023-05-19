@@ -139,7 +139,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
     params: { clubData, refresh },
   },
 }) => {
-  const myRole = useSelector((state: RootState) => state.club.role);
+  const myRole = useSelector((state: RootState) => state.club[clubData.id]?.role);
   const toast = useToast();
   const [data, setData] = useState<Club>(clubData);
   const [isToggle, setIsToggle] = useState(clubData?.recruitStatus === "OPEN" ? true : false);
