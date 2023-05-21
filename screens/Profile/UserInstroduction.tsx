@@ -31,7 +31,7 @@ const PersonalItem = styled.View`
 
 const ClubItem = styled.TouchableOpacity`
   flex-direction: row;
-  width: 350px;
+  align-items: center;
   height: 60px;
   background-color: #f8f8f8;
   border-radius: 10px;
@@ -67,6 +67,7 @@ const ClubThumbnail = styled(FastImage)`
   height: 40px;
   border-radius: 10px;
   margin-right: 20px;
+  border: 0.2px solid #c4c4c4;
 `;
 
 const HeaderTitle = styled.Text`
@@ -90,7 +91,6 @@ const PersonalText = styled.Text`
 const ClubNameText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 16px;
-  line-height: 19px;
   margin-right: 5px;
 `;
 
@@ -103,6 +103,7 @@ const ClubMemberCount = styled.Text`
 const ClubCategoryText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 10px;
+  margin: 1px 0px;
   margin-right: 5px;
   color: #808080;
 `;

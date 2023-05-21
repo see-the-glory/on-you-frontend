@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "../screens/Profile/Profile";
 import AccountEdit from "../screens/Preferences/AccountEdit";
@@ -15,10 +15,11 @@ import UserNotification from "../screens/Profile/UserNotification";
 import Preferences from "../screens/Preferences/Preferences";
 import { lightTheme } from "../theme";
 import ProfileEdit from "../screens/Profile/ProfileEdit";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
 const NativeStack = createNativeStackNavigator();
 
-const ProfileStack = ({ route: { params }, navigation: { navigate, goBack } }) => {
+const ProfileStack = ({ route, navigation }) => {
   return (
     <NativeStack.Navigator
       initialRouteName="Profile"
