@@ -696,10 +696,24 @@ const updateUserInfo = (req: UserUpdateRequest) => {
   });
 };
 
+// Profile
 const getMyProfile = ({ queryKey }: any) => axios.get<String, ProfileResponse>(`/api/user/myProfile`);
+
+const getMyFeeds = ({ queryKey, pageParam }: any) => {
+  const [_key]: [string, number] = queryKey;
+  let params = pageParam ? `cursor=${pageParam}` : "";
+  return axios.get<string, FeedsResponse>(`/api/feeds/my?${params}`);
+};
+
 const getProfile = ({ queryKey }: any) => {
   const [_key, userId]: [string, number] = queryKey;
   return axios.get<String, ProfileResponse>(`/api/user/${userId}/profile`);
+};
+
+const getUserFeeds = ({ queryKey, pageParam }: any) => {
+  const [_key, userId]: [string, number] = queryKey;
+  let params = pageParam ? `cursor=${pageParam}` : "";
+  return axios.get<string, FeedsResponse>(`/api/users/${userId}/feeds?${params}`);
 };
 
 const changePassword = (req: PasswordChangeRequest) => axios.post<string, BaseResponse>(`/api/user/changePassword`, req);
@@ -795,6 +809,7 @@ export const ClubApi = {
   getCategories,
   getClub,
   getClubs,
+  getClubFeeds,
   createClub,
   deleteClub,
   updateClub,
@@ -834,13 +849,14 @@ export const UserApi = {
   getUserNotifications,
   metaInfo,
   getMyProfile,
+  getMyFeeds,
   getProfile,
+  getUserFeeds,
 };
 
 export const FeedApi = {
   getFeed,
   getFeeds,
-  getClubFeeds,
   getFeedComments,
   createFeedComment,
   deleteFeedComment,

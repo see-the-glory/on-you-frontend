@@ -345,7 +345,7 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
             <HeaderText>{`공개여부`}</HeaderText>
           </SectionHeader>
           <SectionContent>
-            {profile?.clubs.map((club: Club, index: number) => (
+            {profile?.clubs?.map((club: Club, index: number) => (
               <ClubItem key={`Club_${club.id}`} style={index === profile?.clubs?.length - 1 ? { borderBottomWidth: 0 } : {}}>
                 <ClubThumbnail source={club.thumbnail ? { uri: club.thumbnail } : require("../../assets/basic.jpg")} />
                 <ClubInfo>

@@ -160,7 +160,7 @@ const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
           <HeaderTitle>{`내 모임`}</HeaderTitle>
         </Header>
         <Content>
-          {profile?.clubs.map((club) => (
+          {profile?.clubs?.map((club) => (
             <ClubItem key={`Club_${club.id}`} onPress={() => goToClub(club.id)}>
               <ClubThumbnail source={club.thumbnail ? { uri: club.thumbnail } : require("../../assets/basic.jpg")} />
               <ClubInfo>

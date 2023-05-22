@@ -81,7 +81,6 @@ const Root = () => {
   const toast = useToast();
   const queryClient = useQueryClient();
   const navigation = useNavigation();
-
   const { refetch: userInfoRefecth } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
       if (res.data) dispatch(updateUser({ user: res.data }));
