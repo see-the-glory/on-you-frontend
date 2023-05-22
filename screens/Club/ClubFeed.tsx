@@ -5,7 +5,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { ErrorResponse, Feed, FeedApi, FeedsResponse } from "../../api";
+import { ClubApi, ErrorResponse, Feed, FeedsResponse } from "../../api";
 import clubSlice from "../../redux/slices/club";
 import { useAppDispatch } from "../../redux/store";
 import { RootState } from "../../redux/store/reducers";
@@ -76,7 +76,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     hasNextPage,
     refetch: feedsRefetch,
     fetchNextPage,
-  } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["getClubFeeds", clubData.id], FeedApi.getClubFeeds, {
+  } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["getClubFeeds", clubData.id], ClubApi.getClubFeeds, {
     getNextPageParam: (currentPage) => {
       if (currentPage) {
         return currentPage.hasData === true ? currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor : null;

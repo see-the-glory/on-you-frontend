@@ -64,6 +64,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
   });
 
   const screenScrollRefs = useRef<any>({});
+  const screenScrollOffset = useRef<any>({});
 
   const {
     data: profile,
@@ -78,6 +79,48 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
+
+  // Screen Scroll Sync
+  const syncScrollOffset = (screenName: string) => {
+    screenScrollOffset.current[screenName] = scrollY._value; // 현재 탭의 y 값 저장.
+
+    // 다른 탭들의 scroll 위치 조절
+    for (const [key, ref] of Object.entries(screenScrollRefs.current)) {
+      if (key === screenName) continue;
+      const offsetY = screenScrollOffset.current[key] ?? 0;
+
+      // 현재 탭의 y 값과 헤더가 접히는 정도를 기준으로 다른 탭들의 스크롤 위치를 변경한다.
+      if (scrollY._value < headerDiff) {
+        if (ref.scrollTo) {
+          ref.scrollTo({
+            x: 0,
+            y: scrollY._value,
+            animated: false,
+          });
+        } else {
+          ref.scrollToOffset({
+            offset: scrollY._value,
+            animated: false,
+          });
+        }
+        screenScrollOffset.current[key] = scrollY._value;
+      } else if (scrollY._value >= headerDiff && offsetY < headerDiff) {
+        if (ref.scrollTo) {
+          ref.scrollTo({
+            x: 0,
+            y: headerDiff,
+            animated: false,
+          });
+        } else {
+          ref.scrollToOffset({
+            offset: headerDiff,
+            animated: false,
+          });
+        }
+        screenScrollOffset.current[key] = headerDiff;
+      }
+    }
+  };
 
   const renderUserInstroduction = useCallback(
     (props: any) => {
@@ -112,12 +155,29 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
     [headerDiff, profile]
   );
 
+  const renderUserFeed = useCallback(
+    (props: any) => {
+      return (
+        <UserFeed
+          userId={userId}
+          scrollY={scrollY}
+          headerDiff={headerDiff}
+          headerCollapsedHeight={heightCollapsed}
+          syncScrollOffset={syncScrollOffset}
+          screenScrollRefs={screenScrollRefs}
+          actionButtonHeight={0}
+        />
+      );
+    },
+    [headerDiff, userId, profile]
+  );
+
   const goToPreferences = () => {
-    navigate("Preferences");
+    navigate("ProfileStack", { screen: "Preferences" });
   };
 
   const goToEditProfile = () => {
-    navigate("ProfileEdit", { profile: profile?.data });
+    navigate("ProfileStack", { screen: "ProfileEdit", params: { profile: profile?.data } });
   };
 
   const openReportModal = () => {
@@ -211,7 +271,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
           sceneContainerStyle={{ position: "absolute", zIndex: 1 }}
         >
           <TopTab.Screen options={{ tabBarLabel: "소개" }} name="UserInstroduction" component={renderUserInstroduction} />
-          <TopTab.Screen options={{ tabBarLabel: "작성한 피드" }} name="UserFeed" component={UserFeed} />
+          <TopTab.Screen options={{ tabBarLabel: "작성한 피드" }} name="UserFeed" component={renderUserFeed} />
         </TopTab.Navigator>
       </Animated.View>
 
