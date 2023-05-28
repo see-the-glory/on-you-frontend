@@ -76,6 +76,7 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, scrollY, headerDiff, header
     },
     onSuccess: (res) => {
       // if (res.pages[res.pages.length - 1].responses) dispatch(clubSlice.actions.addFeed({ clubId: clubData.id, feeds: res.pages[res.pages.length - 1].responses.content }));
+      console.log(res.pages.map((page) => page.responses.content));
       console.log(res);
     },
     onError: (error) => {
@@ -97,16 +98,10 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, scrollY, headerDiff, header
   };
 
   useEffect(() => {
-    console.log("UserFeed - add listner");
-    let userFeedRefetchSub = DeviceEventEmitter.addListener("UserFeedRefetch", () => {
-      console.log("UserFeed - User Feed Refetch Event");
-      onRefresh();
-    });
+    console.log("UserFeed - useEffect");
 
     return () => {
-      console.log("UserFeed - remove listner");
-      userFeedRefetchSub.remove();
-      queryClient.removeQueries({ queryKey: ["getUserFeeds"] });
+      // queryClient.removeQueries({ queryKey: ["getUserFeeds"] });
     };
   }, []);
 
@@ -153,7 +148,7 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, scrollY, headerDiff, header
         flexGrow: 1,
       }}
       onEndReached={loadMore}
-      data={[]}
+      data={feedData?.pages?.flatMap((page: FeedsResponse) => page.responses.content) ?? []}
       keyExtractor={(item: Feed, index: number) => String(index)}
       numColumns={numColumn}
       columnWrapperStyle={{ paddingBottom: 1 }}

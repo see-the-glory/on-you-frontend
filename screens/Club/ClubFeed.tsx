@@ -161,7 +161,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
         flexGrow: 1,
       }}
       onEndReached={loadMore}
-      data={feeds}
+      data={feeds ?? []}
       keyExtractor={(item: Feed, index: number) => String(index)}
       numColumns={numColumn}
       columnWrapperStyle={{ paddingBottom: 1 }}

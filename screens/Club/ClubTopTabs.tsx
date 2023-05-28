@@ -448,7 +448,7 @@ const ClubTopTabs = ({
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
       backHandler.remove();
-      dispatch(clubSlice.actions.deleteClub({ clubId: data.id }));
+      dispatch(clubSlice.actions.initClub({ clubId: data.id }));
       console.log("ClubTopTabs - remove listner & delete clubslice");
     };
   }, []);

@@ -24,9 +24,6 @@ const clubSlice = createSlice({
         applyStatus: null,
       };
     },
-    deleteClub(state, action) {
-      delete state[action.payload.clubId];
-    },
     refreshFeed(state, action) {
       state[action.payload.clubId].feeds = [...action.payload.feeds];
     },
