@@ -81,7 +81,7 @@ const SignUpName: React.FC<NativeStackScreenProps<any, "SignUpName">> = ({ navig
       }}
     >
       <Container>
-        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
         <BorderWrap>
           <Border />
         </BorderWrap>

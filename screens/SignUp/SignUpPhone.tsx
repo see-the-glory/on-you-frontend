@@ -143,7 +143,7 @@ const SignUpPhone: React.FC<NativeStackScreenProps<any, "SignUpPhone">> = ({
       }}
     >
       <Container>
-        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
         <BorderWrap>
           <Border />
         </BorderWrap>

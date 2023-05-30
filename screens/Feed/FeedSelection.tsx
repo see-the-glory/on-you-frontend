@@ -247,7 +247,7 @@ const FeedSelection = ({
     </Loader>
   ) : (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <FeedDetail
         feedData={feedData}
         feedSize={SCREEN_WIDTH}

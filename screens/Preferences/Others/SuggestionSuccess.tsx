@@ -53,7 +53,7 @@ const SuggestionSuccess: React.FC<NativeStackScreenProps<any, "SuggestionSuccess
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <Header style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
         <HeaderText>{`소중한 의견이 온유 모임에 전송되었습니다.\n감사합니다.`}</HeaderText>
       </Header>

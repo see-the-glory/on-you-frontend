@@ -369,7 +369,7 @@ const Home = () => {
     </Loader>
   ) : (
     <Container>
-      <StatusBar translucent backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <HeaderView height={homeHeaderHeight}>
         <LogoText>{`ON YOU`}</LogoText>
         <HeaderRightView>

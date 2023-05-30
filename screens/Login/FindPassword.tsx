@@ -107,7 +107,7 @@ const FindPassword: React.FC<NativeStackScreenProps<any, "FindPassword">> = ({ n
         }}
       >
         <Container>
-          <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+          <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
           <Content>
             <ItemView>
               <ContentTitle>이름</ContentTitle>

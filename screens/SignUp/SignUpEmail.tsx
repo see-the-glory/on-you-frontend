@@ -193,7 +193,7 @@ const SignUpEmail: React.FC<NativeStackScreenProps<any, "SignUpEmail">> = ({
       }}
     >
       <Container>
-        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
         <BorderWrap>
           <Border />
         </BorderWrap>

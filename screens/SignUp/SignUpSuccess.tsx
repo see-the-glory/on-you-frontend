@@ -101,7 +101,7 @@ const SignUpSuccess: React.FC<NativeStackScreenProps<any, "SignUpSuccess">> = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <Header>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <HeaderTitle>{`Welcome to`}</HeaderTitle>

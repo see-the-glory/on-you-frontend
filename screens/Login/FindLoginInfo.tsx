@@ -61,7 +61,7 @@ const FindLoginInfo: React.FC<NativeStackScreenProps<any, "FindLoginInfo">> = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <TopView>
         <Button onPressIn={() => setFindEmailColor("white")} onPressOut={() => setFindEmailColor("black")} onPress={goToFindEmail} underlayColor={lightTheme.primaryColor}>
           <TitleView>

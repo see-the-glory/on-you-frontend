@@ -115,7 +115,7 @@ const SignUpPassword: React.FC<NativeStackScreenProps<any, "SignUpPassword">> = 
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <ScrollView contentContainerStyle={{ minHeight: SCREEN_HEIGHT - 100 }} stickyHeaderIndices={[0]} showsVerticalScrollIndicator={false}>
         <BorderWrap>
           <Border />

@@ -81,7 +81,7 @@ const SignUpTerms: React.FC<NativeStackScreenProps<any, "SignUpTerms">> = ({ nav
       }}
     >
       <Container>
-        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
         <Wrap>
           <HeaderText>{`On You에 오신 것을 환영합니다.\n앱 사용을 위해서는 아래의 약관동의와\n회원가입이 필요합니다.`}</HeaderText>
 

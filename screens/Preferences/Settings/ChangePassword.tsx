@@ -104,7 +104,7 @@ const ChangePassword: React.FC<NativeStackScreenProps<any, "ChangePassword">> = 
     <>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Container>
-          <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+          <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
           <Item>
             <ItemText>{`비밀번호 재설정`}</ItemText>
             <Input

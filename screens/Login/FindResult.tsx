@@ -83,7 +83,7 @@ const FindResult: React.FC<NativeStackScreenProps<any, "FindResult">> = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <Header>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <HeaderTitle>{findType === "Email" ? "Here is" : "Check"}</HeaderTitle>

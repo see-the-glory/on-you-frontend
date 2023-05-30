@@ -75,7 +75,7 @@ const Main: React.FC<NativeStackScreenProps<any, "Main">> = ({ navigation: { nav
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <BackgroundView source={require("../../assets/main_background.jpg")} resizeMode="cover">
         <ContentView>
           <ContentText>공동체와 함께하는 즐거운 시간</ContentText>

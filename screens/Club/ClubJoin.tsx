@@ -113,7 +113,7 @@ const ClubJoin = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <MainView>
         <Header>
           <HeaderTitle>{`모임의 가입 희망을 환영합니다!\n모임 리더에게 신청자의 정보를 알려주세요.`}</HeaderTitle>

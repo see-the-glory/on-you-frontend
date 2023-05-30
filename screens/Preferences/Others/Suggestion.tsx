@@ -101,7 +101,7 @@ const Suggestion: React.FC<NativeStackScreenProps<any, "Suggestion">> = ({ navig
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
         <MainView>
           <Header>

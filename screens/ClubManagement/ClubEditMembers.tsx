@@ -233,7 +233,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <Header>
         <HeaderText>모임 리더는 회원 관리와 모임 관리의 권한이 있습니다.</HeaderText>
       </Header>

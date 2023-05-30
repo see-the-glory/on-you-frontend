@@ -200,7 +200,7 @@ const Preferences: React.FC<NativeStackScreenProps<any, "Preferences">> = ({ nav
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <Header onPress={goToAccountEdit}>
         <CircleIcon size={55} uri={userInfo?.data?.thumbnail} kerning={15} />
         <UserInfo>

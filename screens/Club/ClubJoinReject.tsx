@@ -121,7 +121,7 @@ const ClubJoinReject = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <MainView>
         <Header>
           <HeaderBoldText>{actionerName}</HeaderBoldText>

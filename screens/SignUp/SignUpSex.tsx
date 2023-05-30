@@ -119,7 +119,7 @@ const SignUpSex: React.FC<NativeStackScreenProps<any, "SignUpSex">> = ({
       }}
     >
       <Container>
-        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
         <BorderWrap>
           <Border />
         </BorderWrap>

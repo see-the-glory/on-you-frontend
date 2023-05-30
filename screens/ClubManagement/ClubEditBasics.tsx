@@ -315,7 +315,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={40} style={{ flex: 1 }}>
         <MainView>
           <Header>

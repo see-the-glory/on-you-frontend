@@ -255,7 +255,7 @@ const ImageSelection: React.FC<NativeStackScreenProps<any, "ImageSelection">> = 
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={90} style={{ flex: 1 }}>
         <ScrollView>
           <HeaderView>

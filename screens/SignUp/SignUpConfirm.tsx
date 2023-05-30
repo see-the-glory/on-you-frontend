@@ -135,7 +135,7 @@ const SignUpConfirm: React.FC<NativeStackScreenProps<any, "SignUpConfirm">> = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <Wrap>
         <AskText>입력 정보가 모두 일치한가요?</AskText>
         <SubText>잘못 입력된 정보는 뒤로가기로 수정할 수 있습니다.</SubText>

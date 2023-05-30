@@ -298,7 +298,7 @@ const UserFeedDetail: React.FC<NativeStackScreenProps<any, "UserFeedDetail">> = 
   );
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <FlatList
         // refreshing={refreshing}
         // onRefresh={onRefresh}
