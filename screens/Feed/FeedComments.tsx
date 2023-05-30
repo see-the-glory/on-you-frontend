@@ -57,9 +57,9 @@ const RoundingView = styled.View`
   flex: 1;
   height: 100%;
   padding: 3px 10px;
-  border-width: 0.5px;
+  /* border-width: 0.5px;
   border-color: rgba(0, 0, 0, 0.5);
-  border-radius: 15px;
+  border-radius: 15px; */
 `;
 const CommentInput = styled.TextInput`
   font-family: ${(props: any) => props.theme.koreanFontR};

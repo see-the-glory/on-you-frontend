@@ -44,7 +44,7 @@ const SectionView = styled.View`
 const TitleView = styled.View`
   width: 100%;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 `;
@@ -54,11 +54,16 @@ const SectionTitle = styled.Text`
   font-size: 15px;
   color: ${(props: any) => props.theme.primaryColor};
 `;
+const SectionDetailButton = styled.TouchableOpacity``;
+const SectionText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-size: 10px;
+  color: #aaaaaa;
+`;
 
 const ContentView = styled.View<{ paddingSize?: number }>`
   padding-left: ${(props: any) => props.paddingSize ?? 0}px;
   padding-right: ${(props: any) => props.paddingSize ?? 0}px;
-  margin-bottom: 15px;
 `;
 
 const ContentText = styled.Text`
@@ -340,7 +345,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
         contentOffset={{ x: 0, y: 0 }}
         style={{
           flex: 1,
-          paddingTop: 15,
+          paddingTop: 20,
           backgroundColor: "#F5F5F5",
           transform: [
             {
@@ -386,7 +391,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           </ContentView>
         </SectionView>
         <View style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
-          <Break sep={15} />
+          <Break sep={30} />
         </View>
         <SectionView>
           <TitleView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
@@ -453,16 +458,19 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           )}
         </SectionView>
         <View style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
-          <Break sep={15} />
+          <Break sep={30} />
         </View>
         <SectionView>
           <TitleView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
             <SectionTitle>{`멤버`}</SectionTitle>
+            <SectionDetailButton>
+              <SectionText>{`자세히 >`}</SectionText>
+            </SectionDetailButton>
           </TitleView>
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingVertical: 6, paddingHorizontal: SCREEN_PADDING_SIZE }}
+            contentContainerStyle={{ paddingHorizontal: SCREEN_PADDING_SIZE }}
             data={members}
             keyExtractor={(item: Member, index: number) => String(index)}
             ItemSeparatorComponent={() => <View style={{ width: 15 }} />}
@@ -478,11 +486,14 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           />
         </SectionView>
         <View style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
-          <Break sep={15} />
+          <Break sep={30} />
         </View>
         <SectionView>
           <TitleView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
             <SectionTitle>{`방명록`}</SectionTitle>
+            <SectionDetailButton>
+              <SectionText>{`모두보기 >`}</SectionText>
+            </SectionDetailButton>
           </TitleView>
 
           <View style={{ width: "100%", marginBottom: 15 }}>

@@ -18,7 +18,7 @@ const Container = styled.View<{ height: number }>`
   bottom: 0px;
   padding-right: 20px;
   padding-left: 20px;
-  padding-bottom: ${Platform.OS === "ios" ? 8 : 0}px;
+  padding-bottom: ${Platform.OS === "ios" ? 18 : 10}px;
 `;
 
 const SectionLeft = styled.View`
@@ -99,11 +99,11 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ height, r
                   { keypath: "Filled", color: lightTheme.accentColor },
                   { keypath: "Empty", color: "#E0E0E0" },
                 ]}
-                style={{ width: 38, height: 38 }}
+                style={{ width: 41, height: 41 }}
               />
             </LottieButton>
             <IconButton onPress={openShare}>
-              <MaterialIcons name="ios-share" size={25} color={lightTheme.primaryColor} />
+              <MaterialIcons name="ios-share" size={26} color={lightTheme.primaryColor} />
             </IconButton>
           </>
         )}

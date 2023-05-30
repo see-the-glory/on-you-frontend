@@ -50,7 +50,7 @@ const HeaderRightView = styled.View`
 const HeaderText = styled.Text`
   font-size: 14px;
   line-height: 16px;
-  font-family: ${(props: any) => props.theme.koreanFontEB};
+  font-family: ${(props: any) => props.theme.koreanFontB};
   color: #2b2b2b;
   margin-right: 5px;
 `;
@@ -82,7 +82,8 @@ const InformationNumberButton = styled.TouchableOpacity`
 `;
 
 const CountingNumber = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-size: 15px;
   margin-left: 3px;
 `;
 const CreatedTime = styled.Text`
@@ -348,12 +349,12 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
                   speed={1.5}
                   colorFilters={[
                     { keypath: "Filled", color: lightTheme.accentColor },
-                    { keypath: "Empty", color: "#000000" },
+                    { keypath: "Empty", color: "#DBDBDB" },
                   ]}
                   style={{ width: 35, height: 35, marginLeft: -2 }}
                 />
               </InformationIconButton>
-              <InformationNumberButton activeOpacity={1} onPress={() => goToFeedLikes(feedData?.likeUserList ?? [])} style={{ marginLeft: -10 }}>
+              <InformationNumberButton activeOpacity={1} onPress={() => goToFeedLikes(feedData?.likeUserList ?? [])} style={{ marginLeft: -8, paddingRight: 10 }}>
                 <CountingNumber>{likesCount}</CountingNumber>
               </InformationNumberButton>
               <InformationIconButton activeOpacity={1} onPress={() => goToFeedComments(feedIndex, feedData?.id)}>

@@ -67,7 +67,7 @@ const HeaderItem = styled.View`
 
 const HeaderItemText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 12px;
+  font-size: 13px;
 `;
 
 const MainView = styled.View`
@@ -95,7 +95,7 @@ const FloatingButton = styled.TouchableOpacity`
   bottom: 20px;
   width: 50px;
   height: 50px;
-  background-color: black;
+  background-color: ${(props: any) => props.theme.accentColor};
   elevation: 5;
   box-shadow: 1px 1px 3px gray;
   border-radius: 50px;
@@ -386,7 +386,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 <HeaderItemText>상세 필터</HeaderItemText>
               </TouchableOpacity>
               <TouchableOpacity style={{ height: 35, justifyContent: "center" }} onPress={() => openFilteringSheet()}>
-                <Feather name="filter" size={13} color={usingFilter ? lightTheme.accentColor : "black"} />
+                <Feather name="filter" size={14} color={usingFilter ? lightTheme.accentColor : "black"} />
               </TouchableOpacity>
             </HeaderItem>
             <View
@@ -402,7 +402,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 <HeaderItemText>{sortItem ? sortItem[selectedSortIndex].title : "최신순"}</HeaderItemText>
               </TouchableOpacity>
               <TouchableOpacity style={{ height: 35, justifyContent: "center" }} onPress={() => openSortingSheet()}>
-                <MaterialCommunityIcons name="sort" size={13} color="black" />
+                <MaterialCommunityIcons name="sort" size={14} color="black" />
               </TouchableOpacity>
             </HeaderItem>
           </HeaderSection>

@@ -41,7 +41,7 @@ const Container = styled.View`
 
 const FooterView = styled.View`
   background-color: white;
-  height: 70px;
+  height: 80px;
 `;
 
 const CommentInputView = styled.View`
@@ -49,7 +49,7 @@ const CommentInputView = styled.View`
   border-top-width: 0.5px;
   border-top-color: #c4c4c4;
   align-items: flex-end;
-  padding: 15px 20px 0px 20px;
+  padding: 20px 20px 0px 20px;
   margin-bottom: 10px;
 `;
 
@@ -57,9 +57,9 @@ const RoundingView = styled.View`
   flex-direction: row;
   flex: 1;
   height: 100%;
-  border-width: 0.5px;
+  /* border-width: 0.5px;
   border-color: rgba(0, 0, 0, 0.5);
-  border-radius: 15px;
+  border-radius: 15px; */
   padding: 3px 10px;
 `;
 const CommentInput = styled.TextInput`
@@ -95,7 +95,7 @@ const TopTab = createMaterialTopTabNavigator();
 const HEADER_EXPANDED_HEIGHT = 300;
 const HEADER_HEIGHT = 56;
 const TAB_BUTTON_HEIGHT = 46;
-const ACTION_BUTTON_HEIGHT = 70;
+const ACTION_BUTTON_HEIGHT = 80;
 
 const AnimatedFooterView = Animated.createAnimatedComponent(FooterView);
 

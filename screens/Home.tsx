@@ -86,7 +86,7 @@ const Home = () => {
   const feedDetailHeaderHeight = 52;
   const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
-  const itemSeparatorGap = 20;
+  const itemSeparatorGap = 30;
   const [selectFeedData, setSelectFeedData] = useState<Feed>();
   const navigation = useNavigation();
   let scrollY = useRef(new Animated.Value(0)).current;
@@ -384,7 +384,7 @@ const Home = () => {
           </HeaderButton>
         </HeaderRightView>
       </HeaderView>
-      <Animated.View style={{ width: "100%", borderBottomWidth: 0.5, borderBottomColor: "rgba(0,0,0,0.3)", opacity: animatedHeaderOpacity }} />
+      <Animated.View style={{ width: "100%", borderBottomWidth: 0.5, borderBottomColor: "#cccccc", opacity: animatedHeaderOpacity }} />
       <Animated.FlatList
         ref={homeFlatlistRef}
         refreshing={refreshing}

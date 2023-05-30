@@ -34,8 +34,8 @@ const RightNavigationView = styled.View`
 const NotiView = styled.View``;
 const NotiBadge = styled.View`
   position: absolute;
-  top: 0px;
-  right: -4px;
+  top: -1px;
+  right: -5px;
   width: 5px;
   height: 5px;
   border-radius: 5px;

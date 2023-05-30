@@ -54,7 +54,7 @@ const UserFeedDetail: React.FC<NativeStackScreenProps<any, "UserFeedDetail">> = 
   const feedDetailHeaderHeight = 52;
   const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
-  const itemSeparatorGap = 20;
+  const itemSeparatorGap = 30;
   const itemLength = SCREEN_WIDTH + feedDetailHeaderHeight + feedDetailInfoHeight + feedDetailContentHeight + itemSeparatorGap;
   const [selectFeedData, setSelectFeedData] = useState<Feed>();
 
