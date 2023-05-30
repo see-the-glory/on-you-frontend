@@ -11,25 +11,25 @@ import Profile from "../screens/Profile/Profile";
 import { Iconify } from "react-native-iconify";
 import { lightTheme } from "../theme";
 
-const Container = styled.View`
-  height: ${Platform.OS === "ios" ? 75 : 65}px;
+const Container = styled.View<{ height: number }>`
+  height: ${(props: any) => props.height}px;
 `;
 
-const TabBarContainer = styled.View`
+const TabBarContainer = styled.View<{ height: number }>`
   position: absolute;
   bottom: 0px;
   flex-direction: row;
   width: 100%;
-  height: ${Platform.OS === "ios" ? 75 : 65}px;
+  height: ${(props: any) => props.height}px;
   justify-content: space-around;
   align-items: center;
   background-color: white;
 `;
 
-const ShadowBox = styled.View`
+const ShadowBox = styled.View<{ height: number }>`
   position: absolute;
   width: 100%;
-  height: ${Platform.OS === "ios" ? 75 : 65}px;
+  height: ${(props: any) => props.height}px;
   background-color: white;
   box-shadow: 1px 1px 3px gray;
 `;
@@ -50,9 +50,10 @@ const Circle = styled.View<{ tabWidth: number }>`
   background-color: white;
 `;
 
-const IconButton = styled.TouchableOpacity`
+const IconButton = styled.TouchableOpacity<{ tabPaddingBottom: number }>`
   align-items: center;
-  padding: 5px 0px 10px 0px;
+  padding-top: 5px;
+  padding-bottom: ${(props: any) => props.tabPaddingBottom}px;
 `;
 
 const IconName = styled.Text`
@@ -77,6 +78,8 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
       restSpeedThreshold: 5,
     }).start();
   };
+  const tabHeight = Platform.OS === "ios" ? 80 : 65;
+  const tabPaddingBottom = Platform.OS === "ios" ? 20 : 10;
 
   useEffect(() => {
     translateTab(state.index);
@@ -84,9 +87,9 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
 
   return (
     <>
-      <Container>
+      <Container height={tabHeight}>
         <Shadow distance={3}>
-          <ShadowBox />
+          <ShadowBox height={tabHeight} />
         </Shadow>
         {/* <SlidingTabContainer tabWidth={TAB_WIDTH}>
           <SlidingTab style={{ transform: [{ translateX }] }}>
@@ -95,7 +98,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
             </Shadow>
           </SlidingTab>
         </SlidingTabContainer> */}
-        <TabBarContainer>
+        <TabBarContainer height={tabHeight}>
           {state.routes.map((route, index) => {
             const { options } = descriptors[route.key];
 
@@ -118,13 +121,20 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
             };
 
             return (
-              <IconButton key={index} accessibilityRole="button" accessibilityState={isFocused ? { selected: true } : {}} accessibilityLabel={options.tabBarAccessibilityLabel} onPress={onPress}>
+              <IconButton
+                key={index}
+                tabPaddingBottom={tabPaddingBottom}
+                accessibilityRole="button"
+                accessibilityState={isFocused ? { selected: true } : {}}
+                accessibilityLabel={options.tabBarAccessibilityLabel}
+                onPress={onPress}
+              >
                 {(() => {
                   switch (route.name) {
                     case "Home":
-                      return isFocused ? <Iconify icon="fluent:home-32-regular" size={32} color={lightTheme.primaryColor} /> : <Iconify icon="fluent:home-32-regular" size={32} color="#9C9C9C" />;
+                      return isFocused ? <Iconify icon="fluent:home-32-regular" size={30} color={lightTheme.primaryColor} /> : <Iconify icon="fluent:home-32-regular" size={30} color="#9C9C9C" />;
                     case "Find":
-                      return isFocused ? <Iconify icon="ph:list-magnifying-glass" size={32} color={lightTheme.primaryColor} /> : <Iconify icon="ph:list-magnifying-glass" size={32} color="#9C9C9C" />;
+                      return isFocused ? <Iconify icon="ph:list-magnifying-glass" size={30} color={lightTheme.primaryColor} /> : <Iconify icon="ph:list-magnifying-glass" size={30} color="#9C9C9C" />;
                     case "Chat":
                       return <Iconify icon="ph:chat-circle-text" size={32} color={lightTheme.primaryColor} />;
                     case "My":
@@ -157,9 +167,9 @@ const Tabs = ({ route, navigation }) => {
       screenOptions={{ tabBarShowLabel: false, headerShown: false }}
       tabBar={(props) => <CustomTabBar {...props} />}
     >
-      <Tab.Screen name="Home" component={Home} initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }} options={{ headerShown: false }} />
-      <Tab.Screen name="Find" component={Clubs} initialParams={{ activeIcon: "grid", inActiveIcon: "grid-outline" }} options={{}} />
-      <Tab.Screen name="My" component={Profile} initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }} options={{}} />
+      <Tab.Screen name="Home" component={Home} initialParams={{}} options={{ headerShown: false }} />
+      <Tab.Screen name="Find" component={Clubs} initialParams={{}} options={{}} />
+      <Tab.Screen name="My" component={Profile} initialParams={{}} options={{}} />
     </Tab.Navigator>
   );
 };

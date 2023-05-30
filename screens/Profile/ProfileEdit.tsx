@@ -339,7 +339,7 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
         </RightNavigationView>
       </AnimatedNavigationView>
 
-      <Animated.ScrollView onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: false })}>
+      <Animated.ScrollView bounces={false} onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: false })}>
         <Header>
           <FastImage style={{ width: "100%", height: "100%" }} source={backgroundImage ? { uri: backgroundImage } : require("../../assets/basic.jpg")}>
             <FilterView>
@@ -388,7 +388,7 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
                   thumbColor={"white"}
                   onValueChange={() => setEmailPublic((prev) => !prev)}
                   value={emailPublic}
-                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
+                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.7 }, { scaleY: 0.7 }] : [], marginRight: -5 }}
                 />
               </PersonalItem>
               <PersonalItem>
@@ -401,7 +401,7 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
                   thumbColor={"white"}
                   onValueChange={() => setContactPublic((prev) => !prev)}
                   value={contactPublic}
-                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
+                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.7 }, { scaleY: 0.7 }] : [], marginRight: -5 }}
                 />
               </PersonalItem>
               <PersonalItem style={{ borderBottomWidth: 0 }}>
@@ -414,7 +414,7 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
                   thumbColor={"white"}
                   onValueChange={() => setBirthdayPublic((prev) => !prev)}
                   value={birthdayPublic}
-                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
+                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.7 }, { scaleY: 0.7 }] : [], marginRight: -5 }}
                 />
               </PersonalItem>
               <SectionContentSubText>{`정보 변경은 마이페이지 > 설정 > 프로필카드 에서 수정할 수 있습니다.`}</SectionContentSubText>
@@ -435,7 +435,7 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
                   thumbColor={"white"}
                   onValueChange={() => setClubPublic((prev) => !prev)}
                   value={clubPublic}
-                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
+                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.7 }, { scaleY: 0.7 }] : [], marginRight: -5 }}
                 />
               </PersonalItem>
               {profile?.clubs?.map((club: Club, index: number) => (
@@ -480,7 +480,7 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
                   thumbColor={"white"}
                   onValueChange={() => setFeedPublic((prev) => !prev)}
                   value={feedPublic}
-                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
+                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.7 }, { scaleY: 0.7 }] : [], marginRight: -5 }}
                 />
               </PersonalItem>
               <SectionContentSubText>{`비공개 설정 시 마이페이지 게시물 탭에서 본인에게만 피드가 보여집니다.`}</SectionContentSubText>

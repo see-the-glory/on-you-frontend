@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, Text } from "react-native";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import { Profile } from "../../api";
@@ -168,6 +168,7 @@ const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
           <HeaderTitle>{`내 모임`}</HeaderTitle>
         </Header>
         <Content>
+          {!profile?.clubs?.length ? <AboutText>{`가입한 모임이 없습니다.`}</AboutText> : null}
           {profile?.clubs?.map((club) => (
             <ClubItem key={`Club_${club.id}`} onPress={() => goToClub(club.id)}>
               <ClubThumbnail source={club.thumbnail ? { uri: club.thumbnail } : require("../../assets/basic.jpg")} />

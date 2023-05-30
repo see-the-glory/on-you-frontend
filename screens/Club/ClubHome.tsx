@@ -470,7 +470,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: SCREEN_PADDING_SIZE }}
+            contentContainerStyle={{ paddingHorizontal: SCREEN_PADDING_SIZE, flexGrow: 1 }}
             data={members}
             keyExtractor={(item: Member, index: number) => String(index)}
             ItemSeparatorComponent={() => <View style={{ width: 15 }} />}

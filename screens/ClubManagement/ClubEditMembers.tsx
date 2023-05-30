@@ -266,13 +266,11 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
                     style={{ marginLeft: ICON_SIZE / 2 + 5, marginTop: ICON_SIZE / 2 + 5 }}
                     visible={menuVisibleMap.get(item.id)}
                     anchor={
-                      <TouchableOpacity onPress={() => showMenu(item.id)}>
-                        {item.role !== null && item.role !== "MEMBER" ? (
-                          <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} badge={item.role} opacity={kickOutMap.get(item.id) === true ? 0.5 : 1} />
-                        ) : (
-                          <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} opacity={kickOutMap.get(item.id) === true ? 0.5 : 1} />
-                        )}
-                      </TouchableOpacity>
+                      item.role !== null && item.role !== "MEMBER" ? (
+                        <CircleIcon onPress={() => showMenu(item.id)} size={ICON_SIZE} uri={item.thumbnail} name={item.name} badge={item.role} opacity={kickOutMap.get(item.id) === true ? 0.5 : 1} />
+                      ) : (
+                        <CircleIcon onPress={() => showMenu(item.id)} size={ICON_SIZE} uri={item.thumbnail} name={item.name} opacity={kickOutMap.get(item.id) === true ? 0.5 : 1} />
+                      )
                     }
                     onRequestClose={() => hideMenu(item.id)}
                   >

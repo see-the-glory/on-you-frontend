@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity, DeviceEventEmitter } from "react-native";
+import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity, DeviceEventEmitter, Platform } from "react-native";
 import FastImage from "react-native-fast-image";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useQueryClient } from "react-query";
 import styled from "styled-components/native";
@@ -64,6 +65,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
+  const { top } = useSafeAreaInsets();
   const numColumn = 3;
   const feedSize = Math.round(SCREEN_WIDTH / 3) - 1;
   const {
@@ -81,7 +83,6 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     },
     onSuccess: (res) => {
       if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeed({ feeds: res.pages[res.pages.length - 1].responses.content }));
-      console.log("dispatch update!");
     },
     onError: (error) => {
       console.log(`API ERROR | getClubFeeds ${error.code} ${error.status}`);
@@ -153,7 +154,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       }}
       contentContainerStyle={{
         paddingTop: headerDiff,
-        paddingBottom: actionButtonHeight,
+        paddingBottom: Platform.OS === "ios" ? actionButtonHeight + top : actionButtonHeight,
         backgroundColor: "#F5F5F5",
         minHeight: SCREEN_HEIGHT + headerCollapsedHeight,
         flexGrow: 1,

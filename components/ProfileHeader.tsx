@@ -109,6 +109,7 @@ const CollapsedView = styled.SafeAreaView<{ height: number }>`
 // ClubHome Header
 export interface ProfileHeaderProps {
   isMe: boolean;
+  disabledBack?: boolean;
   profile?: Profile;
   heightExpanded: number;
   heightCollapsed: number;
@@ -124,6 +125,7 @@ export interface ProfileHeaderProps {
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   isMe,
+  disabledBack,
   profile,
   headerHeight,
   heightExpanded,
@@ -152,14 +154,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     <>
       <NavigationView height={headerHeight} style={{ marginTop: top }}>
         <LeftNavigationView>
-          <TouchableOpacity onPress={navigation.goBack}>
-            <Animated.View style={{ position: "absolute" }}>
-              <Entypo name="chevron-thin-left" size={20} color="white" />
-            </Animated.View>
-            <Animated.View style={{ opacity: fadeIn }}>
-              <Entypo name="chevron-thin-left" size={20} color="black" />
-            </Animated.View>
-          </TouchableOpacity>
+          {disabledBack ? null : (
+            <TouchableOpacity onPress={navigation.goBack}>
+              <Animated.View style={{ position: "absolute" }}>
+                <Entypo name="chevron-thin-left" size={20} color="white" />
+              </Animated.View>
+              <Animated.View style={{ opacity: fadeIn }}>
+                <Entypo name="chevron-thin-left" size={20} color="black" />
+              </Animated.View>
+            </TouchableOpacity>
+          )}
         </LeftNavigationView>
         <RightNavigationView>
           {isMe ? (

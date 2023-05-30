@@ -542,7 +542,7 @@ PODS:
     - RNNotifee/NotifeeCore (= 7.7.1)
   - RNNotifee/NotifeeCore (7.7.1):
     - React-Core
-  - RNReanimated (2.12.0):
+  - RNReanimated (2.15.0):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -574,7 +574,7 @@ PODS:
     - React-RCTImage
   - RNShare (8.2.2):
     - React-Core
-  - RNSVG (13.4.0):
+  - RNSVG (13.9.0):
     - React-Core
   - SDWebImage (5.11.1):
     - SDWebImage/Core (= 5.11.1)
@@ -921,10 +921,10 @@ SPEC CHECKSUMS:
   RNGestureHandler: 62232ba8f562f7dea5ba1b3383494eb5bf97a4d3
   RNImageCropPicker: 648356d68fbf9911a1016b3e3723885d28373eda
   RNNotifee: 05692d7bb42b6c718a3906aeb8431c48ff2e8097
-  RNReanimated: 2a91e85fcd343f8af3c58d3425b99fdd285590a5
+  RNReanimated: 716842722e1c5b0b7c56cf718e586b7f6a712879
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
   RNShare: d82e10f6b7677f4b0048c23709bd04098d5aee6c
-  RNSVG: 07dbd870b0dcdecc99b3a202fa37c8ca163caec2
+  RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
