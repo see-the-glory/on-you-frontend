@@ -1,8 +1,9 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity } from "react-native";
+import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity, Platform } from "react-native";
 import FastImage from "react-native-fast-image";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery } from "react-query";
 import styled from "styled-components/native";
@@ -57,6 +58,7 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, profile, scrollY, headerDif
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const numColumn = 3;
+  const { top } = useSafeAreaInsets();
   const feedSize = Math.round(SCREEN_WIDTH / 3) - 1;
   const {
     isLoading: feedsLoading,
@@ -131,7 +133,7 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, profile, scrollY, headerDif
       }}
       contentContainerStyle={{
         paddingTop: headerDiff,
-        paddingBottom: actionButtonHeight,
+        paddingBottom: Platform.OS === "ios" ? actionButtonHeight + top : actionButtonHeight,
         backgroundColor: "white",
         minHeight: SCREEN_HEIGHT + headerCollapsedHeight,
         flexGrow: 1,
