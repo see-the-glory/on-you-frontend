@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import CircleIcon from "./CircleIcon";
@@ -18,6 +17,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store/reducers";
 import { lightTheme } from "../theme";
+import { Iconify } from "react-native-iconify";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -302,7 +302,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
         </HeaderLeftView>
         <HeaderRightView>
           <TouchableOpacity onPress={() => goToFeedOptionModal(feedData)} style={{ paddingLeft: 15, paddingTop: 15, marginRight: -10 }}>
-            <AntDesign name="ellipsis1" size={16} color="black" style={{ marginRight: 10 }} />
+            <Iconify icon="ant-design:ellipsis-outlined" size={16} color="black" style={{ marginRight: 10 }} />
           </TouchableOpacity>
         </HeaderRightView>
       </HeaderView>
@@ -358,7 +358,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
                 <CountingNumber>{likesCount}</CountingNumber>
               </InformationNumberButton>
               <InformationIconButton activeOpacity={1} onPress={() => goToFeedComments(feedIndex, feedData?.id)}>
-                <Ionicons name="md-chatbox-ellipses" size={24} color="black" />
+                <Iconify icon="ph:chat-text" size={24} color="black" />
               </InformationIconButton>
               <InformationNumberButton activeOpacity={1} onPress={() => goToFeedComments(feedIndex, feedData?.id)}>
                 <CountingNumber>{commentCount}</CountingNumber>

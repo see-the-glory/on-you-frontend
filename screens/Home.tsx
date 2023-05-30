@@ -1,4 +1,3 @@
-import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Animated, DeviceEventEmitter, Platform, StatusBar, useWindowDimensions, View } from "react-native";
@@ -16,6 +15,7 @@ import FeedOptionModal from "./Feed/FeedOptionModal";
 import FeedReportModal from "./Feed/FeedReportModal";
 import RNFetchBlob from "rn-fetch-blob";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
+import { Iconify } from "react-native-iconify";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -376,11 +376,11 @@ const Home = () => {
           <HeaderButton onPress={goToUserNotification} style={{ paddingHorizontal: 8 }}>
             <NotiView>
               {!notiLoading && notiCount > 0 ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
-              <MaterialIcons name="notifications" size={23} color="black" />
+              <Iconify icon="mdi:bell" size={23} color="black" />
             </NotiView>
           </HeaderButton>
           <HeaderButton onPress={goToFeedCreation} style={{ paddingLeft: 8 }}>
-            <MaterialIcons name="add-photo-alternate" size={23} color="black" />
+            <Iconify icon="mdi:plus-box-multiple" size={23} color="black" />
           </HeaderButton>
         </HeaderRightView>
       </HeaderView>

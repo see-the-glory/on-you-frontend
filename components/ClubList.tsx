@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components/native";
-import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Category } from "../api";
 import FastImage from "react-native-fast-image";
 import Tag from "./Tag";
+import { Iconify } from "react-native-iconify";
 
 const Club = styled.View`
   align-items: flex-start;
@@ -60,12 +60,12 @@ const TitleViewRight = styled.View`
   flex: 1;
   flex-direction: row;
   justify-content: flex-end;
-  align-items: flex-end;
+  align-items: center;
 `;
 
 const Number = styled.Text`
   font-family: ${(props: any) => props.theme.englishFontM};
-  margin-left: 3px;
+  margin-left: 2px;
   color: white;
   font-size: 10px;
 `;
@@ -120,7 +120,7 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
           <TitleView>
             <ClubNameText>{clubName}</ClubNameText>
             <TitleViewRight>
-              <Feather name="user" size={12} color="white" />
+              <Iconify icon="ant-design:user-outlined" size={12} color="white" />
               <Number>{memberNum}</Number>
             </TitleViewRight>
           </TitleView>

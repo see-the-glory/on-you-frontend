@@ -13,7 +13,7 @@ import { RootState } from "../redux/store/reducers";
 import axios from "axios";
 import { useAppDispatch } from "../redux/store";
 import { logout, updateUser } from "../redux/slices/auth";
-import { BackHandler, DeviceEventEmitter, Linking, Modal, Platform, Text, View } from "react-native";
+import { BackHandler, DeviceEventEmitter, Linking, Modal, Platform, View } from "react-native";
 import { BaseResponse, ErrorResponse, MetaInfoRequest, MetaInfoResponse, TargetTokenUpdateRequest, UserApi, UserInfoResponse } from "../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import feedSlice from "../redux/slices/feed";

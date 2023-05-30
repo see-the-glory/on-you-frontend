@@ -13,7 +13,6 @@ import FeedReportModal from "../Feed/FeedReportModal";
 import FeedOptionModal from "../Feed/FeedOptionModal";
 import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
-import clubSlice from "../../redux/slices/club";
 import { Entypo } from "@expo/vector-icons";
 import RNFetchBlob from "rn-fetch-blob";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";

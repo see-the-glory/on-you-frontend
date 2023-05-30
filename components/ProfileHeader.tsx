@@ -8,6 +8,7 @@ import { Entypo, Ionicons } from "@expo/vector-icons";
 import { Profile } from "../api";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Iconify } from "react-native-iconify";
 
 const NavigationView = styled.SafeAreaView<{ height: number }>`
   position: absolute;
@@ -164,10 +165,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           {isMe ? (
             <TouchableOpacity onPress={openShareProfile} style={{ paddingLeft: 10, paddingRight: 1 }}>
               <Animated.View style={{ position: "absolute", left: 10, paddingRight: 1 }}>
-                <Ionicons name="share-social-outline" size={22} color="white" />
+                <Iconify icon="icon-park-outline:share" size={22} color="white" />
               </Animated.View>
               <Animated.View style={{ opacity: fadeIn }}>
-                <Ionicons name="share-social-outline" size={22} color="black" />
+                <Iconify icon="icon-park-outline:share" size={22} color="black" />
               </Animated.View>
             </TouchableOpacity>
           ) : (

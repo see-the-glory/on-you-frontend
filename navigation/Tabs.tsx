@@ -7,11 +7,12 @@ import styled from "styled-components/native";
 import { Animated, DeviceEventEmitter, Platform, useWindowDimensions, View } from "react-native";
 import { MainBottomTabParamList } from "../Types/Club";
 import { Shadow } from "react-native-shadow-2";
-import ProfileStack from "./ProfileStack";
 import Profile from "../screens/Profile/Profile";
+import { Iconify } from "react-native-iconify";
+import { lightTheme } from "../theme";
 
 const Container = styled.View`
-  height: ${Platform.OS === "ios" ? 70 : 60}px;
+  height: ${Platform.OS === "ios" ? 75 : 65}px;
 `;
 
 const TabBarContainer = styled.View`
@@ -19,7 +20,7 @@ const TabBarContainer = styled.View`
   bottom: 0px;
   flex-direction: row;
   width: 100%;
-  height: ${Platform.OS === "ios" ? 70 : 60}px;
+  height: ${Platform.OS === "ios" ? 75 : 65}px;
   justify-content: space-around;
   align-items: center;
   background-color: white;
@@ -28,7 +29,7 @@ const TabBarContainer = styled.View`
 const ShadowBox = styled.View`
   position: absolute;
   width: 100%;
-  height: ${Platform.OS === "ios" ? 70 : 60}px;
+  height: ${Platform.OS === "ios" ? 75 : 65}px;
   background-color: white;
   box-shadow: 1px 1px 3px gray;
 `;
@@ -51,6 +52,13 @@ const Circle = styled.View<{ tabWidth: number }>`
 
 const IconButton = styled.TouchableOpacity`
   align-items: center;
+  padding: 5px 0px 10px 0px;
+`;
+
+const IconName = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  color: ${(props: any) => props.theme.primaryColor};
+  font-size: 11px;
 `;
 
 const SlidingTab = Animated.createAnimatedComponent(View);
@@ -80,13 +88,13 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
         <Shadow distance={3}>
           <ShadowBox />
         </Shadow>
-        <SlidingTabContainer tabWidth={TAB_WIDTH}>
+        {/* <SlidingTabContainer tabWidth={TAB_WIDTH}>
           <SlidingTab style={{ transform: [{ translateX }] }}>
             <Shadow distance={3} offset={[0, -18]} style={{ borderRadius: TAB_WIDTH }}>
               <Circle tabWidth={TAB_WIDTH} />
             </Shadow>
           </SlidingTab>
-        </SlidingTabContainer>
+        </SlidingTabContainer> */}
         <TabBarContainer>
           {state.routes.map((route, index) => {
             const { options } = descriptors[route.key];
@@ -111,12 +119,27 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
 
             return (
               <IconButton key={index} accessibilityRole="button" accessibilityState={isFocused ? { selected: true } : {}} accessibilityLabel={options.tabBarAccessibilityLabel} onPress={onPress}>
-                <AnimatedIcon
+                {(() => {
+                  switch (route.name) {
+                    case "Home":
+                      return isFocused ? <Iconify icon="fluent:home-32-regular" size={32} color={lightTheme.primaryColor} /> : <Iconify icon="fluent:home-32-regular" size={32} color="#9C9C9C" />;
+                    case "Find":
+                      return isFocused ? <Iconify icon="ph:list-magnifying-glass" size={32} color={lightTheme.primaryColor} /> : <Iconify icon="ph:list-magnifying-glass" size={32} color="#9C9C9C" />;
+                    case "Chat":
+                      return <Iconify icon="ph:chat-circle-text" size={32} color={lightTheme.primaryColor} />;
+                    case "My":
+                      return isFocused ? <Iconify icon="prime:user" size={32} color={lightTheme.primaryColor} /> : <Iconify icon="prime:user" size={32} color="#9C9C9C" />;
+                    default:
+                      return null;
+                  }
+                })()}
+                <IconName style={{ opacity: isFocused ? 1 : 0 }}>{route.name}</IconName>
+                {/* <AnimatedIcon
                   name={isFocused ? route.params.activeIcon : route.params.inActiveIcon}
                   size={24}
                   color={isFocused ? "black" : "gray"}
                   style={{ bottom: Platform.OS === "ios" ? 6 : 0, padding: 10 }}
-                />
+                /> */}
               </IconButton>
             );
           })}
@@ -135,8 +158,8 @@ const Tabs = ({ route, navigation }) => {
       tabBar={(props) => <CustomTabBar {...props} />}
     >
       <Tab.Screen name="Home" component={Home} initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }} options={{ headerShown: false }} />
-      <Tab.Screen name="Clubs" component={Clubs} initialParams={{ activeIcon: "grid", inActiveIcon: "grid-outline" }} options={{}} />
-      <Tab.Screen name="MyProfile" component={Profile} initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }} options={{}} />
+      <Tab.Screen name="Find" component={Clubs} initialParams={{ activeIcon: "grid", inActiveIcon: "grid-outline" }} options={{}} />
+      <Tab.Screen name="My" component={Profile} initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }} options={{}} />
     </Tab.Navigator>
   );
 };

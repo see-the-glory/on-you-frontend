@@ -228,7 +228,6 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
   useFocusEffect(() => {
     // Android만 지원
     if (Platform.OS === "android") {
-      console.log("focusEffect");
       StatusBar.setTranslucent(true);
       StatusBar.setBackgroundColor("transparent");
     }

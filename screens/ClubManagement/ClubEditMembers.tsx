@@ -268,13 +268,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
                     anchor={
                       <TouchableOpacity onPress={() => showMenu(item.id)}>
                         {item.role !== null && item.role !== "MEMBER" ? (
-                          <CircleIcon
-                            size={ICON_SIZE}
-                            uri={item.thumbnail}
-                            name={item.name}
-                            badge={item.role === "MASTER" ? "stars" : "check-circle"}
-                            opacity={kickOutMap.get(item.id) === true ? 0.5 : 1}
-                          />
+                          <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} badge={item.role} opacity={kickOutMap.get(item.id) === true ? 0.5 : 1} />
                         ) : (
                           <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} opacity={kickOutMap.get(item.id) === true ? 0.5 : 1} />
                         )}

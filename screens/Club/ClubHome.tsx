@@ -475,13 +475,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
             keyExtractor={(item: Member, index: number) => String(index)}
             ItemSeparatorComponent={() => <View style={{ width: 15 }} />}
             renderItem={({ item, index }: { item: Member; index: number }) => (
-              <CircleIcon
-                onPress={() => goToProfile(item.id)}
-                size={MEMBER_ICON_SIZE}
-                uri={item?.thumbnail}
-                name={item?.name}
-                badge={item.role === "MASTER" ? "stars" : item.role === "MANAGER" ? "check-circle" : undefined}
-              />
+              <CircleIcon onPress={() => goToProfile(item.id)} size={MEMBER_ICON_SIZE} uri={item?.thumbnail} name={item?.name} badge={item.role} />
             )}
           />
         </SectionView>
