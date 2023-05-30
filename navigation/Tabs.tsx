@@ -167,9 +167,9 @@ const Tabs = ({ route, navigation }) => {
       screenOptions={{ tabBarShowLabel: false, headerShown: false }}
       tabBar={(props) => <CustomTabBar {...props} />}
     >
-      <Tab.Screen name="Home" component={Home} initialParams={{ activeIcon: "home", inActiveIcon: "home-outline" }} options={{ headerShown: false }} />
-      <Tab.Screen name="Find" component={Clubs} initialParams={{ activeIcon: "grid", inActiveIcon: "grid-outline" }} options={{}} />
-      <Tab.Screen name="My" component={Profile} initialParams={{ activeIcon: "person", inActiveIcon: "person-outline" }} options={{}} />
+      <Tab.Screen name="Home" component={Home} initialParams={{}} options={{ headerShown: false }} />
+      <Tab.Screen name="Find" component={Clubs} initialParams={{}} options={{}} />
+      <Tab.Screen name="My" component={Profile} initialParams={{}} options={{}} />
     </Tab.Navigator>
   );
 };

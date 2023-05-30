@@ -32,6 +32,7 @@ const TAB_BAR_HEIGHT = 46;
 const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
   route: {
     params: { userId },
+    name,
   },
   navigation: { navigate, goBack, setOptions },
 }) => {
@@ -238,6 +239,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
       <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <ProfileHeader
         isMe={isMe}
+        disabledBack={name === "My"}
         profile={profile?.data}
         headerHeight={HEADER_HEIGHT}
         tabBarHeight={TAB_BAR_HEIGHT}
