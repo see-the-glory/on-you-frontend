@@ -3,12 +3,10 @@ import { Alert, DeviceEventEmitter, FlatList, Platform, StatusBar, TouchableOpac
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
 import { InfiniteData, useMutation, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, LikeUser, UserApi, UserBlockRequest } from "../../api";
+import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsLikeReponse, FeedsResponse, LikeUser, UserApi, UserBlockRequest } from "../../api";
 import CustomText from "../../components/CustomText";
 import FeedDetail from "../../components/FeedDetail";
-import { ClubFeedDetailScreenProps } from "../../Types/Club";
 import FeedReportModal from "../Feed/FeedReportModal";
 import FeedOptionModal from "../Feed/FeedOptionModal";
 import { RootState } from "../../redux/store/reducers";
@@ -16,7 +14,9 @@ import { useAppDispatch } from "../../redux/store";
 import { Entypo } from "@expo/vector-icons";
 import RNFetchBlob from "rn-fetch-blob";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import feedSlice from "../../redux/slices/feed";
+import { useSelector } from "react-redux";
 
 const Container = styled.View``;
 const HeaderTitleView = styled.View`
@@ -36,17 +36,16 @@ const HeaderText = styled(CustomText)`
   color: #2b2b2b;
 `;
 
-const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
+const UserFeedDetail: React.FC<NativeStackScreenProps<any, "UserFeedDetail">> = ({
   navigation: { setOptions, navigate, goBack },
   route: {
-    params: { clubData, targetIndex, fetchNextPage },
+    params: { userId, profile, targetIndex, fetchNextPage },
   },
 }) => {
   const queryClient = useQueryClient();
-  const me = useSelector((state: RootState) => state.auth.user);
-  const myRole = useSelector((state: RootState) => state.club[clubData.id]?.role);
-  const [query, setQuery] = useState<InfiniteData<FeedsResponse> | undefined>(queryClient.getQueryData<InfiniteData<FeedsResponse>>(["getClubFeeds", clubData.id]));
   const dispatch = useAppDispatch();
+  const me = useSelector((state: RootState) => state.auth.user);
+  const [query, setQuery] = useState<InfiniteData<FeedsResponse> | undefined>(queryClient.getQueryData<InfiniteData<FeedsResponse>>(userId ? ["getUserFeeds", userId] : ["getMyFeeds"]));
   const toast = useToast();
   const { ref: feedOptionRef, open: openFeedOption, close: closeFeedOption } = useModalize();
   const { ref: complainOptionRef, open: openComplainOption, close: closeComplainOption } = useModalize();
@@ -141,9 +140,27 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
 
   const likeFeed = useCallback((feedIndex?: number, feedId?: number) => {
     if (feedIndex === undefined || feedId === undefined) return;
+    let size = 10;
+    if (query?.pages.length) size = query?.pages[0].responses.size;
+    const pageIndex = Math.floor(feedIndex / size);
+    const feedIndexinPage = feedIndex % size;
     const requestData: FeedLikeRequest = { feedId };
     likeFeedMutation.mutate(requestData, {
-      onSuccess: (res) => {},
+      onSuccess: (res) => {
+        // queryClient.setQueryData<InfiniteData<FeedsResponse> | undefined>(userId ? ["getUserFeeds", userId] : ["getMyFeeds"], (data) => {
+        //   if (data && pageIndex !== undefined && feedIndexinPage !== undefined) {
+        //     const newPages = [...data?.pages];
+        //     const likeYn = newPages[pageIndex].responses.content[feedIndexinPage].likeYn;
+        //     if (likeYn) newPages[pageIndex].responses.content[feedIndexinPage].likesCount--;
+        //     else newPages[pageIndex].responses.content[feedIndexinPage].likesCount++;
+        //     newPages[pageIndex].responses.content[feedIndexinPage].likeYn = !likeYn;
+        //     return {
+        //       ...data,
+        //       newPages,
+        //     };
+        //   }
+        // });
+      },
       onError: (error) => {
         console.log(`API ERROR | likeFeed ${error.code} ${error.status}`);
         toast.show(`${error.message ?? error.code}`, { type: "warning" });
@@ -239,7 +256,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     setOptions({
       headerTitle: () => (
         <HeaderTitleView>
-          <HeaderClubName>{clubData.name}</HeaderClubName>
+          <HeaderClubName>{profile?.name}</HeaderClubName>
           <HeaderText>게시물</HeaderText>
         </HeaderTitleView>
       ),
@@ -256,7 +273,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   const renderItem = useCallback(
     ({ item, index }: { item: Feed; index: number }) => (
       <FeedDetail
-        key={`ClubFeed_${index}`}
+        key={`UserFeed_${index}`}
         feedData={item}
         feedIndex={index}
         feedSize={SCREEN_WIDTH}
@@ -265,7 +282,6 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         contentHeight={feedDetailContentHeight}
         goToFeedOptionModal={goToFeedOptionModal}
         likeFeed={likeFeed}
-        isMyClubPost={["MASTER", "MANAGER", "MEMBER"].includes(myRole ?? "") ? true : false}
       />
     ),
     []
@@ -301,7 +317,6 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         modalRef={feedOptionRef}
         buttonHeight={modalOptionButtonHeight}
         isMyFeed={selectFeedData?.userId === me?.id}
-        isMyClubPost={["MASTER", "MANAGER", "MEMBER"].includes(myRole ?? "") ? true : false}
         goToUpdateFeed={goToUpdateFeed}
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}
@@ -313,4 +328,4 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   );
 };
 
-export default ClubFeedDetail;
+export default UserFeedDetail;

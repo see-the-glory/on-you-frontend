@@ -43,9 +43,9 @@ export type ClubStackParamList = {
 
 export type MainBottomTabParamList = {
   Home: {};
-  Search: {};
-  Clubs: {};
-  MyProfile: {};
+  Find: {};
+  Chat: {};
+  My: {};
 };
 
 // For Screens

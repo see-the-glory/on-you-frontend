@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
-import { Entypo, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
 import { BlurView } from "expo-blur";
@@ -11,6 +11,7 @@ import Tag from "./Tag";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { lightTheme } from "../theme";
+import { Iconify } from "react-native-iconify";
 
 const NavigationView = styled.SafeAreaView<{ height: number }>`
   position: absolute;
@@ -204,13 +205,13 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, clubRole, notiCou
               <Animated.View style={{ position: "absolute", left: 8 }}>
                 <NotiView>
                   {notiCount > 0 ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
-                  <Ionicons name="mail-outline" size={22} color="white" />
+                  <Iconify icon="fluent:mail-48-regular" size={24} color="white" />
                 </NotiView>
               </Animated.View>
               <Animated.View style={{ opacity: fadeIn }}>
                 <NotiView>
                   {notiCount > 0 ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
-                  <Ionicons name="mail-outline" size={22} color="black" />
+                  <Iconify icon="fluent:mail-48-regular" size={24} color="black" />
                 </NotiView>
               </Animated.View>
             </TouchableOpacity>
@@ -263,7 +264,8 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, clubRole, notiCou
                 <Break />
                 <DetailInfoView>
                   <DetailInfoItem>
-                    <MaterialIcons name="star" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
+                    <Iconify icon="ph:star-fill" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
+
                     <DetailItemTitle>{`리더`}</DetailItemTitle>
                     {master ? (
                       <>
@@ -275,13 +277,13 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, clubRole, notiCou
                     )}
                   </DetailInfoItem>
                   <DetailInfoItem>
-                    <MaterialIcons name="people" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
+                    <Iconify icon="fe:users" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
                     <DetailItemTitle>{`멤버`}</DetailItemTitle>
                     <DetailItemText>{clubData.recruitNumber}</DetailItemText>
                     <DetailItemText style={{ color: "#C0C0C0" }}>{` / ${clubData.maxNumber ? `${clubData.maxNumber} 명` : `무제한`}`}</DetailItemText>
                   </DetailInfoItem>
                   <DetailInfoItem>
-                    <MaterialIcons name="description" size={14} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
+                    <Iconify icon="material-symbols:feed-rounded" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
                     <DetailItemTitle>{`피드`}</DetailItemTitle>
                     <DetailItemText>{clubData.feedNumber}</DetailItemText>
                   </DetailInfoItem>

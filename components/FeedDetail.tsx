@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import CircleIcon from "./CircleIcon";
@@ -18,6 +17,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store/reducers";
 import { lightTheme } from "../theme";
+import { Iconify } from "react-native-iconify";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -50,7 +50,7 @@ const HeaderRightView = styled.View`
 const HeaderText = styled.Text`
   font-size: 14px;
   line-height: 16px;
-  font-family: ${(props: any) => props.theme.koreanFontEB};
+  font-family: ${(props: any) => props.theme.koreanFontB};
   color: #2b2b2b;
   margin-right: 5px;
 `;
@@ -82,7 +82,8 @@ const InformationNumberButton = styled.TouchableOpacity`
 `;
 
 const CountingNumber = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-size: 15px;
   margin-left: 3px;
 `;
 const CreatedTime = styled.Text`
@@ -119,7 +120,7 @@ const HeartView = styled.View`
 `;
 
 interface FeedDetailProps {
-  feedData?: Feed;
+  feedData: Feed;
   feedIndex?: number;
   feedSize: number;
   headerHeight: number;
@@ -141,6 +142,7 @@ interface FeedDetailState {
 
 const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, headerHeight, infoHeight, contentHeight, showClubName, isMyClubPost, goToFeedOptionModal, likeFeed }) => {
   const me = useSelector((state: RootState) => state.auth.user);
+  const { likeYn, likesCount, commentCount } = useSelector((state: RootState) => state.feed[feedData?.id]);
   let lastTapTime: number | undefined = undefined;
   const heartRef = useRef<Lottie>(null);
   const bgHeartRef = useRef<Lottie>(null);
@@ -173,16 +175,16 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
 
   useEffect(() => {
     if (isFirstRun.current) {
-      if (feedData?.likeYn) heartRef.current?.play(30, 30);
+      if (likeYn) heartRef.current?.play(30, 30);
       else heartRef.current?.play(0, 0);
       isFirstRun.current = false;
     } else {
       bgHeartRef.current?.play(10, 25);
 
-      if (feedData?.likeYn) heartRef.current?.play(10, 25);
+      if (likeYn) heartRef.current?.play(10, 25);
       else heartRef.current?.play(45, 60);
     }
-  }, [feedData?.likeYn]);
+  }, [likeYn]);
 
   const onPressHeart = () => {
     if (likeFeed) {
@@ -201,14 +203,12 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
         useNativeDriver: true,
       }).start();
 
-      if (feedData?.likeYn) {
-        heartRef.current?.play(10, 25);
-        bgHeartRef.current?.play(10, 25);
-      } else {
-        if (likeFeed) {
-          likeFeed(feedIndex, feedData?.id);
-        }
+      if (!likeYn && likeFeed) {
+        likeFeed(feedIndex, feedData?.id);
       }
+
+      heartRef.current?.play(10, 25);
+      bgHeartRef.current?.play(10, 25);
     } else {
       lastTapTime = now;
     }
@@ -230,13 +230,13 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
       // 로그인 되어있다면, likeYn에 따라 likeUsers 목록에 내 정보를 넣거나 뺀다.
       if (me?.thumbnail && me?.name && me?.id) {
         likeUsers = likeUsers?.filter((user) => user.userId != me?.id);
-        if (feedData?.likeYn) likeUsers?.push({ thumbnail: me?.thumbnail, userName: me?.name, likeDate: moment().tz("Asia/Seoul").format("YYYY-MM-DDThh:mm:ss"), userId: me?.id });
+        if (likeYn) likeUsers?.push({ thumbnail: me?.thumbnail, userName: me?.name, likeDate: moment().tz("Asia/Seoul").format("YYYY-MM-DDThh:mm:ss"), userId: me?.id });
       }
 
       if (!likeUsers || likeUsers.length === 0) return;
       navigation.push("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
     },
-    [feedData?.likeYn]
+    [likeYn]
   );
 
   const onBgHeartAnimationFinish = () => {
@@ -302,7 +302,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
         </HeaderLeftView>
         <HeaderRightView>
           <TouchableOpacity onPress={() => goToFeedOptionModal(feedData)} style={{ paddingLeft: 15, paddingTop: 15, marginRight: -10 }}>
-            <AntDesign name="ellipsis1" size={16} color="black" style={{ marginRight: 10 }} />
+            <Iconify icon="ant-design:ellipsis-outlined" size={16} color="black" style={{ marginRight: 10 }} />
           </TouchableOpacity>
         </HeaderRightView>
       </HeaderView>
@@ -349,19 +349,19 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
                   speed={1.5}
                   colorFilters={[
                     { keypath: "Filled", color: lightTheme.accentColor },
-                    { keypath: "Empty", color: "#000000" },
+                    { keypath: "Empty", color: "#DBDBDB" },
                   ]}
                   style={{ width: 35, height: 35, marginLeft: -2 }}
                 />
               </InformationIconButton>
-              <InformationNumberButton activeOpacity={1} onPress={() => goToFeedLikes(feedData?.likeUserList ?? [])} style={{ marginLeft: -10 }}>
-                <CountingNumber>{feedData?.likesCount}</CountingNumber>
+              <InformationNumberButton activeOpacity={1} onPress={() => goToFeedLikes(feedData?.likeUserList ?? [])} style={{ marginLeft: -8, paddingRight: 10 }}>
+                <CountingNumber>{likesCount}</CountingNumber>
               </InformationNumberButton>
               <InformationIconButton activeOpacity={1} onPress={() => goToFeedComments(feedIndex, feedData?.id)}>
-                <Ionicons name="md-chatbox-ellipses" size={24} color="black" />
+                <Iconify icon="ph:chat-text" size={24} color="black" />
               </InformationIconButton>
               <InformationNumberButton activeOpacity={1} onPress={() => goToFeedComments(feedIndex, feedData?.id)}>
-                <CountingNumber>{feedData?.commentCount}</CountingNumber>
+                <CountingNumber>{commentCount}</CountingNumber>
               </InformationNumberButton>
             </InformationLeftView>
           </View>

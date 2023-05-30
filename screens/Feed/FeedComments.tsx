@@ -12,7 +12,6 @@ import { SwipeListView } from "react-native-swipe-list-view";
 import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
 import feedSlice from "../../redux/slices/feed";
-import clubSlice from "../../redux/slices/club";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Loader = styled.SafeAreaView`
@@ -58,9 +57,9 @@ const RoundingView = styled.View`
   flex: 1;
   height: 100%;
   padding: 3px 10px;
-  border-width: 0.5px;
+  /* border-width: 0.5px;
   border-color: rgba(0, 0, 0, 0.5);
-  border-radius: 15px;
+  border-radius: 15px; */
 `;
 const CommentInput = styled.TextInput`
   font-family: ${(props: any) => props.theme.koreanFontR};
@@ -132,8 +131,7 @@ const FeedComments = ({
       setIsLoading(false);
       if (feedIndex !== undefined) {
         const count = res.data.length + res.data.reduce((acc, comment) => acc + comment.replies.length, 0);
-        if (clubId) dispatch(clubSlice.actions.updateCommentCount({ clubId, feedIndex, count }));
-        else dispatch(feedSlice.actions.updateCommentCount({ feedIndex, count }));
+        dispatch(feedSlice.actions.updateCommentCount({ feedId, count }));
       } else {
         DeviceEventEmitter.emit("SelectFeedRefetch");
       }

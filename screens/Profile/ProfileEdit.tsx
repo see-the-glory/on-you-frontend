@@ -1,15 +1,17 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState } from "react";
-import { Platform, Switch, TouchableOpacity } from "react-native";
+import React, { useRef, useState } from "react";
+import { Animated, Platform, Switch, Text, TouchableOpacity } from "react-native";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
-import { Club } from "../../api";
+import { BaseResponse, Club, ErrorResponse, ProfileUpdateRequest, UserApi } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import { lightTheme } from "../../theme";
 import ImagePicker from "react-native-image-crop-picker";
 import BottomButton from "../../components/BottomButton";
 import { Entypo } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useMutation } from "react-query";
+import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -20,7 +22,7 @@ const Header = styled.View`
   height: 300px;
 `;
 
-const NavigationView = styled.SafeAreaView<{ height: number }>`
+const NavigationView = styled.View<{ height: number }>`
   position: absolute;
   z-index: 3;
   width: 100%;
@@ -37,6 +39,15 @@ const LeftNavigationView = styled.View`
 const RightNavigationView = styled.View`
   flex-direction: row;
   padding-right: 16px;
+`;
+const CenterNavigationView = styled.View`
+  flex-direction: row;
+`;
+
+const NavigationTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-size: 16px;
+  color: #2b2b2b;
 `;
 
 const FilterView = styled.View`
@@ -207,24 +218,32 @@ const enum IMAGE_TYPE {
   BACKGROUND = "background",
 }
 
-const HEADER_HEIGHT = 56;
-
 const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
   route: {
-    params: { profile },
+    params: { profile, headerHeight },
   },
   navigation: { navigate, push, goBack, setOptions },
 }) => {
+  const toast = useToast();
   const [about, setAbout] = useState<string>(profile?.about ?? "");
   const [thumbnail, setThumbnail] = useState<string | undefined>(profile?.thumbnail ?? undefined);
   const [backgroundImage, setBackgroundImage] = useState<string | undefined>(profile?.backgroundImage ?? undefined);
-
   const [emailPublic, setEmailPublic] = useState<boolean>(profile?.emailPublic ?? false);
   const [contactPublic, setContactPublic] = useState<boolean>(profile?.contactPublic ?? false);
   const [birthdayPublic, setBirthdayPublic] = useState<boolean>(profile?.birthdayPublic ?? false);
   const [clubPublic, setClubPublic] = useState<boolean>(profile?.clubPublic ?? false);
   const [feedPublic, setFeedPublic] = useState<boolean>(profile?.feedPublic ?? false);
   const { top } = useSafeAreaInsets();
+
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const fadeIn = scrollY.interpolate({
+    inputRange: [50, 100],
+    outputRange: [-1, 1],
+  });
+  const bgColor = scrollY.interpolate({
+    inputRange: [70, 100],
+    outputRange: ["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 1)"],
+  });
 
   const pickImage = async (type: IMAGE_TYPE) => {
     try {
@@ -247,155 +266,230 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
     } catch (e) {}
   };
 
-  const onSubmit = () => {};
+  const profileMutation = useMutation<BaseResponse, ErrorResponse, ProfileUpdateRequest>(UserApi.updateMyProfile, {
+    onSuccess: (res) => {
+      toast.show("저장에 성공하였습니다.", { type: "success" });
+      console.log(res);
+      goBack();
+    },
+    onError: (error) => {
+      console.log(`API ERROR | updateMyProfile ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
+  const onSubmit = () => {
+    const updateData: ProfileUpdateRequest = {
+      data: {
+        about: about?.trim() ?? "",
+        isBirthdayPublic: birthdayPublic,
+        isClubPublic: clubPublic,
+        isContactPublic: contactPublic,
+        isEmailPublic: emailPublic,
+        isFeedPublic: feedPublic,
+      },
+    };
+
+    const splitedThumbnail = thumbnail?.split("/");
+    const splitedBackgroundImage = backgroundImage?.split("/");
+
+    if (thumbnail && splitedThumbnail) {
+      updateData.thumbnail = {
+        uri: Platform.OS === "android" ? thumbnail : thumbnail.replace("file://", ""),
+        type: "image/jpeg",
+        name: splitedThumbnail[splitedThumbnail.length - 1],
+      };
+    }
+
+    if (backgroundImage && splitedBackgroundImage) {
+      updateData.backgroundImage = {
+        uri: Platform.OS === "android" ? backgroundImage : backgroundImage.replace("file://", ""),
+        type: "image/jpeg",
+        name: splitedBackgroundImage[splitedBackgroundImage.length - 1],
+      };
+    }
+
+    console.log(updateData);
+
+    profileMutation.mutate(updateData);
+  };
+
+  const AnimatedNavigationView = Animated.createAnimatedComponent(NavigationView);
 
   return (
-    <Container>
-      <Header>
-        <NavigationView height={HEADER_HEIGHT} style={{ marginTop: top }}>
-          <LeftNavigationView>
-            <TouchableOpacity onPress={goBack}>
+    <>
+      <AnimatedNavigationView height={headerHeight + top} style={{ paddingTop: top, backgroundColor: bgColor }}>
+        <LeftNavigationView>
+          <TouchableOpacity onPress={goBack}>
+            <Animated.View style={{ position: "absolute" }}>
               <Entypo name="chevron-thin-left" size={20} color="white" />
-            </TouchableOpacity>
-          </LeftNavigationView>
-          <RightNavigationView></RightNavigationView>
-        </NavigationView>
-        <FastImage style={{ width: "100%", height: "100%" }} source={backgroundImage ? { uri: backgroundImage } : require("../../assets/basic.jpg")}>
-          <FilterView>
-            <BackgroundChangeButton activeOpacity={1} onPress={() => pickImage(IMAGE_TYPE.BACKGROUND)}>
-              <CircleIcon uri={thumbnail} size={140} onPress={() => pickImage(IMAGE_TYPE.THUMBNAIL)} />
-              <ImageChangeText>{`이미지 영역을 터치해 수정해 보세요.`}</ImageChangeText>
-            </BackgroundChangeButton>
-          </FilterView>
-        </FastImage>
-      </Header>
-      <Content>
-        <Section>
-          <SectionHeader>
-            <HeaderTitle>{`인사`}</HeaderTitle>
-            <HeaderSubText>{`${about.length}/200 자`}</HeaderSubText>
-          </SectionHeader>
-          <SectionContent>
-            <AboutTextInput
-              value={about}
-              placeholder="자신을 소개해주세요."
-              placeholderTextColor="#B0B0B0"
-              textAlign="left"
-              multiline={true}
-              maxLength={200}
-              textAlignVertical="top"
-              onChangeText={(text: string) => setAbout(text)}
-              onEndEditing={() => setAbout((prev) => prev.trim())}
-              includeFontPadding={false}
-            />
-          </SectionContent>
-        </Section>
+            </Animated.View>
+            <Animated.View style={{ opacity: fadeIn }}>
+              <Entypo name="chevron-thin-left" size={20} color="black" />
+            </Animated.View>
+          </TouchableOpacity>
+        </LeftNavigationView>
+        <CenterNavigationView>
+          <Animated.View style={{ opacity: fadeIn }}>
+            <NavigationTitle>{"프로필 수정"}</NavigationTitle>
+          </Animated.View>
+        </CenterNavigationView>
+        <RightNavigationView>
+          <Entypo name="chevron-thin-left" size={20} color="transparent" />
+        </RightNavigationView>
+      </AnimatedNavigationView>
 
-        <Section>
-          <SectionHeader>
-            <HeaderTitle>{`정보`}</HeaderTitle>
-            <HeaderText>{`공개여부`}</HeaderText>
-          </SectionHeader>
-          <SectionContent>
-            <PersonalItem>
-              <PersonalInfo>
-                <PersonalInfoTitle>{`이메일`}</PersonalInfoTitle>
-                <PersonalInfoText>{profile?.email}</PersonalInfoText>
-              </PersonalInfo>
-              <Switch
-                trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
-                thumbColor={"white"}
-                onValueChange={() => setEmailPublic((prev) => !prev)}
-                value={emailPublic}
-                style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
+      <Animated.ScrollView onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: false })}>
+        <Header>
+          <FastImage style={{ width: "100%", height: "100%" }} source={backgroundImage ? { uri: backgroundImage } : require("../../assets/basic.jpg")}>
+            <FilterView>
+              <BackgroundChangeButton activeOpacity={1} onPress={() => pickImage(IMAGE_TYPE.BACKGROUND)}>
+                <CircleIcon uri={thumbnail} size={140} onPress={() => pickImage(IMAGE_TYPE.THUMBNAIL)} />
+                <ImageChangeText>{`이미지 영역을 터치해 수정해 보세요.`}</ImageChangeText>
+              </BackgroundChangeButton>
+            </FilterView>
+          </FastImage>
+        </Header>
+        <Content>
+          <Section>
+            <SectionHeader>
+              <HeaderTitle>{`인사`}</HeaderTitle>
+              <HeaderSubText>{`${about.length}/200 자`}</HeaderSubText>
+            </SectionHeader>
+            <SectionContent>
+              <AboutTextInput
+                value={about}
+                placeholder="자신을 소개해주세요."
+                placeholderTextColor="#B0B0B0"
+                textAlign="left"
+                multiline={true}
+                maxLength={200}
+                textAlignVertical="top"
+                onChangeText={(text: string) => setAbout(text)}
+                onEndEditing={() => setAbout((prev) => prev.trim())}
+                includeFontPadding={false}
               />
-            </PersonalItem>
-            <PersonalItem>
-              <PersonalInfo>
-                <PersonalInfoTitle>{`연락처`}</PersonalInfoTitle>
-                <PersonalInfoText>{profile?.contact}</PersonalInfoText>
-              </PersonalInfo>
-              <Switch
-                trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
-                thumbColor={"white"}
-                onValueChange={() => setContactPublic((prev) => !prev)}
-                value={contactPublic}
-                style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
-              />
-            </PersonalItem>
-            <PersonalItem style={{ borderBottomWidth: 0 }}>
-              <PersonalInfo>
-                <PersonalInfoTitle>{`생일`}</PersonalInfoTitle>
-                <PersonalInfoText>{profile?.birthday}</PersonalInfoText>
-              </PersonalInfo>
-              <Switch
-                trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
-                thumbColor={"white"}
-                onValueChange={() => setBirthdayPublic((prev) => !prev)}
-                value={birthdayPublic}
-                style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
-              />
-            </PersonalItem>
-            <SectionContentSubText>{`정보 변경은 마이페이지 > 설정 > 프로필카드 에서 수정할 수 있습니다.`}</SectionContentSubText>
-          </SectionContent>
-        </Section>
-        <Section>
-          <SectionHeader>
-            <HeaderTitle>{`내 모임`}</HeaderTitle>
-            <HeaderText>{`공개여부`}</HeaderText>
-          </SectionHeader>
-          <SectionContent>
-            {profile?.clubs?.map((club: Club, index: number) => (
-              <ClubItem key={`Club_${club.id}`} style={index === profile?.clubs?.length - 1 ? { borderBottomWidth: 0 } : {}}>
-                <ClubThumbnail source={club.thumbnail ? { uri: club.thumbnail } : require("../../assets/basic.jpg")} />
-                <ClubInfo>
-                  <ClubInfoDetail>
-                    <ClubInfoDetailHeader>
-                      <ClubNameText>{club.name}</ClubNameText>
-                      <ClubMemberCount>{club.recruitNumber}</ClubMemberCount>
-                    </ClubInfoDetailHeader>
-                    <ClubCategory>
-                      {club.categories?.map((category) => (
-                        <ClubCategoryText key={`Category_${category.id}`}>{`#${category.name}`}</ClubCategoryText>
-                      ))}
-                    </ClubCategory>
-                  </ClubInfoDetail>
-                  {["MASTER", "MANAGER"].includes(club.role ?? "") ? (
-                    <ClubRole>
-                      <ClubRoleText>{club.role === "MASTER" ? "LD" : "MG"}</ClubRoleText>
-                    </ClubRole>
-                  ) : null}
-                </ClubInfo>
-              </ClubItem>
-            ))}
-            <SectionContentSubText>{`비공개로 설정된 모임은 작성된 게시물도 함께 비공개 됩니다.`}</SectionContentSubText>
-          </SectionContent>
-        </Section>
+            </SectionContent>
+          </Section>
 
-        <Section>
-          <SectionHeader>
-            <HeaderTitle>{`작성한 피드`}</HeaderTitle>
-            <HeaderText>{`공개여부`}</HeaderText>
-          </SectionHeader>
-          <SectionContent>
-            <PersonalItem style={{ borderBottomWidth: 0 }}>
-              <PersonalInfo>
-                <PersonalInfoTitle style={{ width: 100 }}>{`나의 게시물`}</PersonalInfoTitle>
-              </PersonalInfo>
-              <Switch
-                trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
-                thumbColor={"white"}
-                onValueChange={() => setFeedPublic((prev) => !prev)}
-                value={feedPublic}
-                style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
-              />
-            </PersonalItem>
-            <SectionContentSubText>{`비공개 설정 시 마이페이지 게시물 탭에서 본인에게만 피드가 보여집니다.`}</SectionContentSubText>
-          </SectionContent>
-        </Section>
-      </Content>
-      <BottomButton onPress={onSubmit} title={"저장"} backgroundColor={lightTheme.accentColor} />
-    </Container>
+          <Section>
+            <SectionHeader>
+              <HeaderTitle>{`정보`}</HeaderTitle>
+              <HeaderText>{`공개여부`}</HeaderText>
+            </SectionHeader>
+            <SectionContent>
+              <PersonalItem>
+                <PersonalInfo>
+                  <PersonalInfoTitle>{`이메일`}</PersonalInfoTitle>
+                  <PersonalInfoText>{profile?.email}</PersonalInfoText>
+                </PersonalInfo>
+                <Switch
+                  trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
+                  thumbColor={"white"}
+                  onValueChange={() => setEmailPublic((prev) => !prev)}
+                  value={emailPublic}
+                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
+                />
+              </PersonalItem>
+              <PersonalItem>
+                <PersonalInfo>
+                  <PersonalInfoTitle>{`연락처`}</PersonalInfoTitle>
+                  <PersonalInfoText>{profile?.contact}</PersonalInfoText>
+                </PersonalInfo>
+                <Switch
+                  trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
+                  thumbColor={"white"}
+                  onValueChange={() => setContactPublic((prev) => !prev)}
+                  value={contactPublic}
+                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
+                />
+              </PersonalItem>
+              <PersonalItem style={{ borderBottomWidth: 0 }}>
+                <PersonalInfo>
+                  <PersonalInfoTitle>{`생일`}</PersonalInfoTitle>
+                  <PersonalInfoText>{profile?.birthday}</PersonalInfoText>
+                </PersonalInfo>
+                <Switch
+                  trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
+                  thumbColor={"white"}
+                  onValueChange={() => setBirthdayPublic((prev) => !prev)}
+                  value={birthdayPublic}
+                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
+                />
+              </PersonalItem>
+              <SectionContentSubText>{`정보 변경은 마이페이지 > 설정 > 프로필카드 에서 수정할 수 있습니다.`}</SectionContentSubText>
+            </SectionContent>
+          </Section>
+          <Section>
+            <SectionHeader>
+              <HeaderTitle>{`내 모임`}</HeaderTitle>
+              <HeaderText>{`공개여부`}</HeaderText>
+            </SectionHeader>
+            <SectionContent>
+              <PersonalItem style={{ borderBottomWidth: 0 }}>
+                <PersonalInfo>
+                  <PersonalInfoTitle style={{ width: 100 }}>{`나의 모임 정보`}</PersonalInfoTitle>
+                </PersonalInfo>
+                <Switch
+                  trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
+                  thumbColor={"white"}
+                  onValueChange={() => setClubPublic((prev) => !prev)}
+                  value={clubPublic}
+                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
+                />
+              </PersonalItem>
+              {profile?.clubs?.map((club: Club, index: number) => (
+                <ClubItem key={`Club_${club.id}`} style={index === profile?.clubs?.length - 1 ? { borderBottomWidth: 0 } : {}}>
+                  <ClubThumbnail source={club.thumbnail ? { uri: club.thumbnail } : require("../../assets/basic.jpg")} />
+                  <ClubInfo>
+                    <ClubInfoDetail>
+                      <ClubInfoDetailHeader>
+                        <ClubNameText>{club.name}</ClubNameText>
+                        <ClubMemberCount>{club.recruitNumber}</ClubMemberCount>
+                      </ClubInfoDetailHeader>
+                      <ClubCategory>
+                        {club.categories?.map((category) => (
+                          <ClubCategoryText key={`Category_${category.id}`}>{`#${category.name}`}</ClubCategoryText>
+                        ))}
+                      </ClubCategory>
+                    </ClubInfoDetail>
+                    {["MASTER", "MANAGER"].includes(club.role ?? "") ? (
+                      <ClubRole>
+                        <ClubRoleText>{club.role === "MASTER" ? "LD" : "MG"}</ClubRoleText>
+                      </ClubRole>
+                    ) : null}
+                  </ClubInfo>
+                </ClubItem>
+              ))}
+              <SectionContentSubText>{`비공개로 설정된 모임은 작성된 게시물도 함께 비공개 됩니다.`}</SectionContentSubText>
+            </SectionContent>
+          </Section>
+
+          <Section>
+            <SectionHeader>
+              <HeaderTitle>{`작성한 피드`}</HeaderTitle>
+              <HeaderText>{`공개여부`}</HeaderText>
+            </SectionHeader>
+            <SectionContent>
+              <PersonalItem style={{ borderBottomWidth: 0 }}>
+                <PersonalInfo>
+                  <PersonalInfoTitle style={{ width: 100 }}>{`나의 게시물`}</PersonalInfoTitle>
+                </PersonalInfo>
+                <Switch
+                  trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
+                  thumbColor={"white"}
+                  onValueChange={() => setFeedPublic((prev) => !prev)}
+                  value={feedPublic}
+                  style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.8 }, { scaleY: 0.8 }] : [], marginRight: -5 }}
+                />
+              </PersonalItem>
+              <SectionContentSubText>{`비공개 설정 시 마이페이지 게시물 탭에서 본인에게만 피드가 보여집니다.`}</SectionContentSubText>
+            </SectionContent>
+          </Section>
+        </Content>
+        <BottomButton onPress={onSubmit} title={"저장"} backgroundColor={lightTheme.accentColor} />
+      </Animated.ScrollView>
+    </>
   );
 };
 

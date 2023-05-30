@@ -67,7 +67,7 @@ const ClubJoinRejectMessage = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <Header style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
         <HeaderBoldText>{clubName}</HeaderBoldText>
         <HeaderText>{`에서 모임가입 거절 메시지가 왔습니다.`}</HeaderText>

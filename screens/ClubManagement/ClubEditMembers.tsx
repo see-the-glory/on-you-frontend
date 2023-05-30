@@ -233,7 +233,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <Header>
         <HeaderText>모임 리더는 회원 관리와 모임 관리의 권한이 있습니다.</HeaderText>
       </Header>
@@ -268,13 +268,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
                     anchor={
                       <TouchableOpacity onPress={() => showMenu(item.id)}>
                         {item.role !== null && item.role !== "MEMBER" ? (
-                          <CircleIcon
-                            size={ICON_SIZE}
-                            uri={item.thumbnail}
-                            name={item.name}
-                            badge={item.role === "MASTER" ? "stars" : "check-circle"}
-                            opacity={kickOutMap.get(item.id) === true ? 0.5 : 1}
-                          />
+                          <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} badge={item.role} opacity={kickOutMap.get(item.id) === true ? 0.5 : 1} />
                         ) : (
                           <CircleIcon size={ICON_SIZE} uri={item.thumbnail} name={item.name} opacity={kickOutMap.get(item.id) === true ? 0.5 : 1} />
                         )}

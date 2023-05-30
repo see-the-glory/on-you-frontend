@@ -30,8 +30,8 @@ const TextWrap = styled.View<{ height: number }>`
 
 const TabText = styled.Text<{ isFocused: boolean }>`
   font-family: ${(props: any) => (props.isFocused ? props.theme.koreanFontM : props.theme.koreanFontR)};
-  font-size: 14px;
-  line-height: ${(props: any) => (props.isFocused ? 15 : 16)}px;
+  font-size: 15px;
+  line-height: ${(props: any) => (props.isFocused ? 17 : 18)}px;
   color: ${(props: any) => (props.isFocused ? "black" : "#818181")};
 `;
 

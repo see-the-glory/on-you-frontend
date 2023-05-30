@@ -71,9 +71,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
     isLoading: isProfileLoading,
     refetch: profileRefetch,
   } = useQuery<ProfileResponse, ErrorResponse>(userId ? ["getProfile", userId] : ["getMyProfile"], userId ? UserApi.getProfile : UserApi.getMyProfile, {
-    onSuccess: (res) => {
-      console.log(res);
-    },
+    onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getProfile ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
@@ -160,6 +158,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
       return (
         <UserFeed
           userId={userId}
+          profile={profile?.data}
           scrollY={scrollY}
           headerDiff={headerDiff}
           headerCollapsedHeight={heightCollapsed}
@@ -177,7 +176,7 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
   };
 
   const goToEditProfile = () => {
-    navigate("ProfileStack", { screen: "ProfileEdit", params: { profile: profile?.data } });
+    navigate("ProfileStack", { screen: "ProfileEdit", params: { profile: profile?.data, headerHeight: HEADER_HEIGHT } });
   };
 
   const openReportModal = () => {

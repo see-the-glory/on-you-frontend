@@ -1,9 +1,7 @@
 import React from "react";
-import { MaterialIcons } from "@expo/vector-icons";
 import styled from "styled-components/native";
-import CustomText from "./CustomText";
 import FastImage from "react-native-fast-image";
-import { lightTheme } from "../theme";
+import { Iconify } from "react-native-iconify";
 
 const Container = styled.TouchableOpacity<{ size: number; kerning: number; opacity: number }>`
   position: relative;
@@ -19,8 +17,11 @@ const BadgeIcon = styled.View<{ size: number }>`
   elevation: 2;
   top: ${(props: any) => props.size * 0.58}px;
   right: 0%;
-  background-color: white;
+  width: ${(props: any) => props.size * 0.4}px;
+  height: ${(props: any) => props.size * 0.4}px;
+  background-color: ${(props: any) => props.theme.accentColor};
   border-radius: ${(props: any) => props.size / 2}px;
+  border: 1px solid white;
   justify-content: center;
   align-items: center;
 `;
@@ -50,7 +51,7 @@ interface CircleIconProps {
   size: number;
   uri?: string | null;
   name?: string;
-  badge?: "check-circle" | "stars";
+  badge?: "MASTER" | "MANAGER" | "MEMBER" | null;
   kerning?: number;
   opacity?: number;
   onPress?: () => void;
@@ -59,9 +60,9 @@ interface CircleIconProps {
 const CircleIcon: React.FC<CircleIconProps> = ({ size, uri, name, badge, kerning, opacity, onPress }) => {
   return (
     <Container size={size} kerning={kerning ?? 0} opacity={opacity ?? 1} activeOpacity={1} onPress={onPress}>
-      {badge ? (
+      {["MASTER", "MANAGER"].includes(badge) ? (
         <BadgeIcon size={size}>
-          <MaterialIcons name={badge} size={size * 0.4} color={lightTheme.accentColor} />
+          {badge === "MASTER" ? <Iconify icon="ph:star-fill" size={size * 0.23} color="white" /> : <Iconify icon="fluent-mdl2:skype-check" size={size * 0.23} color="white" />}
         </BadgeIcon>
       ) : (
         <></>

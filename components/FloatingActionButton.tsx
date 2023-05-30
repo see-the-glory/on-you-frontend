@@ -1,10 +1,10 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components/native";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Platform, View } from "react-native";
 import { ClubRole } from "../api";
 import Lottie from "lottie-react-native";
 import { lightTheme } from "../theme";
+import { Iconify } from "react-native-iconify";
 
 const Container = styled.View<{ height: number }>`
   position: absolute;
@@ -18,11 +18,12 @@ const Container = styled.View<{ height: number }>`
   bottom: 0px;
   padding-right: 20px;
   padding-left: 20px;
-  padding-bottom: ${Platform.OS === "ios" ? 8 : 0}px;
+  padding-bottom: ${Platform.OS === "ios" ? 18 : 10}px;
 `;
 
 const SectionLeft = styled.View`
   flex-direction: row;
+  align-items: center;
 `;
 const SectionRight = styled.View`
   flex-direction: row;
@@ -80,10 +81,10 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ height, r
         {isJoined ? (
           <>
             <IconButton>
-              <MaterialIcons name={"star"} size={28} color={lightTheme.accentColor} />
+              <Iconify icon="ph:star-fill" size={28} color={lightTheme.accentColor} />
             </IconButton>
             <IconButton>
-              <MaterialIcons name="chat" size={28} color={lightTheme.accentColor} />
+              <Iconify icon="mingcute:chat-1-line" size={28} color={lightTheme.accentColor} />
             </IconButton>
           </>
         ) : (
@@ -99,11 +100,11 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ height, r
                   { keypath: "Filled", color: lightTheme.accentColor },
                   { keypath: "Empty", color: "#E0E0E0" },
                 ]}
-                style={{ width: 38, height: 38 }}
+                style={{ width: 41, height: 41 }}
               />
             </LottieButton>
             <IconButton onPress={openShare}>
-              <MaterialIcons name="ios-share" size={25} color={lightTheme.primaryColor} />
+              <Iconify icon="icon-park-outline:share" size={26} color={lightTheme.primaryColor} />
             </IconButton>
           </>
         )}

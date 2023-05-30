@@ -5,6 +5,8 @@ import { ActivityIndicator } from "react-native";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import { Profile } from "../../api";
+import { Iconify } from "react-native-iconify";
+import { lightTheme } from "../../theme";
 
 const Loader = styled.View`
   flex: 1;
@@ -55,8 +57,10 @@ const ClubCategory = styled.View`
   flex-direction: row;
 `;
 const ClubRole = styled.View`
+  flex-direction: row;
   background-color: black;
-  padding: 2px 6px;
+  padding: 2px 0px;
+  width: 40px;
   border-radius: 15px;
   justify-content: center;
   align-items: center;
@@ -86,6 +90,7 @@ const AboutText = styled.Text`
 const PersonalText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 10px;
+  margin-left: 5px;
 `;
 
 const ClubNameText = styled.Text`
@@ -139,16 +144,19 @@ const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
           <Personal>
             {profile?.emailPublic ? (
               <PersonalItem>
+                <Iconify icon="pepicons-pencil:letter" size={14} color="#C4C4C4" />
                 <PersonalText>{profile?.email}</PersonalText>
               </PersonalItem>
             ) : null}
             {profile?.contactPublic ? (
               <PersonalItem>
+                <Iconify icon="material-symbols:call" size={14} color="#C4C4C4" />
                 <PersonalText>{profile?.contact}</PersonalText>
               </PersonalItem>
             ) : null}
             {profile?.birthdayPublic ? (
               <PersonalItem>
+                <Iconify icon="ic:outline-cake" size={14} color="#C4C4C4" />
                 <PersonalText>{profile?.birthday}</PersonalText>
               </PersonalItem>
             ) : null}
@@ -167,7 +175,8 @@ const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
                 <ClubInfoDetail>
                   <ClubInfoDetailHeader>
                     <ClubNameText>{club.name}</ClubNameText>
-                    <ClubMemberCount>{club.recruitNumber}</ClubMemberCount>
+                    <Iconify icon="ant-design:user-outlined" size={14} color={lightTheme.accentColor} />
+                    <ClubMemberCount>{` ${club.recruitNumber}`}</ClubMemberCount>
                   </ClubInfoDetailHeader>
                   <ClubCategory>
                     {club.categories?.map((category) => (
@@ -176,9 +185,17 @@ const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
                   </ClubCategory>
                 </ClubInfoDetail>
                 {["MASTER", "MANAGER"].includes(club.role ?? "") ? (
-                  <ClubRole>
-                    <ClubRoleText>{club.role === "MASTER" ? "LD" : "MG"}</ClubRoleText>
-                  </ClubRole>
+                  club.role === "MASTER" ? (
+                    <ClubRole>
+                      <Iconify icon="ph:star-fill" size={10} color="white" />
+                      <ClubRoleText>{" LD"}</ClubRoleText>
+                    </ClubRole>
+                  ) : (
+                    <ClubRole>
+                      <Iconify icon="fluent-mdl2:skype-check" size={10} color="white" />
+                      <ClubRoleText>{" MG"}</ClubRoleText>
+                    </ClubRole>
+                  )
                 ) : null}
               </ClubInfo>
             </ClubItem>

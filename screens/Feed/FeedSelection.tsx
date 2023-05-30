@@ -38,7 +38,7 @@ const FeedSelection = ({
   const feedDetailHeaderHeight = 52;
   const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
-  const itemSeparatorGap = 20;
+  const itemSeparatorGap = 30;
 
   const { refetch: feedRefetch } = useQuery<FeedResponse, ErrorResponse>(["getFeed", selectFeedId], FeedApi.getFeed, {
     onSuccess: (res) => {
@@ -247,7 +247,7 @@ const FeedSelection = ({
     </Loader>
   ) : (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <FeedDetail
         feedData={feedData}
         feedSize={SCREEN_WIDTH}

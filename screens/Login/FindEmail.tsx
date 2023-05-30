@@ -93,7 +93,7 @@ const FindEmail: React.FC<NativeStackScreenProps<any, "FindEmail">> = ({ navigat
         }}
       >
         <Container>
-          <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+          <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
           <Content>
             <NameView>
               <ContentTitle>이름</ContentTitle>

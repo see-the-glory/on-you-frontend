@@ -122,7 +122,7 @@ const SignUpChurch: React.FC<NativeStackScreenProps<any, "SignUpChurch">> = ({
       }}
     >
       <Container>
-        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
         <BorderWrap>
           <Border />
         </BorderWrap>

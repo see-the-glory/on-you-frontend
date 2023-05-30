@@ -1,17 +1,14 @@
-import { useRoute } from "@react-navigation/native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity, DeviceEventEmitter } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useState } from "react";
+import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity } from "react-native";
 import FastImage from "react-native-fast-image";
 import { useToast } from "react-native-toast-notifications";
-import { useInfiniteQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
+import { useInfiniteQuery } from "react-query";
 import styled from "styled-components/native";
-import { UserApi, ErrorResponse, Feed, FeedsResponse } from "../../api";
-import clubSlice from "../../redux/slices/club";
+import { UserApi, ErrorResponse, Feed, FeedsResponse, Profile } from "../../api";
+import feedSlice from "../../redux/slices/feed";
 import { useAppDispatch } from "../../redux/store";
-import { RootState } from "../../redux/store/reducers";
-import { ClubFeedScreenProps } from "../../Types/Club";
 
 const Loader = styled.View`
   flex: 1;
@@ -42,7 +39,8 @@ const EmptyText = styled.Text`
 `;
 
 export interface UserFeedProps {
-  userId: number;
+  userId?: number;
+  profile?: Profile;
   scrollY: Animated.Value;
   headerDiff: number;
   headerCollapsedHeight: number;
@@ -51,12 +49,11 @@ export interface UserFeedProps {
   screenScrollRefs: any;
 }
 
-const UserFeed: React.FC<UserFeedProps> = ({ userId, scrollY, headerDiff, headerCollapsedHeight, actionButtonHeight, syncScrollOffset, screenScrollRefs }) => {
-  // const feeds = useSelector((state: RootState) => state.club[userId]?.feeds);
+const UserFeed: React.FC<UserFeedProps> = ({ userId, profile, scrollY, headerDiff, headerCollapsedHeight, actionButtonHeight, syncScrollOffset, screenScrollRefs }) => {
   const toast = useToast();
   const route = useRoute();
-  const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const numColumn = 3;
@@ -75,14 +72,14 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, scrollY, headerDiff, header
       }
     },
     onSuccess: (res) => {
-      // if (res.pages[res.pages.length - 1].responses) dispatch(clubSlice.actions.addFeed({ clubId: clubData.id, feeds: res.pages[res.pages.length - 1].responses.content }));
-      console.log(res);
+      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeed({ feeds: res?.pages[res.pages.length - 1]?.responses?.content ?? [] }));
     },
     onError: (error) => {
-      console.log(`API ERROR | getClubFeeds ${error.code} ${error.status}`);
+      console.log(`API ERROR | getUserFeeds | getMyFeeds ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
-    // enabled: feeds?.length ? false : true,
+    staleTime: 5000,
+    cacheTime: 15000,
   });
 
   const loadMore = () => {
@@ -92,34 +89,21 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, scrollY, headerDiff, header
   const onRefresh = async () => {
     setRefreshing(true);
     const result = await feedsRefetch();
-    // dispatch(clubSlice.actions.refreshFeed({ clubId: clubData.id, feeds: result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? [] }));
+    dispatch(feedSlice.actions.refreshFeed({ feeds: result?.data?.pages?.flatMap((page) => page?.responses?.content) ?? [] }));
     setRefreshing(false);
   };
 
-  useEffect(() => {
-    console.log("UserFeed - add listner");
-    let userFeedRefetchSub = DeviceEventEmitter.addListener("UserFeedRefetch", () => {
-      console.log("UserFeed - User Feed Refetch Event");
-      onRefresh();
-    });
-
-    return () => {
-      console.log("UserFeed - remove listner");
-      userFeedRefetchSub.remove();
-      queryClient.removeQueries({ queryKey: ["getUserFeeds"] });
-    };
-  }, []);
-
   const goToUserFeedDetail = (index: number) => {
-    // const clubFeedDetailProps = {
-    //   clubData,
-    //   targetIndex: index,
-    //   fetchNextPage,
-    // };
-    // return push("ClubFeedDetail", clubFeedDetailProps);
+    const userFeedDetailProps = {
+      userId,
+      profile,
+      targetIndex: index,
+      fetchNextPage,
+    };
+    return navigation.push("UserFeedDetail", userFeedDetailProps);
   };
 
-  return feedsLoading || refreshing ? (
+  return feedsLoading ? (
     <Loader>
       <ActivityIndicator />
     </Loader>
@@ -152,8 +136,11 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, scrollY, headerDiff, header
         minHeight: SCREEN_HEIGHT + headerCollapsedHeight,
         flexGrow: 1,
       }}
+      onEndReachedThreshold={0.5}
+      // refreshing={refreshing}
+      // onRefresh={onRefresh}
       onEndReached={loadMore}
-      data={[]}
+      data={feedData?.pages?.flatMap((page: FeedsResponse) => page.responses.content) ?? []}
       keyExtractor={(item: Feed, index: number) => String(index)}
       numColumns={numColumn}
       columnWrapperStyle={{ paddingBottom: 1 }}

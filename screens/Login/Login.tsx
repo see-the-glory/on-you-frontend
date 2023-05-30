@@ -108,7 +108,7 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
         }}
       >
         <Container>
-          <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+          <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
           <Header>
             <HeaderTitle>Log in</HeaderTitle>
           </Header>
