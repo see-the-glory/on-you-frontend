@@ -282,32 +282,32 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
     const updateData: ProfileUpdateRequest = {
       data: {
         about: about?.trim() ?? "",
-        birthdayPublic,
-        clubPublic,
-        contactPublic,
-        emailPublic,
-        feedPublic,
+        isBirthdayPublic: birthdayPublic,
+        isClubPublic: clubPublic,
+        isContactPublic: contactPublic,
+        isEmailPublic: emailPublic,
+        isFeedPublic: feedPublic,
       },
     };
 
     const splitedThumbnail = thumbnail?.split("/");
     const splitedBackgroundImage = backgroundImage?.split("/");
 
-    // if (thumbnail && splitedThumbnail) {
-    //   updateData.thumbnail = {
-    //     uri: Platform.OS === "android" ? thumbnail : thumbnail.replace("file://", ""),
-    //     type: "image/jpeg",
-    //     name: splitedThumbnail[splitedThumbnail.length - 1],
-    //   };
-    // }
+    if (thumbnail && splitedThumbnail) {
+      updateData.thumbnail = {
+        uri: Platform.OS === "android" ? thumbnail : thumbnail.replace("file://", ""),
+        type: "image/jpeg",
+        name: splitedThumbnail[splitedThumbnail.length - 1],
+      };
+    }
 
-    // if (backgroundImage && splitedBackgroundImage) {
-    //   updateData.backgroundImage = {
-    //     uri: Platform.OS === "android" ? backgroundImage : backgroundImage.replace("file://", ""),
-    //     type: "image/jpeg",
-    //     name: splitedBackgroundImage[splitedBackgroundImage.length - 1],
-    //   };
-    // }
+    if (backgroundImage && splitedBackgroundImage) {
+      updateData.backgroundImage = {
+        uri: Platform.OS === "android" ? backgroundImage : backgroundImage.replace("file://", ""),
+        type: "image/jpeg",
+        name: splitedBackgroundImage[splitedBackgroundImage.length - 1],
+      };
+    }
 
     console.log(updateData);
 

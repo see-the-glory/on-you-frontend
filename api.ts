@@ -503,11 +503,11 @@ export interface ProfileUpdateRequest {
   backgroundImage?: ImageType | null;
   data?: {
     about?: string | null;
-    birthdayPublic?: boolean | null;
-    clubPublic?: boolean | null;
-    contactPublic?: boolean | null;
-    emailPublic?: boolean | null;
-    feedPublic?: boolean | null;
+    isBirthdayPublic?: boolean | null;
+    isClubPublic?: boolean | null;
+    isContactPublic?: boolean | null;
+    isEmailPublic?: boolean | null;
+    isFeedPublic?: boolean | null;
   };
 }
 
@@ -716,7 +716,7 @@ const updateMyProfile = (req: ProfileUpdateRequest) => {
   if (req.thumbnail) body.append("thumbnail", req.thumbnail);
   if (req.backgroundImage) body.append("backgroundImage", req.backgroundImage);
   if (req.data) {
-    body.append("UpdateMyProfileRequest", {
+    body.append("updateMyProfileRequest", {
       string: JSON.stringify(req.data),
       type: "application/json",
     });
