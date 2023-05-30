@@ -339,7 +339,7 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
         </RightNavigationView>
       </AnimatedNavigationView>
 
-      <Animated.ScrollView onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: false })}>
+      <Animated.ScrollView bounces={false} onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: false })}>
         <Header>
           <FastImage style={{ width: "100%", height: "100%" }} source={backgroundImage ? { uri: backgroundImage } : require("../../assets/basic.jpg")}>
             <FilterView>
