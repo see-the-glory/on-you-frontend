@@ -78,7 +78,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
       restSpeedThreshold: 5,
     }).start();
   };
-  const tabHeight = Platform.OS === "ios" ? 85 : 65;
+  const tabHeight = Platform.OS === "ios" ? 80 : 65;
   const tabPaddingBottom = Platform.OS === "ios" ? 20 : 10;
 
   useEffect(() => {
