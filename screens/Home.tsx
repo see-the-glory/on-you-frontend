@@ -379,7 +379,7 @@ const Home = () => {
               <Iconify icon="mdi:bell" size={23} color="black" />
             </NotiView>
           </HeaderButton>
-          <HeaderButton onPress={goToFeedCreation} style={{ paddingLeft: 8 }}>
+          <HeaderButton onPress={goToFeedCreation} style={{ paddingLeft: 12 }}>
             <Iconify icon="mdi:plus-box-multiple" size={23} color="black" />
           </HeaderButton>
         </HeaderRightView>
