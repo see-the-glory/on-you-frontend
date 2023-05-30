@@ -90,6 +90,8 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       console.log(`API ERROR | getClubFeeds ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
+    staleTime: 5000,
+    cacheTime: 15000,
     enabled: feeds?.length ? false : true,
   });
 

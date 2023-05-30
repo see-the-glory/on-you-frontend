@@ -223,8 +223,8 @@ export interface ClubsResponse extends BaseResponse {
   hasData: boolean;
   responses: {
     content: Club[];
+    size: number;
   };
-  size: number;
 }
 
 export interface NotificationsResponse extends BaseResponse {
@@ -239,8 +239,8 @@ export interface FeedsResponse extends BaseResponse {
   hasData: boolean;
   responses: {
     content: Feed[];
+    size: number;
   };
-  size: number;
 }
 
 export interface FeedCommentsResponse extends BaseResponse {
@@ -498,6 +498,19 @@ export interface UserUpdateRequest {
   };
 }
 
+export interface ProfileUpdateRequest {
+  thumbnail?: ImageType | null;
+  backgroundImage?: ImageType | null;
+  data?: {
+    about?: string | null;
+    birthdayPublic?: boolean | null;
+    clubPublic?: boolean | null;
+    contactPublic?: boolean | null;
+    emailPublic?: boolean | null;
+    feedPublic?: boolean | null;
+  };
+}
+
 export interface SignUp {
   birthday?: string;
   email?: string;
@@ -698,6 +711,20 @@ const updateUserInfo = (req: UserUpdateRequest) => {
 
 // Profile
 const getMyProfile = ({ queryKey }: any) => axios.get<String, ProfileResponse>(`/api/user/myProfile`);
+const updateMyProfile = (req: ProfileUpdateRequest) => {
+  const body = new FormData();
+  if (req.thumbnail) body.append("thumbnail", req.thumbnail);
+  if (req.backgroundImage) body.append("backgroundImage", req.backgroundImage);
+  if (req.data) {
+    body.append("UpdateMyProfileRequest", {
+      string: JSON.stringify(req.data),
+      type: "application/json",
+    });
+  }
+  return axios.put<string, BaseResponse>(`/api/user/myProfile`, body, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
 
 const getMyFeeds = ({ queryKey, pageParam }: any) => {
   const [_key]: [string, number] = queryKey;
@@ -849,6 +876,7 @@ export const UserApi = {
   getUserNotifications,
   metaInfo,
   getMyProfile,
+  updateMyProfile,
   getMyFeeds,
   getProfile,
   getUserFeeds,

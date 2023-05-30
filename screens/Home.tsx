@@ -118,6 +118,8 @@ const Home = () => {
       console.log(`API ERROR | getFeeds ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
+    staleTime: 5000,
+    cacheTime: 15000,
   });
 
   const {

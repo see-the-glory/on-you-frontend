@@ -142,6 +142,8 @@ interface FeedDetailState {
 const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, headerHeight, infoHeight, contentHeight, showClubName, isMyClubPost, goToFeedOptionModal, likeFeed }) => {
   const me = useSelector((state: RootState) => state.auth.user);
   let lastTapTime: number | undefined = undefined;
+  const [isLike, setIsLike] = useState<boolean>(feedData?.likeYn ?? false);
+  const [likeCount, setLikeCount] = useState<number>(feedData?.likesCount ?? 0);
   const heartRef = useRef<Lottie>(null);
   const bgHeartRef = useRef<Lottie>(null);
   const isFirstRun = useRef(true);
@@ -173,20 +175,23 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
 
   useEffect(() => {
     if (isFirstRun.current) {
-      if (feedData?.likeYn) heartRef.current?.play(30, 30);
+      if (isLike) heartRef.current?.play(30, 30);
       else heartRef.current?.play(0, 0);
       isFirstRun.current = false;
     } else {
       bgHeartRef.current?.play(10, 25);
 
-      if (feedData?.likeYn) heartRef.current?.play(10, 25);
+      if (isLike) heartRef.current?.play(10, 25);
       else heartRef.current?.play(45, 60);
     }
-  }, [feedData?.likeYn]);
+  }, [isLike]);
 
   const onPressHeart = () => {
     if (likeFeed) {
       likeFeed(feedIndex, feedData?.id);
+      if (isLike) setLikeCount((prev) => prev - 1);
+      else setLikeCount((prev) => prev + 1);
+      setIsLike((prev) => !prev);
     }
   };
 
@@ -201,14 +206,14 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
         useNativeDriver: true,
       }).start();
 
-      if (feedData?.likeYn) {
-        heartRef.current?.play(10, 25);
-        bgHeartRef.current?.play(10, 25);
-      } else {
-        if (likeFeed) {
-          likeFeed(feedIndex, feedData?.id);
-        }
+      if (!isLike && likeFeed) {
+        likeFeed(feedIndex, feedData?.id);
+        setIsLike((prev) => !prev);
+        setLikeCount((prev) => prev + 1);
       }
+
+      heartRef.current?.play(10, 25);
+      bgHeartRef.current?.play(10, 25);
     } else {
       lastTapTime = now;
     }
@@ -230,13 +235,13 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
       // 로그인 되어있다면, likeYn에 따라 likeUsers 목록에 내 정보를 넣거나 뺀다.
       if (me?.thumbnail && me?.name && me?.id) {
         likeUsers = likeUsers?.filter((user) => user.userId != me?.id);
-        if (feedData?.likeYn) likeUsers?.push({ thumbnail: me?.thumbnail, userName: me?.name, likeDate: moment().tz("Asia/Seoul").format("YYYY-MM-DDThh:mm:ss"), userId: me?.id });
+        if (isLike) likeUsers?.push({ thumbnail: me?.thumbnail, userName: me?.name, likeDate: moment().tz("Asia/Seoul").format("YYYY-MM-DDThh:mm:ss"), userId: me?.id });
       }
 
       if (!likeUsers || likeUsers.length === 0) return;
       navigation.push("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
     },
-    [feedData?.likeYn]
+    [isLike]
   );
 
   const onBgHeartAnimationFinish = () => {
@@ -355,7 +360,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
                 />
               </InformationIconButton>
               <InformationNumberButton activeOpacity={1} onPress={() => goToFeedLikes(feedData?.likeUserList ?? [])} style={{ marginLeft: -10 }}>
-                <CountingNumber>{feedData?.likesCount}</CountingNumber>
+                <CountingNumber>{likeCount}</CountingNumber>
               </InformationNumberButton>
               <InformationIconButton activeOpacity={1} onPress={() => goToFeedComments(feedIndex, feedData?.id)}>
                 <Ionicons name="md-chatbox-ellipses" size={24} color="black" />
