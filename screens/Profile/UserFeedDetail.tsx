@@ -3,7 +3,6 @@ import { Alert, DeviceEventEmitter, FlatList, Platform, StatusBar, TouchableOpac
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
 import { InfiniteData, useMutation, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsLikeReponse, FeedsResponse, LikeUser, UserApi, UserBlockRequest } from "../../api";
 import CustomText from "../../components/CustomText";
@@ -12,12 +11,12 @@ import FeedReportModal from "../Feed/FeedReportModal";
 import FeedOptionModal from "../Feed/FeedOptionModal";
 import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
-import clubSlice from "../../redux/slices/club";
 import { Entypo } from "@expo/vector-icons";
 import RNFetchBlob from "rn-fetch-blob";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import PagerView from "react-native-pager-view";
+import feedSlice from "../../redux/slices/feed";
+import { useSelector } from "react-redux";
 
 const Container = styled.View``;
 const HeaderTitleView = styled.View`
@@ -44,6 +43,7 @@ const UserFeedDetail: React.FC<NativeStackScreenProps<any, "UserFeedDetail">> = 
   },
 }) => {
   const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
   const me = useSelector((state: RootState) => state.auth.user);
   const [query, setQuery] = useState<InfiniteData<FeedsResponse> | undefined>(queryClient.getQueryData<InfiniteData<FeedsResponse>>(userId ? ["getUserFeeds", userId] : ["getMyFeeds"]));
   const toast = useToast();
@@ -147,26 +147,27 @@ const UserFeedDetail: React.FC<NativeStackScreenProps<any, "UserFeedDetail">> = 
     const requestData: FeedLikeRequest = { feedId };
     likeFeedMutation.mutate(requestData, {
       onSuccess: (res) => {
-        queryClient.setQueryData<InfiniteData<FeedsResponse> | undefined>(userId ? ["getUserFeeds", userId] : ["getMyFeeds"], (data) => {
-          if (data && pageIndex !== undefined && feedIndexinPage !== undefined) {
-            const newPages = [...data?.pages];
-            const likeYn = newPages[pageIndex].responses.content[feedIndexinPage].likeYn;
-            if (likeYn) newPages[pageIndex].responses.content[feedIndexinPage].likesCount--;
-            else newPages[pageIndex].responses.content[feedIndexinPage].likesCount++;
-
-            newPages[pageIndex].responses.content[feedIndexinPage].likeYn = !likeYn;
-            return {
-              ...data,
-              newPages,
-            };
-          }
-        });
+        // queryClient.setQueryData<InfiniteData<FeedsResponse> | undefined>(userId ? ["getUserFeeds", userId] : ["getMyFeeds"], (data) => {
+        //   if (data && pageIndex !== undefined && feedIndexinPage !== undefined) {
+        //     const newPages = [...data?.pages];
+        //     const likeYn = newPages[pageIndex].responses.content[feedIndexinPage].likeYn;
+        //     if (likeYn) newPages[pageIndex].responses.content[feedIndexinPage].likesCount--;
+        //     else newPages[pageIndex].responses.content[feedIndexinPage].likesCount++;
+        //     newPages[pageIndex].responses.content[feedIndexinPage].likeYn = !likeYn;
+        //     return {
+        //       ...data,
+        //       newPages,
+        //     };
+        //   }
+        // });
       },
       onError: (error) => {
         console.log(`API ERROR | likeFeed ${error.code} ${error.status}`);
         toast.show(`${error.message ?? error.code}`, { type: "warning" });
       },
     });
+
+    dispatch(feedSlice.actions.likeToggle({ feedId }));
   }, []);
 
   const blockUser = () => {

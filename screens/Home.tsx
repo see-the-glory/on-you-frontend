@@ -74,7 +74,6 @@ const NotiBadgeText = styled.Text`
 
 const Home = () => {
   const me = useSelector((state: RootState) => state.auth.user);
-  const feeds = useSelector((state: RootState) => state.feed.data);
   const dispatch = useAppDispatch();
   const toast = useToast();
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -112,7 +111,7 @@ const Home = () => {
       }
     },
     onSuccess: (res) => {
-      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
+      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeed({ feeds: res?.pages[res.pages.length - 1]?.responses?.content ?? [] }));
     },
     onError: (error) => {
       console.log(`API ERROR | getFeeds ${error.code} ${error.status}`);
@@ -162,7 +161,7 @@ const Home = () => {
     setRefreshing(true);
     await notiRefetch();
     const result = await feedsRefetch();
-    dispatch(feedSlice.actions.refreshFeed(result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? []));
+    dispatch(feedSlice.actions.refreshFeed({ feeds: result?.data?.pages?.flatMap((page) => page?.responses?.content) ?? [] }));
     setRefreshing(false);
   };
 
@@ -239,7 +238,7 @@ const Home = () => {
       },
     });
 
-    dispatch(feedSlice.actions.likeToggle(feedIndex));
+    dispatch(feedSlice.actions.likeToggle({ feedId }));
   }, []);
 
   const deleteFeed = () => {
@@ -392,7 +391,7 @@ const Home = () => {
         onRefresh={onRefresh}
         onEndReached={loadMore}
         onEndReachedThreshold={0.7}
-        data={feeds}
+        data={queryFeedData?.pages?.flatMap((page: FeedsResponse) => page.responses.content) ?? []}
         ItemSeparatorComponent={ItemSeparatorComponent}
         ListFooterComponent={ListFooterComponent}
         keyExtractor={keyExtractor}

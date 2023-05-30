@@ -17,6 +17,7 @@ import clubSlice from "../../redux/slices/club";
 import { Entypo } from "@expo/vector-icons";
 import RNFetchBlob from "rn-fetch-blob";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
+import feedSlice from "../../redux/slices/feed";
 
 const Container = styled.View``;
 const HeaderTitleView = styled.View`
@@ -42,10 +43,10 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     params: { clubData, targetIndex, fetchNextPage },
   },
 }) => {
+  const queryClient = useQueryClient();
   const me = useSelector((state: RootState) => state.auth.user);
   const myRole = useSelector((state: RootState) => state.club[clubData.id]?.role);
-  const feeds = useSelector((state: RootState) => state.club[clubData.id]?.feeds);
-  const queryClient = useQueryClient();
+  const [query, setQuery] = useState<InfiniteData<FeedsResponse> | undefined>(queryClient.getQueryData<InfiniteData<FeedsResponse>>(["getClubFeeds", clubData.id]));
   const dispatch = useAppDispatch();
   const toast = useToast();
   const { ref: feedOptionRef, open: openFeedOption, close: closeFeedOption } = useModalize();
@@ -150,7 +151,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       },
     });
 
-    dispatch(clubSlice.actions.likeToggle({ clubId: clubData.id, feedIndex }));
+    dispatch(feedSlice.actions.likeToggle({ feedId }));
   }, []);
 
   const blockUser = () => {
@@ -228,9 +229,11 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     closeComplainOption();
   };
 
-  const loadMore = () => {
-    const query = queryClient.getQueryData<InfiniteData<FeedsResponse>>(["getClubFeeds", clubData.id]);
-    if (query?.pages[query?.pages.length - 1].hasData) fetchNextPage();
+  const loadMore = async () => {
+    if (query?.pages[query?.pages.length - 1].hasData) {
+      const q = await fetchNextPage();
+      setQuery(q.data);
+    }
   };
 
   useLayoutEffect(() => {
@@ -285,7 +288,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         // refreshing={refreshing}
         // onRefresh={onRefresh}
         onEndReached={loadMore}
-        data={feeds ?? []}
+        data={query?.pages?.flatMap((page) => page.responses.content) ?? []}
         ItemSeparatorComponent={ItemSeparatorComponent}
         ListFooterComponent={ListFooterComponent}
         keyExtractor={keyExtractor}

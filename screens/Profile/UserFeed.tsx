@@ -1,17 +1,14 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity, DeviceEventEmitter } from "react-native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useState } from "react";
+import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity } from "react-native";
 import FastImage from "react-native-fast-image";
 import { useToast } from "react-native-toast-notifications";
-import { useInfiniteQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
+import { useInfiniteQuery } from "react-query";
 import styled from "styled-components/native";
 import { UserApi, ErrorResponse, Feed, FeedsResponse, Profile } from "../../api";
-import clubSlice from "../../redux/slices/club";
+import feedSlice from "../../redux/slices/feed";
 import { useAppDispatch } from "../../redux/store";
-import { RootState } from "../../redux/store/reducers";
-import { ClubFeedScreenProps } from "../../Types/Club";
 
 const Loader = styled.View`
   flex: 1;
@@ -55,6 +52,7 @@ export interface UserFeedProps {
 const UserFeed: React.FC<UserFeedProps> = ({ userId, profile, scrollY, headerDiff, headerCollapsedHeight, actionButtonHeight, syncScrollOffset, screenScrollRefs }) => {
   const toast = useToast();
   const route = useRoute();
+  const dispatch = useAppDispatch();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
@@ -73,7 +71,9 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, profile, scrollY, headerDif
         return currentPage.hasData === true ? currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor : null;
       }
     },
-    onSuccess: (res) => {},
+    onSuccess: (res) => {
+      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeed({ feeds: res?.pages[res.pages.length - 1]?.responses?.content ?? [] }));
+    },
     onError: (error) => {
       console.log(`API ERROR | getUserFeeds | getMyFeeds ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
@@ -89,6 +89,7 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, profile, scrollY, headerDif
   const onRefresh = async () => {
     setRefreshing(true);
     const result = await feedsRefetch();
+    dispatch(feedSlice.actions.refreshFeed({ feeds: result?.data?.pages?.flatMap((page) => page?.responses?.content) ?? [] }));
     setRefreshing(false);
   };
 
@@ -135,6 +136,7 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, profile, scrollY, headerDif
         minHeight: SCREEN_HEIGHT + headerCollapsedHeight,
         flexGrow: 1,
       }}
+      onEndReachedThreshold={0.5}
       // refreshing={refreshing}
       // onRefresh={onRefresh}
       onEndReached={loadMore}

@@ -3,12 +3,10 @@ import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity, Dev
 import FastImage from "react-native-fast-image";
 import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { ClubApi, ErrorResponse, Feed, FeedsResponse } from "../../api";
-import clubSlice from "../../redux/slices/club";
+import feedSlice from "../../redux/slices/feed";
 import { useAppDispatch } from "../../redux/store";
-import { RootState } from "../../redux/store/reducers";
 import { ClubFeedScreenProps } from "../../Types/Club";
 
 const Loader = styled.View`
@@ -61,7 +59,6 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   syncScrollOffset,
   screenScrollRefs,
 }) => {
-  const feeds = useSelector((state: RootState) => state.club[clubData.id]?.feeds);
   const toast = useToast();
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
@@ -83,7 +80,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       }
     },
     onSuccess: (res) => {
-      if (res.pages[res.pages.length - 1].responses) dispatch(clubSlice.actions.addFeed({ clubId: clubData.id, feeds: res.pages[res.pages.length - 1].responses.content }));
+      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeed({ feeds: res.pages[res.pages.length - 1].responses.content }));
       console.log("dispatch update!");
     },
     onError: (error) => {
@@ -92,7 +89,6 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     },
     staleTime: 5000,
     cacheTime: 15000,
-    enabled: feeds?.length ? false : true,
   });
 
   const loadMore = () => {
@@ -102,7 +98,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   const onRefresh = async () => {
     setRefreshing(true);
     const result = await feedsRefetch();
-    dispatch(clubSlice.actions.refreshFeed({ clubId: clubData.id, feeds: result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? [] }));
+    dispatch(feedSlice.actions.refreshFeed({ feeds: result?.data?.pages?.flatMap((page) => page?.responses?.content) ?? [] }));
     setRefreshing(false);
   };
 
@@ -162,8 +158,9 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
         minHeight: SCREEN_HEIGHT + headerCollapsedHeight,
         flexGrow: 1,
       }}
+      onEndReachedThreshold={0.5}
       onEndReached={loadMore}
-      data={feeds ?? []}
+      data={queryFeedData?.pages?.flatMap((page: FeedsResponse) => page.responses.content) ?? []}
       keyExtractor={(item: Feed, index: number) => String(index)}
       numColumns={numColumn}
       columnWrapperStyle={{ paddingBottom: 1 }}
