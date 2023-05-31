@@ -18,6 +18,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store/reducers";
 import { lightTheme } from "../theme";
 import { Iconify } from "react-native-iconify";
+import { useAppDispatch } from "../redux/store";
+import feedSlice from "../redux/slices/feed";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -170,7 +172,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
 
   const contentTextTouch = () => {
     if (contentState.moreContent && isCollapsed) setIscollapsed(false);
-    else goToFeedComments(feedIndex, feedData?.id);
+    else goToFeedComments(feedData?.id);
   };
 
   useEffect(() => {
@@ -180,13 +182,15 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
       isFirstRun.current = false;
     } else {
       bgHeartRef.current?.play(10, 25);
-
       if (likeYn) heartRef.current?.play(10, 25);
       else heartRef.current?.play(45, 60);
     }
   }, [likeYn]);
 
   const onPressHeart = () => {
+    if (likeYn) heartRef.current?.play(45, 60);
+    else heartRef.current?.play(10, 25);
+
     if (likeFeed) {
       likeFeed(feedIndex, feedData?.id);
     }
@@ -203,12 +207,10 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
         useNativeDriver: true,
       }).start();
 
-      if (!likeYn && likeFeed) {
-        likeFeed(feedIndex, feedData?.id);
-      }
+      if (!likeYn && likeFeed) likeFeed(feedIndex, feedData?.id);
 
-      heartRef.current?.play(10, 25);
       bgHeartRef.current?.play(10, 25);
+      heartRef.current?.play(10, 25);
     } else {
       lastTapTime = now;
     }
@@ -220,9 +222,9 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
     if (clubId) navigation.push("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
   }, []);
 
-  const goToFeedComments = useCallback((feedIndex?: number, feedId?: number) => {
-    if (feedIndex === undefined || feedId === undefined) return;
-    navigation.push("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId } });
+  const goToFeedComments = useCallback((feedId?: number) => {
+    if (feedId === undefined) return;
+    navigation.push("FeedStack", { screen: "FeedComments", params: { feedId } });
   }, []);
 
   const goToFeedLikes = useCallback(
@@ -357,10 +359,10 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
               <InformationNumberButton activeOpacity={1} onPress={() => goToFeedLikes(feedData?.likeUserList ?? [])} style={{ marginLeft: -8, paddingRight: 10 }}>
                 <CountingNumber>{likesCount}</CountingNumber>
               </InformationNumberButton>
-              <InformationIconButton activeOpacity={1} onPress={() => goToFeedComments(feedIndex, feedData?.id)}>
+              <InformationIconButton activeOpacity={1} onPress={() => goToFeedComments(feedData?.id)}>
                 <Iconify icon="ph:chat-text" size={24} color="black" />
               </InformationIconButton>
-              <InformationNumberButton activeOpacity={1} onPress={() => goToFeedComments(feedIndex, feedData?.id)}>
+              <InformationNumberButton activeOpacity={1} onPress={() => goToFeedComments(feedData?.id)}>
                 <CountingNumber>{commentCount}</CountingNumber>
               </InformationNumberButton>
             </InformationLeftView>

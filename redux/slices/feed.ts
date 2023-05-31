@@ -30,7 +30,7 @@ const feedSlice = createSlice({
         }
       });
     },
-    addFeed(state, action) {
+    addFeeds(state, action) {
       const feeds = action.payload.feeds;
       feeds.forEach((feed: Feed) => {
         const feedId = feed?.id;
@@ -42,6 +42,16 @@ const feedSlice = createSlice({
           };
         }
       });
+    },
+    addFeed(state, action) {
+      const { feedId, feed }: { feedId: number; feed: Feed } = action.payload;
+      if (feedId !== undefined) {
+        state[feedId] = {
+          likeYn: feed?.likeYn ?? false,
+          likesCount: feed?.likesCount ?? 0,
+          commentCount: feed?.commentCount ?? 0,
+        };
+      }
     },
     likeToggle(state, action) {
       const feedId = action.payload.feedId;

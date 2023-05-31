@@ -74,7 +74,7 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, profile, scrollY, headerDif
       }
     },
     onSuccess: (res) => {
-      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeed({ feeds: res?.pages[res.pages.length - 1]?.responses?.content ?? [] }));
+      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeeds({ feeds: res?.pages[res.pages.length - 1]?.responses?.content ?? [] }));
     },
     onError: (error) => {
       console.log(`API ERROR | getUserFeeds | getMyFeeds ${error.code} ${error.status}`);
