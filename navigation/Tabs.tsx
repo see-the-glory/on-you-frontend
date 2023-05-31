@@ -132,7 +132,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
                 {(() => {
                   switch (route.name) {
                     case "Home":
-                      return isFocused ? <Iconify icon="fluent:home-32-regular" size={30} color={lightTheme.primaryColor} /> : <Iconify icon="fluent:home-32-regular" size={30} color="#9C9C9C" />;
+                      return isFocused ? <Iconify icon="fluent:home-32-regular" size={28} color={lightTheme.primaryColor} /> : <Iconify icon="fluent:home-32-regular" size={28} color="#9C9C9C" />;
                     case "Find":
                       return isFocused ? <Iconify icon="ph:list-magnifying-glass" size={30} color={lightTheme.primaryColor} /> : <Iconify icon="ph:list-magnifying-glass" size={30} color="#9C9C9C" />;
                     case "Chat":
