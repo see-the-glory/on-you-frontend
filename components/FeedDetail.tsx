@@ -148,6 +148,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
   let lastTapTime: number | undefined = undefined;
   const heartRef = useRef<Lottie>(null);
   const bgHeartRef = useRef<Lottie>(null);
+  const isFirstRun = useRef(true);
   const opacity = useRef(new Animated.Value(0)).current;
   const [isCollapsed, setIscollapsed] = useState<boolean>(true);
   const [contentState, setcontentState] = useState<FeedDetailState>({
@@ -175,9 +176,16 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
   };
 
   useEffect(() => {
-    if (likeYn) heartRef.current?.play(30, 30);
-    else heartRef.current?.play(0, 0);
-  }, []);
+    if (isFirstRun.current) {
+      if (likeYn) heartRef.current?.play(30, 30);
+      else heartRef.current?.play(0, 0);
+      isFirstRun.current = false;
+    } else {
+      bgHeartRef.current?.play(10, 25);
+      if (likeYn) heartRef.current?.play(10, 25);
+      else heartRef.current?.play(45, 60);
+    }
+  }, [likeYn]);
 
   const onPressHeart = () => {
     if (likeYn) heartRef.current?.play(45, 60);
@@ -197,9 +205,9 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
         toValue: 1,
         duration: 350,
         useNativeDriver: true,
-      }).start(() => {
-        if (!likeYn && likeFeed) setTimeout(() => likeFeed(feedIndex, feedData?.id), 300);
-      });
+      }).start();
+
+      if (!likeYn && likeFeed) likeFeed(feedIndex, feedData?.id);
 
       bgHeartRef.current?.play(10, 25);
       heartRef.current?.play(10, 25);

@@ -31,7 +31,6 @@ const FeedSelection = ({
   },
 }) => {
   const me = useSelector((state: RootState) => state.auth.user);
-  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const dispatch = useAppDispatch();
   const { ref: feedOptionRef, open: openFeedOption, close: closeFeedOption } = useModalize();
@@ -42,7 +41,6 @@ const FeedSelection = ({
   const feedDetailHeaderHeight = 52;
   const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
-  console.log(token);
 
   const { refetch: feedRefetch } = useQuery<FeedResponse, ErrorResponse>(["getFeed", selectFeedId], FeedApi.getFeed, {
     onSuccess: (res) => {
@@ -139,13 +137,13 @@ const FeedSelection = ({
     const requestData: FeedLikeRequest = { feedId: selectFeedId };
     likeFeedMutation.mutate(requestData, {
       onSuccess: (res) => {
-        setFeedData((prev) => {
-          if (!prev) return;
-          if (prev.likeYn) prev.likesCount--;
-          else prev.likesCount++;
-          prev.likeYn = !prev?.likeYn;
-          return prev;
-        });
+        // setFeedData((prev) => {
+        //   if (!prev) return;
+        //   if (prev.likeYn) prev.likesCount--;
+        //   else prev.likesCount++;
+        //   prev.likeYn = !prev?.likeYn;
+        //   return prev;
+        // });
       },
       onError: (error) => {
         console.log(`API ERROR | likeFeed ${error.code} ${error.status}`);
