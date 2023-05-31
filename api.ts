@@ -188,6 +188,7 @@ export interface ClubRole {
 }
 
 export interface GuestComment {
+  id: number;
   content: string;
   created: string;
   thumbnail: string;
@@ -475,6 +476,10 @@ export interface GuestCommentRequest {
   content: string;
 }
 
+export interface GuestCommentDeletionRequest {
+  guestCommentId: number;
+}
+
 export interface FindEmailRequest {
   phoneNumber?: string;
   username?: string;
@@ -636,6 +641,8 @@ const getGuestComment = ({ queryKey }: any) => {
   return axios.get<string, GuestCommentResponse>(`/api/clubs/${clubId}/guestComment`);
 };
 const createGuestComment = (req: GuestCommentRequest) => axios.post<string, BaseResponse>(`/api/clubs/${req.clubId}/guestComment`, req);
+
+const deleteGuestComment = (req: GuestCommentDeletionRequest) => axios.delete<string, BaseResponse>(`/api/clubs/guestComment/${req.guestCommentId}`);
 
 // Club Management
 const approveToClubJoin = (req: ClubApproveRequest) => axios.post<string, BaseResponse>(`/api/clubs/approve`, req);
@@ -855,6 +862,7 @@ export const ClubApi = {
   duplicateClubNameCheck,
   createGuestComment,
   getGuestComment,
+  deleteGuestComment,
 };
 
 export const UserApi = {

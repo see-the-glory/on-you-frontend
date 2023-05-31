@@ -1,19 +1,18 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter, TouchableWithoutFeedback, View } from "react-native";
+import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter, TouchableWithoutFeedback, View, Alert } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { ClubHomeScreenProps, RefinedSchedule } from "../../Types/Club";
-import { ClubApi, ErrorResponse, GuestComment, GuestCommentResponse, Member } from "../../api";
+import { BaseResponse, ClubApi, ErrorResponse, GuestComment, GuestCommentDeletionRequest, GuestCommentResponse, Member } from "../../api";
 import ScheduleModal from "./ClubScheduleModal";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { useAppDispatch } from "../../redux/store";
-import clubSlice from "../../redux/slices/club";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
 import Collapsible from "react-native-collapsible";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import moment from "moment";
 
 const MEMBER_ICON_KERNING = 20;
@@ -285,11 +284,23 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const { isLoading: isGuestCommentLoading, refetch: guestCommentRefetch } = useQuery<GuestCommentResponse, ErrorResponse>(["getGuestComment", clubData.id], ClubApi.getGuestComment, {
     onSuccess: (res) => {
       let result = [];
+      res?.data?.reverse();
       for (let i = 0; i < res?.data.length; i += guestCommentLine) result.push(res?.data?.slice(i, i + guestCommentLine));
       setGuestCommentBulde(result);
     },
     onError: (error) => {
       console.log(`API ERROR | getGuestComment ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
+  const deleteGuestCommentMutation = useMutation<BaseResponse, ErrorResponse, GuestCommentDeletionRequest>(ClubApi.deleteGuestComment, {
+    onSuccess: (res) => {
+      guestCommentRefetch();
+      toast.show(`방명록을 삭제했습니다.`, { type: "success" });
+    },
+    onError: (error) => {
+      console.log(`API ERROR | deleteGuestComment ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
@@ -326,6 +337,18 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
 
   const clubLongDescTouch = () => {
     setIsCollapsedLongDesc((prev) => !prev);
+  };
+
+  const deleteGuestComment = (guestCommentId: number) => {
+    if (guestCommentId === undefined) return;
+    const requestData: GuestCommentDeletionRequest = { guestCommentId };
+    Alert.alert("방명록 삭제", "작성하신 방명록을 삭제하시겠어요?", [
+      { text: "아니요" },
+      {
+        text: "예",
+        onPress: () => deleteGuestCommentMutation.mutate(requestData),
+      },
+    ]);
   };
 
   const loading = memberLoading;
@@ -523,7 +546,9 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
                           <GuestName>{guest.userName}</GuestName>
                           <GuestCreatedTime>{moment(guest.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</GuestCreatedTime>
                         </GuestItemHeaderLeft>
-                        <GuestItemHeaderRight>{guest.userId === me?.id ? <Ionicons name="close-outline" size={14} color="#8E8E8E" /> : <></>}</GuestItemHeaderRight>
+                        <GuestItemHeaderRight>
+                          {guest.userId === me?.id ? <Ionicons onPress={() => deleteGuestComment(guest.id)} name="close-outline" size={14} color="#8E8E8E" /> : <></>}
+                        </GuestItemHeaderRight>
                       </GuestItemHeader>
                       <GuestItemContent>
                         <GuestContentText>{guest.content}</GuestContentText>
