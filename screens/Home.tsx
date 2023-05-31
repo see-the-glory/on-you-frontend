@@ -111,7 +111,7 @@ const Home = () => {
       }
     },
     onSuccess: (res) => {
-      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeed({ feeds: res?.pages[res.pages.length - 1]?.responses?.content ?? [] }));
+      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeeds({ feeds: res?.pages[res.pages.length - 1]?.responses?.content ?? [] }));
     },
     onError: (error) => {
       console.log(`API ERROR | getFeeds ${error.code} ${error.status}`);

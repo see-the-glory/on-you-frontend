@@ -13,6 +13,8 @@ import { RootState } from "../../redux/store/reducers";
 import { Entypo } from "@expo/vector-icons";
 import RNFetchBlob from "rn-fetch-blob";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
+import { useAppDispatch } from "../../redux/store";
+import feedSlice from "../../redux/slices/feed";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -29,7 +31,9 @@ const FeedSelection = ({
   },
 }) => {
   const me = useSelector((state: RootState) => state.auth.user);
+  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
+  const dispatch = useAppDispatch();
   const { ref: feedOptionRef, open: openFeedOption, close: closeFeedOption } = useModalize();
   const { ref: complainOptionRef, open: openComplainOption, close: closeComplainOption } = useModalize();
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -38,11 +42,13 @@ const FeedSelection = ({
   const feedDetailHeaderHeight = 52;
   const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
-  const itemSeparatorGap = 30;
+  console.log(token);
 
   const { refetch: feedRefetch } = useQuery<FeedResponse, ErrorResponse>(["getFeed", selectFeedId], FeedApi.getFeed, {
     onSuccess: (res) => {
-      setFeedData(res?.data);
+      const data = { ...res?.data, id: selectFeedId };
+      dispatch(feedSlice.actions.addFeed({ feedId: selectFeedId, feed: data }));
+      setFeedData(data);
     },
     onError: (error) => {
       console.log(`API ERROR | getFeed ${error.code} ${error.status}`);
@@ -146,6 +152,8 @@ const FeedSelection = ({
         toast.show(`${error.message ?? error.code}`, { type: "warning" });
       },
     });
+
+    dispatch(feedSlice.actions.likeToggle({ feedId }));
   }, []);
 
   const blockUser = () => {

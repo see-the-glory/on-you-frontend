@@ -108,7 +108,7 @@ const EmptyText = styled.Text`
 const FeedComments = ({
   navigation: { setOptions, navigate, goBack },
   route: {
-    params: { feedIndex, feedId, clubId },
+    params: { feedId, clubId },
   },
 }) => {
   const me = useSelector((state: RootState) => state.auth.user);
@@ -129,12 +129,9 @@ const FeedComments = ({
     onSuccess: (res: FeedCommentsResponse) => {
       setCommentData(res?.data);
       setIsLoading(false);
-      if (feedIndex !== undefined) {
-        const count = res.data.length + res.data.reduce((acc, comment) => acc + comment.replies.length, 0);
-        dispatch(feedSlice.actions.updateCommentCount({ feedId, count }));
-      } else {
-        DeviceEventEmitter.emit("SelectFeedRefetch");
-      }
+      const count = res.data.length + res.data.reduce((acc, comment) => acc + comment.replies.length, 0);
+      dispatch(feedSlice.actions.updateCommentCount({ feedId, count }));
+      DeviceEventEmitter.emit("SelectFeedRefetch");
     },
     onError: (error) => {
       console.log(`API ERROR | getFeedComments ${error.code} ${error.status}`);
