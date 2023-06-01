@@ -309,19 +309,19 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
       };
     }
 
-    // if (backgroundImage && splitedBackgroundImage) {
-    //   updateData.backgroundImage = {
-    //     uri: Platform.OS === "android" ? backgroundImage : backgroundImage.replace("file://", ""),
-    //     type: "image/jpeg",
-    //     name: splitedBackgroundImage[splitedBackgroundImage.length - 1],
-    //   };
-    // } else {
-    //   updateData.backgroundImage = {
-    //     uri: basicImagePath,
-    //     type: "image/jpeg",
-    //     name: "basic.jpg",
-    //   };
-    // }
+    if (backgroundImage && splitedBackgroundImage) {
+      updateData.backgroundImage = {
+        uri: Platform.OS === "android" ? backgroundImage : backgroundImage.replace("file://", ""),
+        type: "image/jpeg",
+        name: splitedBackgroundImage[splitedBackgroundImage.length - 1],
+      };
+    } else {
+      updateData.backgroundImage = {
+        uri: basicImagePath,
+        type: "image/jpeg",
+        name: "basic.jpg",
+      };
+    }
 
     profileMutation.mutate(updateData);
   };
