@@ -9,6 +9,7 @@ import styled from "styled-components/native";
 import { FeedComment } from "../api";
 import CircleIcon from "./CircleIcon";
 import { lightTheme } from "../theme";
+import LinkedText from "./LinkedText";
 
 const Container = styled.View`
   flex-direction: row;
@@ -43,7 +44,7 @@ const UserName = styled.Text`
   color: #2b2b2b;
 `;
 
-const ContentText = styled.Text`
+const ContentText = styled(LinkedText)`
   font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 21px;

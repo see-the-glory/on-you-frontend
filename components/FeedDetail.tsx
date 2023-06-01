@@ -20,6 +20,7 @@ import { lightTheme } from "../theme";
 import { Iconify } from "react-native-iconify";
 import { useAppDispatch } from "../redux/store";
 import feedSlice from "../redux/slices/feed";
+import LinkedText from "./LinkedText";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -96,7 +97,7 @@ const CreatedTime = styled.Text`
 const ContentTextView = styled.Text<{ height?: number }>`
   ${(props: any) => (props.height ? `height: ${props.height}px` : "")};
 `;
-const ContentText = styled.Text`
+const ContentText = styled(LinkedText)`
   font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;

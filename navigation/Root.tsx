@@ -25,6 +25,7 @@ import queryString from "query-string";
 import { getModel, getVersion } from "react-native-device-info";
 import styled from "styled-components/native";
 import CustomText from "../components/CustomText";
+import Parking from "../screens/Parking";
 
 const Nav = createNativeStackNavigator();
 
@@ -209,6 +210,9 @@ const Root = () => {
           }
           return Promise.reject({ ...error.response?.data, status, code: error.code });
         } else {
+          console.log(error.response);
+          console.log(error.response.status, error.code);
+          navigation.navigate("Parking");
           return Promise.reject({ message: "요청시간이 만료되었습니다.", code: error.code });
         }
       }
@@ -342,6 +346,7 @@ const Root = () => {
             <Nav.Screen name="ProfileStack" component={ProfileStack} />
             <Nav.Screen name="ClubCreationStack" component={ClubCreationStack} />
             <Nav.Screen name="ClubManagementStack" component={ClubManagementStack} />
+            <Nav.Screen name="Parking" component={Parking} />
           </Nav.Navigator>
         }
       ></Host>

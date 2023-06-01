@@ -4,6 +4,7 @@ import { useLayoutEffect } from "react";
 import { StatusBar, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import moment from "moment";
+import LinkedText from "../../components/LinkedText";
 
 const SCREEN_PADDING_SIZE = 20;
 
@@ -41,7 +42,7 @@ const CreatedTimeText = styled.Text`
   font-size: 12px;
   color: #8e8e8e;
 `;
-const ContentText = styled.Text`
+const ContentText = styled(LinkedText)`
   font-family: ${(props: any) => props.theme.koreanFontR};
   margin: 8px;
   color: #343434;

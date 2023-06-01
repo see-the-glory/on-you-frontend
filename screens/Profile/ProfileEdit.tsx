@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useRef, useState } from "react";
-import { Animated, Platform, Switch, Text, TouchableOpacity } from "react-native";
+import { Animated, Image, Platform, Switch, Text, TouchableOpacity } from "react-native";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import { BaseResponse, Club, ErrorResponse, ProfileUpdateRequest, UserApi } from "../../api";
@@ -290,14 +290,22 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
       },
     };
 
-    const splitedThumbnail = thumbnail?.split("/");
-    const splitedBackgroundImage = backgroundImage?.split("/");
+    let splitedThumbnail = thumbnail?.split("/");
+    let splitedBackgroundImage = backgroundImage?.split("/");
+
+    let basicImagePath = Image.resolveAssetSource(require("../../assets/basic.jpg")).uri;
 
     if (thumbnail && splitedThumbnail) {
       updateData.thumbnail = {
         uri: Platform.OS === "android" ? thumbnail : thumbnail.replace("file://", ""),
         type: "image/jpeg",
         name: splitedThumbnail[splitedThumbnail.length - 1],
+      };
+    } else {
+      updateData.thumbnail = {
+        uri: basicImagePath,
+        type: "image/jpeg",
+        name: "basic.jpg",
       };
     }
 
@@ -307,9 +315,13 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
         type: "image/jpeg",
         name: splitedBackgroundImage[splitedBackgroundImage.length - 1],
       };
+    } else {
+      updateData.backgroundImage = {
+        uri: basicImagePath,
+        type: "image/jpeg",
+        name: "basic.jpg",
+      };
     }
-
-    console.log(updateData);
 
     profileMutation.mutate(updateData);
   };
@@ -487,7 +499,7 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
             </SectionContent>
           </Section>
         </Content>
-        <BottomButton onPress={onSubmit} title={"저장"} backgroundColor={lightTheme.accentColor} />
+        <BottomButton onPress={onSubmit} title={"저장"} backgroundColor={lightTheme.accentColor} disabled={profileMutation.isLoading} />
       </Animated.ScrollView>
     </>
   );

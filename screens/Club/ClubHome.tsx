@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter, TouchableWithoutFeedback, View, Alert } from "react-native";
+import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter, TouchableWithoutFeedback, View, Alert, Text } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { ClubHomeScreenProps, RefinedSchedule } from "../../Types/Club";
@@ -14,6 +14,7 @@ import { useToast } from "react-native-toast-notifications";
 import Collapsible from "react-native-collapsible";
 import { useMutation, useQuery } from "react-query";
 import moment from "moment";
+import LinkedText from "../../components/LinkedText";
 
 const MEMBER_ICON_KERNING = 20;
 const MEMBER_ICON_SIZE = 40;
@@ -65,7 +66,7 @@ const ContentView = styled.View<{ paddingSize?: number }>`
   padding-right: ${(props: any) => props.paddingSize ?? 0}px;
 `;
 
-const ContentText = styled.Text`
+const ContentText = styled(LinkedText)`
   font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
@@ -77,6 +78,7 @@ const ContentSubText = styled.Text`
   font-size: 14px;
   line-height: 20px;
   color: #5b5b5b;
+  text-align: right;
 `;
 
 const SeparatorView = styled.View`
@@ -393,15 +395,15 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
           </TitleView>
           <ContentView>
             {clubLongDescLines.length <= collapsed ? (
-              <ContentText>{clubData.clubLongDesc}</ContentText>
+              <ContentText>{clubData?.clubLongDesc ?? ""}</ContentText>
             ) : (
               <TouchableWithoutFeedback onPress={clubLongDescTouch}>
                 <View>
                   {isCollapsedLongDesc ? (
-                    <ContentText>
-                      {`${clubLongDescLines.slice(0, collapsed).join("\n")}`}
-                      <ContentSubText>{` 더보기`}</ContentSubText>
-                    </ContentText>
+                    <>
+                      <ContentText>{`${clubLongDescLines.slice(0, collapsed).join("\n")}`}</ContentText>
+                      <ContentSubText>{`\n더보기`}</ContentSubText>
+                    </>
                   ) : (
                     <ContentText>{`${clubLongDescLines.slice(0, collapsed).join("\n")}`}</ContentText>
                   )}

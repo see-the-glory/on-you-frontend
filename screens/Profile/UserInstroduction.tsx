@@ -7,6 +7,10 @@ import styled from "styled-components/native";
 import { Profile } from "../../api";
 import { Iconify } from "react-native-iconify";
 import { lightTheme } from "../../theme";
+import Clipboard from "@react-native-clipboard/clipboard";
+import { useToast } from "react-native-toast-notifications";
+import * as WebBrowser from "expo-web-browser";
+import LinkedText from "../../components/LinkedText";
 
 const Loader = styled.View`
   flex: 1;
@@ -87,6 +91,10 @@ const AboutText = styled.Text`
   font-size: 14px;
 `;
 
+const LinkText = styled(AboutText)`
+  color: #0969da;
+`;
+
 const PersonalText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 10px;
@@ -126,6 +134,7 @@ interface UserInstroductionProps {
 
 const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const toast = useToast();
   const goToClub = (clubId: number) => navigation.push("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
   return !profile ? (
     <Loader>
@@ -139,7 +148,7 @@ const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
         </Header>
         <Content>
           <About>
-            <AboutText>{profile?.about ?? "인사말이 없습니다."}</AboutText>
+            <LinkedText>{profile?.about ?? "인사말이 없습니다."}</LinkedText>
           </About>
           <Personal>
             {profile?.emailPublic ? (

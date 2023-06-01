@@ -80,16 +80,16 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ height, r
       <SectionLeft>
         {isJoined ? (
           <>
-            <IconButton>
+            {/* <IconButton>
               <Iconify icon="ph:star-fill" size={28} color={lightTheme.accentColor} />
             </IconButton>
             <IconButton>
               <Iconify icon="mingcute:chat-1-line" size={28} color={lightTheme.accentColor} />
-            </IconButton>
+            </IconButton> */}
           </>
         ) : (
           <>
-            <LottieButton activeOpacity={1} onPress={onPressHeart}>
+            {/* <LottieButton activeOpacity={1} onPress={onPressHeart}>
               <Lottie
                 ref={heartRef}
                 source={require("../assets/lottie/70547-like.json")}
@@ -102,7 +102,7 @@ const FloatingActionButton: React.FC<ClubHomeFloatingButtonProps> = ({ height, r
                 ]}
                 style={{ width: 41, height: 41 }}
               />
-            </LottieButton>
+            </LottieButton> */}
             <IconButton onPress={openShare}>
               <Iconify icon="icon-park-outline:share" size={26} color={lightTheme.primaryColor} />
             </IconButton>
