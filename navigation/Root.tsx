@@ -14,7 +14,7 @@ import axios from "axios";
 import { useAppDispatch } from "../redux/store";
 import { logout, updateUser } from "../redux/slices/auth";
 import { BackHandler, DeviceEventEmitter, Linking, Modal, Platform, View } from "react-native";
-import { BaseResponse, ErrorResponse, MetaInfoRequest, MetaInfoResponse, TargetTokenUpdateRequest, UserApi, UserInfoResponse } from "../api";
+import { BaseResponse, BASE_URL, ErrorResponse, MetaInfoRequest, MetaInfoResponse, TargetTokenUpdateRequest, UserApi, UserInfoResponse } from "../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import feedSlice from "../redux/slices/feed";
 import messaging from "@react-native-firebase/messaging";
@@ -150,27 +150,29 @@ const Root = () => {
   };
 
   const handlePushMessage = (data: any) => {
+    console.log(data);
     switch (data?.type) {
       case "APPLY":
         navigation.navigate("ProfileStack", { screen: "UserNotification" });
         break;
       case "APPROVE":
-        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
+        if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
         break;
       case "REJECT":
         navigation.navigate("ProfileStack", { screen: "UserNotification" });
         break;
       case "SCHEDULE_CREATE":
-        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
+        if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
         break;
       case "FEED_CREATE":
-        navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        if (data?.feedId) navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        else if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
         break;
       case "FEED_COMMENT":
-        navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        if (data?.feedId) navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
         break;
       case "COMMENT_REPLY":
-        navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        if (data?.feedId) navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
         break;
       default:
         break;
@@ -180,13 +182,13 @@ const Root = () => {
   useEffect(() => {
     console.log(`Root - useEffect!`);
     // Axios Setting
-    axios.defaults.baseURL = "http://3.39.190.23:8080";
+    axios.defaults.baseURL = BASE_URL;
     if (token) axios.defaults.headers.common["Authorization"] = token;
     axios.defaults.headers.common["Content-Type"] = "application/json";
 
     const requestInterceptor = axios.interceptors.request.use(
       (config) => {
-        config.timeout = 5000;
+        config.timeout = 15000;
         return config;
       },
       (error) => error
@@ -211,7 +213,6 @@ const Root = () => {
           return Promise.reject({ ...error.response?.data, status, code: error.code });
         } else {
           console.log(error.response);
-          console.log(error.response.status, error.code);
           navigation.navigate("Parking");
           return Promise.reject({ message: "요청시간이 만료되었습니다.", code: error.code });
         }

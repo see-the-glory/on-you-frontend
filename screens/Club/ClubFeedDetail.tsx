@@ -6,7 +6,6 @@ import { InfiniteData, useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, LikeUser, UserApi, UserBlockRequest } from "../../api";
-import CustomText from "../../components/CustomText";
 import FeedDetail from "../../components/FeedDetail";
 import { ClubFeedDetailScreenProps } from "../../Types/Club";
 import FeedReportModal from "../Feed/FeedReportModal";
@@ -29,7 +28,7 @@ const HeaderClubName = styled.Text`
   color: #8e8e8e;
   line-height: 21px;
 `;
-const HeaderText = styled(CustomText)`
+const HeaderText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontM};
   font-size: 15px;
   line-height: 20px;
