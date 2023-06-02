@@ -102,7 +102,7 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, profile, scrollY, headerDif
       targetIndex: index,
       fetchNextPage,
     };
-    return navigation.push("UserFeedDetail", userFeedDetailProps);
+    return navigation.push("ProfileStack", { screen: "UserFeedDetail", params: userFeedDetailProps });
   };
 
   return feedsLoading ? (
