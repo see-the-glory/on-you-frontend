@@ -77,6 +77,8 @@ const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
       console.log(`API ERROR | getProfile ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
+    staleTime: 10000,
+    cacheTime: 15000,
   });
 
   // Screen Scroll Sync

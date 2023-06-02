@@ -1,5 +1,5 @@
 import axios from "axios";
-const BASE_URL = "http://3.39.190.23:8080";
+export const BASE_URL = "http://125.129.230.5:8080";
 
 export interface BaseResponse {
   resultCode?: string;
