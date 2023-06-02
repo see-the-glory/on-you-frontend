@@ -150,27 +150,29 @@ const Root = () => {
   };
 
   const handlePushMessage = (data: any) => {
+    console.log(data);
     switch (data?.type) {
       case "APPLY":
         navigation.navigate("ProfileStack", { screen: "UserNotification" });
         break;
       case "APPROVE":
-        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
+        if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
         break;
       case "REJECT":
         navigation.navigate("ProfileStack", { screen: "UserNotification" });
         break;
       case "SCHEDULE_CREATE":
-        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
+        if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
         break;
       case "FEED_CREATE":
-        navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        if (data?.feedId) navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        else if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
         break;
       case "FEED_COMMENT":
-        navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        if (data?.feedId) navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
         break;
       case "COMMENT_REPLY":
-        navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        if (data?.feedId) navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
         break;
       default:
         break;
