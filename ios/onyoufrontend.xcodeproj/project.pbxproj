@@ -383,7 +383,7 @@
 				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 23053001;
+				CURRENT_PROJECT_VERSION = 23060201;
 				DEVELOPMENT_TEAM = P83ZS7XR97;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -422,7 +422,7 @@
 				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 23053001;
+				CURRENT_PROJECT_VERSION = 23060201;
 				DEVELOPMENT_TEAM = P83ZS7XR97;
 				INFOPLIST_FILE = onyoufrontend/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OnYou;
@@ -624,7 +624,7 @@
 				CODE_SIGN_ENTITLEMENTS = onyoufrontend/onyoufrontend.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 23053001;
+				CURRENT_PROJECT_VERSION = 23060201;
 				DEVELOPMENT_TEAM = P83ZS7XR97;
 				INFOPLIST_FILE = onyoufrontend/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = OnYou;
