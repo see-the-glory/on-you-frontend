@@ -142,13 +142,13 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, profile, scrollY, headerDif
       // refreshing={refreshing}
       // onRefresh={onRefresh}
       onEndReached={loadMore}
-      data={feedData?.pages?.flatMap((page: FeedsResponse) => page.responses.content) ?? []}
+      data={profile?.isFeedPublic === "Y" ? [] : feedData?.pages?.flatMap((page: FeedsResponse) => page.responses.content) ?? []}
       keyExtractor={(item: Feed, index: number) => String(index)}
       numColumns={numColumn}
       columnWrapperStyle={{ paddingBottom: 1 }}
       ListEmptyComponent={() => (
         <EmptyView>
-          <EmptyText>{`작성된 게시글이 없습니다.`}</EmptyText>
+          <EmptyText>{profile?.isFeedPublic === "Y" ? `작성된 게시글이 없습니다.` : "비공개 상태입니다."}</EmptyText>
         </EmptyView>
       )}
       renderItem={({ item, index }: { item: Feed; index: number }) => (

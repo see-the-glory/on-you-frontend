@@ -3,7 +3,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TouchableOpacity, Platform, KeyboardAvoidingView, DeviceEventEmitter, ActivityIndicator, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import ImagePicker from "react-native-image-crop-picker";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { BaseResponse, ErrorResponse, UserApi, UserUpdateRequest } from "../../api";
 import Collapsible from "react-native-collapsible";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
@@ -107,7 +107,8 @@ const DateView = styled.View`
 `;
 
 const AccountEdit: React.FC<NativeStackScreenProps<any, "AccountEdit">> = ({ route: { params: userData }, navigation: { navigate, goBack, setOptions } }) => {
-  const [imageURI, setImageURI] = useState<string | null>(userData?.thumbnail);
+  const queryClient = useQueryClient();
+  const [imageURI, setImageURI] = useState<string | null>(null);
   const [name, setName] = useState<string>(userData?.name);
   const [nameErrorCheck, setNameErrorCheck] = useState<boolean>(false);
   const [sex, setSex] = useState<string | null>(userData?.sex);
@@ -125,6 +126,7 @@ const AccountEdit: React.FC<NativeStackScreenProps<any, "AccountEdit">> = ({ rou
       toast.show("저장에 성공하였습니다.", { type: "success" });
       DeviceEventEmitter.emit("ProfileRefresh");
       DeviceEventEmitter.emit("HomeAllRefetch");
+      queryClient.invalidateQueries(["getMyProfile"]);
       goBack();
     },
     onError: (error) => {
@@ -137,26 +139,23 @@ const AccountEdit: React.FC<NativeStackScreenProps<any, "AccountEdit">> = ({ rou
     if (nameErrorCheck) return toast.show(`이름을 다시 설정해주세요.`, { type: "warning" });
 
     const data = {
-      birthday: birthday?.trim() ?? null,
+      birthday: birthday?.trim() === "" ? null : birthday?.trim() ?? null,
       sex: sex ?? null,
       name: name.trim() === "" ? userData?.name : name.trim(),
       organization: organizationName.trim(),
-      phoneNumber: phoneNumber?.trim() ?? null,
+      phoneNumber: phoneNumber?.trim() === "" ? null : phoneNumber?.trim() ?? null,
     };
 
-    const splitedURI = new String(imageURI).split("/");
+    const updateData: UserUpdateRequest = { data };
 
-    const updateData: UserUpdateRequest =
-      imageURI === null
-        ? { data }
-        : {
-            image: {
-              uri: Platform.OS === "android" ? imageURI : imageURI.replace("file://", ""),
-              type: "image/jpeg",
-              name: splitedURI[splitedURI.length - 1],
-            },
-            data,
-          };
+    if (imageURI) {
+      const splitedURI = imageURI?.split("/");
+      updateData.image = {
+        uri: Platform.OS === "android" ? imageURI : imageURI.replace("file://", ""),
+        type: "image/jpeg",
+        name: splitedURI[splitedURI.length - 1],
+      };
+    }
     mutation.mutate(updateData);
   };
 
@@ -220,7 +219,7 @@ const AccountEdit: React.FC<NativeStackScreenProps<any, "AccountEdit">> = ({ rou
         <View style={{ width: "100%" }}>
           <HeaderView>
             <ImagePickerButton onPress={pickImage} activeOpacity={1}>
-              <CircleIcon size={imageSize} uri={imageURI} />
+              <CircleIcon size={imageSize} uri={imageURI ?? userData?.thumbnail} />
               <ProfileText onPress={pickImage}>{`프로필 사진 설정`}</ProfileText>
             </ImagePickerButton>
           </HeaderView>

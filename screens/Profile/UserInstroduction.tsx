@@ -27,7 +27,7 @@ const Header = styled.View`
 `;
 const Content = styled.View``;
 const About = styled.View`
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 `;
 const Personal = styled.View``;
 const PersonalItem = styled.View`
@@ -151,19 +151,19 @@ const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
             <LinkedText>{profile?.about ?? "인사말이 없습니다."}</LinkedText>
           </About>
           <Personal>
-            {profile?.emailPublic ? (
+            {profile?.isEmailPublic === "Y" ? (
               <PersonalItem>
                 <Iconify icon="pepicons-pencil:letter" size={14} color="#C4C4C4" />
                 <PersonalText>{profile?.email}</PersonalText>
               </PersonalItem>
             ) : null}
-            {profile?.contactPublic ? (
+            {profile?.contact && profile?.isContactPublic === "Y" ? (
               <PersonalItem>
                 <Iconify icon="material-symbols:call" size={14} color="#C4C4C4" />
                 <PersonalText>{profile?.contact}</PersonalText>
               </PersonalItem>
             ) : null}
-            {profile?.birthdayPublic ? (
+            {profile?.birthday && profile?.isBirthdayPublic === "Y" ? (
               <PersonalItem>
                 <Iconify icon="ic:outline-cake" size={14} color="#C4C4C4" />
                 <PersonalText>{profile?.birthday}</PersonalText>
@@ -177,39 +177,46 @@ const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
           <HeaderTitle>{`내 모임`}</HeaderTitle>
         </Header>
         <Content>
-          {!profile?.clubs?.length ? <AboutText>{`가입한 모임이 없습니다.`}</AboutText> : null}
-          {profile?.clubs?.map((club) => (
-            <ClubItem key={`Club_${club.id}`} onPress={() => goToClub(club.id)}>
-              <ClubThumbnail source={club.thumbnail ? { uri: club.thumbnail } : require("../../assets/basic.jpg")} />
-              <ClubInfo>
-                <ClubInfoDetail>
-                  <ClubInfoDetailHeader>
-                    <ClubNameText>{club.name}</ClubNameText>
-                    <Iconify icon="ant-design:user-outlined" size={14} color={lightTheme.accentColor} />
-                    <ClubMemberCount>{` ${club.recruitNumber}`}</ClubMemberCount>
-                  </ClubInfoDetailHeader>
-                  <ClubCategory>
-                    {club.categories?.map((category) => (
-                      <ClubCategoryText key={`Category_${category.id}`}>{`#${category.name}`}</ClubCategoryText>
-                    ))}
-                  </ClubCategory>
-                </ClubInfoDetail>
-                {["MASTER", "MANAGER"].includes(club.role ?? "") ? (
-                  club.role === "MASTER" ? (
-                    <ClubRole>
-                      <Iconify icon="ph:star-fill" size={10} color="white" />
-                      <ClubRoleText>{" LD"}</ClubRoleText>
-                    </ClubRole>
-                  ) : (
-                    <ClubRole>
-                      <Iconify icon="fluent-mdl2:skype-check" size={10} color="white" />
-                      <ClubRoleText>{" MG"}</ClubRoleText>
-                    </ClubRole>
-                  )
-                ) : null}
-              </ClubInfo>
-            </ClubItem>
-          ))}
+          {profile?.isClubPublic === "Y" ? (
+            !profile?.clubs?.length ? (
+              <AboutText>{`가입한 모임이 없습니다.`}</AboutText>
+            ) : (
+              profile?.clubs?.map((club) => (
+                <ClubItem key={`Club_${club.id}`} onPress={() => goToClub(club.id)}>
+                  <ClubThumbnail source={club.thumbnail ? { uri: club.thumbnail } : require("../../assets/basic.jpg")} />
+                  <ClubInfo>
+                    <ClubInfoDetail>
+                      <ClubInfoDetailHeader>
+                        <ClubNameText>{club.name}</ClubNameText>
+                        <Iconify icon="ant-design:user-outlined" size={14} color={lightTheme.accentColor} />
+                        <ClubMemberCount>{` ${club.recruitNumber}`}</ClubMemberCount>
+                      </ClubInfoDetailHeader>
+                      <ClubCategory>
+                        {club.categories?.map((category) => (
+                          <ClubCategoryText key={`Category_${category.id}`}>{`#${category.name}`}</ClubCategoryText>
+                        ))}
+                      </ClubCategory>
+                    </ClubInfoDetail>
+                    {["MASTER", "MANAGER"].includes(club.role ?? "") ? (
+                      club.role === "MASTER" ? (
+                        <ClubRole>
+                          <Iconify icon="ph:star-fill" size={10} color="white" />
+                          <ClubRoleText>{" LD"}</ClubRoleText>
+                        </ClubRole>
+                      ) : (
+                        <ClubRole>
+                          <Iconify icon="fluent-mdl2:skype-check" size={10} color="white" />
+                          <ClubRoleText>{" MG"}</ClubRoleText>
+                        </ClubRole>
+                      )
+                    ) : null}
+                  </ClubInfo>
+                </ClubItem>
+              ))
+            )
+          ) : (
+            <AboutText>{`비공개 상태입니다.`}</AboutText>
+          )}
         </Content>
       </Section>
     </Container>
