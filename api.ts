@@ -110,14 +110,14 @@ export interface Profile {
   name: string;
   about: string;
   birthday: string;
-  birthdayPublic: boolean;
+  isBirthdayPublic: "Y" | "N";
   clubs: Club[];
-  clubPublic: boolean;
+  isClubPublic: "Y" | "N";
   contact: string;
-  contactPublic: boolean;
+  isContactPublic: "Y" | "N";
   email: string;
-  emailPublic: boolean;
-  feedPublic: boolean;
+  isEmailPublic: "Y" | "N";
+  isFeedPublic: "Y" | "N";
   thumbnail: string | null;
   backgroundImage: string | null;
 }
@@ -508,11 +508,11 @@ export interface ProfileUpdateRequest {
   backgroundImage?: ImageType | null;
   data?: {
     about?: string | null;
-    isBirthdayPublic?: boolean | null;
-    isClubPublic?: boolean | null;
-    isContactPublic?: boolean | null;
-    isEmailPublic?: boolean | null;
-    isFeedPublic?: boolean | null;
+    isBirthdayPublic?: "Y" | "N" | null;
+    isClubPublic?: "Y" | "N" | null;
+    isContactPublic?: "Y" | "N" | null;
+    isEmailPublic?: "Y" | "N" | null;
+    isFeedPublic?: "Y" | "N" | null;
   };
 }
 
@@ -728,7 +728,7 @@ const updateMyProfile = (req: ProfileUpdateRequest) => {
       type: "application/json",
     });
   }
-  return axios.put<string, BaseResponse>(`/api/user/myProfile`, body, {
+  return axios.put<string, ProfileResponse>(`/api/user/myProfile`, body, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };

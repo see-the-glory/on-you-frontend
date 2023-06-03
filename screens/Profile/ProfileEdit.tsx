@@ -3,14 +3,14 @@ import React, { useRef, useState } from "react";
 import { Animated, Image, Platform, Switch, Text, TouchableOpacity } from "react-native";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
-import { BaseResponse, Club, ErrorResponse, ProfileUpdateRequest, UserApi } from "../../api";
+import { BaseResponse, Club, ErrorResponse, ProfileResponse, ProfileUpdateRequest, UserApi } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import { lightTheme } from "../../theme";
 import ImagePicker from "react-native-image-crop-picker";
 import BottomButton from "../../components/BottomButton";
 import { Entypo } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { useToast } from "react-native-toast-notifications";
 
 const Container = styled.ScrollView`
@@ -225,14 +225,15 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
   navigation: { navigate, push, goBack, setOptions },
 }) => {
   const toast = useToast();
+  const queryClient = useQueryClient();
   const [about, setAbout] = useState<string>(profile?.about ?? "");
-  const [thumbnail, setThumbnail] = useState<string | undefined>(profile?.thumbnail ?? undefined);
-  const [backgroundImage, setBackgroundImage] = useState<string | undefined>(profile?.backgroundImage ?? undefined);
-  const [emailPublic, setEmailPublic] = useState<boolean>(profile?.emailPublic ?? false);
-  const [contactPublic, setContactPublic] = useState<boolean>(profile?.contactPublic ?? false);
-  const [birthdayPublic, setBirthdayPublic] = useState<boolean>(profile?.birthdayPublic ?? false);
-  const [clubPublic, setClubPublic] = useState<boolean>(profile?.clubPublic ?? false);
-  const [feedPublic, setFeedPublic] = useState<boolean>(profile?.feedPublic ?? false);
+  const [thumbnail, setThumbnail] = useState<string | undefined>(undefined);
+  const [backgroundImage, setBackgroundImage] = useState<string | undefined>(undefined);
+  const [isEmailPublic, setIsEmailPublic] = useState<"Y" | "N">(profile?.isEmailPublic ?? "N");
+  const [isContactPublic, setIsContactPublic] = useState<"Y" | "N">(profile?.isContactPublic ?? "N");
+  const [isBirthdayPublic, setIsBirthdayPublic] = useState<"Y" | "N">(profile?.isBirthdayPublic ?? "N");
+  const [isClubPublic, setIsClubPublic] = useState<"Y" | "N">(profile?.isClubPublic ?? "N");
+  const [isFeedPublic, setIsFeedPublic] = useState<"Y" | "N">(profile?.isFeedPublic ?? "N");
   const { top } = useSafeAreaInsets();
 
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -266,10 +267,10 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
     } catch (e) {}
   };
 
-  const profileMutation = useMutation<BaseResponse, ErrorResponse, ProfileUpdateRequest>(UserApi.updateMyProfile, {
+  const profileMutation = useMutation<ProfileResponse, ErrorResponse, ProfileUpdateRequest>(UserApi.updateMyProfile, {
     onSuccess: (res) => {
       toast.show("저장에 성공하였습니다.", { type: "success" });
-      console.log(res);
+      queryClient.setQueryData<ProfileResponse>(["getMyProfile"], res);
       goBack();
     },
     onError: (error) => {
@@ -282,11 +283,11 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
     const updateData: ProfileUpdateRequest = {
       data: {
         about: about?.trim() ?? "",
-        isBirthdayPublic: birthdayPublic,
-        isClubPublic: clubPublic,
-        isContactPublic: contactPublic,
-        isEmailPublic: emailPublic,
-        isFeedPublic: feedPublic,
+        isBirthdayPublic,
+        isClubPublic,
+        isContactPublic,
+        isEmailPublic,
+        isFeedPublic,
       },
     };
 
@@ -301,12 +302,6 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
         type: "image/jpeg",
         name: splitedThumbnail[splitedThumbnail.length - 1],
       };
-    } else {
-      updateData.thumbnail = {
-        uri: basicImagePath,
-        type: "image/jpeg",
-        name: "basic.jpg",
-      };
     }
 
     if (backgroundImage && splitedBackgroundImage) {
@@ -315,13 +310,9 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
         type: "image/jpeg",
         name: splitedBackgroundImage[splitedBackgroundImage.length - 1],
       };
-    } else {
-      updateData.backgroundImage = {
-        uri: basicImagePath,
-        type: "image/jpeg",
-        name: "basic.jpg",
-      };
     }
+
+    console.log(updateData);
 
     profileMutation.mutate(updateData);
   };
@@ -353,10 +344,10 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
 
       <Animated.ScrollView bounces={false} onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: false })}>
         <Header>
-          <FastImage style={{ width: "100%", height: "100%" }} source={backgroundImage ? { uri: backgroundImage } : require("../../assets/basic.jpg")}>
+          <FastImage style={{ width: "100%", height: "100%" }} source={{ uri: backgroundImage ?? profile?.backgroundImage ?? Image.resolveAssetSource(require("../../assets/basic.jpg")).uri }}>
             <FilterView>
               <BackgroundChangeButton activeOpacity={1} onPress={() => pickImage(IMAGE_TYPE.BACKGROUND)}>
-                <CircleIcon uri={thumbnail} size={140} onPress={() => pickImage(IMAGE_TYPE.THUMBNAIL)} />
+                <CircleIcon uri={thumbnail ?? profile?.thumbnail} size={140} onPress={() => pickImage(IMAGE_TYPE.THUMBNAIL)} />
                 <ImageChangeText>{`이미지 영역을 터치해 수정해 보세요.`}</ImageChangeText>
               </BackgroundChangeButton>
             </FilterView>
@@ -398,8 +389,8 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
                 <Switch
                   trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
                   thumbColor={"white"}
-                  onValueChange={() => setEmailPublic((prev) => !prev)}
-                  value={emailPublic}
+                  onValueChange={() => setIsEmailPublic((prev) => (prev === "Y" ? "N" : "Y"))}
+                  value={isEmailPublic === "Y"}
                   style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.7 }, { scaleY: 0.7 }] : [], marginRight: -5 }}
                 />
               </PersonalItem>
@@ -411,8 +402,8 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
                 <Switch
                   trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
                   thumbColor={"white"}
-                  onValueChange={() => setContactPublic((prev) => !prev)}
-                  value={contactPublic}
+                  onValueChange={() => setIsContactPublic((prev) => (prev === "Y" ? "N" : "Y"))}
+                  value={isContactPublic === "Y"}
                   style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.7 }, { scaleY: 0.7 }] : [], marginRight: -5 }}
                 />
               </PersonalItem>
@@ -424,8 +415,8 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
                 <Switch
                   trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
                   thumbColor={"white"}
-                  onValueChange={() => setBirthdayPublic((prev) => !prev)}
-                  value={birthdayPublic}
+                  onValueChange={() => setIsBirthdayPublic((prev) => (prev === "Y" ? "N" : "Y"))}
+                  value={isBirthdayPublic === "Y"}
                   style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.7 }, { scaleY: 0.7 }] : [], marginRight: -5 }}
                 />
               </PersonalItem>
@@ -445,8 +436,8 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
                 <Switch
                   trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
                   thumbColor={"white"}
-                  onValueChange={() => setClubPublic((prev) => !prev)}
-                  value={clubPublic}
+                  onValueChange={() => setIsClubPublic((prev) => (prev === "Y" ? "N" : "Y"))}
+                  value={isClubPublic === "Y"}
                   style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.7 }, { scaleY: 0.7 }] : [], marginRight: -5 }}
                 />
               </PersonalItem>
@@ -490,8 +481,8 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
                 <Switch
                   trackColor={{ false: "#D4D4D4", true: lightTheme.accentColor }}
                   thumbColor={"white"}
-                  onValueChange={() => setFeedPublic((prev) => !prev)}
-                  value={feedPublic}
+                  onValueChange={() => setIsFeedPublic((prev) => (prev === "Y" ? "N" : "Y"))}
+                  value={isFeedPublic === "Y"}
                   style={{ transform: Platform.OS === "ios" ? [{ scaleX: 0.7 }, { scaleY: 0.7 }] : [], marginRight: -5 }}
                 />
               </PersonalItem>
