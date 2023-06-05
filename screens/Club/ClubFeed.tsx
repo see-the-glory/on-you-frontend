@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity, DeviceEventEmitter, Platform } from "react-native";
-import FastImage from "react-native-fast-image";
+import { ActivityIndicator, useWindowDimensions, Animated, DeviceEventEmitter, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useQueryClient } from "react-query";
 import styled from "styled-components/native";
 import { ClubApi, ErrorResponse, Feed, FeedsResponse } from "../../api";
+import FadeFastImage from "../../components/FadeFastImage";
 import feedSlice from "../../redux/slices/feed";
 import { useAppDispatch } from "../../redux/store";
 import { ClubFeedScreenProps } from "../../Types/Club";
@@ -14,11 +14,6 @@ const Loader = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-`;
-
-const FeedImage = styled(FastImage)<{ size: number }>`
-  width: ${(props: any) => props.size}px;
-  height: ${(props: any) => props.size}px;
 `;
 
 const EmptyView = styled.View`
@@ -171,9 +166,13 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
         </EmptyView>
       )}
       renderItem={({ item, index }: { item: Feed; index: number }) => (
-        <TouchableOpacity key={String(index)} onPress={() => goToClubFeedDetail(index)} style={index % 3 === 1 ? { marginHorizontal: 1 } : {}}>
-          <FeedImage size={feedSize} source={item?.imageUrls && item?.imageUrls[0] ? { uri: item.imageUrls[0] } : require("../../assets/basic.jpg")} />
-        </TouchableOpacity>
+        <FadeFastImage
+          key={String(index)}
+          uri={item?.imageUrls?.length ? item?.imageUrls[0] : undefined}
+          style={{ width: feedSize, height: feedSize }}
+          onPress={() => goToClubFeedDetail(index)}
+          touchableOpacityStyle={{ marginHorizontal: index % 3 === 1 ? 1 : 0 }}
+        />
       )}
     />
   );

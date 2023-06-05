@@ -18,9 +18,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store/reducers";
 import { lightTheme } from "../theme";
 import { Iconify } from "react-native-iconify";
-import { useAppDispatch } from "../redux/store";
-import feedSlice from "../redux/slices/feed";
 import LinkedText from "./LinkedText";
+import FadeFastImage from "./FadeFastImage";
 
 const Container = styled.View``;
 const HeaderView = styled.View<{ padding: number; height: number }>`
@@ -159,6 +158,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
     collapsedTextList: [],
     remainedText: "",
   });
+  // const feedImageOpacity = Array.from({ length: feedData?.imageUrls?.length ?? 0 }, () => new Animated.Value(0));
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   // prettier-ignore
@@ -282,6 +282,15 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
     ]);
   };
 
+  // const onLoadImage = (index: number) => {
+  //   Animated.timing(feedImageOpacity[index], {
+  //     toValue: 1,
+  //     duration: 150,
+  //     delay: 5,
+  //     useNativeDriver: true,
+  //   }).start();
+  // };
+
   const AnimatedHeartView = Animated.createAnimatedComponent(HeartView);
 
   return (
@@ -319,9 +328,25 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
         showIndicator={(feedData?.imageUrls?.length ?? 0) > 1 ? true : false}
         renderItem={({ item, index }: { item: string; index: number }) => (
           <Pinchable>
-            <TouchableOpacity activeOpacity={1} onPress={() => doubleTap()} onLongPress={() => downloadImage(item)}>
-              <FastImage key={String(index)} source={item ? { uri: item } : require("../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} resizeMode={FastImage.resizeMode.contain} />
-            </TouchableOpacity>
+            <FadeFastImage
+              activeOpacity={1}
+              onPress={() => doubleTap()}
+              onLongPress={() => downloadImage(item)}
+              uri={item}
+              style={{ width: feedSize, height: feedSize }}
+              resizeMode={FastImage.resizeMode.contain}
+            />
+            {/* <TouchableOpacity activeOpacity={1} onPress={() => doubleTap()} onLongPress={() => downloadImage(item)} style={{ backgroundColor: "#e3e3e3" }}>
+              <Animated.View style={{ opacity: feedImageOpacity[index] }}>
+                <FastImage
+                  key={String(index)}
+                  source={item ? { uri: item } : require("../assets/basic.jpg")}
+                  style={{ width: feedSize, height: feedSize }}
+                  resizeMode={FastImage.resizeMode.contain}
+                  onLoadEnd={() => onLoadImage(index)}
+                />
+              </Animated.View>
+            </TouchableOpacity> */}
           </Pinchable>
         )}
         ListEmptyComponent={<FastImage source={require("../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} />}

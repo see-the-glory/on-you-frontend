@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components/native";
 import FastImage from "react-native-fast-image";
 import { Iconify } from "react-native-iconify";
+import { Animated } from "react-native";
 
 const Container = styled.TouchableOpacity<{ size: number; kerning: number; opacity: number }>`
   position: relative;
@@ -51,26 +52,39 @@ interface CircleIconProps {
   size: number;
   uri?: string | null;
   name?: string;
-  badge?: "MASTER" | "MANAGER" | "MEMBER" | null;
+  badge?: string | null;
   kerning?: number;
   opacity?: number;
   onPress?: () => void;
 }
 
 const CircleIcon: React.FC<CircleIconProps> = ({ size, uri, name, badge, kerning, opacity, onPress }) => {
+  const animatedOpacity = useRef(new Animated.Value(0)).current;
+
+  const onLoadImage = () => {
+    Animated.timing(animatedOpacity, {
+      toValue: 1,
+      duration: 150,
+      delay: 5,
+      useNativeDriver: true,
+    }).start();
+  };
+
   return (
     <Container size={size} kerning={kerning ?? 0} opacity={opacity ?? 1} activeOpacity={1} onPress={onPress}>
-      {["MASTER", "MANAGER"].includes(badge) ? (
-        <BadgeIcon size={size}>
-          {badge === "MASTER" ? <Iconify icon="ph:star-fill" size={size * 0.23} color="white" /> : <Iconify icon="fluent-mdl2:skype-check" size={size * 0.23} color="white" />}
-        </BadgeIcon>
-      ) : (
-        <></>
-      )}
-      <Backplate size={size}>
-        <IconImage source={uri ? { uri: uri } : require("../assets/basic.jpg")} size={size} />
-      </Backplate>
-      {name ? <CircleName>{name}</CircleName> : <></>}
+      <Animated.View style={{ opacity: animatedOpacity, justifyContent: "center", alignItems: "center" }}>
+        {["MASTER", "MANAGER"].includes(badge) ? (
+          <BadgeIcon size={size}>
+            {badge === "MASTER" ? <Iconify icon="ph:star-fill" size={size * 0.23} color="white" /> : <Iconify icon="fluent-mdl2:skype-check" size={size * 0.23} color="white" />}
+          </BadgeIcon>
+        ) : (
+          <></>
+        )}
+        <Backplate size={size}>
+          <IconImage source={uri ? { uri: uri } : require("../assets/basic.jpg")} size={size} onLoad={onLoadImage} />
+        </Backplate>
+        {name ? <CircleName>{name}</CircleName> : <></>}
+      </Animated.View>
     </Container>
   );
 };

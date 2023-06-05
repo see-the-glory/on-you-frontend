@@ -27,8 +27,8 @@ interface TagProps {
   textColor?: string;
   backgroundColor?: string;
   borderColor?: string;
-  contentContainerStyle?: StyleProp<ViewStyle> | undefined;
-  textStyle?: StyleProp<TextStyle> | undefined;
+  contentContainerStyle?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 const Tag: React.FC<TagProps> = ({ name, iconName, textColor, backgroundColor, borderColor, contentContainerStyle, textStyle, iconSize }) => {

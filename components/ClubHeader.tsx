@@ -12,6 +12,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { lightTheme } from "../theme";
 import { Iconify } from "react-native-iconify";
+import FadeFastImage from "./FadeFastImage";
+import SkeletonContent from "react-native-skeleton-content-nonexpo";
 
 const NavigationView = styled.SafeAreaView<{ height: number }>`
   position: absolute;
@@ -55,6 +57,7 @@ const Header = styled.View`
   justify-content: center;
   z-index: 2;
   align-items: center;
+  background-color: #e3e3e3;
 `;
 
 const FilterView = styled.View`
@@ -226,72 +229,73 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, clubRole, notiCou
           </TouchableOpacity>
         </RightNavigationView>
       </NavigationView>
-      <Header>
-        <FastImage style={{ width: "100%", height: heightExpanded }} source={clubData.thumbnail ? { uri: clubData.thumbnail } : require("../assets/basic.jpg")}>
-          <Animated.View
-            pointerEvents="box-none"
-            style={{
-              position: "absolute",
-              width: "100%",
-              zIndex: 2,
-              height: heightExpanded,
-              opacity: fadeIn,
-              justifyContent: "flex-start",
-              backgroundColor: "white",
-            }}
-          >
-            <CollapsedView height={headerHeight} style={{ marginTop: top }}>
-              <CollapsedNameView>
-                <CollapsedNameText>{clubData?.name}</CollapsedNameText>
-              </CollapsedNameView>
-            </CollapsedView>
-          </Animated.View>
+      <Header style={{ width: "100%", height: heightExpanded }}>
+        <View style={{ width: "100%", height: heightExpanded, position: "absolute" }}>
+          <FadeFastImage style={{ width: "100%", height: heightExpanded }} uri={clubData?.thumbnail ?? undefined} />
+        </View>
+        <Animated.View
+          pointerEvents="box-none"
+          style={{
+            position: "absolute",
+            width: "100%",
+            zIndex: 2,
+            height: heightExpanded,
+            opacity: fadeIn,
+            justifyContent: "flex-start",
+            backgroundColor: "white",
+          }}
+        >
+          <CollapsedView height={headerHeight} style={{ marginTop: top }}>
+            <CollapsedNameView>
+              <CollapsedNameText>{clubData?.name}</CollapsedNameText>
+            </CollapsedNameView>
+          </CollapsedView>
+        </Animated.View>
 
-          <FilterView>
-            <AnimatedFadeOutBox style={{ opacity: fadeOut, width: "75%" }}>
-              <InformationView>
-                <CategoryView>
-                  {clubData.categories?.map((category, index) => (
-                    <Tag key={`category_${index}`} name={category.name} backgroundColor={"rgba(255, 255, 255, 0.5)"} textColor={"black"} textStyle={{ fontSize: 12, lineHeight: 14 }} />
-                  ))}
-                </CategoryView>
-                <ClubNameView>
-                  <ClubNameText>{clubData.name}</ClubNameText>
-                </ClubNameView>
-                <ClubShortDescView>
-                  <ClubShortDescText>{clubData.clubShortDesc}</ClubShortDescText>
-                </ClubShortDescView>
-                <Break />
-                <DetailInfoView>
-                  <DetailInfoItem>
-                    <Iconify icon="ph:star-fill" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
+        <FilterView>
+          <AnimatedFadeOutBox style={{ opacity: fadeOut, width: "75%" }}>
+            <InformationView>
+              <CategoryView>
+                {clubData.categories?.map((category, index) => (
+                  <Tag key={`category_${index}`} name={category.name} backgroundColor={"rgba(255, 255, 255, 0.5)"} textColor={"black"} textStyle={{ fontSize: 12, lineHeight: 14 }} />
+                ))}
+              </CategoryView>
+              <ClubNameView>
+                <ClubNameText>{clubData.name}</ClubNameText>
+              </ClubNameView>
+              <ClubShortDescView>
+                <ClubShortDescText>{clubData.clubShortDesc}</ClubShortDescText>
+              </ClubShortDescView>
+              <Break />
+              <DetailInfoView>
+                <DetailInfoItem>
+                  <Iconify icon="ph:star-fill" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
 
-                    <DetailItemTitle>{`리더`}</DetailItemTitle>
-                    {master ? (
-                      <>
-                        <CircleIcon size={18} uri={master.thumbnail} kerning={3} />
-                        <DetailItemText>{master.name}</DetailItemText>
-                      </>
-                    ) : (
-                      <DetailItemText>{`없음`}</DetailItemText>
-                    )}
-                  </DetailInfoItem>
-                  <DetailInfoItem>
-                    <Iconify icon="fe:users" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
-                    <DetailItemTitle>{`멤버`}</DetailItemTitle>
-                    <DetailItemText>{clubData.recruitNumber}</DetailItemText>
-                    <DetailItemText style={{ color: "#C0C0C0" }}>{` / ${clubData.maxNumber ? `${clubData.maxNumber} 명` : `무제한`}`}</DetailItemText>
-                  </DetailInfoItem>
-                  <DetailInfoItem>
-                    <Iconify icon="material-symbols:feed-rounded" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
-                    <DetailItemTitle>{`피드`}</DetailItemTitle>
-                    <DetailItemText>{clubData.feedNumber}</DetailItemText>
-                  </DetailInfoItem>
-                </DetailInfoView>
-              </InformationView>
-            </AnimatedFadeOutBox>
-          </FilterView>
-        </FastImage>
+                  <DetailItemTitle>{`리더`}</DetailItemTitle>
+                  {master ? (
+                    <>
+                      <CircleIcon size={18} uri={master.thumbnail} kerning={3} />
+                      <DetailItemText>{master.name}</DetailItemText>
+                    </>
+                  ) : (
+                    <DetailItemText>{`없음`}</DetailItemText>
+                  )}
+                </DetailInfoItem>
+                <DetailInfoItem>
+                  <Iconify icon="fe:users" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
+                  <DetailItemTitle>{`멤버`}</DetailItemTitle>
+                  <DetailItemText>{clubData.recruitNumber}</DetailItemText>
+                  <DetailItemText style={{ color: "#C0C0C0" }}>{` / ${clubData.maxNumber ? `${clubData.maxNumber} 명` : `무제한`}`}</DetailItemText>
+                </DetailInfoItem>
+                <DetailInfoItem>
+                  <Iconify icon="material-symbols:feed-rounded" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
+                  <DetailItemTitle>{`피드`}</DetailItemTitle>
+                  <DetailItemText>{clubData.feedNumber}</DetailItemText>
+                </DetailInfoItem>
+              </DetailInfoView>
+            </InformationView>
+          </AnimatedFadeOutBox>
+        </FilterView>
       </Header>
     </>
   );

@@ -17,7 +17,7 @@ const LinkText = styled(NormalText)`
 
 interface LinkedTextProps {
   children?: string;
-  linkStyle?: StyleProp<TextStyle> | undefined;
+  linkStyle?: StyleProp<TextStyle>;
 }
 
 const LinkedText: React.FC<LinkedTextProps & TextProps> = ({ children, linkStyle, ...props }) => {
