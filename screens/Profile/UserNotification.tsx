@@ -116,8 +116,7 @@ const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
       });
     } else if (item.actionType === "APPROVE") {
       readAction(item);
-      const clubTopTabsProps = { clubData: { id: item.actionClubId } };
-      return navigate("ClubStack", { screen: "ClubTopTabs", params: clubTopTabsProps });
+      return navigate("ClubStack", { screen: "ClubTopTabs", params: { clubid: item.actionClubId } });
     } else if (item.actionType === "REJECT") {
       readAction(item);
       const clubJoinRejectMessageProps = {
@@ -128,16 +127,13 @@ const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
       return navigate("ClubStack", { screen: "ClubJoinRejectMessage", params: clubJoinRejectMessageProps });
     } else if (item.actionType === "FEED_COMMENT") {
       readAction(item);
-      const feedSelectionProps = { selectFeedId: item.actionFeedId };
-      return navigate("FeedStack", { screen: "FeedSelection", params: feedSelectionProps });
+      return navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: item.actionFeedId } });
     } else if (item.actionType === "SCHEDULE_CREATE") {
       readAction(item);
-      const clubTopTabsProps = { clubData: { id: item.actionClubId } };
-      return navigate("ClubStack", { screen: "ClubTopTabs", params: clubTopTabsProps });
+      return navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: item.actionClubId } });
     } else if (item.actionType === "COMMENT_REPLY") {
       readAction(item);
-      const feedSelectionProps = { selectFeedId: item.actionFeedId };
-      return navigate("FeedStack", { screen: "FeedSelection", params: feedSelectionProps });
+      return navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: item.actionFeedId } });
     }
   };
 

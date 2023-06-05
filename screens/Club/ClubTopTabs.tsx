@@ -10,7 +10,6 @@ import FloatingActionButton from "../../components/FloatingActionButton";
 import { useMutation, useQuery } from "react-query";
 import {
   BaseResponse,
-  Club,
   ClubApi,
   ClubDeletionRequest,
   ClubResponse,
@@ -101,14 +100,14 @@ const AnimatedFooterView = Animated.createAnimatedComponent(FooterView);
 
 const ClubTopTabs = ({
   route: {
-    params: { clubData },
+    params: { clubId },
   },
   navigation: { navigate, popToTop },
 }) => {
+  console.log(clubId);
   const me = useSelector((state: RootState) => state.auth.user);
   const toast = useToast();
   const dispatch = useAppDispatch();
-  const [data, setData] = useState<Club>(clubData);
   const [scheduleData, setScheduleData] = useState<RefinedSchedule[]>();
   const [notiCount, setNotiCount] = useState<number>(0);
   const { ref: clubOptionRef, open: openClubOption, close: closeClubOption } = useModalize();
@@ -151,10 +150,12 @@ const ClubTopTabs = ({
     },
   });
 
-  const { isLoading: clubLoading, refetch: clubDataRefetch } = useQuery<ClubResponse, ErrorResponse>(["getClub", clubData.id], ClubApi.getClub, {
-    onSuccess: (res) => {
-      setData(res.data);
-    },
+  const {
+    data: clubData,
+    isLoading: clubLoading,
+    refetch: clubDataRefetch,
+  } = useQuery<ClubResponse, ErrorResponse>(["getClub", clubId], ClubApi.getClub, {
+    onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getClub ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
@@ -167,9 +168,9 @@ const ClubTopTabs = ({
     isLoading: clubRoleLoading,
     data: clubRole,
     refetch: clubRoleRefetch,
-  } = useQuery<ClubRoleResponse, ErrorResponse>(["getClubRole", data.id], ClubApi.getClubRole, {
+  } = useQuery<ClubRoleResponse, ErrorResponse>(["getClubRole", clubId], ClubApi.getClubRole, {
     onSuccess: (res) => {
-      dispatch(clubSlice.actions.updateClubRole({ clubId: data.id, role: res.data.role, applyStatus: res.data.applyStatus }));
+      dispatch(clubSlice.actions.updateClubRole({ clubId, role: res.data.role, applyStatus: res.data.applyStatus }));
     },
     onError: (error) => {
       console.log(`API ERROR | getClubRole ${error.code} ${error.status}`);
@@ -177,7 +178,7 @@ const ClubTopTabs = ({
     },
   });
 
-  const { isLoading: schedulesLoading, refetch: schedulesRefetch } = useQuery<ClubSchedulesResponse, ErrorResponse>(["getClubSchedules", data.id], ClubApi.getClubSchedules, {
+  const { isLoading: schedulesLoading, refetch: schedulesRefetch } = useQuery<ClubSchedulesResponse, ErrorResponse>(["getClubSchedules", clubId], ClubApi.getClubSchedules, {
     onSuccess: (res) => {
       const week = ["일", "월", "화", "수", "목", "금", "토"];
       const result: RefinedSchedule[] = [];
@@ -213,7 +214,7 @@ const ClubTopTabs = ({
     },
   });
 
-  const { isLoading: notiLoading, refetch: clubNotiRefetch } = useQuery<NotificationsResponse, ErrorResponse>(["getClubNotifications", data.id], ClubApi.getClubNotifications, {
+  const { isLoading: notiLoading, refetch: clubNotiRefetch } = useQuery<NotificationsResponse, ErrorResponse>(["getClubNotifications", clubId], ClubApi.getClubNotifications, {
     onSuccess: (res) => {
       setNotiCount(res?.data.filter((item) => !item.read).length);
     },
@@ -258,7 +259,7 @@ const ClubTopTabs = ({
     if (!validation) return toast.show(`글을 입력하세요.`, { type: "warning" });
 
     let requestData: GuestCommentRequest = {
-      clubId: clubData.id,
+      clubId,
       content: guestComment.trim(),
     };
 
@@ -310,19 +311,19 @@ const ClubTopTabs = ({
   // Function in Modal
   const goToClubEdit = () => {
     closeClubOption();
-    navigate("ClubManagementStack", { screen: "ClubManagementMain", params: { clubData: data } });
+    navigate("ClubManagementStack", { screen: "ClubManagementMain", params: { clubId } });
   };
 
   const goToClubJoin = () => {
     if (clubRole?.data?.applyStatus === "APPLIED") {
       return toast.show("가입신청서가 이미 전달되었습니다.", { type: "warning" });
     }
-    if (data?.recruitStatus === "CLOSE") {
+    if (clubData?.data?.recruitStatus === "CLOSE") {
       return toast.show("멤버 모집 기간이 아닙니다.", { type: "warning" });
     }
 
     closeClubOption();
-    navigate("ClubJoin", { clubData: data });
+    navigate("ClubJoin", { clubId });
   };
 
   const goToFeedCreation = () => {
@@ -330,29 +331,29 @@ const ClubTopTabs = ({
       toast.show("유저 정보를 알 수 없습니다.", { type: "warning" });
       return;
     }
-    navigate("FeedStack", { screen: "ImageSelection", params: { clubId: data.id } });
+    navigate("FeedStack", { screen: "ImageSelection", params: { clubId } });
   };
 
   const openShare = async () => {
     closeClubOption();
     const link = await dynamicLinks().buildShortLink(
       {
-        link: `https://onyou.page.link/club?id=${data.id}`,
+        link: `https://onyou.page.link/club?id=${clubId}`,
         domainUriPrefix: "https://onyou.page.link",
         android: { packageName: "com.onyoufrontend" },
         ios: { bundleId: "com.onyou.project", appStoreId: "1663717005" },
         otherPlatform: { fallbackUrl: "https://thin-helium-f6d.notion.site/e33250ceb44c428cb881d6ac7d163e69" },
         social: {
-          title: data?.name ?? "",
-          descriptionText: data?.clubShortDesc ?? "",
-          imageUrl: data?.thumbnail ?? "",
+          title: clubData?.data?.name ?? "",
+          descriptionText: clubData?.data?.clubShortDesc ?? "",
+          imageUrl: clubData?.data?.thumbnail ?? "",
         },
 
         // navigation: { forcedRedirectEnabled: true }, // iOS에서 preview page를 스킵하는 옵션. 이걸 사용하면 온유앱이 꺼져있을 때는 제대로 navigation이 되질 않는 버그가 있음.
       },
       dynamicLinks.ShortLinkType.SHORT
     );
-    const title = data.name;
+    const title = clubData?.data.name;
     const options = Platform.select({
       default: {
         title,
@@ -378,13 +379,13 @@ const ClubTopTabs = ({
   };
 
   const withdrawClub = () => {
-    const requestData = { clubId: data.id };
+    const requestData = { clubId };
     Alert.alert("모임 탈퇴", "정말로 모임에서 탈퇴하시겠습니까?", [
       { text: "아니요" },
       {
         text: "예",
         onPress: () => {
-          if (data.members?.length === 1 && data.members[0].id === me?.id && data.members[0].role === "MASTER")
+          if (clubData?.data?.members?.length === 1 && clubData?.data?.members[0].id === me?.id && clubData?.data?.members[0].role === "MASTER")
             Alert.alert("모임 삭제 안내", "현재 모임의 리더입니다. 모임을 탈퇴할 시 이 모임은 삭제됩니다. 삭제하시겠습니까?", [
               { text: "아니요" },
               {
@@ -401,7 +402,7 @@ const ClubTopTabs = ({
   };
 
   useEffect(() => {
-    dispatch(clubSlice.actions.initClub({ clubId: data.id }));
+    dispatch(clubSlice.actions.initClub({ clubId }));
 
     const scrollListener = scrollY.addListener(({ value }) => {});
 
@@ -450,52 +451,48 @@ const ClubTopTabs = ({
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
       backHandler.remove();
-      dispatch(clubSlice.actions.initClub({ clubId: data.id }));
+      dispatch(clubSlice.actions.initClub({ clubId }));
       console.log("ClubTopTabs - remove listner & delete clubslice");
     };
   }, []);
 
   const renderClubHome = useCallback(
-    (props: any) => {
-      props.route.params.clubData = data;
-      return (
-        <ClubHome
-          {...props}
-          scrollY={scrollY}
-          headerDiff={headerDiff}
-          headerCollapsedHeight={heightCollapsed}
-          actionButtonHeight={ACTION_BUTTON_HEIGHT}
-          schedules={scheduleData}
-          syncScrollOffset={syncScrollOffset}
-          screenScrollRefs={screenScrollRefs}
-        />
-      );
-    },
-    [headerDiff, data, scheduleData]
+    (props: any) => (
+      <ClubHome
+        {...props}
+        clubData={clubData?.data}
+        scrollY={scrollY}
+        headerDiff={headerDiff}
+        headerCollapsedHeight={heightCollapsed}
+        actionButtonHeight={ACTION_BUTTON_HEIGHT}
+        schedules={scheduleData}
+        syncScrollOffset={syncScrollOffset}
+        screenScrollRefs={screenScrollRefs}
+      />
+    ),
+    [headerDiff, clubData, scheduleData]
   );
+
   const renderClubFeed = useCallback(
-    (props: any) => {
-      props.route.params.clubData = data;
-      return (
-        <ClubFeed
-          {...props}
-          scrollY={scrollY}
-          headerDiff={headerDiff}
-          headerCollapsedHeight={heightCollapsed}
-          actionButtonHeight={ACTION_BUTTON_HEIGHT}
-          syncScrollOffset={syncScrollOffset}
-          screenScrollRefs={screenScrollRefs}
-        />
-      );
-    },
-    [headerDiff, data]
+    (props: any) => (
+      <ClubFeed
+        {...props}
+        scrollY={scrollY}
+        headerDiff={headerDiff}
+        headerCollapsedHeight={heightCollapsed}
+        actionButtonHeight={ACTION_BUTTON_HEIGHT}
+        syncScrollOffset={syncScrollOffset}
+        screenScrollRefs={screenScrollRefs}
+      />
+    ),
+    [headerDiff, clubId]
   );
 
   return (
     <Container>
       <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <ClubHeader
-        clubData={data}
+        clubId={clubId}
         clubRole={clubRole?.data}
         notiCount={notiCount}
         openClubOptionModal={openClubOptionModal}
@@ -524,8 +521,8 @@ const ClubTopTabs = ({
           tabBar={(props) => <TabBar {...props} height={TAB_BUTTON_HEIGHT} />}
           sceneContainerStyle={{ position: "absolute", zIndex: 1 }}
         >
-          <TopTab.Screen options={{ tabBarLabel: "모임 정보" }} name="ClubHome" component={renderClubHome} initialParams={{ clubData: data }} />
-          <TopTab.Screen options={{ tabBarLabel: "게시물" }} name="ClubFeed" component={renderClubFeed} initialParams={{ clubData: data }} />
+          <TopTab.Screen options={{ tabBarLabel: "모임 정보" }} name="ClubHome" component={renderClubHome} initialParams={{ clubId }} />
+          <TopTab.Screen options={{ tabBarLabel: "게시물" }} name="ClubFeed" component={renderClubFeed} initialParams={{ clubId }} />
         </TopTab.Navigator>
       </Animated.View>
 
@@ -586,7 +583,7 @@ const ClubTopTabs = ({
         <FloatingActionButton
           height={ACTION_BUTTON_HEIGHT}
           role={clubRole?.data}
-          recruitStatus={data?.recruitStatus}
+          recruitStatus={clubData?.data.recruitStatus}
           openShare={openShare}
           goToClubJoin={goToClubJoin}
           goToFeedCreation={goToFeedCreation}

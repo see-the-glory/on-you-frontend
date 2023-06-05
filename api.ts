@@ -212,10 +212,6 @@ export interface MyClubsResponse extends BaseResponse {
   data: Club[];
 }
 
-export interface ClubUpdateResponse extends BaseResponse {
-  data: Club;
-}
-
 export interface ClubCreationResponse extends BaseResponse {
   data: Club;
 }
@@ -628,7 +624,7 @@ const updateClub = (req: ClubUpdateRequest) => {
       type: "application/json",
     });
   }
-  return axios.put<string, ClubUpdateResponse>(`api/clubs/${req.clubId}`, body, {
+  return axios.put<string, ClubResponse>(`api/clubs/${req.clubId}`, body, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };

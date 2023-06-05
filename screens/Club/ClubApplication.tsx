@@ -129,7 +129,7 @@ const ClubApplication = ({
 
   const reject = () => {
     const clubJoinRejectProps = {
-      clubId: clubData.id,
+      clubId: clubData?.id,
       actionId,
       actionerName,
       actionerId,
@@ -144,7 +144,7 @@ const ClubApplication = ({
         text: "예",
         onPress: () => {
           let data: ClubApproveRequest = {
-            clubId: clubData.id,
+            clubId: clubData?.id,
             actionId: actionId,
             userId: actionerId,
           };

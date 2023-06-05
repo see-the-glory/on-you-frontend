@@ -220,7 +220,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
   const goToProfile = useCallback((userId?: number) => navigation.push("ProfileStack", { screen: "Profile", params: { userId } }), []);
 
   const goToClub = useCallback((clubId?: number) => {
-    if (clubId) navigation.push("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
+    if (clubId) navigation.push("ClubStack", { screen: "ClubTopTabs", params: { clubId }});
   }, []);
 
   const goToFeedComments = useCallback((feedId?: number) => {

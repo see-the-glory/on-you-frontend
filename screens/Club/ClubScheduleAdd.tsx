@@ -159,7 +159,7 @@ const ClubScheduleAdd = ({
     const endDate = `${startDate.split("T")[0]}T23:59:59`;
 
     const requestData: ClubScheduleCreationRequest = {
-      clubId: clubData.id,
+      clubId: clubData?.id,
       content: memo,
       location: place,
       name: "schedule",
@@ -173,7 +173,7 @@ const ClubScheduleAdd = ({
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
+        <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubId: clubData?.id })}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),

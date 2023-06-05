@@ -46,7 +46,7 @@ const ClubNotification = ({
     data: notifications,
     isLoading: notiLoading,
     refetch: notiRefetch,
-  } = useQuery<NotificationsResponse, ErrorResponse>(["getClubNotifications", clubData.id], ClubApi.getClubNotifications, {
+  } = useQuery<NotificationsResponse, ErrorResponse>(["getClubNotifications", clubData?.id], ClubApi.getClubNotifications, {
     onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getClubNotifications ${error.code} ${error.status}`);
