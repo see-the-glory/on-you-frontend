@@ -2,12 +2,11 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter, TouchableWithoutFeedback, View, Alert, Text } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Ionicons } from "@expo/vector-icons";
-import { ClubHomeScreenProps, RefinedSchedule } from "../../Types/Club";
-import { BaseResponse, ClubApi, ErrorResponse, GuestComment, GuestCommentDeletionRequest, GuestCommentResponse, Member } from "../../api";
+import { RefinedSchedule } from "../../Types/Club";
+import { BaseResponse, Club, ClubApi, ErrorResponse, GuestComment, GuestCommentDeletionRequest, GuestCommentResponse, Member } from "../../api";
 import ScheduleModal from "./ClubScheduleModal";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
-import { useAppDispatch } from "../../redux/store";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
@@ -222,6 +221,7 @@ const EmptyText = styled.Text`
 
 // ClubHome Param For Collapsed Scroll Animation
 export interface ClubHomeParamList {
+  clubData?: Club;
   scrollY: Animated.Value;
   headerDiff: number;
   headerCollapsedHeight: number;
@@ -231,12 +231,13 @@ export interface ClubHomeParamList {
   screenScrollRefs: any;
 }
 
-const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
+const ClubHome: React.FC<ClubHomeParamList> = ({
   navigation: { navigate, push },
   route: {
     name: screenName,
-    params: { clubData },
+    params: { clubId },
   },
+  clubData,
   scrollY,
   headerDiff,
   headerCollapsedHeight,
@@ -251,8 +252,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const [memberLoading, setMemberLoading] = useState(true);
   const [members, setMembers] = useState<Member[]>([]);
-  const dispatch = useAppDispatch();
-  const myRole = useSelector((state: RootState) => state.club[clubData.id]?.role);
+  const myRole = useSelector((state: RootState) => state.club[clubId]?.role);
   const toast = useToast();
   const [clubLongDescLines, setClubLongDescLines] = useState<string[]>(typeof clubData?.clubLongDesc === "string" ? clubData?.clubLongDesc?.split("\n") : []);
   const [isCollapsedLongDesc, setIsCollapsedLongDesc] = useState<boolean>(true);
@@ -263,7 +263,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
 
   useLayoutEffect(() => {
     getData();
-  }, []);
+  }, [clubData]);
 
   useEffect(() => {
     const guestCommentSubscription = DeviceEventEmitter.addListener("GuestCommentRefetch", () => {
@@ -282,7 +282,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     setGuestBookIndex(newIndex);
   };
 
-  const { isLoading: isGuestCommentLoading, refetch: guestCommentRefetch } = useQuery<GuestCommentResponse, ErrorResponse>(["getGuestComment", clubData.id], ClubApi.getGuestComment, {
+  const { isLoading: isGuestCommentLoading, refetch: guestCommentRefetch } = useQuery<GuestCommentResponse, ErrorResponse>(["getGuestComment", clubId], ClubApi.getGuestComment, {
     onSuccess: (res) => {
       let result = [];
       res?.data?.reverse();
@@ -581,7 +581,7 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
       </Animated.ScrollView>
       <ScheduleModal
         visible={scheduleVisible}
-        clubId={clubData.id}
+        clubId={clubId}
         scheduleData={schedules}
         selectIndex={selectedSchedule}
         closeModal={(refresh: boolean) => {

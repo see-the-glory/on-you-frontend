@@ -135,7 +135,7 @@ interface UserInstroductionProps {
 const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const toast = useToast();
-  const goToClub = (clubId: number) => navigation.push("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
+  const goToClub = (clubId: number) => navigation.push("ClubStack", { screen: "ClubTopTabs", params: { clubId } });
   return !profile ? (
     <Loader>
       <ActivityIndicator />

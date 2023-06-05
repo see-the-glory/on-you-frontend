@@ -139,7 +139,7 @@ const Root = () => {
     const match = parsed.url.split("/").pop();
     switch (match) {
       case "club":
-        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: parsed.query.id } } });
+        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: parsed.query.id } });
         break;
       case "user":
         navigation.navigate("ProfileStack", { screen: "Profile", params: { userId: parsed.query.id } });
@@ -156,17 +156,17 @@ const Root = () => {
         navigation.navigate("ProfileStack", { screen: "UserNotification" });
         break;
       case "APPROVE":
-        if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
+        if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: data?.clubId } });
         break;
       case "REJECT":
         navigation.navigate("ProfileStack", { screen: "UserNotification" });
         break;
       case "SCHEDULE_CREATE":
-        if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
+        if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: data?.clubId } });
         break;
       case "FEED_CREATE":
         if (data?.feedId) navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
-        else if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
+        else if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: data?.clubId } });
         break;
       case "FEED_COMMENT":
         if (data?.feedId) navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });

@@ -49,7 +49,7 @@ const ClubCreationSuccess: React.FC<ClubCreationSuccessScreenProps> = ({
   const goClubHome = () => {
     return navigate("ClubStack", {
       screen: "ClubTopTabs",
-      params: { clubData },
+      params: { clubId: clubData?.id },
     });
   };
 

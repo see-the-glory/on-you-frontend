@@ -72,10 +72,9 @@ interface MemberList {
 const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
   navigation: { navigate, setOptions, goBack },
   route: {
-    params: { clubData },
+    params: { clubId, clubData },
   },
 }) => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const toast = useToast();
   const [refreshing, setRefreshing] = useState(false);
   const [bundles, setBundles] = useState<MemberBundle[]>();
@@ -83,13 +82,14 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
   const ICON_SIZE = 45;
   const DEFAULT_PADDING = 40;
   const COLUMN_NUM = Math.floor((SCREEN_WIDTH - DEFAULT_PADDING) / (ICON_SIZE + 10));
-  const [menuVisibleMap, setMenuVisibleMap] = useState(new Map(clubData.members?.map((member) => [member.id, false])));
-  const [kickOutMap, setKickOutMap] = useState(new Map(clubData.members?.map((member) => [member.id, false])));
-  const [memberMap, setMemberMap] = useState(new Map(clubData.members?.map((member) => [member.id, { ...member }]))); // 깊은 복사를 위해서 Spread 구문 사용
+  const [menuVisibleMap, setMenuVisibleMap] = useState(new Map(clubData?.members?.map((member) => [member.id, false])));
+  const [kickOutMap, setKickOutMap] = useState(new Map(clubData?.members?.map((member) => [member.id, false])));
+  const [memberMap, setMemberMap] = useState(new Map(clubData?.members?.map((member) => [member.id, { ...member }]))); // 깊은 복사를 위해서 Spread 구문 사용
   const mutation = useMutation<BaseResponse, ErrorResponse, ChangeRoleRequest>(ClubApi.changeRole, {
     onSuccess: (res) => {
       toast.show(`저장이 완료되었습니다.`, { type: "success" });
-      navigate("ClubManagementMain", { clubData, refresh: true });
+      DeviceEventEmitter.emit("ClubRefetch");
+      goBack();
     },
     onError: (error) => {
       console.log(`API ERROR | changeRole ${error.code} ${error.status}`);
@@ -162,11 +162,7 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
       return;
     }
 
-    mutation.mutate({
-      clubId: clubData.id,
-      data,
-      token,
-    });
+    mutation.mutate({ clubId, data });
   };
 
   const onRefresh = () => {

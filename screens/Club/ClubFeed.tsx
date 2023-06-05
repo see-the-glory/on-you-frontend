@@ -46,7 +46,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   navigation: { navigate, push },
   route: {
     name: screenName,
-    params: { clubData },
+    params: { clubId },
   },
   scrollY,
   headerDiff,
@@ -57,6 +57,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
 }) => {
   const toast = useToast();
   const queryClient = useQueryClient();
+  const clubData = queryClient.getQueryData<ClubResponse>(["getClub", clubId])?.data;
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
@@ -70,7 +71,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     hasNextPage,
     refetch: feedsRefetch,
     fetchNextPage,
-  } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["getClubFeeds", clubData.id], ClubApi.getClubFeeds, {
+  } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["getClubFeeds", clubId], ClubApi.getClubFeeds, {
     getNextPageParam: (currentPage) => {
       if (currentPage) {
         return currentPage.hasData === true ? currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor : null;

@@ -4,8 +4,7 @@ import { Entypo, Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
 import { BlurView } from "expo-blur";
-import FastImage from "react-native-fast-image";
-import { Club, ClubRole } from "../api";
+import { Club, ClubResponse, ClubRole } from "../api";
 import CircleIcon from "./CircleIcon";
 import Tag from "./Tag";
 import { useNavigation } from "@react-navigation/native";
@@ -13,7 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { lightTheme } from "../theme";
 import { Iconify } from "react-native-iconify";
 import FadeFastImage from "./FadeFastImage";
-import SkeletonContent from "react-native-skeleton-content-nonexpo";
+import { useQueryClient } from "react-query";
 
 const NavigationView = styled.SafeAreaView<{ height: number }>`
   position: absolute;
@@ -156,7 +155,7 @@ const AnimatedFadeOutBox = Animated.createAnimatedComponent(View);
 
 // ClubHome Header
 export interface ClubHomeHaederProps {
-  clubData: Club;
+  clubId: number;
   clubRole?: ClubRole;
   notiCount: number;
   openClubOptionModal: () => void;
@@ -167,9 +166,11 @@ export interface ClubHomeHaederProps {
   headerDiff: number;
 }
 
-const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, clubRole, notiCount, openClubOptionModal, headerHeight, heightExpanded, heightCollapsed, headerDiff, scrollY }) => {
+const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubId, clubRole, notiCount, openClubOptionModal, headerHeight, heightExpanded, heightCollapsed, headerDiff, scrollY }) => {
   const navigation = useNavigation();
-  const master = clubData.members?.find((member) => member.role === "MASTER");
+  const queryClient = useQueryClient();
+  const clubData = queryClient.getQueryData<ClubResponse>(["getClub", clubId])?.data;
+  const master = clubData?.members?.find((member) => member.role === "MASTER");
   const { top } = useSafeAreaInsets();
   const fadeIn = scrollY.interpolate({
     inputRange: [0, headerDiff],
@@ -256,15 +257,15 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, clubRole, notiCou
           <AnimatedFadeOutBox style={{ opacity: fadeOut, width: "75%" }}>
             <InformationView>
               <CategoryView>
-                {clubData.categories?.map((category, index) => (
+                {clubData?.categories?.map((category, index) => (
                   <Tag key={`category_${index}`} name={category.name} backgroundColor={"rgba(255, 255, 255, 0.5)"} textColor={"black"} textStyle={{ fontSize: 12, lineHeight: 14 }} />
                 ))}
               </CategoryView>
               <ClubNameView>
-                <ClubNameText>{clubData.name}</ClubNameText>
+                <ClubNameText>{clubData?.name}</ClubNameText>
               </ClubNameView>
               <ClubShortDescView>
-                <ClubShortDescText>{clubData.clubShortDesc}</ClubShortDescText>
+                <ClubShortDescText>{clubData?.clubShortDesc}</ClubShortDescText>
               </ClubShortDescView>
               <Break />
               <DetailInfoView>
@@ -284,13 +285,13 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubData, clubRole, notiCou
                 <DetailInfoItem>
                   <Iconify icon="fe:users" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
                   <DetailItemTitle>{`멤버`}</DetailItemTitle>
-                  <DetailItemText>{clubData.recruitNumber}</DetailItemText>
-                  <DetailItemText style={{ color: "#C0C0C0" }}>{` / ${clubData.maxNumber ? `${clubData.maxNumber} 명` : `무제한`}`}</DetailItemText>
+                  <DetailItemText>{clubData?.recruitNumber}</DetailItemText>
+                  <DetailItemText style={{ color: "#C0C0C0" }}>{` / ${clubData?.maxNumber ? `${clubData?.maxNumber} 명` : `무제한`}`}</DetailItemText>
                 </DetailInfoItem>
                 <DetailInfoItem>
                   <Iconify icon="material-symbols:feed-rounded" size={16} color={lightTheme.secondaryColor} style={{ marginRight: 2 }} />
                   <DetailItemTitle>{`피드`}</DetailItemTitle>
-                  <DetailItemText>{clubData.feedNumber}</DetailItemText>
+                  <DetailItemText>{clubData?.feedNumber}</DetailItemText>
                 </DetailInfoItem>
               </DetailInfoView>
             </InformationView>

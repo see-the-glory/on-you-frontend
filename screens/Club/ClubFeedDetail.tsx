@@ -43,8 +43,8 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const me = useSelector((state: RootState) => state.auth.user);
-  const myRole = useSelector((state: RootState) => state.club[clubData.id]?.role);
-  const [query, setQuery] = useState<InfiniteData<FeedsResponse> | undefined>(queryClient.getQueryData<InfiniteData<FeedsResponse>>(["getClubFeeds", clubData.id]));
+  const myRole = useSelector((state: RootState) => state.club[clubData?.id]?.role);
+  const [query, setQuery] = useState<InfiniteData<FeedsResponse> | undefined>(queryClient.getQueryData<InfiniteData<FeedsResponse>>(["getClubFeeds", clubData?.id]));
   const dispatch = useAppDispatch();
   const toast = useToast();
   const { ref: feedOptionRef, open: openFeedOption, close: closeFeedOption } = useModalize();

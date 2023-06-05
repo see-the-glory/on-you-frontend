@@ -112,9 +112,9 @@ const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation:
     setRefreshing(false);
   };
 
-  const goToClubStack = (clubData: Club) => {
+  const goToClub = (clubId: number) => {
     const clubTopTabsProps = {
-      clubData: { id: clubData.id },
+      clubId,
     };
     return navigate("ClubStack", {
       screen: "ClubTopTabs",
@@ -149,7 +149,7 @@ const MyClubs: React.FC<NativeStackScreenProps<any, "MyClubs">> = ({ navigation:
   const renderItem = useCallback(
     ({ item, index }: { item: Club; index: number }) => (
       <Item key={index}>
-        <ItemInfo onPress={() => goToClubStack(item)}>
+        <ItemInfo onPress={() => goToClub(item.id)}>
           <CircleIcon size={35} uri={item.thumbnail} kerning={10} />
           <ItemInfoDetail>
             <ClubNameView>

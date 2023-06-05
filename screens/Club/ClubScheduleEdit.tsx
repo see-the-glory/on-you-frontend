@@ -159,7 +159,7 @@ const ClubScheduleEdit = ({
     const endDate = `${startDate.split("T")[0]}T23:59:59`;
 
     const requestData: ClubScheduleUpdateRequest = {
-      clubId: clubData.id,
+      clubId: clubData?.id,
       scheduleId: scheduleData.id,
       body: {
         content: memo,
@@ -175,7 +175,7 @@ const ClubScheduleEdit = ({
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
+        <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubId: clubData?.id })}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),

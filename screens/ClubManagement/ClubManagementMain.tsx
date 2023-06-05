@@ -6,8 +6,8 @@ import { ClubManagementMainProps, ClubStackParamList } from "../../types/Club";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
 import { Shadow } from "react-native-shadow-2";
-import { useMutation, useQuery } from "react-query";
-import { BaseResponse, Club, ClubApi, ClubDeletionRequest, ClubResponse, ClubUpdateRequest, ClubUpdateResponse, ErrorResponse } from "../../api";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { BaseResponse, Category, Club, ClubApi, ClubDeletionRequest, ClubResponse, ClubUpdateRequest, ClubUpdateResponse, ErrorResponse } from "../../api";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useToast } from "react-native-toast-notifications";
@@ -136,25 +136,31 @@ interface ClubEditItem {
 const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   navigation: { navigate, goBack, popToTop },
   route: {
-    params: { clubData, refresh },
+    params: { clubId },
   },
 }) => {
-  const myRole = useSelector((state: RootState) => state.club[clubData.id]?.role);
   const toast = useToast();
-  const [data, setData] = useState<Club>(clubData);
-  const [isToggle, setIsToggle] = useState(clubData?.recruitStatus === "OPEN" ? true : false);
+  const myRole = useSelector((state: RootState) => state.club[clubId]?.role);
+
   const iconSize = 14;
 
   const X = useRef(new Animated.Value(0)).current;
-  const { refetch: clubDataRefetch } = useQuery<ClubResponse, ErrorResponse>(["getClub", clubData.id], ClubApi.getClub, {
-    onSuccess: (res) => {
-      setData(res.data);
-    },
+
+  const {
+    data: clubData,
+    isLoading: clubLoading,
+    refetch: clubDataRefetch,
+  } = useQuery<ClubResponse, ErrorResponse>(["getClub", clubId], ClubApi.getClub, {
+    onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getClub ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
+    staleTime: 10000,
+    cacheTime: 15000,
   });
+
+  const [isToggle, setIsToggle] = useState(clubData?.data?.recruitStatus === "OPEN" ? true : false);
 
   const updateClubMutation = useMutation<ClubUpdateResponse, ErrorResponse, ClubUpdateRequest>(ClubApi.updateClub, {
     onSuccess: (res) => {
@@ -165,7 +171,6 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
         setIsToggle(false);
         toast.show(`멤버 모집이 비활성화되었습니다.`, { type: "success" });
       }
-      DeviceEventEmitter.emit("ClubRefetch");
     },
     onError: (error) => {
       console.log(`API ERROR | updateClub ${error.code} ${error.status}`);
@@ -183,13 +188,6 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
-
-  useFocusEffect(
-    useCallback(() => {
-      console.log("ClubManagementMain useFocusEffect!");
-      if (refresh) clubDataRefetch();
-    }, [refresh])
-  );
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
@@ -220,7 +218,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
   }, [isToggle]);
 
   const goToScreen = (screen: keyof ClubStackParamList) => {
-    return navigate(screen, { clubData: data });
+    return navigate(screen, { clubId, clubData: clubData?.data });
   };
   const deleteClub = () => {
     Alert.alert("가입 삭제", "정말로 모임을 삭제하시겠습니까?", [
@@ -229,7 +227,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
         text: "예",
         onPress: () => {
           let requestData: ClubDeletionRequest = {
-            clubId: clubData.id,
+            clubId,
           };
           deleteClubMutation.mutate(requestData);
         },
@@ -239,18 +237,22 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
 
   const onPressToggle = () => {
     let updateData: ClubUpdateRequest = {
-      data: { recruitStatus: isToggle ? "CLOSE" : "OPEN", category1Id: data.categories.length > 0 ? data.categories[0].id : -1, category2Id: data.categories.length > 1 ? data.categories[1].id : -1 },
-      clubId: clubData.id,
+      data: {
+        recruitStatus: isToggle ? "CLOSE" : "OPEN",
+        category1Id: clubData?.data?.categories?.length > 0 ? clubData?.data?.categories[0].id : -1,
+        category2Id: clubData?.data?.categories?.length > 1 ? clubData?.data?.categories[1].id : -1,
+      },
+      clubId,
     };
 
-    if (data?.categories?.length === 1) {
+    if (clubData?.data?.categories?.length === 1) {
       delete updateData.data?.category2Id;
     }
 
     updateClubMutation.mutate(updateData);
   };
 
-  const items: ClubEditItem[] = [
+  const clubEditItem: ClubEditItem[] = [
     {
       icon: <Feather name="tool" size={iconSize} color="black" />,
       title: "모임 기본 사항 수정",
@@ -302,14 +304,14 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
 
             <InformationView>
               <TagView>
-                <Tag name={data.organizationName ?? ""} iconName="cross" backgroundColor="white" textColor="#B4B4B4" borderColor="#B4B4B4" />
-                {data?.categories?.map((category, index) => (
+                <Tag name={clubData?.data?.organizationName ?? ""} iconName="cross" backgroundColor="white" textColor="#B4B4B4" borderColor="#B4B4B4" />
+                {clubData?.data?.categories?.map((category: Category, index: number) => (
                   <Tag key={index} name={category.name} backgroundColor="#C4C4C4" textColor="white" borderColor="#C4C4C4" />
                 ))}
               </TagView>
-              <Title>{data.name}</Title>
+              <Title>{clubData?.data?.name}</Title>
             </InformationView>
-            <CircleIcon size={70} uri={data.thumbnail} />
+            <CircleIcon size={70} uri={clubData?.data?.thumbnail} />
             <ButtonView>
               <AntDesign name="user" size={12} color="#a7a7a7" style={{ marginRight: -3 }} />
               <HeaderText>멤버모집</HeaderText>
@@ -322,7 +324,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
           </Header>
         </Shadow>
         <Content>
-          {items?.map((item, index) => (
+          {clubEditItem?.map((item: ClubEditItem, index: number) => (
             <ListView key={index}>
               <ListItem
                 onPress={() => {
@@ -336,7 +338,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
               >
                 <ItemLeft>
                   {item.icon}
-                  <ItemText style={index === items.length - 1 ? { color: "red" } : {}}>{item.title}</ItemText>
+                  <ItemText style={index === clubEditItem.length - 1 ? { color: "red" } : {}}>{item.title}</ItemText>
                 </ItemLeft>
                 <ItemRight>
                   <Feather name="chevron-right" size={20} color="#A0A0A0" />

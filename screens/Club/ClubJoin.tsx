@@ -58,7 +58,7 @@ const MemoTextInput = styled.TextInput`
 const ClubJoin = ({
   navigation: { navigate, goBack, setOptions },
   route: {
-    params: { clubData },
+    params: { clubId },
   },
 }) => {
   const [memo, setMemo] = useState<string>("");
@@ -67,8 +67,7 @@ const ClubJoin = ({
 
   const clubApplyMutation = useMutation<BaseResponse, ErrorResponse, ClubApplyRequest>(ClubApi.applyClub, {
     onSuccess: (res) => {
-      if (clubData.isApprovedRequired === "Y") toast.show(`가입 신청이 완료되었습니다.`, { type: "success" });
-      else if (clubData.isApprovedRequired === "N") toast.show(`가입이 완료되었습니다.`, { type: "success" });
+      toast.show(`가입 신청이 완료되었습니다.`, { type: "success" });
       goBack();
     },
     onError: (error) => {
@@ -80,7 +79,7 @@ const ClubJoin = ({
   const save = () => {
     if (memo.trim() === "") return toast.show(`내용이 비어있습니다.`, { type: "danger" });
     const requestData: ClubApplyRequest = {
-      clubId: clubData.id,
+      clubId,
       message: memo.trim(),
     };
 
@@ -90,7 +89,7 @@ const ClubJoin = ({
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubData })}>
+        <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubId })}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),

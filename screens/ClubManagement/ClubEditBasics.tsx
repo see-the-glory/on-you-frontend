@@ -4,8 +4,8 @@ import styled from "styled-components/native";
 import { ClubEditBasicsProps } from "../../Types/Club";
 import ImagePicker from "react-native-image-crop-picker";
 import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
-import { useQuery, useMutation } from "react-query";
-import { Category, CategoryResponse, ClubApi, ClubUpdateRequest, ClubUpdateResponse, ErrorResponse } from "../../api";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+import { Category, CategoryResponse, ClubApi, ClubResponse, ClubUpdateRequest, ErrorResponse } from "../../api";
 import { useToast } from "react-native-toast-notifications";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
@@ -163,20 +163,21 @@ const CategoryLabel = styled.TouchableOpacity<{ selected?: boolean }>`
 const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
   navigation: { navigate, setOptions, goBack },
   route: {
-    params: { clubData },
+    params: { clubId, clubData },
   },
 }) => {
   const toast = useToast();
-  const [clubName, setClubName] = useState<string>(clubData.name ?? "");
+  const queryClient = useQueryClient();
+  const [clubName, setClubName] = useState<string>(clubData?.name ?? "");
   const [nameErrorCheck, setNameErrorCheck] = useState<boolean>(false);
   const [isDuplicatedName, setIsDuplicatedName] = useState<boolean>(false);
-  const [maxNumber, setMaxNumber] = useState<string>(clubData.maxNumber === 0 ? "무제한 정원" : `${String(clubData.maxNumber)} 명`);
-  const [maxNumberInfinity, setMaxNumberInfinity] = useState<boolean>(clubData.maxNumber ? false : true);
-  const [phoneNumber, setPhoneNumber] = useState<string>(clubData.contactPhone ?? "");
-  const [organizationName, setOrganizationName] = useState<string>(clubData.organizationName ?? "");
-  const [isApproveRequired, setIsApproveRequired] = useState<string>(clubData.isApprovedRequired ?? "");
-  const [selectCategory1, setCategory1] = useState((clubData.categories && clubData.categories[0]?.id) ?? -1);
-  const [selectCategory2, setCategory2] = useState((clubData.categories && clubData.categories[1]?.id) ?? -1);
+  const [maxNumber, setMaxNumber] = useState<string>(clubData?.maxNumber === 0 ? "무제한 정원" : `${String(clubData?.maxNumber)} 명`);
+  const [maxNumberInfinity, setMaxNumberInfinity] = useState<boolean>(clubData?.maxNumber ? false : true);
+  const [phoneNumber, setPhoneNumber] = useState<string>(clubData?.contactPhone ?? "");
+  const [organizationName, setOrganizationName] = useState<string>(clubData?.organizationName ?? "");
+  const [isApproveRequired, setIsApproveRequired] = useState<string>(clubData?.isApprovedRequired ?? "");
+  const [selectCategory1, setCategory1] = useState((clubData?.categories && clubData?.categories[0]?.id) ?? -1);
+  const [selectCategory2, setCategory2] = useState((clubData?.categories && clubData?.categories[1]?.id) ?? -1);
   const [categoryBundle, setCategoryBundle] = useState<Array<Category[]>>();
   const [imageURI, setImageURI] = useState<string | null>(null);
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -196,10 +197,11 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
-  const mutation = useMutation<ClubUpdateResponse, ErrorResponse, ClubUpdateRequest>(ClubApi.updateClub, {
+  const mutation = useMutation<ClubResponse, ErrorResponse, ClubUpdateRequest>(ClubApi.updateClub, {
     onSuccess: (res) => {
+      queryClient.setQueryData<ClubResponse>(["getClub", clubId], res);
       toast.show(`저장이 완료되었습니다.`, { type: "success" });
-      navigate("ClubManagementMain", { clubData: res.data, refresh: true });
+      goBack();
     },
     onError: (error) => {
       console.log(`API ERROR | updateClub ${error.code} ${error.status}`);
@@ -256,7 +258,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
       contactPhone: contactPhone === "" ? null : contactPhone,
     };
     if (category2 !== -1) data.category2Id = category2;
-    if (nameErrorCheck === false && clubName.trim() !== "" && clubData.name !== clubName.trim()) data.clubName = clubName;
+    if (nameErrorCheck === false && clubName.trim() !== "" && clubData?.name !== clubName.trim()) data.clubName = clubName;
 
     const splitedURI = new String(imageURI).split("/");
 
@@ -264,7 +266,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
       imageURI === null
         ? {
             data,
-            clubId: clubData.id,
+            clubId: clubData?.id,
           }
         : {
             image: {
@@ -273,7 +275,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
               name: splitedURI[splitedURI.length - 1],
             },
             data,
-            clubId: clubData.id,
+            clubId: clubData?.id,
           };
 
     mutation.mutate(updateData);
@@ -388,7 +390,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                   }}
                   onEndEditing={() =>
                     setMaxNumber((prev) => {
-                      if (prev.trim() === "" || prev.trim() === "0") return `${clubData.maxNumber} 명`;
+                      if (prev.trim() === "" || prev.trim() === "0") return `${clubData?.maxNumber} 명`;
                       else return `${prev} 명`;
                     })
                   }
@@ -407,7 +409,7 @@ const ClubEditBasics: React.FC<ClubEditBasicsProps> = ({
                 <CheckButton
                   onPress={() => {
                     if (!maxNumberInfinity) setMaxNumber("무제한 정원");
-                    else setMaxNumber(`${clubData.maxNumber} 명`);
+                    else setMaxNumber(`${clubData?.maxNumber} 명`);
 
                     setMaxNumberInfinity((prev) => !prev);
                   }}

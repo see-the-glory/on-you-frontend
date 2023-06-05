@@ -247,9 +247,9 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     },
   });
 
-  const goToClub = (clubData: Club) => {
+  const goToClub = (clubId: number) => {
     const clubTopTabsProps = {
-      clubData,
+      clubId,
     };
     return navigate("ClubStack", {
       screen: "ClubTopTabs",
@@ -430,7 +430,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               renderItem={({ item, index }: { item: Club; index: number }) => (
                 <TouchableOpacity
                   onPress={() => {
-                    goToClub(item);
+                    goToClub(item.id);
                   }}
                   style={index % 2 === 0 ? { marginRight: 0.5 } : { marginLeft: 0.5 }}
                 >
