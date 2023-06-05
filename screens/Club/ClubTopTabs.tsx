@@ -159,6 +159,8 @@ const ClubTopTabs = ({
       console.log(`API ERROR | getClub ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
+    staleTime: 10000,
+    cacheTime: 15000,
   });
 
   const {

@@ -8,7 +8,7 @@ const Container = styled.View`
   width: 100%;
 `;
 
-const Button = styled.TouchableOpacity<{ disabled: boolean; color: string }>`
+const Button = styled.TouchableOpacity<{ disabled?: boolean; color?: string }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -18,7 +18,7 @@ const Button = styled.TouchableOpacity<{ disabled: boolean; color: string }>`
   background-color: ${(props: any) => (props.disabled ? "#D3D3D3" : props.color ?? props.theme.primaryColor)};
 `;
 
-const Title = styled.Text<{ color: string }>`
+const Title = styled.Text<{ color?: string }>`
   font-family: ${(props: any) => props.theme.koreanFontSB};
   font-size: 22px;
   line-height: 25px;
@@ -31,13 +31,13 @@ interface BottomButtonProps {
   title?: string;
   backgroundColor?: string;
   textColor?: string;
-  contentContainerStyle?: StyleProp<ViewStyle> | undefined;
+  contentContainerStyle?: StyleProp<ViewStyle>;
 }
 
 const BottomButton: React.FC<BottomButtonProps> = ({ onPress, disabled, title, backgroundColor, textColor, contentContainerStyle }) => {
   return (
     <Container style={contentContainerStyle}>
-      <Button onPress={onPress} disabled={disabled} color={backgroundColor}>
+      <Button onPress={() => onPress()} disabled={disabled} color={backgroundColor}>
         <Title color={textColor}>{title}</Title>
       </Button>
     </Container>

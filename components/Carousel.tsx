@@ -10,6 +10,7 @@ const Indicator = styled.View<{ focused: boolean }>`
   width: 5px;
   height: 5px;
   border-radius: 3px;
+  border: solid 0.3px #cccccc;
 `;
 
 const IndicatorWrapper = styled.View`

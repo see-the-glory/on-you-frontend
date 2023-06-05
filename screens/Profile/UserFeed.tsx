@@ -1,13 +1,13 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity, Platform } from "react-native";
-import FastImage from "react-native-fast-image";
+import { ActivityIndicator, useWindowDimensions, Animated, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery } from "react-query";
 import styled from "styled-components/native";
 import { UserApi, ErrorResponse, Feed, FeedsResponse, Profile } from "../../api";
+import FadeFastImage from "../../components/FadeFastImage";
 import feedSlice from "../../redux/slices/feed";
 import { useAppDispatch } from "../../redux/store";
 
@@ -15,11 +15,6 @@ const Loader = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-`;
-
-const FeedImage = styled(FastImage)<{ size: number }>`
-  width: ${(props: any) => props.size}px;
-  height: ${(props: any) => props.size}px;
 `;
 
 const EmptyView = styled.View`
@@ -152,9 +147,13 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, profile, scrollY, headerDif
         </EmptyView>
       )}
       renderItem={({ item, index }: { item: Feed; index: number }) => (
-        <TouchableOpacity key={String(index)} onPress={() => goToUserFeedDetail(index)} style={index % 3 === 1 ? { marginHorizontal: 1 } : {}}>
-          <FeedImage size={feedSize} source={item?.imageUrls && item?.imageUrls[0] ? { uri: item.imageUrls[0] } : require("../../assets/basic.jpg")} />
-        </TouchableOpacity>
+        <FadeFastImage
+          key={String(index)}
+          uri={item?.imageUrls?.length ? item?.imageUrls[0] : undefined}
+          style={{ width: feedSize, height: feedSize }}
+          onPress={() => goToUserFeedDetail(index)}
+          touchableOpacityStyle={{ marginHorizontal: index % 3 === 1 ? 1 : 0 }}
+        />
       )}
     />
   );

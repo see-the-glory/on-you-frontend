@@ -1,16 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components/native";
-import { LinearGradient } from "expo-linear-gradient";
+import LinearGradient from "react-native-linear-gradient";
 import { Category } from "../api";
 import FastImage from "react-native-fast-image";
 import Tag from "./Tag";
 import { Iconify } from "react-native-iconify";
+import { Animated } from "react-native";
 
 const Club = styled.View`
   align-items: flex-start;
 `;
 
-const ThumbnailView = styled.View``;
+const ThumbnailView = styled.View`
+  background-color: #e3e3e3;
+`;
 
 const ThumbnailImage = styled(FastImage)<{ size: number }>`
   position: absolute;
@@ -105,26 +108,39 @@ interface ClubListProps {
 }
 
 const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, clubName, memberNum, clubShortDesc, categories, recruitStatus, colSize }) => {
+  const thumbnailOpacity = new Animated.Value(0);
+
+  const onLoadImage = () => {
+    Animated.timing(thumbnailOpacity, {
+      toValue: 1,
+      duration: 150,
+      delay: 5,
+      useNativeDriver: true,
+    }).start();
+  };
+
   return (
     <Club>
       <ThumbnailView>
-        <ThumbnailImage source={thumbnailPath ? { uri: thumbnailPath } : require("../assets/basic.jpg")} size={colSize} />
-        <Gradient size={colSize} colors={["transparent", "rgba(0, 0, 0, 0.8)"]} start={{ x: 0.5, y: 0.65 }}>
-          {recruitStatus === "OPEN" ? (
-            <RecruitView>
-              <RecruitText>모집중</RecruitText>
-            </RecruitView>
-          ) : (
-            <></>
-          )}
-          <TitleView>
-            <ClubNameText>{clubName}</ClubNameText>
-            <TitleViewRight>
-              <Iconify icon="ant-design:user-outlined" size={12} color="white" />
-              <Number>{memberNum}</Number>
-            </TitleViewRight>
-          </TitleView>
-        </Gradient>
+        <Animated.View style={{ opacity: thumbnailOpacity }}>
+          <ThumbnailImage source={thumbnailPath ? { uri: thumbnailPath } : require("../assets/basic.jpg")} size={colSize} onLoadEnd={onLoadImage} />
+          <Gradient size={colSize} colors={["transparent", "rgba(0, 0, 0, 0.8)"]} start={{ x: 0.5, y: 0.65 }}>
+            {recruitStatus === "OPEN" ? (
+              <RecruitView>
+                <RecruitText>모집중</RecruitText>
+              </RecruitView>
+            ) : (
+              <></>
+            )}
+            <TitleView>
+              <ClubNameText>{clubName}</ClubNameText>
+              <TitleViewRight>
+                <Iconify icon="ant-design:user-outlined" size={12} color="white" />
+                <Number>{memberNum}</Number>
+              </TitleViewRight>
+            </TitleView>
+          </Gradient>
+        </Animated.View>
       </ThumbnailView>
 
       <ClubInfo width={colSize}>
@@ -160,4 +176,4 @@ const ClubList: React.FC<ClubListProps> = ({ thumbnailPath, organizationName, cl
   );
 };
 
-export default ClubList;
+export default React.memo(ClubList);

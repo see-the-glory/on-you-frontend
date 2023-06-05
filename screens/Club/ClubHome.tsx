@@ -16,7 +16,6 @@ import { useMutation, useQuery } from "react-query";
 import moment from "moment";
 import LinkedText from "../../components/LinkedText";
 
-const MEMBER_ICON_KERNING = 20;
 const MEMBER_ICON_SIZE = 40;
 const SCREEN_PADDING_SIZE = 20;
 
