@@ -1,15 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
-import { ActivityIndicator, Text } from "react-native";
+import { ActivityIndicator } from "react-native";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import { Profile } from "../../api";
 import { Iconify } from "react-native-iconify";
 import { lightTheme } from "../../theme";
-import Clipboard from "@react-native-clipboard/clipboard";
-import { useToast } from "react-native-toast-notifications";
-import * as WebBrowser from "expo-web-browser";
 import LinkedText from "../../components/LinkedText";
 
 const Loader = styled.View`
@@ -91,10 +88,6 @@ const AboutText = styled.Text`
   font-size: 14px;
 `;
 
-const LinkText = styled(AboutText)`
-  color: #0969da;
-`;
-
 const PersonalText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 10px;
@@ -134,7 +127,6 @@ interface UserInstroductionProps {
 
 const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  const toast = useToast();
   const goToClub = (clubId: number) => navigation.push("ClubStack", { screen: "ClubTopTabs", params: { clubId } });
   return !profile ? (
     <Loader>

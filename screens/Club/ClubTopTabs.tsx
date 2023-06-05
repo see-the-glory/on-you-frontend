@@ -102,9 +102,8 @@ const ClubTopTabs = ({
   route: {
     params: { clubId },
   },
-  navigation: { navigate, popToTop },
+  navigation: { navigate, popToTop, push },
 }) => {
-  console.log(clubId);
   const me = useSelector((state: RootState) => state.auth.user);
   const toast = useToast();
   const dispatch = useAppDispatch();
@@ -311,7 +310,7 @@ const ClubTopTabs = ({
   // Function in Modal
   const goToClubEdit = () => {
     closeClubOption();
-    navigate("ClubManagementStack", { screen: "ClubManagementMain", params: { clubId } });
+    push("ClubManagementStack", { screen: "ClubManagementMain", params: { clubId } });
   };
 
   const goToClubJoin = () => {
@@ -322,8 +321,7 @@ const ClubTopTabs = ({
       return toast.show("멤버 모집 기간이 아닙니다.", { type: "warning" });
     }
 
-    closeClubOption();
-    navigate("ClubJoin", { clubId });
+    push("ClubJoin", { clubId });
   };
 
   const goToFeedCreation = () => {
@@ -331,7 +329,7 @@ const ClubTopTabs = ({
       toast.show("유저 정보를 알 수 없습니다.", { type: "warning" });
       return;
     }
-    navigate("FeedStack", { screen: "ImageSelection", params: { clubId } });
+    push("FeedStack", { screen: "ImageSelection", params: { clubId } });
   };
 
   const openShare = async () => {

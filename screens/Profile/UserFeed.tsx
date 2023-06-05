@@ -137,7 +137,7 @@ const UserFeed: React.FC<UserFeedProps> = ({ userId, profile, scrollY, headerDif
       // refreshing={refreshing}
       // onRefresh={onRefresh}
       onEndReached={loadMore}
-      data={profile?.isFeedPublic === "Y" ? [] : feedData?.pages?.flatMap((page: FeedsResponse) => page.responses.content) ?? []}
+      data={profile?.isFeedPublic === "Y" ? feedData?.pages?.flatMap((page: FeedsResponse) => page.responses.content) ?? [] : []}
       keyExtractor={(item: Feed, index: number) => String(index)}
       numColumns={numColumn}
       columnWrapperStyle={{ paddingBottom: 1 }}

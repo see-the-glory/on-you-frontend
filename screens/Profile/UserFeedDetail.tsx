@@ -276,6 +276,7 @@ const UserFeedDetail: React.FC<NativeStackScreenProps<any, "UserFeedDetail">> = 
         feedData={item}
         feedIndex={index}
         feedSize={SCREEN_WIDTH}
+        showClubName={true}
         headerHeight={feedDetailHeaderHeight}
         infoHeight={feedDetailInfoHeight}
         contentHeight={feedDetailContentHeight}

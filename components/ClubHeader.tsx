@@ -13,6 +13,7 @@ import { lightTheme } from "../theme";
 import { Iconify } from "react-native-iconify";
 import FadeFastImage from "./FadeFastImage";
 import { useQueryClient } from "react-query";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const NavigationView = styled.SafeAreaView<{ height: number }>`
   position: absolute;
@@ -167,7 +168,7 @@ export interface ClubHomeHaederProps {
 }
 
 const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubId, clubRole, notiCount, openClubOptionModal, headerHeight, heightExpanded, heightCollapsed, headerDiff, scrollY }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const queryClient = useQueryClient();
   const clubData = queryClient.getQueryData<ClubResponse>(["getClub", clubId])?.data;
   const master = clubData?.members?.find((member) => member.role === "MASTER");
@@ -187,7 +188,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubId, clubRole, notiCount
       clubData,
       clubRole,
     };
-    navigation.navigate("ClubNotification", clubNotificationProps);
+    navigation.push("ClubNotification", clubNotificationProps);
   };
 
   return (
