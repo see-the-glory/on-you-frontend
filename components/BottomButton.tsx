@@ -37,7 +37,7 @@ interface BottomButtonProps {
 const BottomButton: React.FC<BottomButtonProps> = ({ onPress, disabled, title, backgroundColor, textColor, contentContainerStyle }) => {
   return (
     <Container style={contentContainerStyle}>
-      <Button onPress={() => onPress} disabled={disabled} color={backgroundColor}>
+      <Button onPress={() => onPress()} disabled={disabled} color={backgroundColor}>
         <Title color={textColor}>{title}</Title>
       </Button>
     </Container>
