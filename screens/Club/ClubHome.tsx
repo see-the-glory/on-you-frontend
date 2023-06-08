@@ -54,8 +54,8 @@ const SectionTitle = styled.Text`
 `;
 const SectionDetailButton = styled.TouchableOpacity``;
 const SectionText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
-  font-size: 10px;
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
   color: #aaaaaa;
 `;
 
@@ -73,10 +73,8 @@ const ContentText = styled(LinkedText)`
 
 const ContentSubText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 14px;
-  line-height: 20px;
-  color: #5b5b5b;
-  text-align: right;
+  font-size: 13px;
+  color: #828282;
 `;
 
 const SeparatorView = styled.View`
@@ -100,7 +98,7 @@ const ScheduleAddView = styled.TouchableOpacity`
 `;
 
 const ScheduleDateView = styled.View<{ index: number }>`
-  background-color: ${(props: any) => (props.index === 0 ? "#FF551F" : "#EBEBEB")};
+  background-color: ${(props: any) => (props.index === 0 ? props.theme.accentColor : "#EBEBEB")};
   justify-content: center;
   align-items: center;
   padding: 7px 15px;
@@ -401,7 +399,7 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
                   {isCollapsedLongDesc ? (
                     <>
                       <ContentText>{`${clubLongDescLines.slice(0, collapsed).join("\n")}`}</ContentText>
-                      <ContentSubText>{`\n더보기`}</ContentSubText>
+                      <ContentSubText>{`더보기`}</ContentSubText>
                     </>
                   ) : (
                     <ContentText>{`${clubLongDescLines.slice(0, collapsed).join("\n")}`}</ContentText>
@@ -514,18 +512,6 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
             </SectionDetailButton>
           </TitleView>
 
-          <View style={{ width: "100%", marginBottom: 15 }}>
-            <GuestCommentButton
-              activeOpacity={1}
-              style={{ marginHorizontal: SCREEN_PADDING_SIZE }}
-              onPress={() => {
-                DeviceEventEmitter.emit("ClubGuestCommentFocus");
-                screenScrollRefs.current[screenName]?.scrollToEnd({ animated: true });
-              }}
-            >
-              <GuestCommentGuideText>{`방명록을 작성해보세요. (최대 100자)`}</GuestCommentGuideText>
-            </GuestCommentButton>
-          </View>
           <FlatList
             horizontal
             pagingEnabled
@@ -566,7 +552,7 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
             )}
           />
 
-          <GuestBookInfoView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+          {/* <GuestBookInfoView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
             {guestCommentBundle?.length > 0 ? (
               <>
                 <Ionicons name="caret-back-sharp" size={11} color={guestBookIndex > 0 ? "#959595" : "rgba(0, 0, 0, 0)"} />
@@ -576,7 +562,20 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
             ) : (
               <></>
             )}
-          </GuestBookInfoView>
+          </GuestBookInfoView> */}
+
+          <View style={{ width: "100%", marginTop: 15, marginBottom: 15 }}>
+            <GuestCommentButton
+              activeOpacity={1}
+              style={{ marginHorizontal: SCREEN_PADDING_SIZE }}
+              onPress={() => {
+                DeviceEventEmitter.emit("ClubGuestCommentFocus");
+                screenScrollRefs.current[screenName]?.scrollToEnd({ animated: true });
+              }}
+            >
+              <GuestCommentGuideText>{`방명록을 작성해보세요. (최대 100자)`}</GuestCommentGuideText>
+            </GuestCommentButton>
+          </View>
         </SectionView>
       </Animated.ScrollView>
       <ScheduleModal

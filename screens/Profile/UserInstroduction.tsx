@@ -2,12 +2,12 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import { ActivityIndicator } from "react-native";
-import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
 import { Profile } from "../../api";
 import { Iconify } from "react-native-iconify";
 import { lightTheme } from "../../theme";
 import LinkedText from "../../components/LinkedText";
+import FadeFastImage from "../../components/FadeFastImage";
 
 const Loader = styled.View`
   flex: 1;
@@ -35,11 +35,11 @@ const PersonalItem = styled.View`
 const ClubItem = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  height: 60px;
+  height: 61px;
   background-color: #f8f8f8;
   border-radius: 10px;
   margin-bottom: 10px;
-  padding: 10px;
+  padding: 9px;
 `;
 
 const ClubInfo = styled.View`
@@ -67,11 +67,11 @@ const ClubRole = styled.View`
   align-items: center;
 `;
 
-const ClubThumbnail = styled(FastImage)`
-  width: 40px;
-  height: 40px;
+const ClubThumbnail = styled(FadeFastImage)`
+  width: 45px;
+  height: 45px;
   border-radius: 10px;
-  margin-right: 20px;
+  margin-right: 10px;
   border: 0.2px solid #c4c4c4;
 `;
 
@@ -90,7 +90,7 @@ const AboutText = styled.Text`
 
 const PersonalText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 10px;
+  font-size: 11px;
   margin-left: 5px;
 `;
 
@@ -104,11 +104,13 @@ const ClubMemberCount = styled.Text`
   font-family: ${(props: any) => props.theme.englishFontM};
   color: ${(props: any) => props.theme.accentColor};
   font-size: 12px;
+  margin-left: -2px;
+  margin-bottom: 1px;
 `;
 
 const ClubCategoryText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 10px;
+  font-size: 12px;
   margin: 1px 0px;
   margin-right: 5px;
   color: #808080;
@@ -145,19 +147,19 @@ const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
           <Personal>
             {profile?.isEmailPublic === "Y" ? (
               <PersonalItem>
-                <Iconify icon="pepicons-pencil:letter" size={14} color="#C4C4C4" />
+                <Iconify icon="pepicons-pencil:letter" size={15} color="#C4C4C4" />
                 <PersonalText>{profile?.email}</PersonalText>
               </PersonalItem>
             ) : null}
             {profile?.contact && profile?.isContactPublic === "Y" ? (
               <PersonalItem>
-                <Iconify icon="material-symbols:call" size={14} color="#C4C4C4" />
+                <Iconify icon="material-symbols:call" size={15} color="#C4C4C4" />
                 <PersonalText>{profile?.contact}</PersonalText>
               </PersonalItem>
             ) : null}
             {profile?.birthday && profile?.isBirthdayPublic === "Y" ? (
               <PersonalItem>
-                <Iconify icon="ic:outline-cake" size={14} color="#C4C4C4" />
+                <Iconify icon="ic:outline-cake" size={15} color="#C4C4C4" />
                 <PersonalText>{profile?.birthday}</PersonalText>
               </PersonalItem>
             ) : null}
@@ -175,7 +177,7 @@ const UserInstroduction: React.FC<UserInstroductionProps> = ({ profile }) => {
             ) : (
               profile?.clubs?.map((club) => (
                 <ClubItem key={`Club_${club.id}`} onPress={() => goToClub(club.id)}>
-                  <ClubThumbnail source={club.thumbnail ? { uri: club.thumbnail } : require("../../assets/basic.jpg")} />
+                  <ClubThumbnail uri={club.thumbnail ?? undefined} />
                   <ClubInfo>
                     <ClubInfoDetail>
                       <ClubInfoDetailHeader>

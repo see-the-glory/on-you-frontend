@@ -60,6 +60,7 @@ const IconName = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
   color: ${(props: any) => props.theme.primaryColor};
   font-size: 11px;
+  margin-top: 2px;
 `;
 
 const SlidingTab = Animated.createAnimatedComponent(View);
@@ -88,7 +89,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
   return (
     <>
       <Container height={tabHeight}>
-        <Shadow distance={3}>
+        <Shadow distance={1}>
           <ShadowBox height={tabHeight} />
         </Shadow>
         {/* <SlidingTabContainer tabWidth={TAB_WIDTH}>

@@ -220,7 +220,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
   const goToProfile = useCallback((userId?: number) => navigation.push("ProfileStack", { screen: "Profile", params: { userId } }), []);
 
   const goToClub = useCallback((clubId?: number) => {
-    if (clubId) navigation.push("ClubStack", { screen: "ClubTopTabs", params: { clubId }});
+    if (clubId) navigation.push("ClubStack", { screen: "ClubTopTabs", params: { clubId } });
   }, []);
 
   const goToFeedComments = useCallback((feedId?: number) => {
@@ -314,7 +314,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
         </HeaderLeftView>
         <HeaderRightView>
           <TouchableOpacity onPress={() => goToFeedOptionModal(feedData)} style={{ paddingLeft: 15, paddingTop: 15, marginRight: -10 }}>
-            <Iconify icon="ant-design:ellipsis-outlined" size={16} color="black" style={{ marginRight: 10 }} />
+            <Iconify icon="ant-design:ellipsis-outlined" size={18} color="black" style={{ marginRight: 10, marginBottom: -5 }} />
           </TouchableOpacity>
         </HeaderRightView>
       </HeaderView>
@@ -382,7 +382,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
                   style={{ width: 35, height: 35, marginLeft: -2 }}
                 />
               </InformationIconButton>
-              <InformationNumberButton activeOpacity={1} onPress={() => goToFeedLikes(feedData?.likeUserList ?? [])} style={{ marginLeft: -8, paddingRight: 10 }}>
+              <InformationNumberButton activeOpacity={1} onPress={() => goToFeedLikes(feedData?.likeUserList ?? [])} style={{ marginLeft: -8, paddingRight: 4 }}>
                 <CountingNumber>{likesCount}</CountingNumber>
               </InformationNumberButton>
               <InformationIconButton activeOpacity={1} onPress={() => goToFeedComments(feedData?.id)}>

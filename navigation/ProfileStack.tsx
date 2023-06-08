@@ -36,7 +36,7 @@ const ProfileStack = ({ route, navigation }) => {
       <NativeStack.Screen name="UserFeedDetail" component={UserFeedDetail} options={{ headerBackVisible: false }} />
       <NativeStack.Screen name="Preferences" component={Preferences} options={{ title: "설정" }} />
       <NativeStack.Screen name="AccountEdit" component={AccountEdit} options={{ title: "프로필 수정" }} />
-      <NativeStack.Screen name="MyClubs" component={MyClubs} options={{ title: "나의 모임" }} />
+      <NativeStack.Screen name="MyClubs" component={MyClubs} options={{ title: "나의 모임 관리" }} />
       <NativeStack.Screen name="AccountSetting" component={AccountSetting} options={{ title: "계정" }} />
       <NativeStack.Screen name="ChangePassword" component={ChangePassword} options={{ title: "비밀번호 변경" }} />
       <NativeStack.Screen name="BlockUserList" component={BlockUserList} options={{ title: "차단된 계정" }} />

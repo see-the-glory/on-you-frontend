@@ -1,7 +1,7 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { View, useWindowDimensions, StatusBar, Animated, Platform } from "react-native";
+import React, { useCallback, useMemo, useRef } from "react";
+import { useWindowDimensions, StatusBar, Animated, Platform } from "react-native";
 import { useModalize } from "react-native-modalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useToast } from "react-native-toast-notifications";
@@ -29,7 +29,7 @@ const HEADER_EXPANDED_HEIGHT = 300;
 const HEADER_HEIGHT = 56;
 const TAB_BAR_HEIGHT = 46;
 
-const Profile: React.FC<NativeStackScreenProps<any, "Profile">> = ({
+const Profile: React.FC<NativeStackScreenProps<any, "Profile" | "My">> = ({
   route: {
     params: { userId },
     name,

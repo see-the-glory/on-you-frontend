@@ -1,10 +1,10 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
-import { Entypo, Ionicons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
 import { BlurView } from "expo-blur";
-import { Club, ClubResponse, ClubRole } from "../api";
+import { ClubResponse, ClubRole } from "../api";
 import CircleIcon from "./CircleIcon";
 import Tag from "./Tag";
 import { useNavigation } from "@react-navigation/native";
@@ -210,28 +210,28 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubId, clubRole, notiCount
               <Animated.View style={{ position: "absolute", left: 8 }}>
                 <NotiView>
                   {notiCount > 0 ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
-                  <Iconify icon="fluent:mail-48-regular" size={24} color="white" />
+                  <Iconify icon="fluent:mail-48-regular" size={28} color="white" />
                 </NotiView>
               </Animated.View>
               <Animated.View style={{ opacity: fadeIn }}>
                 <NotiView>
                   {notiCount > 0 ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
-                  <Iconify icon="fluent:mail-48-regular" size={24} color="black" />
+                  <Iconify icon="fluent:mail-48-regular" size={28} color="black" />
                 </NotiView>
               </Animated.View>
             </TouchableOpacity>
           ) : null}
           <TouchableOpacity onPress={openClubOptionModal} style={{ paddingLeft: 10, paddingRight: 1 }}>
             <Animated.View style={{ position: "absolute", left: 10 }}>
-              <Ionicons name="ellipsis-vertical-sharp" size={22} color="white" />
+              <Iconify icon="ant-design:ellipsis-outlined" size={26} color="white" style={{ transform: [{ rotate: "90deg" }], marginRight: -7 }} />
             </Animated.View>
             <Animated.View style={{ opacity: fadeIn }}>
-              <Ionicons name="ellipsis-vertical-sharp" size={22} color="black" />
+              <Iconify icon="ant-design:ellipsis-outlined" size={26} color="black" style={{ transform: [{ rotate: "90deg" }], marginRight: -7 }} />
             </Animated.View>
           </TouchableOpacity>
         </RightNavigationView>
       </NavigationView>
-      <Header style={{ width: "100%", height: heightExpanded }}>
+      <Header style={{ height: heightExpanded }}>
         <View style={{ width: "100%", height: heightExpanded, position: "absolute" }}>
           <FadeFastImage style={{ width: "100%", height: heightExpanded }} uri={clubData?.thumbnail ?? undefined} />
         </View>
