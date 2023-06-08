@@ -77,7 +77,6 @@ const Login: React.FC<NativeStackScreenProps<any, "Login">> = ({ navigation: { n
       } else if (res.status === 404) {
         toast.show(`존재하지 않는 아이디입니다.`, { type: "danger" });
       } else if (res.status === 500) {
-        console.log(res);
         toast.show(`알 수 없는 오류`, { type: "danger" });
       }
     },

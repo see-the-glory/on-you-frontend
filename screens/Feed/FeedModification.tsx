@@ -219,7 +219,6 @@ const FeedModification = ({
   });
 
   const ChangeClub = (id: any, name: any) => {
-    console.log(id, name);
     setClubName(name);
     setClubId(id);
     modalizeRef.current?.close();

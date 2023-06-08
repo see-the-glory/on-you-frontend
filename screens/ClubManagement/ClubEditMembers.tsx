@@ -172,8 +172,6 @@ const ClubEditMembers: React.FC<ClubEditMembersProps> = ({
   };
 
   const setMemberData = () => {
-    console.log("set member data!");
-
     const masters: Member[] = [];
     const managers: Member[] = [];
     const members: Member[] = [];

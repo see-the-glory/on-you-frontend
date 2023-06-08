@@ -31,7 +31,7 @@ const ShadowBox = styled.View<{ height: number }>`
   width: 100%;
   height: ${(props: any) => props.height}px;
   background-color: white;
-  box-shadow: 1px 1px 3px gray;
+  box-shadow: 0px 9px 6px gray;
 `;
 
 const SlidingTabContainer = styled.View<{ tabWidth: number }>`

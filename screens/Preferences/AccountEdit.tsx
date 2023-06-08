@@ -50,8 +50,8 @@ const ItemText = styled.Text<{ disabled: boolean }>`
 const ItemTextInput = styled.TextInput`
   font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 15px;
-  line-height: 22px;
   flex: 1;
+  margin-bottom: ${Platform.OS === "ios" ? 3 : 0}px;
 `;
 
 const ValidationView = styled.View`
