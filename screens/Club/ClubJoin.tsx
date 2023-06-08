@@ -68,6 +68,7 @@ const ClubJoin = ({
   const clubApplyMutation = useMutation<BaseResponse, ErrorResponse, ClubApplyRequest>(ClubApi.applyClub, {
     onSuccess: (res) => {
       toast.show(`가입 신청이 완료되었습니다.`, { type: "success" });
+      DeviceEventEmitter.emit("ClubRefetch");
       goBack();
     },
     onError: (error) => {
@@ -89,7 +90,7 @@ const ClubJoin = ({
   useLayoutEffect(() => {
     setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigate("ClubTopTabs", { clubId })}>
+        <TouchableOpacity onPress={() => goBack()}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
         </TouchableOpacity>
       ),
@@ -103,12 +104,6 @@ const ClubJoin = ({
         ),
     });
   }, [memo, clubApplyMutation.isLoading]);
-
-  useEffect(() => {
-    return () => {
-      DeviceEventEmitter.emit("ClubRefetch");
-    };
-  }, []);
 
   return (
     <Container>

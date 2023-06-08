@@ -120,6 +120,7 @@ export interface Profile {
   isFeedPublic: "Y" | "N";
   thumbnail: string | null;
   backgroundImage: string | null;
+  feedNumber: number;
 }
 
 export interface BlockUser {

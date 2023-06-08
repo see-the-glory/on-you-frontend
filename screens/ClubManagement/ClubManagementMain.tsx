@@ -40,11 +40,11 @@ const NavigationView = styled.SafeAreaView<{ height: number }>`
 
 const LeftNavigationView = styled.View`
   flex-direction: row;
-  padding-left: 10px;
+  padding-left: 16px;
 `;
 const RightNavigationView = styled.View`
   flex-direction: row;
-  padding-right: 10px;
+  padding-right: 16px;
 `;
 
 const InformationView = styled.View`
@@ -287,7 +287,7 @@ const ClubManagementMain: React.FC<ClubManagementMainProps> = ({
           <Header>
             <NavigationView height={50}>
               <LeftNavigationView>
-                <TouchableOpacity onPress={goBack}>
+                <TouchableOpacity onPress={() => goBack()}>
                   <Entypo name="chevron-thin-left" size={20} color="black" />
                 </TouchableOpacity>
               </LeftNavigationView>

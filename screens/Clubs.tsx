@@ -113,7 +113,6 @@ const ModalContainer = styled.View`
 const ItemView = styled.View`
   flex-direction: row;
   margin: 8px 0px;
-  align-items: center;
 `;
 
 const ItemLeftView = styled.View`
@@ -129,7 +128,7 @@ const ItemNameText = styled.Text`
 `;
 const ItemContentText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 14px;
+  font-size: 15px;
 `;
 const ItemContentSubText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
@@ -462,7 +461,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
       <Portal>
         <Modalize
           ref={filteringSheetRef}
-          modalHeight={270}
+          modalHeight={245}
           handlePosition="inside"
           handleStyle={{ top: 14, height: 3, width: 35, backgroundColor: "#d4d4d4" }}
           modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
@@ -472,6 +471,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 closeFilteringSheet();
                 if (params.showRecruiting !== showRecruiting || params.showMy !== showMy || memberRange[0] !== params.minMember || memberRange[1] !== params.maxMember) setClubsFilterParams();
               }}
+              backgroundColor={lightTheme.accentColor}
               title={"모임 보기"}
             />
           }
@@ -514,6 +514,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               <ItemRightView>
                 <Slider
                   animateTransitions
+                  containerStyle={{ height: 20, marginBottom: 3 }}
                   value={memberRange}
                   onValueChange={(value) => {
                     clearTimeout(sliderTimeoutId);
@@ -529,7 +530,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                   step={5}
                   thumbTintColor="white"
                   trackStyle={{ height: 2 }}
-                  thumbStyle={{ width: 18, height: 18, borderWidth: 1, borderColor: lightTheme.accentColor }}
+                  thumbStyle={{ width: 14, height: 14, borderWidth: 1, borderColor: lightTheme.accentColor }}
                 />
                 <ItemContentSubText>{Array.isArray(memberRange) ? `최소 ${memberRange[0]} 명 이상 최대 ${memberRange[1]} 명 이하` : ``}</ItemContentSubText>
               </ItemRightView>

@@ -12,6 +12,7 @@ import { Entypo } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useMutation, useQueryClient } from "react-query";
 import { useToast } from "react-native-toast-notifications";
+import { Iconify } from "react-native-iconify";
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -20,6 +21,7 @@ const Container = styled.ScrollView`
 const Header = styled.View`
   width: 100%;
   height: 300px;
+  background-color: white;
 `;
 
 const NavigationView = styled.View<{ height: number }>`
@@ -113,13 +115,13 @@ const PersonalInfoTitle = styled.Text`
   width: 50px;
   font-family: ${(props: any) => props.theme.koreanFontSB};
   color: ${(props: any) => props.theme.accentColor};
-  font-size: 12px;
+  font-size: 13px;
   color: #020202;
 `;
 const PersonalInfoText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
   color: ${(props: any) => props.theme.accentColor};
-  font-size: 13px;
+  font-size: 14px;
   color: #808080;
 `;
 
@@ -147,8 +149,10 @@ const ClubCategory = styled.View`
   flex-direction: row;
 `;
 const ClubRole = styled.View`
+  flex-direction: row;
   background-color: black;
-  padding: 2px 6px;
+  padding: 2px 0px;
+  width: 40px;
   border-radius: 15px;
   justify-content: center;
   align-items: center;
@@ -164,7 +168,7 @@ const ClubThumbnail = styled(FastImage)`
 
 const ClubNameText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontB};
-  font-size: 14px;
+  font-size: 15px;
   margin-right: 5px;
 `;
 
@@ -172,11 +176,12 @@ const ClubMemberCount = styled.Text`
   font-family: ${(props: any) => props.theme.englishFontM};
   color: #c4c4c4;
   font-size: 12px;
+  margin-bottom: 1px;
 `;
 
 const ClubCategoryText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 11px;
+  font-size: 13px;
   margin: 1px 0px;
   margin-right: 5px;
   color: #808080;
@@ -198,18 +203,18 @@ const HeaderTitle = styled.Text`
 const HeaderText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontSB};
   color: #2b2b2b;
-  font-size: 10px;
+  font-size: 11px;
 `;
 const HeaderSubText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
   color: #bcbcbc;
-  font-size: 10px;
+  font-size: 11px;
 `;
 
 const SectionContentSubText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
   color: #bcbcbc;
-  font-size: 11px;
+  font-size: 12px;
   margin-top: 10px;
 `;
 
@@ -448,6 +453,7 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
                     <ClubInfoDetail>
                       <ClubInfoDetailHeader>
                         <ClubNameText>{club.name}</ClubNameText>
+                        <Iconify icon="ant-design:user-outlined" size={14} color="#c4c4c4" />
                         <ClubMemberCount>{club.recruitNumber}</ClubMemberCount>
                       </ClubInfoDetailHeader>
                       <ClubCategory>
@@ -457,9 +463,17 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
                       </ClubCategory>
                     </ClubInfoDetail>
                     {["MASTER", "MANAGER"].includes(club.role ?? "") ? (
-                      <ClubRole>
-                        <ClubRoleText>{club.role === "MASTER" ? "LD" : "MG"}</ClubRoleText>
-                      </ClubRole>
+                      club.role === "MASTER" ? (
+                        <ClubRole>
+                          <Iconify icon="ph:star-fill" size={10} color="white" />
+                          <ClubRoleText>{" LD"}</ClubRoleText>
+                        </ClubRole>
+                      ) : (
+                        <ClubRole>
+                          <Iconify icon="fluent-mdl2:skype-check" size={10} color="white" />
+                          <ClubRoleText>{" MG"}</ClubRoleText>
+                        </ClubRole>
+                      )
                     ) : null}
                   </ClubInfo>
                 </ClubItem>

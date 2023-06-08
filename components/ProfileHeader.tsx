@@ -1,14 +1,14 @@
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { Animated } from "react-native";
-import FastImage from "react-native-fast-image";
 import CircleIcon from "./CircleIcon";
-import { Entypo, Ionicons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import { Profile } from "../api";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Iconify } from "react-native-iconify";
+import FadeFastImage from "./FadeFastImage";
 
 const NavigationView = styled.SafeAreaView<{ height: number }>`
   position: absolute;
@@ -44,7 +44,7 @@ const FilterView = styled.View`
 const InfoView = styled.View`
   justify-content: center;
   align-items: center;
-  margin-top: 90px;
+  margin-top: 100px;
 `;
 
 const CollapsedNameView = styled.View`
@@ -62,7 +62,7 @@ const NameText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 22px;
   color: white;
-  margin: 13px 0px;
+  margin: 10px 0px;
 `;
 
 const InfoDetailView = styled.View`
@@ -74,13 +74,13 @@ const InfoDetailItem = styled.View`
 `;
 const InfoDetailText = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 12px;
+  font-size: 13px;
   color: white;
   margin: 0px 5px;
 `;
 const InfoDetailNumber = styled.Text`
   font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 12px;
+  font-size: 13px;
   color: ${(props: any) => props.theme.secondaryColor};
 `;
 
@@ -178,66 +178,67 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           ) : (
             <TouchableOpacity onPress={openOptionModal} style={{ paddingLeft: 10, paddingRight: 1 }}>
               <Animated.View style={{ position: "absolute", left: 10, paddingRight: 1 }}>
-                <Ionicons name="ellipsis-vertical-sharp" size={22} color="white" />
+                <Iconify icon="ant-design:ellipsis-outlined" size={26} color="white" style={{ transform: [{ rotate: "90deg" }], marginRight: -7 }} />
               </Animated.View>
               <Animated.View style={{ opacity: fadeIn }}>
-                <Ionicons name="ellipsis-vertical-sharp" size={22} color="black" />
+                <Iconify icon="ant-design:ellipsis-outlined" size={26} color="black" style={{ transform: [{ rotate: "90deg" }], marginRight: -7 }} />
               </Animated.View>
             </TouchableOpacity>
           )}
         </RightNavigationView>
       </NavigationView>
-      <Header>
-        <FastImage style={{ width: "100%", height: heightExpanded + tabBarHeight }} source={profile?.backgroundImage ? { uri: profile?.backgroundImage } : require("../assets/basic.jpg")}>
-          <Animated.View
-            pointerEvents="box-none"
-            style={{
-              position: "absolute",
-              width: "100%",
-              zIndex: 2,
-              height: heightExpanded,
-              opacity: fadeIn,
-              justifyContent: "flex-start",
-              backgroundColor: "white",
-            }}
-          >
-            <CollapsedView height={headerHeight} style={{ marginTop: top }}>
-              <CollapsedNameView>
-                <CollapsedNameText>{profile?.name ?? "이름"}</CollapsedNameText>
-              </CollapsedNameView>
-            </CollapsedView>
-          </Animated.View>
+      <Header style={{ height: heightExpanded + tabBarHeight }}>
+        <View style={{ width: "100%", height: heightExpanded + tabBarHeight, position: "absolute" }}>
+          <FadeFastImage style={{ width: "100%", height: heightExpanded + tabBarHeight }} uri={profile?.backgroundImage ?? undefined} />
+        </View>
+        <Animated.View
+          pointerEvents="box-none"
+          style={{
+            position: "absolute",
+            width: "100%",
+            zIndex: 2,
+            height: heightExpanded + tabBarHeight,
+            opacity: fadeIn,
+            justifyContent: "flex-start",
+            backgroundColor: "white",
+          }}
+        >
+          <CollapsedView height={headerHeight} style={{ marginTop: top }}>
+            <CollapsedNameView>
+              <CollapsedNameText>{profile?.name ?? "이름"}</CollapsedNameText>
+            </CollapsedNameView>
+          </CollapsedView>
+        </Animated.View>
 
-          <FilterView>
-            <Animated.View style={{ opacity: fadeOut, width: "75%" }}>
-              <InfoView>
-                <CircleIcon size={100} uri={profile?.thumbnail} />
-                <NameText>{profile?.name}</NameText>
-                {isMe ? (
-                  <OptionView>
-                    <OptionButton onPress={goToEditProfile}>
-                      <OptionText>{"프로필 수정"}</OptionText>
-                    </OptionButton>
-                    <OptionButton onPress={goToPreferences}>
-                      <OptionText>{"내 정보 설정"}</OptionText>
-                    </OptionButton>
-                  </OptionView>
-                ) : (
-                  <InfoDetailView>
-                    <InfoDetailItem>
-                      <InfoDetailText>{"가입 모임"}</InfoDetailText>
-                      <InfoDetailNumber>{profile?.clubs.length}</InfoDetailNumber>
-                    </InfoDetailItem>
-                    {/* <InfoDetailItem>
-                    <InfoDetailText>{"작성 피드"}</InfoDetailText>
+        <FilterView>
+          <Animated.View style={{ opacity: fadeOut, width: "75%" }}>
+            <InfoView>
+              <CircleIcon size={100} uri={profile?.thumbnail} />
+              <NameText>{profile?.name}</NameText>
+              {isMe ? (
+                <OptionView>
+                  <OptionButton onPress={goToEditProfile}>
+                    <OptionText>{"프로필 수정"}</OptionText>
+                  </OptionButton>
+                  <OptionButton onPress={goToPreferences}>
+                    <OptionText>{"내 정보 설정"}</OptionText>
+                  </OptionButton>
+                </OptionView>
+              ) : (
+                <InfoDetailView>
+                  <InfoDetailItem>
+                    <InfoDetailText>{"가입 모임"}</InfoDetailText>
                     <InfoDetailNumber>{profile?.clubs.length}</InfoDetailNumber>
-                  </InfoDetailItem> */}
-                  </InfoDetailView>
-                )}
-              </InfoView>
-            </Animated.View>
-          </FilterView>
-        </FastImage>
+                  </InfoDetailItem>
+                  <InfoDetailItem>
+                    <InfoDetailText>{"작성 피드"}</InfoDetailText>
+                    <InfoDetailNumber>{profile?.feedNumber}</InfoDetailNumber>
+                  </InfoDetailItem>
+                </InfoDetailView>
+              )}
+            </InfoView>
+          </Animated.View>
+        </FilterView>
       </Header>
     </>
   );

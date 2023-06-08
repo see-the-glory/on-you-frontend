@@ -65,7 +65,7 @@ const Parking = ({ navigation }) => {
           <HeaderTitle>{`The server`}</HeaderTitle>
           <LineView style={{ width: "100%", marginLeft: 20, marginBottom: 3 }} />
         </View>
-        <HeaderTitle>{`is down :()`}</HeaderTitle>
+        <HeaderTitle>{`is down :(`}</HeaderTitle>
         <HeaderText>{`서버가 중단되었습니다.`}</HeaderText>
       </Header>
       <Content>

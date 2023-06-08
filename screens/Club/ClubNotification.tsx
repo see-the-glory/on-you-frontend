@@ -35,7 +35,7 @@ const EmptyText = styled.Text`
 `;
 
 const ClubNotification = ({
-  navigation: { navigate, goBack, setOptions },
+  navigation: { navigate, goBack, setOptions, push },
   route: {
     params: { clubData, clubRole },
   },
@@ -90,7 +90,6 @@ const ClubNotification = ({
     return () => {
       clubNotiSubs.remove();
       backHandler.remove();
-      DeviceEventEmitter.emit("ClubRefetch");
     };
   }, []);
 
@@ -118,7 +117,7 @@ const ClubNotification = ({
           createdTime: item.created,
           processDone: item.done || item.processDone,
         };
-        return navigate("ClubApplication", clubApplicationProps);
+        return push("ClubApplication", clubApplicationProps);
       } else {
         return toast.show("가입신청서를 볼 수 있는 권한이 없습니다.", { type: "warning" });
       }
@@ -130,10 +129,10 @@ const ClubNotification = ({
           clubData,
           targetIndex: 0,
         };
-        return navigate("ClubStack", { screen: "ClubFeedDetail", params: clubFeedDetailProps });
+        return push("ClubStack", { screen: "ClubFeedDetail", params: clubFeedDetailProps });
       } else {
         const feedSelectionProps = { selectFeedId: item.actionFeedId };
-        return navigate("FeedStack", { screen: "FeedSelection", params: feedSelectionProps });
+        return push("FeedStack", { screen: "FeedSelection", params: feedSelectionProps });
       }
     } else if (item.actionType === "SCHEDULE_CREATE") {
       readAction(item);

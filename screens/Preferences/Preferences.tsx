@@ -20,7 +20,7 @@ const Header = styled.TouchableOpacity`
   margin: 10px 20px;
   padding: 18px;
   background-color: #f5f5f5;
-  border-radius: 20px;
+  border-radius: 10px;
   flex-direction: row;
   align-items: center;
 `;
@@ -165,7 +165,7 @@ const Preferences: React.FC<NativeStackScreenProps<any, "Preferences">> = ({ nav
       title: "나의 활동",
       items: [
         {
-          title: "나의 모임",
+          title: "나의 모임 관리",
           screen: "MyClubs",
         },
       ],
