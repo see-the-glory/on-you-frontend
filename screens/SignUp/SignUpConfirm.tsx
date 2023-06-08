@@ -92,12 +92,10 @@ const SignUpConfirm: React.FC<NativeStackScreenProps<any, "SignUpConfirm">> = ({
           },
         });
       } else if (res.status === 404) {
-        console.log(res);
         toast.show("이미 가입된 사용자입니다.", { type: "warning" });
         navigate("LoginStack", { screen: "Login" });
       } else {
         console.log(`user register mutation success but please check status code`);
-        console.log(res);
         toast.show(`회원가입에 실패했습니다. (Error Code: ${res.status})`, { type: "warning" });
       }
     },

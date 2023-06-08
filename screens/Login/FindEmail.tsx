@@ -60,18 +60,15 @@ const FindEmail: React.FC<NativeStackScreenProps<any, "FindEmail">> = ({ navigat
 
   const mutation = useMutation(UserApi.FindUserId, {
     onSuccess: (res) => {
-      console.log(res);
       if (res.status === 200) {
         navigate("FindResult", { findType: "Email", email: res?.data });
       } else if (res.status === 500) {
-        console.log(res);
         toast.show(`알 수 없는 오류`, { type: "danger" });
       } else {
         toast.show(`${res?.message}`, { type: "warning" });
       }
     },
     onError: (error) => {
-      console.log(error);
       toast.show(`네트워크를 확인해주세요.`, { type: "danger" });
     },
   });

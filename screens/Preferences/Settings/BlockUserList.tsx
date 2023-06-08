@@ -106,7 +106,6 @@ const BlockUserList: React.FC<NativeStackScreenProps<any, "BlockUserList">> = ({
   };
 
   const unblock = (userName: string, userId: number) => {
-    console.log(userId);
     const requestData: UserBlockRequest = { userId };
     Alert.alert(`${userName}님을 차단 해제하시겠어요?`, `이제 홈화면에서 ${userName}님의 게시글을 볼 수 있게 됩니다. ${userName}님에게는 차단을 해제했다는 정보를 알리지 않습니다.`, [
       { text: "아니요", onPress: () => {} },

@@ -150,7 +150,6 @@ const Root = () => {
   };
 
   const handlePushMessage = (data: any) => {
-    console.log(data);
     switch (data?.type) {
       case "APPLY":
         navigation.navigate("ProfileStack", { screen: "UserNotification" });

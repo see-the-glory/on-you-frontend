@@ -299,8 +299,6 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
     let splitedThumbnail = thumbnail?.split("/");
     let splitedBackgroundImage = backgroundImage?.split("/");
 
-    let basicImagePath = Image.resolveAssetSource(require("../../assets/basic.jpg")).uri;
-
     if (thumbnail && splitedThumbnail) {
       updateData.thumbnail = {
         uri: Platform.OS === "android" ? thumbnail : thumbnail.replace("file://", ""),
@@ -316,8 +314,6 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
         name: splitedBackgroundImage[splitedBackgroundImage.length - 1],
       };
     }
-
-    console.log(updateData);
 
     profileMutation.mutate(updateData);
   };
@@ -349,7 +345,7 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
 
       <Animated.ScrollView bounces={false} onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: false })}>
         <Header>
-          <FastImage style={{ width: "100%", height: "100%" }} source={{ uri: backgroundImage ?? profile?.backgroundImage ?? Image.resolveAssetSource(require("../../assets/basic.jpg")).uri }}>
+          <FastImage style={{ width: "100%", height: "100%" }} source={{ uri: backgroundImage ?? profile?.backgroundImage }}>
             <FilterView>
               <BackgroundChangeButton activeOpacity={1} onPress={() => pickImage(IMAGE_TYPE.BACKGROUND)}>
                 <CircleIcon uri={thumbnail ?? profile?.thumbnail} size={140} onPress={() => pickImage(IMAGE_TYPE.THUMBNAIL)} />
