@@ -266,13 +266,14 @@ export interface ReportResponse extends BaseResponse {
   data: Report[];
 }
 export interface ClubsParams {
-  categoryId: number | null;
-  minMember: number | null;
-  maxMember: number | null;
-  showRecruiting: number;
-  sortType: string;
-  orderBy: string;
-  showMy: number;
+  categoryId?: number | null;
+  minMember?: number | null;
+  maxMember?: number | null;
+  showRecruiting?: number;
+  sortType?: string;
+  orderBy?: string;
+  showMy?: number;
+  keyword?: string;
 }
 
 export interface ReplyParams {
@@ -581,10 +582,15 @@ const getClub = ({ queryKey }: any) => {
 };
 const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
-  let params = `categoryId=${clubsParams.categoryId ?? 0}&showMy=${clubsParams.showMy}&showRecruitingOnly=${clubsParams.showRecruiting}`;
-  params += clubsParams.minMember !== null ? `&min=${clubsParams.minMember}` : "";
-  params += clubsParams.maxMember !== null ? `&max=${clubsParams.maxMember}` : "";
-  params += `&sort=${clubsParams.sortType}&orderBy=${clubsParams.orderBy}`;
+  let params = "";
+  if (clubsParams.keyword) {
+    params += `keyword=${clubsParams.keyword}`;
+  } else {
+    params += `categoryId=${clubsParams.categoryId ?? 0}&showMy=${clubsParams.showMy}&showRecruitingOnly=${clubsParams.showRecruiting}`;
+    params += clubsParams.minMember !== null ? `&min=${clubsParams.minMember}` : "";
+    params += clubsParams.maxMember !== null ? `&max=${clubsParams.maxMember}` : "";
+    params += `&sort=${clubsParams.sortType}&orderBy=${clubsParams.orderBy}`;
+  }
   params += pageParam ? `&cursor=${pageParam}` : "";
 
   return axios.get<string, ClubsResponse>(`/api/clubs?${params}`);

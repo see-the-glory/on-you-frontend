@@ -26,6 +26,8 @@ import { getModel, getVersion } from "react-native-device-info";
 import styled from "styled-components/native";
 import CustomText from "../components/CustomText";
 import Parking from "../screens/Parking";
+import Search from "../screens/Search";
+import { lightTheme } from "../theme";
 
 const Nav = createNativeStackNavigator();
 
@@ -347,6 +349,19 @@ const Root = () => {
             <Nav.Screen name="ClubCreationStack" component={ClubCreationStack} />
             <Nav.Screen name="ClubManagementStack" component={ClubManagementStack} />
             <Nav.Screen name="Parking" component={Parking} />
+            <Nav.Screen
+              name="Search"
+              component={Search}
+              options={{
+                headerShown: true,
+                title: "모임 검색",
+                contentStyle: { backgroundColor: "white" },
+                headerTitleAlign: "center",
+                headerTitleStyle: { fontFamily: lightTheme.koreanFontB, fontSize: 16 },
+                headerShadowVisible: false,
+                headerBackVisible: false,
+              }}
+            />
           </Nav.Navigator>
         }
       ></Host>

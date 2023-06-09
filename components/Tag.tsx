@@ -3,7 +3,7 @@ import React from "react";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
-const TagView = styled.View<{ backgroundColor: string; borderColor: string }>`
+const TagView = styled.View<{ backgroundColor?: string; borderColor?: string }>`
   flex-direction: row;
   align-items: center;
   background-color: ${(props: any) => (props.backgroundColor ? props.backgroundColor : "white")};
@@ -13,7 +13,7 @@ const TagView = styled.View<{ backgroundColor: string; borderColor: string }>`
   ${(props: any) => (props.borderColor ? `border: 1px solid ${props.borderColor};` : "")}
 `;
 
-const TagText = styled.Text<{ color: string; includeEmoji: boolean }>`
+const TagText = styled.Text<{ color?: string; includeEmoji?: boolean }>`
   font-family: ${(props: any) => props.theme.koreanFontSB};
   font-size: 11px;
   line-height: ${(props: any) => (props.includeEmoji ? 15 : 13)}px;

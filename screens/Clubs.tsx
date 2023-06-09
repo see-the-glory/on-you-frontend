@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ActivityIndicator, DeviceEventEmitter, FlatList, Platform, StatusBar, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, DeviceEventEmitter, FlatList, Platform, StatusBar, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
 import { Feather, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
-import ClubList from "../components/ClubList";
+import ClubGrid from "../components/ClubGrid";
 import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
 import { Category, CategoryResponse, ClubApi, Club, ClubsResponse, ClubsParams, ErrorResponse } from "../api";
 import { ClubListScreenProps } from "../Types/Club";
@@ -12,6 +12,8 @@ import { Slider } from "@miblanchard/react-native-slider";
 import { useToast } from "react-native-toast-notifications";
 import BottomButton from "../components/BottomButton";
 import { lightTheme } from "../theme";
+import { Iconify } from "react-native-iconify";
+import ClubList from "../components/ClubList";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -43,7 +45,54 @@ const Container = styled.SafeAreaView`
 `;
 
 const HeaderView = styled.View`
-  height: 80px;
+  height: 170px;
+`;
+
+const TitleSection = styled.View`
+  flex-direction: row;
+  height: 50px;
+  padding: 0px 10px;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const Title = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-size: 20px;
+  color: ${(props: any) => props.theme.accentColor};
+`;
+
+const LayoutTypeToggle = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const TypeText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 11px;
+  color: #6f6f6f;
+  margin-right: 5px;
+`;
+
+const SearchSection = styled.View`
+  height: 40px;
+  padding: 0px 10px;
+`;
+
+const SearchButton = styled.TouchableOpacity`
+  flex-direction: row;
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  height: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 10px;
+`;
+
+const SearchText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 16px;
+  color: #c4c4c4;
 `;
 
 const HeaderSection = styled.View`
@@ -55,6 +104,7 @@ const HeaderSection = styled.View`
   border-top-color: #e9e9e9;
   border-bottom-width: 1px;
   border-bottom-color: #e9e9e9;
+  height: 32px;
 `;
 
 const HeaderItem = styled.View`
@@ -169,7 +219,7 @@ interface ClubSortItem {
   orderBy: string;
 }
 
-const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
+const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate, push } }) => {
   const filterMinNumber = 0;
   const filterMaxNumber = 100;
   const toast = useToast();
@@ -189,7 +239,6 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const [showRecruiting, setShowRecruiting] = useState<number>(0);
   const [showMy, setShowMy] = useState<number>(0);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number>(0);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
   const { ref: filteringSheetRef, open: openFilteringSheet, close: closeFilteringSheet } = useModalize();
@@ -199,6 +248,8 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const colSize = Math.round(SCREEN_WIDTH / 2);
   const clubsFlatlistRef = useRef<FlatList<Club>>();
+  const [searchKeyword, setSearchKeyword] = useState<string | undefined>(undefined);
+  const [layoutType, setLayoutType] = useState<"list" | "grid">("grid");
 
   const {
     isLoading: clubsLoading,
@@ -227,23 +278,13 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     data: category,
     isRefetching: isRefetchingCategory,
   } = useQuery<CategoryResponse, ErrorResponse>(["getCategories"], ClubApi.getCategories, {
-    onSuccess: (res) => {
-      if (res.data)
-        setCategoryData([
-          {
-            description: "All Category",
-            id: 0,
-            name: "전체",
-            thumbnail: null,
-            order: null,
-          },
-          ...res.data,
-        ]);
-    },
+    onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getCategories ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
+    staleTime: Infinity,
+    cacheTime: Infinity,
   });
 
   const goToClub = (clubId: number) => {
@@ -258,6 +299,10 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
 
   const goToCreation = () => {
     return navigate("ClubCreationStack", { screen: "ClubCreationStepOne", params: { category } });
+  };
+
+  const goToSearch = () => {
+    return navigate("Search");
   };
 
   const setClubsCategoryParams = (categoryId: number) => {
@@ -301,6 +346,32 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const loadMore = () => {
     if (hasNextPage) fetchNextPage();
   };
+
+  const toggleLayoutType = () => {
+    setLayoutType((prev) => (prev === "grid" ? "list" : "grid"));
+  };
+
+  const gridRenderItem = ({ item, index }: { item: Club; index: number }) => (
+    <TouchableOpacity
+      onPress={() => {
+        goToClub(item.id);
+      }}
+      style={index % 2 === 0 ? { marginRight: 0.5 } : { marginLeft: 0.5 }}
+    >
+      <ClubGrid
+        thumbnailPath={item.thumbnail}
+        organizationName={item.organizationName}
+        clubName={item.name}
+        memberNum={item.recruitNumber}
+        clubShortDesc={item.clubShortDesc}
+        categories={item.categories}
+        recruitStatus={item.recruitStatus}
+        colSize={colSize}
+      />
+    </TouchableOpacity>
+  );
+
+  const listRenderItem = ({ item, index }: { item: Club; index: number }) => <ClubList clubData={item} onPress={() => goToClub(item.id)} />;
 
   const loading = categoryLoading && clubsLoading;
 
@@ -358,12 +429,43 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
       <Container>
         <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
         <HeaderView>
+          <TitleSection>
+            <Title>{`정기모임`}</Title>
+            <LayoutTypeToggle onPress={toggleLayoutType}>
+              {layoutType === "list" ? (
+                <>
+                  <TypeText>{`그리드로 보기`}</TypeText>
+                  <Iconify icon="ion:grid" size={16} color="#6F6F6F" style={{ marginLeft: 2 }} />
+                </>
+              ) : (
+                <>
+                  <TypeText>{`리스트로 보기`}</TypeText>
+                  <Iconify icon="ion:list-sharp" size={18} color="#6F6F6F" />
+                </>
+              )}
+            </LayoutTypeToggle>
+          </TitleSection>
+          <SearchSection>
+            <SearchButton activeOpacity={1} onPress={goToSearch}>
+              <SearchText>{`모임 이름을 검색하세요.`}</SearchText>
+              <Iconify icon="ion:search" size={18} color={"#8E8E8E"} />
+            </SearchButton>
+          </SearchSection>
           <FlatList
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{}}
             ItemSeparatorComponent={() => <View style={{ marginHorizontal: 10 }} />}
             horizontal
-            data={categoryData}
+            data={[
+              {
+                description: "All Category",
+                id: 0,
+                name: "전체",
+                thumbnail: null,
+                order: null,
+              },
+              ...(category?.data ?? []),
+            ]}
             keyExtractor={(item: Category) => item.id + ""}
             renderItem={({ item, index }: { item: Category; index: number }) => (
               <CategoryButton
@@ -420,36 +522,19 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               onEndReached={loadMore}
               onEndReachedThreshold={0.7}
               data={clubs?.pages?.map((page) => page?.responses?.content).flat()}
-              columnWrapperStyle={{ justifyContent: "space-between" }}
-              ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
               ListFooterComponent={() => <View />}
               ListFooterComponentStyle={{ marginBottom: 60 }}
-              numColumns={2}
               keyExtractor={(item: Club, index: number) => String(index)}
-              renderItem={({ item, index }: { item: Club; index: number }) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    goToClub(item.id);
-                  }}
-                  style={index % 2 === 0 ? { marginRight: 0.5 } : { marginLeft: 0.5 }}
-                >
-                  <ClubList
-                    thumbnailPath={item.thumbnail}
-                    organizationName={item.organizationName}
-                    clubName={item.name}
-                    memberNum={item.recruitNumber}
-                    clubShortDesc={item.clubShortDesc}
-                    categories={item.categories}
-                    recruitStatus={item.recruitStatus}
-                    colSize={colSize}
-                  />
-                </TouchableOpacity>
-              )}
               ListEmptyComponent={() => (
                 <EmptyView>
                   <EmptyText>{`조건에 해당하는 모임이 없습니다.`}</EmptyText>
                 </EmptyView>
               )}
+              key={layoutType}
+              ItemSeparatorComponent={layoutType === "grid" ? () => <View style={{ height: 25 }} /> : undefined}
+              numColumns={layoutType === "grid" ? 2 : undefined}
+              columnWrapperStyle={layoutType === "grid" ? { justifyContent: "space-between" } : undefined}
+              renderItem={layoutType === "grid" ? gridRenderItem : listRenderItem}
             />
           )}
         </MainView>
