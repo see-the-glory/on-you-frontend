@@ -333,6 +333,7 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
   };
 
   const goToProfile = (userId: number) => push("ProfileStack", { screen: "Profile", params: { userId } });
+  const goToClubMembers = () => push("ClubMembers", { members: clubData?.members?.filter((member) => member.applyStatus === "APPROVED") });
 
   const clubLongDescTouch = () => {
     setIsCollapsedLongDesc((prev) => !prev);
@@ -485,7 +486,7 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
         <SectionView>
           <TitleView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
             <SectionTitle>{`멤버`}</SectionTitle>
-            <SectionDetailButton>
+            <SectionDetailButton onPress={goToClubMembers}>
               <SectionText>{`자세히 >`}</SectionText>
             </SectionDetailButton>
           </TitleView>
