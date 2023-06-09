@@ -43,7 +43,7 @@ interface CommentProps {
 
 const Comment: React.FC<CommentProps> = ({ commentData, parentIndex, parentId, deleteComment, likeComment, setReplyStatus }) => {
   const me = useSelector((state: RootState) => state.auth.user);
-  const [collapsed, setCollapsed] = useState<boolean>(true);
+  const [collapsed, setCollapsed] = useState<boolean>(commentData?.replies?.length < 4 ? false : true);
   const paddingSize = 20;
   const hiddenItemWidth = 60;
   const thumbnailSize = 36;

@@ -1,9 +1,9 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useRef, useState } from "react";
-import { Animated, Image, Platform, Switch, Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Animated, Platform, Switch, TouchableOpacity, View } from "react-native";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
-import { BaseResponse, Club, ErrorResponse, ProfileResponse, ProfileUpdateRequest, UserApi } from "../../api";
+import { Club, ErrorResponse, ProfileResponse, ProfileUpdateRequest, UserApi } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
 import { lightTheme } from "../../theme";
 import ImagePicker from "react-native-image-crop-picker";
@@ -218,6 +218,12 @@ const SectionContentSubText = styled.Text`
   margin-top: 10px;
 `;
 
+const SubmitText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  color: #2995fa;
+  font-size: 14px;
+`;
+
 const enum IMAGE_TYPE {
   THUMBNAIL = "thunbmail",
   BACKGROUND = "background",
@@ -325,9 +331,9 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
       <AnimatedNavigationView height={headerHeight + top} style={{ paddingTop: top, backgroundColor: bgColor }}>
         <LeftNavigationView>
           <TouchableOpacity onPress={goBack}>
-            <Animated.View style={{ position: "absolute" }}>
+            <View style={{ position: "absolute" }}>
               <Entypo name="chevron-thin-left" size={20} color="white" />
-            </Animated.View>
+            </View>
             <Animated.View style={{ opacity: fadeIn }}>
               <Entypo name="chevron-thin-left" size={20} color="black" />
             </Animated.View>
@@ -339,7 +345,18 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
           </Animated.View>
         </CenterNavigationView>
         <RightNavigationView>
-          <Entypo name="chevron-thin-left" size={20} color="transparent" />
+          {profileMutation.isLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <TouchableOpacity onPress={onSubmit} disabled={profileMutation.isLoading}>
+              <View style={{ position: "absolute" }}>
+                <SubmitText style={{ color: "white" }}>저장</SubmitText>
+              </View>
+              <Animated.View style={{ opacity: fadeIn }}>
+                <SubmitText>저장</SubmitText>
+              </Animated.View>
+            </TouchableOpacity>
+          )}
         </RightNavigationView>
       </AnimatedNavigationView>
 
@@ -500,7 +517,7 @@ const ProfileEdit: React.FC<NativeStackScreenProps<any, "ProfileEdit">> = ({
             </SectionContent>
           </Section>
         </Content>
-        <BottomButton onPress={onSubmit} title={"저장"} backgroundColor={lightTheme.accentColor} disabled={profileMutation.isLoading} />
+        {/* <BottomButton onPress={onSubmit} title={"저장"} backgroundColor={lightTheme.accentColor} disabled={profileMutation.isLoading} /> */}
       </Animated.ScrollView>
     </>
   );

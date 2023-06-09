@@ -22,33 +22,30 @@ import LinkedText from "./LinkedText";
 import FadeFastImage from "./FadeFastImage";
 
 const Container = styled.View``;
-const HeaderView = styled.View<{ padding: number; height: number }>`
+const Header = styled.View<{ height: number }>`
   height: ${(props: any) => props.height}px;
   flex-direction: row;
+  align-items: center;
+  padding: 6px 10px;
+`;
+
+const HeaderInformation = styled.View`
+  flex: 1;
+  justify-content: center;
+`;
+const HeaderInformationTop = styled.View`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const HeaderInformationBottom = styled.View`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  padding: 0px ${(props: any) => (props.padding ? props.padding : "0")}px;
-`;
-const HeaderLeftView = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-const HeaderInformationView = styled.View`
-  justify-content: center;
-  align-items: flex-start;
 `;
 
-const HeaderNameView = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`;
-
-const HeaderRightView = styled.View`
-  height: 100%;
-  justify-content: flex-end;
-  padding-bottom: 10px;
-`;
 const HeaderText = styled.Text`
   font-size: 14px;
   line-height: 16px;
@@ -57,16 +54,16 @@ const HeaderText = styled.Text`
   margin-right: 5px;
 `;
 
-const ContentView = styled.View<{ padding: number }>`
+const Content = styled.View<{ padding: number }>`
   padding: 0px ${(props: any) => (props.padding ? props.padding : "0")}px;
 `;
-const InformationView = styled.View<{ height: number }>`
+const Information = styled.View<{ height: number }>`
   height: ${(props: any) => props.height}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 `;
-const InformationLeftView = styled.View`
+const InformationLeft = styled.View`
   flex-direction: row;
   align-items: center;
 `;
@@ -158,7 +155,6 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
     collapsedTextList: [],
     remainedText: "",
   });
-  // const feedImageOpacity = Array.from({ length: feedData?.imageUrls?.length ?? 0 }, () => new Animated.Value(0));
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   // prettier-ignore
@@ -282,42 +278,31 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
     ]);
   };
 
-  // const onLoadImage = (index: number) => {
-  //   Animated.timing(feedImageOpacity[index], {
-  //     toValue: 1,
-  //     duration: 150,
-  //     delay: 5,
-  //     useNativeDriver: true,
-  //   }).start();
-  // };
-
   const AnimatedHeartView = Animated.createAnimatedComponent(HeartView);
 
   return (
     <Container>
-      <HeaderView padding={10} height={headerHeight}>
-        <HeaderLeftView>
-          <CircleIcon uri={feedData?.thumbnail} size={38} kerning={6} onPress={() => goToProfile(feedData?.userId)} />
-          <HeaderInformationView>
-            <HeaderNameView>
-              <TouchableOpacity activeOpacity={1} onPress={() => goToProfile(feedData?.userId)}>
-                <HeaderText>{feedData?.userName}</HeaderText>
+      <Header height={headerHeight}>
+        <CircleIcon uri={feedData?.thumbnail} size={38} kerning={8} onPress={() => goToProfile(feedData?.userId)} />
+        <HeaderInformation>
+          <HeaderInformationTop>
+            <TouchableOpacity activeOpacity={1} onPress={() => goToProfile(feedData?.userId)}>
+              <HeaderText>{feedData?.userName}</HeaderText>
+            </TouchableOpacity>
+            {showClubName ? (
+              <TouchableOpacity activeOpacity={1} onPress={() => goToClub(feedData?.clubId)}>
+                <Tag name={feedData?.clubName ?? ""} contentContainerStyle={{ paddingLeft: 7, paddingRight: 7 }} textColor="#464646" backgroundColor="#E6E6E6" />
               </TouchableOpacity>
-              {showClubName ? (
-                <TouchableOpacity activeOpacity={1} onPress={() => goToClub(feedData?.clubId)}>
-                  <Tag name={feedData?.clubName ?? ""} contentContainerStyle={{ paddingLeft: 7, paddingRight: 7 }} textColor="#464646" backgroundColor="#E6E6E6" />
-                </TouchableOpacity>
-              ) : null}
-            </HeaderNameView>
+            ) : null}
+          </HeaderInformationTop>
+          <HeaderInformationBottom>
             <CreatedTime>{moment(feedData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
-          </HeaderInformationView>
-        </HeaderLeftView>
-        <HeaderRightView>
-          <TouchableOpacity onPress={() => goToFeedOptionModal(feedData)} style={{ paddingLeft: 15, paddingTop: 15, marginRight: -10 }}>
-            <Iconify icon="ant-design:ellipsis-outlined" size={18} color="black" style={{ marginRight: 10, marginBottom: -5 }} />
-          </TouchableOpacity>
-        </HeaderRightView>
-      </HeaderView>
+            <TouchableOpacity onPress={() => goToFeedOptionModal(feedData)} style={{ paddingLeft: 15, marginRight: -10 }}>
+              <Iconify icon="ant-design:ellipsis-outlined" size={20} color="black" style={{ marginRight: 7 }} />
+            </TouchableOpacity>
+          </HeaderInformationBottom>
+        </HeaderInformation>
+      </Header>
       <Carousel
         pages={feedData?.imageUrls}
         pageWidth={feedSize}
@@ -336,17 +321,6 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
               style={{ width: feedSize, height: feedSize }}
               resizeMode={FastImage.resizeMode.contain}
             />
-            {/* <TouchableOpacity activeOpacity={1} onPress={() => doubleTap()} onLongPress={() => downloadImage(item)} style={{ backgroundColor: "#e3e3e3" }}>
-              <Animated.View style={{ opacity: feedImageOpacity[index] }}>
-                <FastImage
-                  key={String(index)}
-                  source={item ? { uri: item } : require("../assets/basic.jpg")}
-                  style={{ width: feedSize, height: feedSize }}
-                  resizeMode={FastImage.resizeMode.contain}
-                  onLoadEnd={() => onLoadImage(index)}
-                />
-              </Animated.View>
-            </TouchableOpacity> */}
           </Pinchable>
         )}
         ListEmptyComponent={<FastImage source={require("../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} />}
@@ -364,10 +338,10 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
           style={{ width: 200, height: 200 }}
         />
       </AnimatedHeartView>
-      <ContentView padding={10}>
-        <InformationView height={infoHeight}>
+      <Content padding={10}>
+        <Information height={infoHeight}>
           <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "flex-start" }}>
-            <InformationLeftView>
+            <InformationLeft>
               <InformationIconButton activeOpacity={1} onPress={onPressHeart}>
                 <Lottie
                   ref={heartRef}
@@ -391,9 +365,9 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
               <InformationNumberButton activeOpacity={1} onPress={() => goToFeedComments(feedData?.id)}>
                 <CountingNumber>{commentCount}</CountingNumber>
               </InformationNumberButton>
-            </InformationLeftView>
+            </InformationLeft>
           </View>
-        </InformationView>
+        </Information>
         <ScrollView style={{ height: 0 }}>
           <ContentText onTextLayout={onTextLayout}>{feedData?.content}</ContentText>
         </ScrollView>
@@ -418,7 +392,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
             </ContentTextView>
           </Collapsible>
         </TouchableOpacity>
-      </ContentView>
+      </Content>
     </Container>
   );
 };
