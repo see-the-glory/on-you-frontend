@@ -21,7 +21,8 @@ const Header = styled.View`
   flex-direction: row;
   align-items: center;
 `;
-const Content = styled.View`
+const Content = styled.View<{ width: number }>`
+  width: ${(props: any) => (props.width ? props.width : 0)}px;
   margin-bottom: 2px;
 `;
 const Footer = styled.View`

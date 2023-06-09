@@ -11,6 +11,8 @@ import ClubJoinReject from "../screens/Club/ClubJoinReject";
 import ClubJoinRejectMessage from "../screens/Club/ClubJoinRejectMessage";
 import ClubInvitation from "../screens/Club/ClubInvitation";
 import { lightTheme } from "../theme";
+import ClubMembers from "../screens/Club/ClubMembers";
+import ClubGuestBook from "../screens/Club/ClubGuestBook";
 
 const NativeStack = createNativeStackNavigator();
 
@@ -35,6 +37,8 @@ const ClubStack = ({ route: { params }, navigation: { navigate, goBack } }) => {
       <NativeStack.Screen name="ClubJoinRejectMessage" component={ClubJoinRejectMessage} options={{ title: "가입 거절" }} />
       <NativeStack.Screen name="ClubInvitation" component={ClubInvitation} options={{ title: "모임 초대" }} />
       <NativeStack.Screen name="ClubFeedDetail" component={ClubFeedDetail} options={{ headerBackVisible: false }} />
+      <NativeStack.Screen name="ClubMembers" component={ClubMembers} options={{ title: "멤버" }} />
+      <NativeStack.Screen name="ClubGuestBook" component={ClubGuestBook} options={{ headerBackVisible: false }} />
     </NativeStack.Navigator>
   );
 };

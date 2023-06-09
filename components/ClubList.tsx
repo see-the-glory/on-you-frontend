@@ -1,19 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import styled from "styled-components/native";
-import LinearGradient from "react-native-linear-gradient";
-import { Category, Club } from "../api";
+import { Club } from "../api";
 import FastImage from "react-native-fast-image";
 import Tag from "./Tag";
-import { Iconify } from "react-native-iconify";
-import { Animated, Text, View } from "react-native";
-import FadeFastImage from "./FadeFastImage";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { Animated } from "react-native";
 
 const Container = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  border-bottom-color: #e9e9e9;
-  border-bottom-width: 1px;
   padding: 10px;
 `;
 
@@ -46,8 +40,6 @@ interface ClubListProps {
   onPress: Function;
 }
 
-const AnimatedContainer = Animated.createAnimatedComponent(Container);
-
 const ClubList: React.FC<ClubListProps> = ({ clubData, onPress }) => {
   const opacity = useRef(new Animated.Value(0));
 
@@ -61,7 +53,7 @@ const ClubList: React.FC<ClubListProps> = ({ clubData, onPress }) => {
   };
 
   return (
-    <Animated.View style={{ opacity: opacity.current }}>
+    <Animated.View style={{ opacity: opacity.current, borderBottomColor: "#e9e9e9", borderBottomWidth: 1 }}>
       <Container onPress={() => onPress()}>
         <FastImage style={{ width: 36, height: 36, borderRadius: 18, marginRight: 10 }} source={{ uri: clubData?.thumbnail ?? undefined }} onLoadEnd={onLoadImage} />
         <Content>
