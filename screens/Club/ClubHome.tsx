@@ -517,11 +517,11 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
                 .slice(0, 4)
                 .map((guest: GuestComment, index: number) => (
                   <GuestItem key={`guest_${index}`}>
-                    <CircleIcon size={28} uri={guest.thumbnail} kerning={5} />
+                    <CircleIcon size={28} uri={guest.thumbnail} kerning={5} onPress={() => goToProfile(guest.userId)} />
                     <GuestItemInnerView>
                       <GuestItemHeader>
                         <GuestItemHeaderLeft>
-                          <GuestName>{guest.userName}</GuestName>
+                          <GuestName onPress={() => goToProfile(guest.userId)}>{guest.userName}</GuestName>
                           <GuestCreatedTime>{moment(guest.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</GuestCreatedTime>
                         </GuestItemHeaderLeft>
                         <GuestItemHeaderRight>

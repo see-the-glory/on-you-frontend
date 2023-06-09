@@ -45,7 +45,7 @@ const SearchWrapper = styled.View`
 const SearchInput = styled.TextInput`
   font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 16px;
-  width: 90%;
+  width: 95%;
   height: 100%;
 `;
 

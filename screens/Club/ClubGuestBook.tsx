@@ -248,6 +248,8 @@ const ClubGuestBook: React.FC<NativeStackScreenProps<any, "ClubGuestBook">> = ({
     });
   }, []);
 
+  const goToProfile = (userId: number) => push("ProfileStack", { screen: "Profile", params: { userId } });
+
   return (
     <Container>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={commentInputHeight} style={{ flex: 1 }}>
@@ -279,11 +281,11 @@ const ClubGuestBook: React.FC<NativeStackScreenProps<any, "ClubGuestBook">> = ({
                   </HiddenItemButton>
                 </HiddenItemContainer>
                 <CommentContainer style={{ paddingVertical: 10, paddingLeft: paddingSize, paddingRight: paddingSize }}>
-                  <CircleIcon uri={item?.thumbnail} size={thumbnailSize} kerning={thumbnailKerning} onPress={() => {}} />
+                  <CircleIcon onPress={() => goToProfile(item?.userId)} uri={item?.thumbnail} size={thumbnailSize} kerning={thumbnailKerning} />
                   <View style={{ flex: 1, justifyContent: "center" }}>
                     <CommentHeader>
                       <TouchableOpacity activeOpacity={1} onPress={() => {}}>
-                        <CommentUserName>{item?.userName.trim()}</CommentUserName>
+                        <CommentUserName onPress={() => goToProfile(item?.userId)}>{item?.userName.trim()}</CommentUserName>
                       </TouchableOpacity>
                       <CommentSubText>{moment(item?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CommentSubText>
                     </CommentHeader>
