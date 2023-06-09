@@ -466,6 +466,7 @@ const ClubTopTabs = ({
         schedules={scheduleData}
         syncScrollOffset={syncScrollOffset}
         screenScrollRefs={screenScrollRefs}
+        screenScrollOffset={screenScrollOffset}
       />
     ),
     [headerDiff, clubData, scheduleData]
@@ -481,6 +482,7 @@ const ClubTopTabs = ({
         actionButtonHeight={ACTION_BUTTON_HEIGHT}
         syncScrollOffset={syncScrollOffset}
         screenScrollRefs={screenScrollRefs}
+        screenScrollOffset={screenScrollOffset}
       />
     ),
     [headerDiff, clubId]

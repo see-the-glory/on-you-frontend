@@ -40,6 +40,7 @@ export interface ClubFeedParamList {
   actionButtonHeight: number;
   syncScrollOffset: (screenName: string) => void;
   screenScrollRefs: any;
+  screenScrollOffset: any;
 }
 
 const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
@@ -54,6 +55,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   actionButtonHeight,
   syncScrollOffset,
   screenScrollRefs,
+  screenScrollOffset,
 }) => {
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -132,7 +134,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
         screenScrollRefs.current[screenName] = ref;
       }}
       onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
-      contentOffset={{ x: 0, y: 0 }}
+      contentOffset={{ x: 0, y: screenScrollOffset?.current[screenName] ?? 0 }}
       onMomentumScrollEnd={(event) => syncScrollOffset(screenName)}
       onScrollEndDrag={() => syncScrollOffset(screenName)}
       style={{

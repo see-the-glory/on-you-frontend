@@ -1,5 +1,5 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter, TouchableWithoutFeedback, View, Alert, Text } from "react-native";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter, TouchableWithoutFeedback, View, Alert, Text, StatusBar, Platform } from "react-native";
 import styled from "styled-components/native";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { RefinedSchedule } from "../../Types/Club";
@@ -230,6 +230,7 @@ export interface ClubHomeParamList {
   schedules?: RefinedSchedule[];
   syncScrollOffset: (screenName: string) => void;
   screenScrollRefs: any;
+  screenScrollOffset: any;
 }
 
 const ClubHome: React.FC<ClubHomeParamList> = ({
@@ -246,6 +247,7 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
   schedules,
   syncScrollOffset,
   screenScrollRefs,
+  screenScrollOffset,
 }) => {
   const me = useSelector((state: RootState) => state.auth.user);
   const [scheduleVisible, setScheduleVisible] = useState(false);
@@ -362,7 +364,7 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
         onMomentumScrollEnd={(event) => syncScrollOffset(screenName)}
         onScrollEndDrag={() => syncScrollOffset(screenName)}
-        contentOffset={{ x: 0, y: 0 }}
+        contentOffset={{ x: 0, y: screenScrollOffset?.current[screenName] ?? 0 }}
         style={{
           flex: 1,
           paddingTop: 20,
@@ -432,6 +434,9 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
                     onPress={() => {
                       setScheduleVisible(true);
                       setSelectedSchedule(index);
+                      if (Platform.OS === "android") {
+                        StatusBar.setBackgroundColor("black", true);
+                      }
                     }}
                   >
                     <ScheduleDateView index={index}>
