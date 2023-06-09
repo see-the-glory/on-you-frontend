@@ -1,6 +1,6 @@
 import { Entypo, EvilIcons } from "@expo/vector-icons";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ActivityIndicator, BackHandler, DeviceEventEmitter, KeyboardAvoidingView, LayoutChangeEvent, Platform, StatusBar, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, BackHandler, DeviceEventEmitter, KeyboardAvoidingView, LayoutChangeEvent, Platform, StatusBar, TextInput, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
@@ -206,7 +206,15 @@ const FeedComments = ({
     if (commentId === -1) return toast.show(`댓글 정보가 잘못되었습니다.`, { type: "warning" });
 
     let requestData: FeedCommentDefaultRequest = { commentId };
-    deleteFeedCommentMutation.mutate(requestData);
+    Alert.alert("댓글 삭제", "작성하신 댓글을 삭제하시겠어요?", [
+      { text: "아니요" },
+      {
+        text: "예",
+        onPress: () => {
+          deleteFeedCommentMutation.mutate(requestData);
+        },
+      },
+    ]);
   };
 
   /**

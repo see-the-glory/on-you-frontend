@@ -161,8 +161,11 @@ const InfoText = styled.Text`
   color: #959595;
 `;
 
-const GusetPage = styled.View``;
+const GusetPage = styled.View`
+  width: 100%;
+`;
 const GuestItem = styled.View`
+  flex: 1;
   flex-direction: row;
   align-items: flex-start;
   padding: 8px 0px;
@@ -254,10 +257,7 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
   const toast = useToast();
   const [clubLongDescLines, setClubLongDescLines] = useState<string[]>(typeof clubData?.clubLongDesc === "string" ? clubData?.clubLongDesc?.split("\n") : []);
   const [isCollapsedLongDesc, setIsCollapsedLongDesc] = useState<boolean>(true);
-  const [guestCommentBundle, setGuestCommentBulde] = useState<GuestComment[][]>([]);
   const collapsed = 8;
-  const guestCommentLine = 4;
-  const [guestBookIndex, setGuestBookIndex] = useState<number>(0);
 
   useLayoutEffect(() => {
     getData();
@@ -275,22 +275,18 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
     };
   }, []);
 
-  const onScrollGuestBook = (e: any) => {
-    const newIndex = Math.round(e.nativeEvent.contentOffset.x / SCREEN_WIDTH);
-    setGuestBookIndex(newIndex);
-  };
-
-  const { isLoading: isGuestCommentLoading, refetch: guestCommentRefetch } = useQuery<GuestCommentResponse, ErrorResponse>(["getGuestComment", clubId], ClubApi.getGuestComment, {
-    onSuccess: (res) => {
-      let result = [];
-      res?.data?.reverse();
-      for (let i = 0; i < res?.data.length; i += guestCommentLine) result.push(res?.data?.slice(i, i + guestCommentLine));
-      setGuestCommentBulde(result);
-    },
+  const {
+    data: guestComment,
+    isLoading: isGuestCommentLoading,
+    refetch: guestCommentRefetch,
+  } = useQuery<GuestCommentResponse, ErrorResponse>(["getGuestComment", clubId], ClubApi.getGuestComment, {
+    onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getGuestComment ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
+    staleTime: 10000,
+    cacheTime: 15000,
   });
 
   const deleteGuestCommentMutation = useMutation<BaseResponse, ErrorResponse, GuestCommentDeletionRequest>(ClubApi.deleteGuestComment, {
@@ -334,6 +330,7 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
 
   const goToProfile = (userId: number) => push("ProfileStack", { screen: "Profile", params: { userId } });
   const goToClubMembers = () => push("ClubMembers", { members: clubData?.members?.filter((member) => member.applyStatus === "APPROVED") });
+  const goToClubGuestBook = () => push("ClubGuestBook", { clubId, clubData });
 
   const clubLongDescTouch = () => {
     setIsCollapsedLongDesc((prev) => !prev);
@@ -351,7 +348,7 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
     ]);
   };
 
-  const loading = memberLoading;
+  const loading = memberLoading && isGuestCommentLoading;
   return loading ? (
     <Loader>
       <ActivityIndicator />
@@ -508,24 +505,17 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
         <SectionView>
           <TitleView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
             <SectionTitle>{`방명록`}</SectionTitle>
-            <SectionDetailButton>
+            <SectionDetailButton onPress={goToClubGuestBook}>
               <SectionText>{`모두보기 >`}</SectionText>
             </SectionDetailButton>
           </TitleView>
 
-          <FlatList
-            horizontal
-            pagingEnabled
-            automaticallyAdjustContentInsets={false}
-            snapToInterval={SCREEN_WIDTH}
-            decelerationRate="fast"
-            onScroll={onScrollGuestBook}
-            showsHorizontalScrollIndicator={false}
-            data={guestCommentBundle}
-            keyExtractor={(item: GuestComment[], index: number) => String(index)}
-            renderItem={({ item, index }: { item: GuestComment[]; index: number }) => (
-              <GusetPage style={{ width: SCREEN_WIDTH - SCREEN_PADDING_SIZE * 2, marginHorizontal: SCREEN_PADDING_SIZE }}>
-                {item?.map((guest: GuestComment, index: number) => (
+          <GusetPage style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+            {guestComment?.data && guestComment.data.length > 0 ? (
+              [...guestComment?.data]
+                .reverse()
+                .slice(0, 4)
+                .map((guest: GuestComment, index: number) => (
                   <GuestItem key={`guest_${index}`}>
                     <CircleIcon size={28} uri={guest.thumbnail} kerning={5} />
                     <GuestItemInnerView>
@@ -543,27 +533,13 @@ const ClubHome: React.FC<ClubHomeParamList> = ({
                       </GuestItemContent>
                     </GuestItemInnerView>
                   </GuestItem>
-                ))}
-              </GusetPage>
-            )}
-            ListEmptyComponent={() => (
-              <EmptyView style={{ width: SCREEN_WIDTH }}>
+                ))
+            ) : (
+              <EmptyView>
                 <EmptyText>{`아직 등록된 방명록이 없습니다.`}</EmptyText>
               </EmptyView>
             )}
-          />
-
-          {/* <GuestBookInfoView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
-            {guestCommentBundle?.length > 0 ? (
-              <>
-                <Ionicons name="caret-back-sharp" size={11} color={guestBookIndex > 0 ? "#959595" : "rgba(0, 0, 0, 0)"} />
-                <InfoText style={{ marginHorizontal: 6 }}>{`${guestBookIndex + 1} / ${guestCommentBundle?.length}`}</InfoText>
-                <Ionicons name="caret-forward-sharp" size={11} color={guestBookIndex < guestCommentBundle?.length - 1 ? "#959595" : "rgba(0, 0, 0, 0)"} />
-              </>
-            ) : (
-              <></>
-            )}
-          </GuestBookInfoView> */}
+          </GusetPage>
 
           <View style={{ width: "100%", marginTop: 15, marginBottom: 15 }}>
             <GuestCommentButton

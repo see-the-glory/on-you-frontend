@@ -1,5 +1,5 @@
 import { AntDesign } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Collapsible from "react-native-collapsible";
 import { SwipeRow } from "react-native-swipe-list-view";
 import { useSelector } from "react-redux";
@@ -48,12 +48,20 @@ const Comment: React.FC<CommentProps> = ({ commentData, parentIndex, parentId, d
   const hiddenItemWidth = 60;
   const thumbnailSize = 36;
   const thumbnailKerning = 10;
+  const commentRef = useRef(null);
+  const replyRef = useRef(null);
 
   return (
     <>
-      <SwipeRow disableRightSwipe={true} disableLeftSwipe={commentData.userId !== me?.id} rightOpenValue={-hiddenItemWidth} tension={60}>
+      <SwipeRow ref={commentRef} key={`Comment_${parentIndex}`} disableRightSwipe={true} disableLeftSwipe={commentData.userId !== me?.id} rightOpenValue={-hiddenItemWidth} tension={60}>
         <HiddenItemContainer>
-          <HiddenItemButton width={hiddenItemWidth} onPress={() => deleteComment(commentData.commentId ?? -1)}>
+          <HiddenItemButton
+            width={hiddenItemWidth}
+            onPress={() => {
+              deleteComment(commentData.commentId ?? -1);
+              commentRef?.current?.closeRow();
+            }}
+          >
             <AntDesign name="delete" size={20} color="white" />
           </HiddenItemButton>
         </HiddenItemContainer>
@@ -84,9 +92,15 @@ const Comment: React.FC<CommentProps> = ({ commentData, parentIndex, parentId, d
       {/* Collapsible 에 minHeight 이 없으면 HiddenItemContainer의 배경색이 적용되지 않는 이슈가 있음. */}
       <Collapsible style={{ minHeight: commentData.replies.length ? 50 : 0 }} collapsed={collapsed}>
         {commentData.replies?.map((reply: FeedComment, index: number) => (
-          <SwipeRow key={`Reply_${index}`} disableRightSwipe={true} disableLeftSwipe={reply.userId !== me?.id} rightOpenValue={-hiddenItemWidth} tension={60}>
+          <SwipeRow ref={replyRef} key={`Reply_${index}`} disableRightSwipe={true} disableLeftSwipe={reply.userId !== me?.id} rightOpenValue={-hiddenItemWidth} tension={60}>
             <HiddenItemContainer>
-              <HiddenItemButton width={hiddenItemWidth} onPress={() => deleteComment(reply.commentId ?? -1)}>
+              <HiddenItemButton
+                width={hiddenItemWidth}
+                onPress={() => {
+                  deleteComment(reply.commentId ?? -1);
+                  replyRef?.current?.closeRow();
+                }}
+              >
                 <AntDesign name="delete" size={20} color="white" />
               </HiddenItemButton>
             </HiddenItemContainer>
