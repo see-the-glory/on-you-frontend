@@ -250,7 +250,8 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
     if (!url) return;
     if (!isMyClubPost) return;
     let fileName = url.split("/").pop();
-    let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}` : `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}`;
+    let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DownloadDir}` : `${RNFetchBlob.fs.dirs.CacheDir}`;
+    path += `/OnYou/${fileName}`;
     Alert.alert("사진 저장", "이 사진을 저장하시겠습니까?", [
       { text: "아니요" },
       {
@@ -268,7 +269,10 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
             .then((res) => {
               if (Platform.OS === "ios") {
                 const filePath = res.path();
-                CameraRoll.save(filePath).then(() => {
+                CameraRoll.save(filePath, {
+                  type: "photo",
+                  album: "OnYou",
+                }).then(() => {
                   RNFetchBlob.fs.unlink(filePath);
                 });
               }

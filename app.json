@@ -2,7 +2,7 @@
   "expo": {
     "name": "OnYou",
     "slug": "OnYou",
-    "version": "1.0.2",
+    "version": "1.0.0",
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "y"

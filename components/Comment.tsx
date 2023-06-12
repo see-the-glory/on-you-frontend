@@ -4,7 +4,7 @@ import Collapsible from "react-native-collapsible";
 import { SwipeRow } from "react-native-swipe-list-view";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { FeedComment } from "../api";
+import { FeedComment, LikeUser } from "../api";
 import { RootState } from "../redux/store/reducers";
 import CommentDetail from "./CommentDetail";
 
@@ -39,9 +39,10 @@ interface CommentProps {
   deleteComment: (commentId: number) => void;
   likeComment: (commentId: number, commentType: number, parentIndex: number, replyIndex?: number) => void;
   setReplyStatus: (parentId: number, userName: string) => void;
+  goToFeedLikes: (likeUsers?: LikeUser[]) => void;
 }
 
-const Comment: React.FC<CommentProps> = ({ commentData, parentIndex, parentId, deleteComment, likeComment, setReplyStatus }) => {
+const Comment: React.FC<CommentProps> = ({ commentData, parentIndex, parentId, deleteComment, likeComment, setReplyStatus, goToFeedLikes }) => {
   const me = useSelector((state: RootState) => state.auth.user);
   const [collapsed, setCollapsed] = useState<boolean>(commentData?.replies?.length < 4 ? false : true);
   const paddingSize = 20;
@@ -74,6 +75,7 @@ const Comment: React.FC<CommentProps> = ({ commentData, parentIndex, parentId, d
           thumbnailKerning={thumbnailKerning}
           likeComment={likeComment}
           setReplyStatus={setReplyStatus}
+          goToFeedLikes={goToFeedLikes}
         />
       </SwipeRow>
       {commentData?.replies?.length && collapsed ? (
@@ -114,6 +116,7 @@ const Comment: React.FC<CommentProps> = ({ commentData, parentIndex, parentId, d
               thumbnailKerning={thumbnailKerning}
               likeComment={likeComment}
               setReplyStatus={setReplyStatus}
+              goToFeedLikes={goToFeedLikes}
             />
           </SwipeRow>
         ))}
