@@ -1,57 +1,69 @@
-import React, { PureComponent } from "react";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import FastImage from "react-native-fast-image";
 import styled from "styled-components/native";
-import CustomText from "./CustomText";
 import CircleIcon from "./CircleIcon";
 import { Feed, LikeUser } from "../api";
-import { Alert, NativeSyntheticEvent, Platform, ScrollView, TextLayoutEventData, TouchableOpacity, View } from "react-native";
+import { Alert, Animated, NativeSyntheticEvent, Platform, ScrollView, TextLayoutEventData, TouchableOpacity, View } from "react-native";
 import moment from "moment";
 import Carousel from "./Carousel";
 import Tag from "./Tag";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import Collapsible from "react-native-collapsible";
 import Pinchable from "react-native-pinchable";
 import RNFetchBlob from "rn-fetch-blob";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
+import Lottie from "lottie-react-native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store/reducers";
+import { lightTheme } from "../theme";
+import { Iconify } from "react-native-iconify";
+import LinkedText from "./LinkedText";
+import FadeFastImage from "./FadeFastImage";
 
 const Container = styled.View``;
-const HeaderView = styled.View<{ padding: number; height: number }>`
+const Header = styled.View<{ height: number }>`
   height: ${(props: any) => props.height}px;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
-  padding: 0px ${(props: any) => (props.padding ? props.padding : "0")}px;
+  padding: 6px 10px;
 `;
-const HeaderLeftView = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-const HeaderNameView = styled.View`
+
+const HeaderInformation = styled.View`
+  flex: 1;
   justify-content: center;
-  align-items: flex-start;
 `;
-const HeaderRightView = styled.View`
-  height: 100%;
-  justify-content: flex-end;
-  padding-bottom: 10px;
+const HeaderInformationTop = styled.View`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
 `;
-const HeaderText = styled(CustomText)`
-  font-size: 16px;
-  font-family: "NotoSansKR-Medium";
+
+const HeaderInformationBottom = styled.View`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const HeaderText = styled.Text`
+  font-size: 14px;
+  line-height: 16px;
+  font-family: ${(props: any) => props.theme.koreanFontB};
   color: #2b2b2b;
-  line-height: 25px;
+  margin-right: 5px;
 `;
-const ContentView = styled.View<{ padding: number }>`
+
+const Content = styled.View<{ padding: number }>`
   padding: 0px ${(props: any) => (props.padding ? props.padding : "0")}px;
 `;
-const InformationView = styled.View<{ height: number }>`
+const Information = styled.View<{ height: number }>`
   height: ${(props: any) => props.height}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 `;
-const InformationLeftView = styled.View`
+const InformationLeft = styled.View`
   flex-direction: row;
   align-items: center;
 `;
@@ -68,30 +80,46 @@ const InformationNumberButton = styled.TouchableOpacity`
   margin-right: 12px;
 `;
 
-const CountingNumber = styled(CustomText)`
+const CountingNumber = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-size: 15px;
   margin-left: 3px;
 `;
-const InformationRightView = styled.View``;
-const CreatedTime = styled(CustomText)`
+const CreatedTime = styled.Text`
   color: #9a9a9a;
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
 `;
-const ContentTextView = styled.Text<{ height: number }>`
+const ContentTextView = styled.Text<{ height?: number }>`
   ${(props: any) => (props.height ? `height: ${props.height}px` : "")};
 `;
-const ContentText = styled(CustomText)`
+const ContentText = styled(LinkedText)`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #2b2b2b;
 `;
 
-const ContentSubText = styled(CustomText)`
-  font-size: 14px;
-  line-height: 20px;
-  color: #9a9a9a;
+const ContentSubText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 13px;
+  line-height: 19px;
+  color: #5b5b5b;
+`;
+
+const HeartView = styled.View`
+  position: absolute;
+  left: 50%;
+  margin-left: -50px;
+  top: 150px;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  width: 100px;
 `;
 
 interface FeedDetailProps {
-  feedData?: Feed;
+  feedData: Feed;
   feedIndex?: number;
   feedSize: number;
   headerHeight: number;
@@ -99,15 +127,11 @@ interface FeedDetailProps {
   contentHeight: number;
   showClubName?: boolean;
   isMyClubPost?: boolean;
-  openFeedOption: (feedData?: Feed) => void;
-  goToFeedComments: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
-  goToFeedLikes: (likeUsers: LikeUser[]) => void;
-  goToClub?: (clubId?: number) => void;
+  goToFeedOptionModal: (feedData?: Feed) => void;
   likeFeed?: (feedIndex?: number, feedId?: number) => void; // Feed 단독 화면에서는 index, id가 undefined
 }
 
 interface FeedDetailState {
-  isCollapsed: boolean;
   moreContent: boolean;
   textHeight: number;
   collapsedText: string;
@@ -115,37 +139,116 @@ interface FeedDetailState {
   remainedText: string;
 }
 
-class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
-  lastTapTime?: number;
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      isCollapsed: true,
-      moreContent: false,
-      textHeight: 0,
-      collapsedText: "",
-      collapsedTextList: [],
-      remainedText: "",
-    };
-    this.lastTapTime = undefined;
-  }
+const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, headerHeight, infoHeight, contentHeight, showClubName, isMyClubPost, goToFeedOptionModal, likeFeed }) => {
+  const me = useSelector((state: RootState) => state.auth.user);
+  const { likeYn, likesCount, commentCount } = useSelector((state: RootState) => state.feed[feedData?.id]);
+  let lastTapTime: number | undefined = undefined;
+  const heartRef = useRef<Lottie>(null);
+  const bgHeartRef = useRef<Lottie>(null);
+  const isFirstRun = useRef(true);
+  const opacity = useRef(new Animated.Value(0)).current;
+  const [isCollapsed, setIscollapsed] = useState<boolean>(true);
+  const [contentState, setcontentState] = useState<FeedDetailState>({
+    moreContent: false,
+    textHeight: 0,
+    collapsedText: "",
+    collapsedTextList: [],
+    remainedText: "",
+  });
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  doubleTap() {
+  // prettier-ignore
+  const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
+      const moreContent = event.nativeEvent.lines.length > 2 ? true : false;
+      const collapsedTextList = event.nativeEvent.lines.slice(0, 2).map(line => line.text);
+      const collapsedText = collapsedTextList.join("").trim();
+      const remainedText = moreContent ? event.nativeEvent.lines.slice(2).map((line) => line.text).join("").trim() : "";
+      const textHeight = moreContent ? (event.nativeEvent.lines.slice(2).length * (contentHeight / 2)) : 0;
+      setcontentState({ textHeight, moreContent, collapsedText, collapsedTextList, remainedText });
+    };
+
+  const contentTextTouch = () => {
+    if (contentState.moreContent && isCollapsed) setIscollapsed(false);
+    else goToFeedComments(feedData?.id);
+  };
+
+  useEffect(() => {
+    if (isFirstRun.current) {
+      if (likeYn) heartRef.current?.play(30, 30);
+      else heartRef.current?.play(0, 0);
+      isFirstRun.current = false;
+    } else {
+      bgHeartRef.current?.play(10, 25);
+      if (likeYn) heartRef.current?.play(10, 25);
+      else heartRef.current?.play(45, 60);
+    }
+  }, [likeYn]);
+
+  const onPressHeart = () => {
+    if (likeYn) heartRef.current?.play(45, 60);
+    else heartRef.current?.play(10, 25);
+
+    if (likeFeed) {
+      likeFeed(feedIndex, feedData?.id);
+    }
+  };
+
+  const doubleTap = () => {
     const now = Date.now();
     const DOUBLE_PRESS_DELAY = 300;
 
-    if (this.lastTapTime && now - this.lastTapTime < DOUBLE_PRESS_DELAY) {
-      if (this.props.likeFeed) {
-        this.props.likeFeed(this.props.feedIndex, this.props.feedData?.id);
-      }
-    } else {
-      this.lastTapTime = now;
-    }
-  }
+    if (lastTapTime && now - lastTapTime < DOUBLE_PRESS_DELAY) {
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 350,
+        useNativeDriver: true,
+      }).start();
 
-  downloadImage(url?: string) {
+      if (!likeYn && likeFeed) likeFeed(feedIndex, feedData?.id);
+
+      bgHeartRef.current?.play(10, 25);
+      heartRef.current?.play(10, 25);
+    } else {
+      lastTapTime = now;
+    }
+  };
+
+  const goToProfile = useCallback((userId?: number) => navigation.push("ProfileStack", { screen: "Profile", params: { userId } }), []);
+
+  const goToClub = useCallback((clubId?: number) => {
+    if (clubId) navigation.push("ClubStack", { screen: "ClubTopTabs", params: { clubId } });
+  }, []);
+
+  const goToFeedComments = useCallback((feedId?: number) => {
+    if (feedId === undefined) return;
+    navigation.push("FeedStack", { screen: "FeedComments", params: { feedId } });
+  }, []);
+
+  const goToFeedLikes = useCallback(
+    (likeUsers?: LikeUser[]) => {
+      // 로그인 되어있다면, likeYn에 따라 likeUsers 목록에 내 정보를 넣거나 뺀다.
+      if (me?.thumbnail && me?.name && me?.id) {
+        likeUsers = likeUsers?.filter((user) => user.userId != me?.id);
+        if (likeYn) likeUsers?.push({ thumbnail: me?.thumbnail, userName: me?.name, likeDate: moment().tz("Asia/Seoul").format("YYYY-MM-DDThh:mm:ss"), userId: me?.id });
+      }
+
+      if (!likeUsers || likeUsers.length === 0) return;
+      navigation.push("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
+    },
+    [likeYn]
+  );
+
+  const onBgHeartAnimationFinish = () => {
+    Animated.timing(opacity, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const downloadImage = (url?: string) => {
     if (!url) return;
-    if (!this.props.isMyClubPost) return;
+    if (!isMyClubPost) return;
     let fileName = url.split("/").pop();
     let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DownloadDir}` : `${RNFetchBlob.fs.dirs.CacheDir}`;
     path += `/OnYou/${fileName}`;
@@ -177,121 +280,125 @@ class FeedDetail extends PureComponent<FeedDetailProps, FeedDetailState> {
         },
       },
     ]);
-  }
+  };
 
-  render() {
-    // prettier-ignore
-    const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
-      const moreContent = event.nativeEvent.lines.length > 2 ? true : false;
-      const collapsedTextList = event.nativeEvent.lines.slice(0, 2).map(line => line.text);
-      const collapsedText = collapsedTextList.join("").trim();
-      const remainedText = moreContent ? event.nativeEvent.lines.slice(2).map((line) => line.text).join("").trim() : "";
-      const textHeight = moreContent ? (event.nativeEvent.lines.slice(2).length * (this.props.contentHeight / 2)) : 0;
-      this.setState({ ...this.state, textHeight, moreContent, collapsedText, collapsedTextList, remainedText });
-    };
+  const AnimatedHeartView = Animated.createAnimatedComponent(HeartView);
 
-    const contentTextTouch = () => {
-      if (this.state.moreContent && this.state.isCollapsed) this.setState({ ...this.state, isCollapsed: !this.state.isCollapsed });
-      else this.props.goToFeedComments(this.props.feedIndex, this.props.feedData?.id);
-    };
-    return (
-      <Container>
-        <HeaderView padding={10} height={this.props.headerHeight}>
-          <HeaderLeftView>
-            <CircleIcon uri={this.props.feedData?.thumbnail} size={46} kerning={6} />
-            <HeaderNameView>
-              <HeaderText>{this.props.feedData?.userName}</HeaderText>
-              {this.props.showClubName ? (
-                <TouchableWithoutFeedback onPress={() => (this.props.goToClub ? this.props.goToClub(this.props.feedData?.clubId) : {})}>
-                  <Tag name={this.props.feedData?.clubName ?? ""} textColor="white" backgroundColor="#C4C4C4" />
-                </TouchableWithoutFeedback>
-              ) : (
-                <></>
-              )}
-            </HeaderNameView>
-          </HeaderLeftView>
-          <HeaderRightView>
-            <TouchableOpacity onPress={() => this.props.openFeedOption(this.props.feedData)} style={{ paddingLeft: 15, paddingTop: 15 }}>
-              <Ionicons name="ellipsis-vertical" size={15} color="black" style={{ marginRight: -5 }} />
+  return (
+    <Container>
+      <Header height={headerHeight}>
+        <CircleIcon uri={feedData?.thumbnail} size={38} kerning={8} onPress={() => goToProfile(feedData?.userId)} />
+        <HeaderInformation>
+          <HeaderInformationTop>
+            <TouchableOpacity activeOpacity={1} onPress={() => goToProfile(feedData?.userId)}>
+              <HeaderText>{feedData?.userName}</HeaderText>
             </TouchableOpacity>
-          </HeaderRightView>
-        </HeaderView>
-        <Carousel
-          pages={this.props.feedData?.imageUrls}
-          pageWidth={this.props.feedSize}
-          gap={0}
-          offset={0}
-          initialScrollIndex={0}
-          keyExtractor={(item: string, index: number) => String(index)}
-          showIndicator={(this.props.feedData?.imageUrls?.length ?? 0) > 1 ? true : false}
-          renderItem={({ item, index }: { item: string; index: number }) => (
-            <Pinchable>
-              <TouchableOpacity activeOpacity={1} onPress={() => this.doubleTap()} onLongPress={() => this.downloadImage(item)}>
-                <FastImage
-                  key={String(index)}
-                  source={item ? { uri: item } : require("../assets/basic.jpg")}
-                  style={{ width: this.props.feedSize, height: this.props.feedSize }}
-                  resizeMode={FastImage.resizeMode.contain}
-                />
+            {showClubName ? (
+              <TouchableOpacity activeOpacity={1} onPress={() => goToClub(feedData?.clubId)}>
+                <Tag name={feedData?.clubName ?? ""} contentContainerStyle={{ paddingLeft: 7, paddingRight: 7 }} textColor="#464646" backgroundColor="#E6E6E6" />
               </TouchableOpacity>
-            </Pinchable>
-          )}
-          ListEmptyComponent={<FastImage source={require("../assets/basic.jpg")} style={{ width: this.props.feedSize, height: this.props.feedSize }} />}
+            ) : null}
+          </HeaderInformationTop>
+          <HeaderInformationBottom>
+            <CreatedTime>{moment(feedData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
+            <TouchableOpacity onPress={() => goToFeedOptionModal(feedData)} style={{ paddingLeft: 15, marginRight: -10 }}>
+              <Iconify icon="ant-design:ellipsis-outlined" size={20} color="black" style={{ marginRight: 7 }} />
+            </TouchableOpacity>
+          </HeaderInformationBottom>
+        </HeaderInformation>
+      </Header>
+      <Carousel
+        pages={feedData?.imageUrls}
+        pageWidth={feedSize}
+        gap={0}
+        offset={0}
+        initialScrollIndex={0}
+        keyExtractor={(item: string, index: number) => String(index)}
+        showIndicator={(feedData?.imageUrls?.length ?? 0) > 1 ? true : false}
+        renderItem={({ item, index }: { item: string; index: number }) => (
+          <Pinchable>
+            <FadeFastImage
+              activeOpacity={1}
+              onPress={() => doubleTap()}
+              onLongPress={() => downloadImage(item)}
+              uri={item}
+              style={{ width: feedSize, height: feedSize }}
+              resizeMode={FastImage.resizeMode.contain}
+            />
+          </Pinchable>
+        )}
+        ListEmptyComponent={<FastImage source={require("../assets/basic.jpg")} style={{ width: feedSize, height: feedSize }} />}
+      />
+      <AnimatedHeartView style={{ opacity }} pointerEvents="none">
+        <Lottie
+          ref={bgHeartRef}
+          source={require("../assets/lottie/like-background.json")}
+          autoPlay={false}
+          loop={false}
+          speed={1.0}
+          colorFilters={[{ keypath: "Filled", color: lightTheme.accentColor }]}
+          onAnimationFinish={onBgHeartAnimationFinish}
+          autoSize={true}
+          style={{ width: 200, height: 200 }}
         />
-        <ContentView padding={10}>
-          <InformationView height={this.props.infoHeight}>
-            <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "flex-start" }}>
-              <InformationLeftView>
-                <InformationIconButton onPress={() => (this.props.likeFeed ? this.props.likeFeed(this.props.feedIndex, this.props.feedData?.id) : {})}>
-                  {this.props.feedData?.likeYn ? (
-                    <Ionicons name="heart" size={26} color="#FF551F" style={{ marginLeft: -2, marginRight: -2 }} />
-                  ) : (
-                    <Ionicons name="heart-outline" size={26} color="black" style={{ marginLeft: -2, marginRight: -2 }} />
-                  )}
-                </InformationIconButton>
-                <InformationNumberButton activeOpacity={1} onPress={() => this.props.goToFeedLikes(this.props.feedData?.likeUserList ?? [])}>
-                  <CountingNumber>{this.props.feedData?.likesCount}</CountingNumber>
-                </InformationNumberButton>
-                <InformationIconButton activeOpacity={1} onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData?.id)}>
-                  <Ionicons name="md-chatbox-ellipses" size={24} color="black" />
-                </InformationIconButton>
-                <InformationNumberButton activeOpacity={1} onPress={() => this.props.goToFeedComments(this.props.feedIndex, this.props.feedData?.id)}>
-                  <CountingNumber>{this.props.feedData?.commentCount}</CountingNumber>
-                </InformationNumberButton>
-              </InformationLeftView>
-              <InformationRightView>
-                <CreatedTime>{moment(this.props.feedData?.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</CreatedTime>
-              </InformationRightView>
-            </View>
-          </InformationView>
-          <ScrollView style={{ height: 0 }}>
-            <ContentText onTextLayout={onTextLayout}>{this.props.feedData?.content}</ContentText>
-          </ScrollView>
-          <TouchableWithoutFeedback onPress={contentTextTouch}>
-            <ContentTextView height={this.props.contentHeight}>
-              {this.state.moreContent && this.state.isCollapsed ? (
-                <>
-                  <ContentText>{`${
-                    this.state.collapsedTextList.length > 1 && this.state.collapsedTextList[1].length > 15 ? this.state.collapsedText.slice(0, -8) : this.state.collapsedText
-                  }...`}</ContentText>
-                  <ContentSubText>{` 더 보기`}</ContentSubText>
-                </>
-              ) : (
-                <ContentText>{this.state.collapsedText}</ContentText>
-              )}
+      </AnimatedHeartView>
+      <Content padding={10}>
+        <Information height={infoHeight}>
+          <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <InformationLeft>
+              <InformationIconButton activeOpacity={1} onPress={onPressHeart}>
+                <Lottie
+                  ref={heartRef}
+                  source={require("../assets/lottie/70547-like.json")}
+                  autoPlay={false}
+                  loop={false}
+                  speed={1.5}
+                  colorFilters={[
+                    { keypath: "Filled", color: lightTheme.accentColor },
+                    { keypath: "Empty", color: "#DBDBDB" },
+                  ]}
+                  style={{ width: 35, height: 35, marginLeft: -2 }}
+                />
+              </InformationIconButton>
+              <InformationNumberButton activeOpacity={1} onPress={() => goToFeedLikes(feedData?.likeUserList ?? [])} style={{ marginLeft: -8, paddingRight: 4 }}>
+                <CountingNumber>{likesCount}</CountingNumber>
+              </InformationNumberButton>
+              <InformationIconButton activeOpacity={1} onPress={() => goToFeedComments(feedData?.id)}>
+                <Iconify icon="ph:chat-text" size={24} color="black" />
+              </InformationIconButton>
+              <InformationNumberButton activeOpacity={1} onPress={() => goToFeedComments(feedData?.id)}>
+                <CountingNumber>{commentCount}</CountingNumber>
+              </InformationNumberButton>
+            </InformationLeft>
+          </View>
+        </Information>
+        <ScrollView style={{ height: 0 }}>
+          <ContentText onTextLayout={onTextLayout}>{feedData?.content}</ContentText>
+        </ScrollView>
+        <TouchableOpacity activeOpacity={1} onPress={contentTextTouch}>
+          <ContentTextView height={contentHeight}>
+            {contentState.moreContent && isCollapsed ? (
+              <>
+                <ContentText>{`${
+                  contentState.collapsedTextList.length > 1 && contentState.collapsedTextList[1].length > 15 ? contentState.collapsedText.slice(0, -8) : contentState.collapsedText
+                }  `}</ContentText>
+                <ContentSubText>{` 더보기`}</ContentSubText>
+              </>
+            ) : (
+              <ContentText>{contentState.collapsedText}</ContentText>
+            )}
+          </ContentTextView>
+        </TouchableOpacity>
+        <TouchableOpacity activeOpacity={1} onPress={contentTextTouch}>
+          <Collapsible collapsed={isCollapsed} style={{ height: contentState.textHeight }}>
+            <ContentTextView>
+              <ContentText>{contentState.remainedText}</ContentText>
             </ContentTextView>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={contentTextTouch}>
-            <Collapsible collapsed={this.state.isCollapsed} style={{ height: this.state.textHeight }}>
-              <ContentTextView>
-                <ContentText>{this.state.remainedText}</ContentText>
-              </ContentTextView>
-            </Collapsible>
-          </TouchableWithoutFeedback>
-        </ContentView>
-      </Container>
-    );
-  }
-}
+          </Collapsible>
+        </TouchableOpacity>
+      </Content>
+    </Container>
+  );
+};
 
-export default FeedDetail;
+export default React.memo(FeedDetail);

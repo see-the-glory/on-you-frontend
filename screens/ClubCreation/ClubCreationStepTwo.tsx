@@ -4,12 +4,11 @@ import styled from "styled-components/native";
 import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
 import ImagePicker from "react-native-image-crop-picker";
 import { ClubCreationStepTwoScreenProps } from "../../Types/Club";
-import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
-import CustomTextInput from "../../components/CustomTextInput";
 import { useMutation } from "react-query";
 import { ClubApi, DuplicateCheckResponse, DuplicateClubNameCheckRequest, ErrorResponse } from "../../api";
 import BottomButton from "../../components/BottomButton";
+import { lightTheme } from "../../theme";
 
 const HeaderView = styled.View`
   align-items: center;
@@ -17,13 +16,14 @@ const HeaderView = styled.View`
   padding: 20px 0px;
 `;
 
-const H1 = styled(CustomText)`
+const H1 = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 18px;
   line-height: 25px;
-  font-family: "NotoSansKR-Bold";
 `;
 
-const H2 = styled(CustomText)`
+const H2 = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #5c5c5c;
@@ -42,7 +42,8 @@ const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
   margin-bottom: 10px;
 `;
 
-const ImagePickerText = styled(CustomText)`
+const ImagePickerText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 15px;
   color: #2995fa;
   line-height: 22px;
@@ -57,7 +58,7 @@ const ContentItem = styled.View<{ error: boolean }>`
   width: 100%;
   flex: 1;
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? "#FF6534" : "#cecece")};
+  border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#cecece")};
   margin: 10px 0px;
 `;
 
@@ -74,8 +75,9 @@ const ValidationItem = styled.View`
   margin-right: 8px;
 `;
 
-const ValidationText = styled(CustomText)`
-  color: #ff6534;
+const ValidationText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  color: ${(props: any) => props.theme.accentColor};
   font-size: 10px;
   line-height: 15px;
 `;
@@ -90,8 +92,10 @@ const ErrorView = styled.View`
   flex-direction: row;
   align-items: center;
 `;
-const ErrorText = styled(CustomText)`
-  color: #ff6534;
+const ErrorText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
+  color: ${(props: any) => props.theme.accentColor};
 `;
 
 const Item = styled.View`
@@ -102,20 +106,23 @@ const Item = styled.View`
   justify-content: space-between;
 `;
 
-const ItemTitle = styled(CustomText)`
+const ItemTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 13px;
   line-height: 19px;
   color: #b0b0b0;
   margin-bottom: 5px;
 `;
 
-const ItemText = styled(CustomText)`
+const ItemText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   margin-right: 5px;
 `;
 
-const ItemTextInput = styled(CustomTextInput)`
+const ItemTextInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 15px;
   line-height: 22px;
   padding: 0px 5px;
@@ -288,7 +295,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
                 />
                 {isDuplicatedName ? (
                   <ErrorView>
-                    <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />
+                    <AntDesign name="exclamationcircleo" size={12} color={lightTheme.accentColor} />
                     <ErrorText>{` 이미 사용 중인 이름입니다.`}</ErrorText>
                   </ErrorView>
                 ) : (
@@ -299,7 +306,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
             <ValidationView>
               {specialChar.test(clubName) ? (
                 <ValidationItem>
-                  <AntDesign name="check" size={12} color={"#ff6534"} />
+                  <AntDesign name="check" size={12} color={lightTheme.accentColor} />
                   <ValidationText>{` 특수문자 불가능`}</ValidationText>
                 </ValidationItem>
               ) : (
@@ -307,7 +314,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
               )}
               {clubName.length - (clubName.split(" ").length - 1) > lengthLimit ? (
                 <ValidationItem>
-                  <AntDesign name="check" size={12} color={"#ff6534"} />
+                  <AntDesign name="check" size={12} color={lightTheme.accentColor} />
                   <ValidationText>{` ${lengthLimit}자 초과`}</ValidationText>
                 </ValidationItem>
               ) : (
@@ -350,7 +357,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
                 >
                   <ItemText>인원 수 무제한으로 받기</ItemText>
                   <CheckBox check={maxNumberInfinity}>
-                    <Ionicons name="checkmark-sharp" size={13} color={maxNumberInfinity ? "#FF6534" : "#e8e8e8"} />
+                    <Ionicons name="checkmark-sharp" size={13} color={maxNumberInfinity ? lightTheme.accentColor : "#e8e8e8"} />
                   </CheckBox>
                 </CheckButton>
               </Item>
@@ -362,7 +369,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
                   <Ionicons
                     name={isApproveRequired === "Y" ? "radio-button-on" : "radio-button-off"}
                     size={16}
-                    color={isApproveRequired === "Y" ? "#FF6534" : "rgba(0, 0, 0, 0.3)"}
+                    color={isApproveRequired === "Y" ? lightTheme.accentColor : "rgba(0, 0, 0, 0.3)"}
                     style={{ marginRight: 3 }}
                   />
                   <ItemText>관리자 승인 후 가입</ItemText>
@@ -371,7 +378,7 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
                   <Ionicons
                     name={isApproveRequired === "N" ? "radio-button-on" : "radio-button-off"}
                     size={16}
-                    color={isApproveRequired === "N" ? "#FF6534" : "rgba(0, 0, 0, 0.3)"}
+                    color={isApproveRequired === "N" ? lightTheme.accentColor : "rgba(0, 0, 0, 0.3)"}
                     style={{ marginRight: 3 }}
                   />
                   <ItemText>누구나 바로 가입</ItemText>
@@ -403,7 +410,6 @@ const ClubCreationStepTwo: React.FC<ClubCreationStepTwoScreenProps> = ({
       <BottomButton
         onPress={goToNext}
         disabled={nameErrorCheck || clubName === "" || maxNumber === "" || phoneNumber === "" || organizationName === "" || !imageURI}
-        backgroundColor={"#FF6534"}
         title={"다음 2/3"}
         contentContainerStyle={Platform.OS === "android" ? { position: "relative" } : {}}
       />

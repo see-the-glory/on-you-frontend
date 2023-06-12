@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, TouchableOpacity, DeviceEventEmitter } from "react-native";
-import FastImage from "react-native-fast-image";
+import { ActivityIndicator, useWindowDimensions, Animated, DeviceEventEmitter, Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { ErrorResponse, Feed, FeedApi, FeedsResponse } from "../../api";
-import CustomText from "../../components/CustomText";
-import clubSlice from "../../redux/slices/club";
+import { ClubApi, ErrorResponse, Feed, FeedsResponse } from "../../api";
+import FadeFastImage from "../../components/FadeFastImage";
+import feedSlice from "../../redux/slices/feed";
 import { useAppDispatch } from "../../redux/store";
-import { RootState } from "../../redux/store/reducers";
-import { ClubFeedParamList, ClubFeedScreenProps } from "../../Types/Club";
+import { ClubFeedScreenProps } from "../../Types/Club";
 
 const Loader = styled.View`
   flex: 1;
@@ -18,46 +16,54 @@ const Loader = styled.View`
   align-items: center;
 `;
 
-const FeedImage = styled(FastImage)<{ size: number }>`
-  width: ${(props: any) => props.size}px;
-  height: ${(props: any) => props.size}px;
-`;
-
 const EmptyView = styled.View`
   flex: 1;
   justify-content: flex-start;
   align-items: center;
   padding-top: 200px;
-  background-color: white;
+  background-color: #f5f5f5;
 `;
 
-const EmptyText = styled(CustomText)`
+const EmptyText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
-  color: #bdbdbd;
+  color: #acacac;
   justify-content: center;
   align-items: center;
 `;
 
+export interface ClubFeedParamList {
+  scrollY: Animated.Value;
+  headerDiff: number;
+  headerCollapsedHeight: number;
+  actionButtonHeight: number;
+  syncScrollOffset: (screenName: string) => void;
+  screenScrollRefs: any;
+  screenScrollOffset: any;
+}
+
 const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
-  navigation: { navigate },
+  navigation: { navigate, push },
   route: {
     name: screenName,
-    params: { clubData },
+    params: { clubId },
   },
   scrollY,
-  offsetY,
   headerDiff,
+  headerCollapsedHeight,
+  actionButtonHeight,
   syncScrollOffset,
   screenScrollRefs,
+  screenScrollOffset,
 }) => {
-  const feeds = useSelector((state: RootState) => state.club.feeds);
-  const myRole = useSelector((state: RootState) => state.club.role);
   const toast = useToast();
   const queryClient = useQueryClient();
+  const clubData = queryClient.getQueryData<ClubResponse>(["getClub", clubId])?.data;
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
+  const { top } = useSafeAreaInsets();
   const numColumn = 3;
   const feedSize = Math.round(SCREEN_WIDTH / 3) - 1;
   const {
@@ -67,19 +73,21 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     hasNextPage,
     refetch: feedsRefetch,
     fetchNextPage,
-  } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["getClubFeeds", clubData.id], FeedApi.getClubFeeds, {
+  } = useInfiniteQuery<FeedsResponse, ErrorResponse>(["getClubFeeds", clubId], ClubApi.getClubFeeds, {
     getNextPageParam: (currentPage) => {
       if (currentPage) {
         return currentPage.hasData === true ? currentPage.responses?.content[currentPage.responses?.content.length - 1].customCursor : null;
       }
     },
     onSuccess: (res) => {
-      if (res.pages[res.pages.length - 1].responses) dispatch(clubSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
+      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeeds({ feeds: res.pages[res.pages.length - 1].responses.content }));
     },
     onError: (error) => {
       console.log(`API ERROR | getClubFeeds ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
+    staleTime: 5000,
+    cacheTime: 15000,
   });
 
   const loadMore = () => {
@@ -89,7 +97,7 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
   const onRefresh = async () => {
     setRefreshing(true);
     const result = await feedsRefetch();
-    dispatch(clubSlice.actions.refreshFeed(result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? []));
+    dispatch(feedSlice.actions.refreshFeed({ feeds: result?.data?.pages?.flatMap((page) => page?.responses?.content) ?? [] }));
     setRefreshing(false);
   };
 
@@ -99,15 +107,10 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       console.log("ClubFeed - Club Feed Refetch Event");
       onRefresh();
     });
-    let ClubFeedLoadmoreSub = DeviceEventEmitter.addListener("ClubFeedLoadmore", () => {
-      console.log("ClubFeed - Load more!");
-      loadMore();
-    });
 
     return () => {
       console.log("ClubFeed - remove listner");
       clubFeedRefetchSub.remove();
-      ClubFeedLoadmoreSub.remove();
       queryClient.removeQueries({ queryKey: ["getClubFeeds"] });
     };
   }, []);
@@ -116,8 +119,9 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
     const clubFeedDetailProps = {
       clubData,
       targetIndex: index,
+      fetchNextPage,
     };
-    return navigate("ClubFeedDetail", clubFeedDetailProps);
+    return push("ClubFeedDetail", clubFeedDetailProps);
   };
 
   return feedsLoading || refreshing ? (
@@ -130,15 +134,12 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
         screenScrollRefs.current[screenName] = ref;
       }}
       onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
-      contentOffset={{ x: 0, y: offsetY ?? 0 }}
-      onMomentumScrollEnd={(event) => {
-        dispatch(clubSlice.actions.updateClubHomeScrollY({ scrollY: event.nativeEvent.contentOffset.y }));
-        syncScrollOffset(screenName);
-      }}
+      contentOffset={{ x: 0, y: screenScrollOffset?.current[screenName] ?? 0 }}
+      onMomentumScrollEnd={(event) => syncScrollOffset(screenName)}
       onScrollEndDrag={() => syncScrollOffset(screenName)}
       style={{
         flex: 1,
-        backgroundColor: "white",
+        backgroundColor: "#F5F5F5",
         transform: [
           {
             translateY: scrollY.interpolate({
@@ -151,12 +152,14 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
       }}
       contentContainerStyle={{
         paddingTop: headerDiff,
-        backgroundColor: "white",
-        minHeight: SCREEN_HEIGHT + headerDiff,
+        paddingBottom: Platform.OS === "ios" ? actionButtonHeight + top : actionButtonHeight,
+        backgroundColor: "#F5F5F5",
+        minHeight: SCREEN_HEIGHT + headerCollapsedHeight,
         flexGrow: 1,
       }}
+      onEndReachedThreshold={0.5}
       onEndReached={loadMore}
-      data={feeds}
+      data={queryFeedData?.pages?.flatMap((page: FeedsResponse) => page.responses.content) ?? []}
       keyExtractor={(item: Feed, index: number) => String(index)}
       numColumns={numColumn}
       columnWrapperStyle={{ paddingBottom: 1 }}
@@ -166,9 +169,13 @@ const ClubFeed: React.FC<ClubFeedScreenProps & ClubFeedParamList> = ({
         </EmptyView>
       )}
       renderItem={({ item, index }: { item: Feed; index: number }) => (
-        <TouchableOpacity key={String(index)} onPress={() => goToClubFeedDetail(index)} style={index % 3 === 1 ? { marginHorizontal: 1 } : {}}>
-          <FeedImage size={feedSize} source={item?.imageUrls && item?.imageUrls[0] ? { uri: item.imageUrls[0] } : require("../../assets/basic.jpg")} />
-        </TouchableOpacity>
+        <FadeFastImage
+          key={String(index)}
+          uri={item?.imageUrls?.length ? item?.imageUrls[0] : undefined}
+          style={{ width: feedSize, height: feedSize }}
+          onPress={() => goToClubFeedDetail(index)}
+          touchableOpacityStyle={{ marginHorizontal: index % 3 === 1 ? 1 : 0 }}
+        />
       )}
     />
   );

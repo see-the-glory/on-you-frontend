@@ -8,6 +8,7 @@ import ClubEditIntroduction from "../screens/ClubManagement/ClubEditIntroduction
 import ClubEditMembers from "../screens/ClubManagement/ClubEditMembers";
 import ClubDelete from "../screens/ClubManagement/ClubDelete";
 import { TouchableOpacity } from "react-native";
+import { lightTheme } from "../theme";
 
 const NativeStack = createNativeStackNavigator<ClubStackParamList>();
 
@@ -23,7 +24,8 @@ const ClubManagementStack: React.FC<ClubManagementStackProps> = ({
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
         headerTitleAlign: "center",
-        headerTitleStyle: { fontFamily: "NotoSansKR-Medium", fontSize: 16 },
+        headerTitleStyle: { fontFamily: lightTheme.koreanFontB, fontSize: 16 },
+        headerShadowVisible: false,
       }}
     >
       <NativeStack.Screen name="ClubManagementMain" component={ClubManagementMain} options={{ headerShown: false }} />

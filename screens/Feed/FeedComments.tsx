@@ -1,20 +1,17 @@
-import { AntDesign, Entypo, EvilIcons } from "@expo/vector-icons";
+import { Entypo, EvilIcons } from "@expo/vector-icons";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ActivityIndicator, BackHandler, DeviceEventEmitter, KeyboardAvoidingView, LayoutChangeEvent, Platform, StatusBar, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, BackHandler, DeviceEventEmitter, KeyboardAvoidingView, LayoutChangeEvent, Platform, StatusBar, TextInput, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import { useSelector } from "react-redux";
-import { FeedComment, FeedApi, FeedCommentsResponse, ErrorResponse, BaseResponse, FeedCommentCreationRequest, FeedCommentDefaultRequest, LikeUser } from "../../api";
-import CustomText from "../../components/CustomText";
+import { FeedComment, FeedApi, FeedCommentsResponse, ErrorResponse, BaseResponse, FeedCommentCreationRequest, FeedCommentDefaultRequest } from "../../api";
 import Comment from "../../components/Comment";
-import CustomTextInput from "../../components/CustomTextInput";
 import CircleIcon from "../../components/CircleIcon";
-import { SwipeListView, SwipeRow } from "react-native-swipe-list-view";
+import { SwipeListView } from "react-native-swipe-list-view";
 import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
 import feedSlice from "../../redux/slices/feed";
-import clubSlice from "../../redux/slices/club";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Loader = styled.SafeAreaView`
@@ -28,7 +25,7 @@ const Container = styled.View`
   flex: 1;
 `;
 
-const FooterView = styled.View<{ padding: number }>``;
+const FooterView = styled.View``;
 
 const ReplyStatusView = styled.View<{ padding: number }>`
   flex-direction: row;
@@ -38,7 +35,9 @@ const ReplyStatusView = styled.View<{ padding: number }>`
   padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
 `;
 
-const StatusText = styled(CustomText)`
+const StatusText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-size: 13px;
   color: #8e8e8e;
 `;
 
@@ -57,12 +56,14 @@ const RoundingView = styled.View`
   flex-direction: row;
   flex: 1;
   height: 100%;
-  padding: 0px 10px;
-  border-width: 0.5px;
+  padding: 3px 10px;
+  /* border-width: 0.5px;
   border-color: rgba(0, 0, 0, 0.5);
-  border-radius: 20px;
+  border-radius: 15px; */
 `;
-const CommentInput = styled(CustomTextInput)`
+const CommentInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 13px;
   flex: 1;
   margin: 1px 0px;
 `;
@@ -80,8 +81,9 @@ const SubmitLoadingView = styled.View`
   padding-left: 8px;
   margin-bottom: 8px;
 `;
-const SubmitButtonText = styled(CustomText)<{ disabled: boolean }>`
-  font-size: 14px;
+const SubmitButtonText = styled.Text<{ disabled: boolean }>`
+  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-size: 15px;
   line-height: 20px;
   color: #63abff;
   opacity: ${(props: any) => (props.disabled ? 0.3 : 1)};
@@ -93,10 +95,11 @@ const EmptyView = styled.View`
   align-items: center;
 `;
 
-const EmptyText = styled(CustomText)`
-  font-size: 14px;
+const EmptyText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 15px;
   line-height: 20px;
-  color: #bdbdbd;
+  color: #acacac;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -105,7 +108,7 @@ const EmptyText = styled(CustomText)`
 const FeedComments = ({
   navigation: { setOptions, navigate, goBack },
   route: {
-    params: { feedIndex, feedId, clubId },
+    params: { feedId, clubId },
   },
 }) => {
   const me = useSelector((state: RootState) => state.auth.user);
@@ -126,13 +129,9 @@ const FeedComments = ({
     onSuccess: (res: FeedCommentsResponse) => {
       setCommentData(res?.data);
       setIsLoading(false);
-      if (feedIndex !== undefined) {
-        const count = res.data.length + res.data.reduce((acc, comment) => acc + comment.replies.length, 0);
-        if (clubId) dispatch(clubSlice.actions.updateCommentCount({ feedIndex, count }));
-        else dispatch(feedSlice.actions.updateCommentCount({ feedIndex, count }));
-      } else {
-        DeviceEventEmitter.emit("SelectFeedRefetch");
-      }
+      const count = res.data.length + res.data.reduce((acc, comment) => acc + comment.replies.length, 0);
+      dispatch(feedSlice.actions.updateCommentCount({ feedId, count }));
+      DeviceEventEmitter.emit("SelectFeedRefetch");
     },
     onError: (error) => {
       console.log(`API ERROR | getFeedComments ${error.code} ${error.status}`);
@@ -207,12 +206,15 @@ const FeedComments = ({
     if (commentId === -1) return toast.show(`댓글 정보가 잘못되었습니다.`, { type: "warning" });
 
     let requestData: FeedCommentDefaultRequest = { commentId };
-    deleteFeedCommentMutation.mutate(requestData);
-  };
-
-  const goToFeedLikes = (likeUsers?: LikeUser[]) => {
-    if (!likeUsers || likeUsers.length === 0) return;
-    navigate("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
+    Alert.alert("댓글 삭제", "작성하신 댓글을 삭제하시겠어요?", [
+      { text: "아니요" },
+      {
+        text: "예",
+        onPress: () => {
+          deleteFeedCommentMutation.mutate(requestData);
+        },
+      },
+    ]);
   };
 
   /**
@@ -289,15 +291,7 @@ const FeedComments = ({
             ListFooterComponent={<View />}
             ListFooterComponentStyle={{ marginBottom: 40 }}
             renderItem={({ item, index }: { item: FeedComment; index: number }) => (
-              <Comment
-                commentData={item}
-                parentIndex={index}
-                parentId={item.commentId}
-                deleteComment={deleteComment}
-                likeComment={likeComment}
-                setReplyStatus={setReplyStatus}
-                goToFeedLikes={goToFeedLikes}
-              />
+              <Comment commentData={item} parentIndex={index} parentId={item.commentId} deleteComment={deleteComment} likeComment={likeComment} setReplyStatus={setReplyStatus} />
             )}
             ListEmptyComponent={() => (
               <EmptyView>
@@ -339,6 +333,7 @@ const FeedComments = ({
                 autoComplete="off"
                 returnKeyType="done"
                 returnKeyLabel="done"
+                textAlignVertical="center"
                 onChangeText={(value: string) => {
                   setComment(value);
                   if (!validation && value.trim() !== "") setValidation(true);

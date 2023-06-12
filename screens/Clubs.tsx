@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ActivityIndicator, DeviceEventEmitter, FlatList, Platform, StatusBar, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, DeviceEventEmitter, FlatList, Platform, StatusBar, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import styled from "styled-components/native";
 import { Feather, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
-import ClubList from "../components/ClubList";
+import ClubGrid from "../components/ClubGrid";
 import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
 import { Category, CategoryResponse, ClubApi, Club, ClubsResponse, ClubsParams, ErrorResponse } from "../api";
 import { ClubListScreenProps } from "../Types/Club";
-import CustomText from "../components/CustomText";
 import { Modalize, useModalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { Slider } from "@miblanchard/react-native-slider";
 import { useToast } from "react-native-toast-notifications";
+import BottomButton from "../components/BottomButton";
+import { lightTheme } from "../theme";
+import { Iconify } from "react-native-iconify";
+import ClubList from "../components/ClubList";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -23,25 +26,73 @@ const CategoryButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
 `;
-const CategoryName = styled(CustomText)`
-  font-size: 17px;
-  color: gray;
-  line-height: 23px;
+const CategoryName = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 15px;
+  line-height: 17px;
+  color: #8e8e8e;
 `;
 
-const SelectedCategoryName = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
-  font-size: 17px;
-  color: black;
-  line-height: 23px;
+const SelectedCategoryName = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-size: 15px;
+  line-height: 18px;
 `;
 
 const Container = styled.SafeAreaView`
+  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
   flex: 1;
 `;
 
 const HeaderView = styled.View`
-  height: 90px;
+  height: 170px;
+`;
+
+const TitleSection = styled.View`
+  flex-direction: row;
+  height: 50px;
+  padding: 0px 10px;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const Title = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-size: 20px;
+  color: ${(props: any) => props.theme.accentColor};
+`;
+
+const LayoutTypeToggle = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const TypeText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 11px;
+  color: #6f6f6f;
+  margin-right: 5px;
+`;
+
+const SearchSection = styled.View`
+  height: 40px;
+  padding: 0px 10px;
+`;
+
+const SearchButton = styled.TouchableOpacity`
+  flex-direction: row;
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  height: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 10px;
+`;
+
+const SearchText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 16px;
+  color: #c4c4c4;
 `;
 
 const HeaderSection = styled.View`
@@ -53,6 +104,7 @@ const HeaderSection = styled.View`
   border-top-color: #e9e9e9;
   border-bottom-width: 1px;
   border-bottom-color: #e9e9e9;
+  height: 32px;
 `;
 
 const HeaderItem = styled.View`
@@ -63,9 +115,9 @@ const HeaderItem = styled.View`
   align-items: center;
 `;
 
-const HeaderItemText = styled(CustomText)`
+const HeaderItemText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 13px;
-  line-height: 18px;
 `;
 
 const MainView = styled.View`
@@ -78,10 +130,11 @@ const EmptyView = styled.View`
   align-items: center;
 `;
 
-const EmptyText = styled(CustomText)`
+const EmptyText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
-  color: #bdbdbd;
+  color: #acacac;
   justify-content: center;
   align-items: center;
 `;
@@ -92,7 +145,7 @@ const FloatingButton = styled.TouchableOpacity`
   bottom: 20px;
   width: 50px;
   height: 50px;
-  background-color: black;
+  background-color: ${(props: any) => props.theme.accentColor};
   elevation: 5;
   box-shadow: 1px 1px 3px gray;
   border-radius: 50px;
@@ -110,7 +163,6 @@ const ModalContainer = styled.View`
 const ItemView = styled.View`
   flex-direction: row;
   margin: 8px 0px;
-  align-items: center;
 `;
 
 const ItemLeftView = styled.View`
@@ -119,18 +171,18 @@ const ItemLeftView = styled.View`
 const ItemRightView = styled.View`
   flex: 0.77;
 `;
-const ItemNameText = styled(CustomText)`
-  font-family: "NotoSansKR-Medium";
+const ItemNameText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
   font-size: 16px;
-  line-height: 22px;
+  line-height: 18px;
 `;
-const ItemContentView = styled.View``;
-const ItemContentText = styled(CustomText)`
-  font-size: 14px;
-  line-height: 20px;
+const ItemContentText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 15px;
 `;
-const ItemContentSubText = styled(CustomText)`
-  font-size: 13px;
+const ItemContentSubText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
 `;
 const ItemContentButton = styled.TouchableOpacity`
   flex-direction: row;
@@ -147,20 +199,6 @@ const CheckBox = styled.View`
   background-color: white;
 `;
 
-const SubmitButton = styled.TouchableOpacity`
-  height: 60px;
-  justify-content: center;
-  align-items: center;
-  background-color: #ff6534;
-`;
-const SubmitText = styled(CustomText)`
-  font-size: 23px;
-  line-height: 32px;
-  font-family: "NotoSansKR-Medium";
-  padding-bottom: 10px;
-  color: white;
-`;
-
 const SortingItemView = styled.View`
   justify-content: center;
   align-items: center;
@@ -169,11 +207,10 @@ const SortingItemButton = styled.TouchableOpacity`
   padding: 7px 0px;
   margin: 3px 0px;
 `;
-const SortingItemText = styled(CustomText)<{ selected: boolean }>`
+const SortingItemText = styled.Text<{ selected: boolean }>`
   font-size: 15px;
-  line-height: 22px;
-  color: ${(props: any) => (props.selected ? "#FF6534" : "#b0b0b0")};
-  font-family: ${(props: any) => (props.selected ? "NotoSansKR-Medium" : "NotoSansKR-Regular")};
+  color: ${(props: any) => (props.selected ? props.theme.accentColor : "#b0b0b0")};
+  font-family: ${(props: any) => (props.selected ? props.theme.koreanFontM : props.theme.koreanFontR)};
 `;
 
 interface ClubSortItem {
@@ -182,7 +219,7 @@ interface ClubSortItem {
   orderBy: string;
 }
 
-const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
+const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate, push } }) => {
   const filterMinNumber = 0;
   const filterMaxNumber = 100;
   const toast = useToast();
@@ -202,7 +239,6 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const [showRecruiting, setShowRecruiting] = useState<number>(0);
   const [showMy, setShowMy] = useState<number>(0);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number>(0);
   const [isPageTransition, setIsPageTransition] = useState<boolean>(false);
   const { ref: filteringSheetRef, open: openFilteringSheet, close: closeFilteringSheet } = useModalize();
@@ -212,6 +248,8 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const colSize = Math.round(SCREEN_WIDTH / 2);
   const clubsFlatlistRef = useRef<FlatList<Club>>();
+  const [searchKeyword, setSearchKeyword] = useState<string | undefined>(undefined);
+  const [layoutType, setLayoutType] = useState<"list" | "grid">("grid");
 
   const {
     isLoading: clubsLoading,
@@ -240,28 +278,18 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
     data: category,
     isRefetching: isRefetchingCategory,
   } = useQuery<CategoryResponse, ErrorResponse>(["getCategories"], ClubApi.getCategories, {
-    onSuccess: (res) => {
-      if (res.data)
-        setCategoryData([
-          {
-            description: "All Category",
-            id: 0,
-            name: "전체",
-            thumbnail: null,
-            order: null,
-          },
-          ...res.data,
-        ]);
-    },
+    onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getCategories ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
+    staleTime: Infinity,
+    cacheTime: Infinity,
   });
 
-  const goToClub = (clubData: Club) => {
+  const goToClub = (clubId: number) => {
     const clubTopTabsProps = {
-      clubData,
+      clubId,
     };
     return navigate("ClubStack", {
       screen: "ClubTopTabs",
@@ -271,6 +299,10 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
 
   const goToCreation = () => {
     return navigate("ClubCreationStack", { screen: "ClubCreationStepOne", params: { category } });
+  };
+
+  const goToSearch = () => {
+    return navigate("Search");
   };
 
   const setClubsCategoryParams = (categoryId: number) => {
@@ -314,6 +346,32 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   const loadMore = () => {
     if (hasNextPage) fetchNextPage();
   };
+
+  const toggleLayoutType = () => {
+    setLayoutType((prev) => (prev === "grid" ? "list" : "grid"));
+  };
+
+  const gridRenderItem = ({ item, index }: { item: Club; index: number }) => (
+    <TouchableOpacity
+      onPress={() => {
+        goToClub(item.id);
+      }}
+      style={index % 2 === 0 ? { marginRight: 0.5 } : { marginLeft: 0.5 }}
+    >
+      <ClubGrid
+        thumbnailPath={item.thumbnail}
+        organizationName={item.organizationName}
+        clubName={item.name}
+        memberNum={item.recruitNumber}
+        clubShortDesc={item.clubShortDesc}
+        categories={item.categories}
+        recruitStatus={item.recruitStatus}
+        colSize={colSize}
+      />
+    </TouchableOpacity>
+  );
+
+  const listRenderItem = ({ item, index }: { item: Club; index: number }) => <ClubList clubData={item} onPress={() => goToClub(item.id)} />;
 
   const loading = categoryLoading && clubsLoading;
 
@@ -369,14 +427,45 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
   ) : (
     <>
       <Container>
-        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
         <HeaderView>
+          <TitleSection>
+            <Title>{`정기모임`}</Title>
+            <LayoutTypeToggle onPress={toggleLayoutType}>
+              {layoutType === "list" ? (
+                <>
+                  <TypeText>{`그리드로 보기`}</TypeText>
+                  <Iconify icon="ion:grid" size={16} color="#6F6F6F" style={{ marginLeft: 2 }} />
+                </>
+              ) : (
+                <>
+                  <TypeText>{`리스트로 보기`}</TypeText>
+                  <Iconify icon="ion:list-sharp" size={18} color="#6F6F6F" />
+                </>
+              )}
+            </LayoutTypeToggle>
+          </TitleSection>
+          <SearchSection>
+            <SearchButton activeOpacity={1} onPress={goToSearch}>
+              <SearchText>{`모임 이름을 검색하세요.`}</SearchText>
+              <Iconify icon="ion:search" size={18} color={"#8E8E8E"} />
+            </SearchButton>
+          </SearchSection>
           <FlatList
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{}}
             ItemSeparatorComponent={() => <View style={{ marginHorizontal: 10 }} />}
             horizontal
-            data={categoryData}
+            data={[
+              {
+                description: "All Category",
+                id: 0,
+                name: "전체",
+                thumbnail: null,
+                order: null,
+              },
+              ...(category?.data ?? []),
+            ]}
             keyExtractor={(item: Category) => item.id + ""}
             renderItem={({ item, index }: { item: Category; index: number }) => (
               <CategoryButton
@@ -394,9 +483,11 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
           />
           <HeaderSection>
             <HeaderItem>
-              <HeaderItemText>상세 필터</HeaderItemText>
+              <TouchableOpacity activeOpacity={1} onPress={() => openFilteringSheet()}>
+                <HeaderItemText>상세 필터</HeaderItemText>
+              </TouchableOpacity>
               <TouchableOpacity style={{ height: 35, justifyContent: "center" }} onPress={() => openFilteringSheet()}>
-                <Feather name="filter" size={14} color={usingFilter ? "#FF6534" : "black"} />
+                <Feather name="filter" size={14} color={usingFilter ? lightTheme.accentColor : "black"} />
               </TouchableOpacity>
             </HeaderItem>
             <View
@@ -408,16 +499,10 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               }}
             ></View>
             <HeaderItem>
-              <HeaderItemText>{sortItem ? sortItem[selectedSortIndex].title : "최신순"}</HeaderItemText>
-              <TouchableOpacity
-                style={{
-                  height: 35,
-                  justifyContent: "center",
-                }}
-                onPress={() => {
-                  openSortingSheet();
-                }}
-              >
+              <TouchableOpacity activeOpacity={1} onPress={() => openSortingSheet()}>
+                <HeaderItemText>{sortItem ? sortItem[selectedSortIndex].title : "최신순"}</HeaderItemText>
+              </TouchableOpacity>
+              <TouchableOpacity style={{ height: 35, justifyContent: "center" }} onPress={() => openSortingSheet()}>
                 <MaterialCommunityIcons name="sort" size={14} color="black" />
               </TouchableOpacity>
             </HeaderItem>
@@ -437,36 +522,19 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               onEndReached={loadMore}
               onEndReachedThreshold={0.7}
               data={clubs?.pages?.map((page) => page?.responses?.content).flat()}
-              columnWrapperStyle={{ justifyContent: "space-between" }}
-              ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
               ListFooterComponent={() => <View />}
               ListFooterComponentStyle={{ marginBottom: 60 }}
-              numColumns={2}
               keyExtractor={(item: Club, index: number) => String(index)}
-              renderItem={({ item, index }: { item: Club; index: number }) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    goToClub(item);
-                  }}
-                  style={index % 2 === 0 ? { marginRight: 0.5 } : { marginLeft: 0.5 }}
-                >
-                  <ClubList
-                    thumbnailPath={item.thumbnail}
-                    organizationName={item.organizationName}
-                    clubName={item.name}
-                    memberNum={item.recruitNumber}
-                    clubShortDesc={item.clubShortDesc}
-                    categories={item.categories}
-                    recruitStatus={item.recruitStatus}
-                    colSize={colSize}
-                  />
-                </TouchableOpacity>
-              )}
               ListEmptyComponent={() => (
                 <EmptyView>
                   <EmptyText>{`조건에 해당하는 모임이 없습니다.`}</EmptyText>
                 </EmptyView>
               )}
+              key={layoutType}
+              ItemSeparatorComponent={layoutType === "grid" ? () => <View style={{ height: 25 }} /> : undefined}
+              numColumns={layoutType === "grid" ? 2 : undefined}
+              columnWrapperStyle={layoutType === "grid" ? { justifyContent: "space-between" } : undefined}
+              renderItem={layoutType === "grid" ? gridRenderItem : listRenderItem}
             />
           )}
         </MainView>
@@ -478,19 +546,19 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
       <Portal>
         <Modalize
           ref={filteringSheetRef}
-          modalHeight={270}
+          modalHeight={245}
           handlePosition="inside"
           handleStyle={{ top: 14, height: 3, width: 35, backgroundColor: "#d4d4d4" }}
           modalStyle={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
           FooterComponent={
-            <SubmitButton
+            <BottomButton
               onPress={() => {
                 closeFilteringSheet();
                 if (params.showRecruiting !== showRecruiting || params.showMy !== showMy || memberRange[0] !== params.minMember || memberRange[1] !== params.maxMember) setClubsFilterParams();
               }}
-            >
-              <SubmitText>모임 보기</SubmitText>
-            </SubmitButton>
+              backgroundColor={lightTheme.accentColor}
+              title={"모임 보기"}
+            />
           }
           onOpen={() => {
             if (Platform.OS === "android") {
@@ -518,7 +586,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 >
                   <ItemContentText>멤버 모집중인 모임만 보기</ItemContentText>
                   <CheckBox>
-                    <Ionicons name="checkmark-sharp" size={15} color={showRecruiting ? "#FF6534" : "white"} />
+                    <Ionicons name="checkmark-sharp" size={15} color={showRecruiting ? lightTheme.accentColor : "white"} />
                   </CheckBox>
                 </ItemContentButton>
               </ItemRightView>
@@ -531,6 +599,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
               <ItemRightView>
                 <Slider
                   animateTransitions
+                  containerStyle={{ height: 20, marginBottom: 3 }}
                   value={memberRange}
                   onValueChange={(value) => {
                     clearTimeout(sliderTimeoutId);
@@ -540,13 +609,13 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                   }}
                   onSlidingComplete={(value) => setMemberRange(value)}
                   minimumValue={filterMinNumber}
-                  minimumTrackTintColor="#FF6534"
+                  minimumTrackTintColor={lightTheme.accentColor}
                   maximumValue={filterMaxNumber}
                   maximumTrackTintColor="#E8E8E8"
                   step={5}
                   thumbTintColor="white"
                   trackStyle={{ height: 2 }}
-                  thumbStyle={{ width: 18, height: 18, borderWidth: 1, borderColor: "#FF6534" }}
+                  thumbStyle={{ width: 14, height: 14, borderWidth: 1, borderColor: lightTheme.accentColor }}
                 />
                 <ItemContentSubText>{Array.isArray(memberRange) ? `최소 ${memberRange[0]} 명 이상 최대 ${memberRange[1]} 명 이하` : ``}</ItemContentSubText>
               </ItemRightView>
@@ -564,7 +633,7 @@ const Clubs: React.FC<ClubListScreenProps> = ({ navigation: { navigate } }) => {
                 >
                   <ItemContentText>내가 가입된 모임만 보기</ItemContentText>
                   <CheckBox>
-                    <Ionicons name="checkmark-sharp" size={15} color={showMy ? "#FF6534" : "#e8e8e8"} />
+                    <Ionicons name="checkmark-sharp" size={15} color={showMy ? lightTheme.accentColor : "#e8e8e8"} />
                   </CheckBox>
                 </ItemContentButton>
               </ItemRightView>

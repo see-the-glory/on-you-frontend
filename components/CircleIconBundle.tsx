@@ -57,7 +57,6 @@ const EmptyCircleText = styled(CustomText)`
 interface CircleIconBundleProps {
   size: number;
   uris?: string[];
-  badge?: "check-circle" | "stars";
   kerning?: number;
   opacity?: number;
 }

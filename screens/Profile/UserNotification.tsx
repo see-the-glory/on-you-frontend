@@ -5,7 +5,6 @@ import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import styled from "styled-components/native";
 import { BaseResponse, CommonApi, ErrorResponse, Notification, NotificationsResponse, ReadActionRequest, UserApi } from "../../api";
-import CustomText from "../../components/CustomText";
 import NotificationItem from "../../components/NotificationItem";
 
 const SCREEN_PADDING_SIZE = 20;
@@ -26,10 +25,11 @@ const EmptyView = styled.View`
   align-items: center;
 `;
 
-const EmptyText = styled(CustomText)`
+const EmptyText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
-  color: #bdbdbd;
+  color: #acacac;
   justify-content: center;
   align-items: center;
 `;
@@ -116,8 +116,7 @@ const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
       });
     } else if (item.actionType === "APPROVE") {
       readAction(item);
-      const clubTopTabsProps = { clubData: { id: item.actionClubId } };
-      return navigate("ClubStack", { screen: "ClubTopTabs", params: clubTopTabsProps });
+      return navigate("ClubStack", { screen: "ClubTopTabs", params: { clubid: item.actionClubId } });
     } else if (item.actionType === "REJECT") {
       readAction(item);
       const clubJoinRejectMessageProps = {
@@ -128,16 +127,13 @@ const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
       return navigate("ClubStack", { screen: "ClubJoinRejectMessage", params: clubJoinRejectMessageProps });
     } else if (item.actionType === "FEED_COMMENT") {
       readAction(item);
-      const feedSelectionProps = { selectFeedId: item.actionFeedId };
-      return navigate("FeedStack", { screen: "FeedSelection", params: feedSelectionProps });
+      return navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: item.actionFeedId } });
     } else if (item.actionType === "SCHEDULE_CREATE") {
       readAction(item);
-      const clubTopTabsProps = { clubData: { id: item.actionClubId } };
-      return navigate("ClubStack", { screen: "ClubTopTabs", params: clubTopTabsProps });
+      return navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: item.actionClubId } });
     } else if (item.actionType === "COMMENT_REPLY") {
       readAction(item);
-      const feedSelectionProps = { selectFeedId: item.actionFeedId };
-      return navigate("FeedStack", { screen: "FeedSelection", params: feedSelectionProps });
+      return navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: item.actionFeedId } });
     }
   };
 
@@ -147,7 +143,7 @@ const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
     </Loader>
   ) : (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <FlatList
         contentContainerStyle={{ flexGrow: 1, paddingVertical: 10, paddingHorizontal: SCREEN_PADDING_SIZE }}
         refreshing={refreshing}

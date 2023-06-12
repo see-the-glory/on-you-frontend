@@ -4,6 +4,7 @@ import { TouchableOpacity, StatusBar, ScrollView, useWindowDimensions } from "re
 import styled from "styled-components/native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import BottomButton from "../../components/BottomButton";
+import { lightTheme } from "../../theme";
 
 const Container = styled.View`
   flex: 1;
@@ -31,13 +32,13 @@ const Border = styled.View`
 `;
 
 const AskText = styled.Text`
-  font-family: "AppleSDGothicNeoB";
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 20px;
   margin-top: 24px;
 `;
 
 const SubText = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
@@ -51,7 +52,7 @@ const Input = styled.TextInput`
 `;
 
 const Error = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   color: #e7564f;
   font-size: 12px;
 `;
@@ -69,7 +70,7 @@ const ValidationItem = styled.View`
 `;
 
 const ValidationText = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   color: #8e8e8e;
   font-size: 12px;
 `;
@@ -114,7 +115,7 @@ const SignUpPassword: React.FC<NativeStackScreenProps<any, "SignUpPassword">> = 
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <ScrollView contentContainerStyle={{ minHeight: SCREEN_HEIGHT - 100 }} stickyHeaderIndices={[0]} showsVerticalScrollIndicator={false}>
         <BorderWrap>
           <Border />
@@ -154,7 +155,7 @@ const SignUpPassword: React.FC<NativeStackScreenProps<any, "SignUpPassword">> = 
           />
           {password !== checkPassword && password !== "" && checkPassword !== "" ? (
             <ValidationView>
-              <AntDesign name="exclamationcircleo" size={12} color="#ff6534" />
+              <AntDesign name="exclamationcircleo" size={12} color={lightTheme.accentColor} />
               <Error>{` 입력을 다시 한번 확인해주세요.`}</Error>
             </ValidationView>
           ) : (

@@ -23,13 +23,13 @@ const Wrap = styled.View`
 `;
 
 const AskText = styled.Text`
-  font-family: "AppleSDGothicNeoB";
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 20px;
   margin-top: 24px;
 `;
 
 const SubText = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
@@ -92,12 +92,10 @@ const SignUpConfirm: React.FC<NativeStackScreenProps<any, "SignUpConfirm">> = ({
           },
         });
       } else if (res.status === 404) {
-        console.log(res);
         toast.show("이미 가입된 사용자입니다.", { type: "warning" });
         navigate("LoginStack", { screen: "Login" });
       } else {
         console.log(`user register mutation success but please check status code`);
-        console.log(res);
         toast.show(`회원가입에 실패했습니다. (Error Code: ${res.status})`, { type: "warning" });
       }
     },
@@ -135,7 +133,7 @@ const SignUpConfirm: React.FC<NativeStackScreenProps<any, "SignUpConfirm">> = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <Wrap>
         <AskText>입력 정보가 모두 일치한가요?</AskText>
         <SubText>잘못 입력된 정보는 뒤로가기로 수정할 수 있습니다.</SubText>

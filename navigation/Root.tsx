@@ -13,8 +13,8 @@ import { RootState } from "../redux/store/reducers";
 import axios from "axios";
 import { useAppDispatch } from "../redux/store";
 import { logout, updateUser } from "../redux/slices/auth";
-import { BackHandler, DeviceEventEmitter, Linking, Modal, Platform, Text, View } from "react-native";
-import { BaseResponse, ErrorResponse, MetaInfoRequest, MetaInfoResponse, TargetTokenUpdateRequest, UserApi, UserInfoResponse } from "../api";
+import { BackHandler, DeviceEventEmitter, Linking, Modal, Platform, View } from "react-native";
+import { BaseResponse, BASE_URL, ErrorResponse, MetaInfoRequest, MetaInfoResponse, TargetTokenUpdateRequest, UserApi, UserInfoResponse } from "../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import feedSlice from "../redux/slices/feed";
 import messaging from "@react-native-firebase/messaging";
@@ -25,8 +25,9 @@ import queryString from "query-string";
 import { getModel, getVersion } from "react-native-device-info";
 import styled from "styled-components/native";
 import CustomText from "../components/CustomText";
-import CodePush from "react-native-code-push";
-import packageInfo from "../package.json";
+import Parking from "../screens/Parking";
+import Search from "../screens/Search";
+import { lightTheme } from "../theme";
 
 const Nav = createNativeStackNavigator();
 
@@ -83,7 +84,6 @@ const Root = () => {
   const toast = useToast();
   const queryClient = useQueryClient();
   const navigation = useNavigation();
-
   const { refetch: userInfoRefecth } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
       if (res.data) dispatch(updateUser({ user: res.data }));
@@ -114,8 +114,6 @@ const Root = () => {
   const updateMetaInfo = async () => {
     let deviceInfo = await getModel();
     let currentVersion = await getVersion();
-    let codePushInfo = await CodePush.getUpdateMetadata();
-    if (currentVersion && codePushInfo) currentVersion = currentVersion.slice(0, -1) + packageInfo.version.split(".")[2];
     const requestData: MetaInfoRequest = { deviceInfo, currentVersion };
 
     updateMetaInfoMutation.mutate(requestData, {
@@ -143,9 +141,11 @@ const Root = () => {
     const match = parsed.url.split("/").pop();
     switch (match) {
       case "club":
-        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: parsed.query.id } } });
+        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: parsed.query.id } });
         break;
-
+      case "user":
+        navigation.navigate("ProfileStack", { screen: "Profile", params: { userId: parsed.query.id } });
+        break;
       default:
         break;
     }
@@ -157,22 +157,23 @@ const Root = () => {
         navigation.navigate("ProfileStack", { screen: "UserNotification" });
         break;
       case "APPROVE":
-        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
+        if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: data?.clubId } });
         break;
       case "REJECT":
         navigation.navigate("ProfileStack", { screen: "UserNotification" });
         break;
       case "SCHEDULE_CREATE":
-        navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: data?.clubId } } });
+        if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: data?.clubId } });
         break;
       case "FEED_CREATE":
-        navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        if (data?.feedId) navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        else if (data?.clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: data?.clubId } });
         break;
       case "FEED_COMMENT":
-        navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        if (data?.feedId) navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
         break;
       case "COMMENT_REPLY":
-        navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
+        if (data?.feedId) navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: data.feedId } });
         break;
       default:
         break;
@@ -182,13 +183,13 @@ const Root = () => {
   useEffect(() => {
     console.log(`Root - useEffect!`);
     // Axios Setting
-    axios.defaults.baseURL = "http://3.39.190.23:8080";
+    axios.defaults.baseURL = BASE_URL;
     if (token) axios.defaults.headers.common["Authorization"] = token;
     axios.defaults.headers.common["Content-Type"] = "application/json";
 
     const requestInterceptor = axios.interceptors.request.use(
       (config) => {
-        config.timeout = 5000;
+        config.timeout = 15000;
         return config;
       },
       (error) => error
@@ -212,6 +213,8 @@ const Root = () => {
           }
           return Promise.reject({ ...error.response?.data, status, code: error.code });
         } else {
+          console.log(error.response);
+          navigation.navigate("Parking");
           return Promise.reject({ message: "요청시간이 만료되었습니다.", code: error.code });
         }
       }
@@ -345,6 +348,20 @@ const Root = () => {
             <Nav.Screen name="ProfileStack" component={ProfileStack} />
             <Nav.Screen name="ClubCreationStack" component={ClubCreationStack} />
             <Nav.Screen name="ClubManagementStack" component={ClubManagementStack} />
+            <Nav.Screen name="Parking" component={Parking} />
+            <Nav.Screen
+              name="Search"
+              component={Search}
+              options={{
+                headerShown: true,
+                title: "모임 검색",
+                contentStyle: { backgroundColor: "white" },
+                headerTitleAlign: "center",
+                headerTitleStyle: { fontFamily: lightTheme.koreanFontB, fontSize: 16 },
+                headerShadowVisible: false,
+                headerBackVisible: false,
+              }}
+            />
           </Nav.Navigator>
         }
       ></Host>

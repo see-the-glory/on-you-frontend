@@ -1,21 +1,21 @@
-import React, { useLayoutEffect, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter, NativeSyntheticEvent, TextLayoutEventData, TouchableWithoutFeedback, View } from "react-native";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ActivityIndicator, useWindowDimensions, Animated, FlatList, DeviceEventEmitter, TouchableWithoutFeedback, View, Alert, Text, StatusBar, Platform } from "react-native";
 import styled from "styled-components/native";
-import { Feather, Entypo, Ionicons } from "@expo/vector-icons";
-import { ClubHomeScreenProps, ClubHomeParamList, RefinedSchedule } from "../../Types/Club";
-import { Member } from "../../api";
+import { Feather, Ionicons } from "@expo/vector-icons";
+import { RefinedSchedule } from "../../Types/Club";
+import { BaseResponse, Club, ClubApi, ErrorResponse, GuestComment, GuestCommentDeletionRequest, GuestCommentResponse, Member } from "../../api";
 import ScheduleModal from "./ClubScheduleModal";
 import CircleIcon from "../../components/CircleIcon";
 import CustomText from "../../components/CustomText";
-import { useAppDispatch } from "../../redux/store";
-import clubSlice from "../../redux/slices/club";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store/reducers";
 import { useToast } from "react-native-toast-notifications";
 import Collapsible from "react-native-collapsible";
+import { useMutation, useQuery } from "react-query";
+import moment from "moment";
+import LinkedText from "../../components/LinkedText";
 
-const MEMBER_ICON_KERNING = 20;
-const MEMBER_ICON_SIZE = 50;
+const MEMBER_ICON_SIZE = 40;
 const SCREEN_PADDING_SIZE = 20;
 
 const Loader = styled.View`
@@ -42,36 +42,42 @@ const SectionView = styled.View`
 const TitleView = styled.View`
   width: 100%;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 `;
 
-const SectionTitle = styled(CustomText)`
-  font-family: "NotoSansKR-Bold";
+const SectionTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 15px;
-  margin-left: 5px;
-  line-height: 22px;
+  color: ${(props: any) => props.theme.primaryColor};
+`;
+const SectionDetailButton = styled.TouchableOpacity``;
+const SectionText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
+  color: #aaaaaa;
 `;
 
 const ContentView = styled.View<{ paddingSize?: number }>`
-  padding-left: ${(props: any) => (props.paddingSize ? props.paddingSize + 5 : 5)}px;
-  padding-right: ${(props: any) => (props.paddingSize ? props.paddingSize + 5 : 5)}px;
-  margin-bottom: 15px;
+  padding-left: ${(props: any) => props.paddingSize ?? 0}px;
+  padding-right: ${(props: any) => props.paddingSize ?? 0}px;
 `;
 
-const ContentText = styled(CustomText)`
+const ContentText = styled(LinkedText)`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 14px;
+  line-height: 20px;
+  color: #0a0a0a;
+`;
+
+const ContentSubText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 13px;
-  line-height: 18px;
+  color: #828282;
 `;
 
-const ContentSubText = styled(CustomText)`
-  font-size: 13px;
-  line-height: 18px;
-  color: #9a9a9a;
-`;
-
-const ScheduleSeparator = styled.View`
+const SeparatorView = styled.View`
   width: 25px;
 `;
 
@@ -92,7 +98,7 @@ const ScheduleAddView = styled.TouchableOpacity`
 `;
 
 const ScheduleDateView = styled.View<{ index: number }>`
-  background-color: ${(props: any) => (props.index === 0 ? "#FF551F" : "#EBEBEB")};
+  background-color: ${(props: any) => (props.index === 0 ? props.theme.accentColor : "#EBEBEB")};
   justify-content: center;
   align-items: center;
   padding: 7px 15px;
@@ -112,7 +118,7 @@ const ScheduleDetailItemView = styled.View`
   margin: 3px 5px;
 `;
 
-const ScheduleText = styled(CustomText)<{ index: number }>`
+const ScheduleText = styled(CustomText)<{ index?: number }>`
   font-size: 11px;
   line-height: 15px;
   color: ${(props: any) => (props.index === 0 ? "white" : "black")};
@@ -132,62 +138,124 @@ const ScheduleTitle = styled(CustomText)<{ index: number }>`
   color: ${(props: any) => (props.index === 0 ? "white" : "black")};
 `;
 
-const MemberView = styled.View`
-  margin-bottom: 150px;
-`;
-
-const MemberLineView = styled.View`
+const GuestBookInfoView = styled.View`
+  width: 100%;
   flex-direction: row;
-  justify-content: flex-start;
-  margin-bottom: 25px;
-  margin-top: 2px;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 10px 0px;
 `;
-
-const MemberSubTitleView = styled.View`
-  margin-left: 5px;
-  margin-bottom: 10px;
+const GuestCommentButton = styled.TouchableOpacity`
+  border: 0.5px solid #c5c5c5;
+  padding: 8px 10px;
 `;
-
-const MemberSubTitle = styled(CustomText)`
-  font-size: 13px;
-  color: #bababa;
-`;
-
-const MemberTextView = styled.View`
-  margin-left: 5px;
-  margin-bottom: 20px;
-`;
-
-const MemberText = styled(CustomText)`
-  font-size: 11px;
-  line-height: 17px;
+const GuestCommentGuideText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 14px;
   color: #b0b0b0;
 `;
 
-const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
-  navigation: { navigate },
+const InfoText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 11px;
+  color: #959595;
+`;
+
+const GusetPage = styled.View`
+  width: 100%;
+`;
+const GuestItem = styled.View`
+  flex: 1;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 8px 0px;
+  border-bottom-width: 0.5px;
+  border-bottom-color: #dddddd;
+`;
+const GuestItemInnerView = styled.View`
+  flex: 1;
+`;
+const GuestItemHeader = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+const GuestItemHeaderLeft = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+const GuestItemHeaderRight = styled.View``;
+
+const GuestName = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-size: 13px;
+  line-height: 15px;
+  color: #2b2b2b;
+  margin-right: 5px;
+`;
+const GuestCreatedTime = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 11px;
+  color: #8e8e8e;
+`;
+const GuestItemContent = styled.View``;
+const GuestContentText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 15px;
+  color: #2b2b2b;
+`;
+
+const EmptyView = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const EmptyText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
+  color: #acacac;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+`;
+
+// ClubHome Param For Collapsed Scroll Animation
+export interface ClubHomeParamList {
+  clubData?: Club;
+  scrollY: Animated.Value;
+  headerDiff: number;
+  headerCollapsedHeight: number;
+  actionButtonHeight: number;
+  schedules?: RefinedSchedule[];
+  syncScrollOffset: (screenName: string) => void;
+  screenScrollRefs: any;
+  screenScrollOffset: any;
+}
+
+const ClubHome: React.FC<ClubHomeParamList> = ({
+  navigation: { navigate, push },
   route: {
     name: screenName,
-    params: { clubData },
+    params: { clubId },
   },
+  clubData,
   scrollY,
-  offsetY,
-  scheduleOffsetX,
   headerDiff,
+  headerCollapsedHeight,
+  actionButtonHeight,
   schedules,
   syncScrollOffset,
   screenScrollRefs,
+  screenScrollOffset,
 }) => {
+  const me = useSelector((state: RootState) => state.auth.user);
   const [scheduleVisible, setScheduleVisible] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(-1);
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const [memberLoading, setMemberLoading] = useState(true);
-  const [memberData, setMemberData] = useState<Member[][]>();
-  const [managerData, setManagerData] = useState<Member[][]>();
-  const [masterData, setMasterData] = useState<Member>();
-  const memberCountPerLine = Math.floor((SCREEN_WIDTH - SCREEN_PADDING_SIZE) / (MEMBER_ICON_SIZE + MEMBER_ICON_KERNING));
-  const dispatch = useAppDispatch();
-  const myRole = useSelector((state: RootState) => state.club.role);
+  const [members, setMembers] = useState<Member[]>([]);
+  const myRole = useSelector((state: RootState) => state.club[clubId]?.role);
   const toast = useToast();
   const [clubLongDescLines, setClubLongDescLines] = useState<string[]>(typeof clubData?.clubLongDesc === "string" ? clubData?.clubLongDesc?.split("\n") : []);
   const [isCollapsedLongDesc, setIsCollapsedLongDesc] = useState<boolean>(true);
@@ -195,35 +263,53 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
 
   useLayoutEffect(() => {
     getData();
+  }, [clubData]);
+
+  useEffect(() => {
+    const guestCommentSubscription = DeviceEventEmitter.addListener("GuestCommentRefetch", () => {
+      console.log("ClubHome - GuestCommentRefetch Refetch Event");
+      guestCommentRefetch();
+    });
+
+    return () => {
+      guestCommentSubscription.remove();
+      console.log("ClubHome - remove listner");
+    };
   }, []);
 
+  const {
+    data: guestComment,
+    isLoading: isGuestCommentLoading,
+    refetch: guestCommentRefetch,
+  } = useQuery<GuestCommentResponse, ErrorResponse>(["getGuestComment", clubId], ClubApi.getGuestComment, {
+    onSuccess: (res) => {},
+    onError: (error) => {
+      console.log(`API ERROR | getGuestComment ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+    staleTime: 10000,
+    cacheTime: 15000,
+  });
+
+  const deleteGuestCommentMutation = useMutation<BaseResponse, ErrorResponse, GuestCommentDeletionRequest>(ClubApi.deleteGuestComment, {
+    onSuccess: (res) => {
+      guestCommentRefetch();
+      toast.show(`방명록을 삭제했습니다.`, { type: "success" });
+    },
+    onError: (error) => {
+      console.log(`API ERROR | deleteGuestComment ${error.code} ${error.status}`);
+      toast.show(`${error.message ?? error.code}`, { type: "warning" });
+    },
+  });
+
   const getClubMembers = () => {
-    const members: Member[] = [];
-    const manager: Member[] = [];
-    const memberBundle: Member[][] = [];
-    const managerBundle: Member[][] = [];
-
-    if (clubData && clubData.members) {
-      for (let i = 0; i < clubData?.members?.length; ++i) {
-        if (clubData.members && clubData.members[i].role?.toUpperCase() === "MASTER") {
-          setMasterData(clubData.members[i]);
-        } else if (clubData.members && clubData.members[i].role?.toUpperCase() === "MANAGER") {
-          manager.push(clubData.members[i]);
-        } else if (clubData.members && clubData.members[i].role?.toUpperCase() === "MEMBER") {
-          members.push(clubData.members[i]);
-        }
-      }
-    }
-
-    for (var i = 0; i < members.length; i += memberCountPerLine) {
-      memberBundle.push(members.slice(i, i + memberCountPerLine));
-    }
-
-    for (var i = 0; i < manager.length; i += memberCountPerLine) {
-      managerBundle.push(manager.slice(i, i + memberCountPerLine));
-    }
-    setMemberData(memberBundle);
-    setManagerData(managerBundle);
+    const approved = clubData?.members?.filter((member) => member.applyStatus === "APPROVED");
+    const sorted = [
+      ...(approved?.filter((member) => member.role === "MASTER") ?? []),
+      ...(approved?.filter((member) => member.role === "MANAGER") ?? []),
+      ...(approved?.filter((member) => member.role === "MEMBER") ?? []),
+    ];
+    setMembers(sorted);
   };
 
   const getData = async () => {
@@ -244,209 +330,246 @@ const ClubHome: React.FC<ClubHomeScreenProps & ClubHomeParamList> = ({
     }
   };
 
+  const goToProfile = (userId: number) => push("ProfileStack", { screen: "Profile", params: { userId } });
+  const goToClubMembers = () => push("ClubMembers", { members: clubData?.members?.filter((member) => member.applyStatus === "APPROVED") });
+  const goToClubGuestBook = () => push("ClubGuestBook", { clubId, clubData });
+
   const clubLongDescTouch = () => {
     setIsCollapsedLongDesc((prev) => !prev);
   };
 
-  const loading = memberLoading;
+  const deleteGuestComment = (guestCommentId: number) => {
+    if (guestCommentId === undefined) return;
+    const requestData: GuestCommentDeletionRequest = { guestCommentId };
+    Alert.alert("방명록 삭제", "작성하신 방명록을 삭제하시겠어요?", [
+      { text: "아니요" },
+      {
+        text: "예",
+        onPress: () => deleteGuestCommentMutation.mutate(requestData),
+      },
+    ]);
+  };
+
+  const loading = memberLoading && isGuestCommentLoading;
   return loading ? (
     <Loader>
       <ActivityIndicator />
     </Loader>
   ) : (
-    <Animated.ScrollView
-      ref={(ref) => {
-        screenScrollRefs.current[screenName] = ref;
-      }}
-      onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
-      onMomentumScrollEnd={(event) => {
-        dispatch(clubSlice.actions.updateClubHomeScrollY({ scrollY: event.nativeEvent.contentOffset.y }));
-        syncScrollOffset(screenName);
-      }}
-      onScrollEndDrag={() => syncScrollOffset(screenName)}
-      contentOffset={{ x: 0, y: offsetY ?? 0 }}
-      style={{
-        flex: 1,
-        paddingTop: 15,
-        backgroundColor: "white",
-        transform: [
-          {
-            translateY: scrollY.interpolate({
-              inputRange: [0, headerDiff],
-              outputRange: [-headerDiff, 0],
-              extrapolate: "clamp",
-            }),
-          },
-        ],
-      }}
-      contentContainerStyle={{
-        paddingTop: headerDiff,
-        minHeight: SCREEN_HEIGHT + headerDiff,
-        backgroundColor: "white",
-      }}
-    >
-      <SectionView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
-        <TitleView>
-          <Entypo name="megaphone" size={16} color="black" />
-          <SectionTitle>ABOUT</SectionTitle>
-        </TitleView>
-        <ContentView>
-          {clubLongDescLines.length <= collapsed ? (
-            <ContentText>{clubData.clubLongDesc}</ContentText>
-          ) : (
-            <TouchableWithoutFeedback onPress={clubLongDescTouch}>
-              <View>
-                {isCollapsedLongDesc ? (
-                  <ContentText>
-                    {`${clubLongDescLines.slice(0, collapsed).join("\n")}...`}
-                    <ContentSubText>{` 더보기`}</ContentSubText>
-                  </ContentText>
+    <>
+      <Animated.ScrollView
+        ref={(ref: any) => {
+          screenScrollRefs.current[screenName] = ref;
+        }}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
+        onMomentumScrollEnd={(event) => syncScrollOffset(screenName)}
+        onScrollEndDrag={() => syncScrollOffset(screenName)}
+        contentOffset={{ x: 0, y: screenScrollOffset?.current[screenName] ?? 0 }}
+        style={{
+          flex: 1,
+          paddingTop: 20,
+          backgroundColor: "#F5F5F5",
+          transform: [
+            {
+              translateY: scrollY.interpolate({
+                inputRange: [0, headerDiff],
+                outputRange: [-headerDiff, 0],
+                extrapolate: "clamp",
+              }),
+            },
+          ],
+        }}
+        contentContainerStyle={{
+          paddingTop: headerDiff,
+          paddingBottom: headerDiff * 2,
+          minHeight: SCREEN_HEIGHT + headerCollapsedHeight,
+          backgroundColor: "#F5F5F5",
+        }}
+      >
+        <SectionView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+          <TitleView>
+            <SectionTitle>{`소개`}</SectionTitle>
+          </TitleView>
+          <ContentView>
+            {clubLongDescLines.length <= collapsed ? (
+              <ContentText>{clubData?.clubLongDesc ?? ""}</ContentText>
+            ) : (
+              <TouchableWithoutFeedback onPress={clubLongDescTouch}>
+                <View>
+                  {isCollapsedLongDesc ? (
+                    <>
+                      <ContentText>{`${clubLongDescLines.slice(0, collapsed).join("\n")}`}</ContentText>
+                      <ContentSubText>{`더보기`}</ContentSubText>
+                    </>
+                  ) : (
+                    <ContentText>{`${clubLongDescLines.slice(0, collapsed).join("\n")}`}</ContentText>
+                  )}
+                  <Collapsible collapsed={isCollapsedLongDesc}>
+                    <ContentText>{`${clubLongDescLines.slice(collapsed).join("\n")}`}</ContentText>
+                  </Collapsible>
+                </View>
+              </TouchableWithoutFeedback>
+            )}
+          </ContentView>
+        </SectionView>
+        <View style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+          <Break sep={30} />
+        </View>
+        <SectionView>
+          <TitleView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+            <SectionTitle>{`스케줄`}</SectionTitle>
+          </TitleView>
+          {myRole && myRole !== "PENDING" ? (
+            <FlatList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentOffset={{ x: 0, y: 0 }}
+              contentContainerStyle={{ paddingVertical: 6, paddingHorizontal: SCREEN_PADDING_SIZE }}
+              data={schedules}
+              keyExtractor={(item: RefinedSchedule, index: number) => String(index)}
+              ItemSeparatorComponent={SeparatorView}
+              renderItem={({ item, index }: { item: RefinedSchedule; index: number }) =>
+                item.isEnd === false ? (
+                  <ScheduleView
+                    onPress={() => {
+                      setScheduleVisible(true);
+                      setSelectedSchedule(index);
+                      if (Platform.OS === "android") {
+                        StatusBar.setBackgroundColor("black", true);
+                      }
+                    }}
+                  >
+                    <ScheduleDateView index={index}>
+                      <ScheduleText index={index}>{item.year}</ScheduleText>
+                      <ScheduleTitle index={index}>
+                        {item.month}/{item.day} {item.dayOfWeek}
+                      </ScheduleTitle>
+                    </ScheduleDateView>
+                    <ScheduleDetailView>
+                      <ScheduleDetailItemView>
+                        <Feather name="clock" size={10} color="#CCCCCC" style={{ marginRight: 5 }} />
+                        <ScheduleText>
+                          {`${item.ampm} ${item.hour} 시`} {item.minute !== "0" ? `${item.minute} 분` : ""}
+                        </ScheduleText>
+                      </ScheduleDetailItemView>
+                      <ScheduleDetailItemView>
+                        <Feather name="map-pin" size={10} color="#CCCCCC" style={{ marginRight: 5 }} />
+                        <ScheduleText>{item.location}</ScheduleText>
+                      </ScheduleDetailItemView>
+                      <Break sep={2} />
+
+                      <ScheduleDetailItemView>
+                        <Ionicons name="people-sharp" size={12} color="#CCCCCC" style={{ marginRight: 7 }} />
+                        <ScheduleText>{item.members?.length}명 참석</ScheduleText>
+                      </ScheduleDetailItemView>
+                      <ScheduleDetailItemView style={{ justifyContent: "center" }}>
+                        <ScheduleSubText>더보기</ScheduleSubText>
+                      </ScheduleDetailItemView>
+                    </ScheduleDetailView>
+                  </ScheduleView>
                 ) : (
-                  <ContentText>{`${clubLongDescLines.slice(0, collapsed).join("\n")}`}</ContentText>
-                )}
-                <Collapsible collapsed={isCollapsedLongDesc}>
-                  <ContentText>{`${clubLongDescLines.slice(collapsed).join("\n")}`}</ContentText>
-                </Collapsible>
-              </View>
-            </TouchableWithoutFeedback>
+                  <ScheduleAddView onPress={goToScheduleAdd}>
+                    <Feather name="plus" size={28} color="#6E6E6E" />
+                    <ScheduleText style={{ textAlign: "center", color: "#6E6E6E" }}>{`새로운 스케줄을\n등록해보세요.`}</ScheduleText>
+                  </ScheduleAddView>
+                )
+              }
+            />
+          ) : (
+            // Schedule FlatList의 padding 이슈 때문에 ContentView에 paddingSize Props 추가.
+            <ContentView paddingSize={SCREEN_PADDING_SIZE}>
+              <ContentText>모임의 멤버만 확인할 수 있습니다.</ContentText>
+            </ContentView>
           )}
-        </ContentView>
-        <Break sep={15} />
-      </SectionView>
-      <SectionView>
-        <TitleView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
-          <Ionicons name="calendar" size={16} color="black" />
-          <SectionTitle>SCHEDULE</SectionTitle>
-        </TitleView>
-        {myRole && myRole !== "PENDING" ? (
+        </SectionView>
+        <View style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+          <Break sep={30} />
+        </View>
+        <SectionView>
+          <TitleView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+            <SectionTitle>{`멤버`}</SectionTitle>
+            <SectionDetailButton onPress={goToClubMembers}>
+              <SectionText>{`자세히 >`}</SectionText>
+            </SectionDetailButton>
+          </TitleView>
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={(event) => dispatch(clubSlice.actions.updateClubHomeScheduleScrollX({ scrollX: event.nativeEvent.contentOffset.x }))}
-            contentOffset={{ x: scheduleOffsetX ?? 0, y: 0 }}
-            contentContainerStyle={{
-              paddingVertical: 6,
-              paddingHorizontal: SCREEN_PADDING_SIZE,
-            }}
-            data={schedules}
-            keyExtractor={(item: RefinedSchedule, index: number) => String(index)}
-            ItemSeparatorComponent={ScheduleSeparator}
-            renderItem={({ item, index }: { item: RefinedSchedule; index: number }) =>
-              item.isEnd === false ? (
-                <ScheduleView
-                  onPress={() => {
-                    setScheduleVisible(true);
-                    setSelectedSchedule(index);
-                  }}
-                >
-                  <ScheduleDateView index={index}>
-                    <ScheduleText index={index}>{item.year}</ScheduleText>
-                    <ScheduleTitle index={index}>
-                      {item.month}/{item.day} {item.dayOfWeek}
-                    </ScheduleTitle>
-                  </ScheduleDateView>
-                  <ScheduleDetailView>
-                    <ScheduleDetailItemView>
-                      <Feather name="clock" size={10} color="#CCCCCC" style={{ marginRight: 5 }} />
-                      <ScheduleText>
-                        {`${item.ampm} ${item.hour} 시`} {item.minute !== "0" ? `${item.minute} 분` : ""}
-                      </ScheduleText>
-                    </ScheduleDetailItemView>
-                    <ScheduleDetailItemView>
-                      <Feather name="map-pin" size={10} color="#CCCCCC" style={{ marginRight: 5 }} />
-                      <ScheduleText>{item.location}</ScheduleText>
-                    </ScheduleDetailItemView>
-                    <Break sep={2} />
-
-                    <ScheduleDetailItemView>
-                      <Ionicons name="people-sharp" size={12} color="#CCCCCC" style={{ marginRight: 7 }} />
-                      <ScheduleText>{item.members?.length}명 참석</ScheduleText>
-                    </ScheduleDetailItemView>
-                    <ScheduleDetailItemView style={{ justifyContent: "center" }}>
-                      <ScheduleSubText>더보기</ScheduleSubText>
-                    </ScheduleDetailItemView>
-                  </ScheduleDetailView>
-                </ScheduleView>
-              ) : (
-                <ScheduleAddView onPress={goToScheduleAdd}>
-                  <Feather name="plus" size={28} color="#6E6E6E" />
-                  <ScheduleText style={{ textAlign: "center", color: "#6E6E6E" }}>{`새로운 스케줄을\n등록해보세요.`}</ScheduleText>
-                </ScheduleAddView>
-              )
-            }
+            contentContainerStyle={{ paddingHorizontal: SCREEN_PADDING_SIZE, flexGrow: 1 }}
+            data={members}
+            keyExtractor={(item: Member, index: number) => String(index)}
+            ItemSeparatorComponent={() => <View style={{ width: 15 }} />}
+            renderItem={({ item, index }: { item: Member; index: number }) => (
+              <CircleIcon onPress={() => goToProfile(item.id)} size={MEMBER_ICON_SIZE} uri={item?.thumbnail} name={item?.name} badge={item.role} />
+            )}
           />
-        ) : (
-          // Schedule FlatList의 padding 이슈 때문에 ContentView에 paddingSize Props 추가.
-          <ContentView paddingSize={SCREEN_PADDING_SIZE}>
-            <ContentText>모임의 멤버만 확인할 수 있습니다.</ContentText>
-          </ContentView>
-        )}
-      </SectionView>
-      <SectionView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
-        <Break sep={15} />
-        <TitleView>
-          <Feather name="users" size={16} color="black" />
-          <SectionTitle>MEMBER</SectionTitle>
-        </TitleView>
-        <MemberView>
-          <MemberSubTitleView>
-            <MemberSubTitle>Leader</MemberSubTitle>
-          </MemberSubTitleView>
-          {masterData ? (
-            <MemberLineView>
-              <CircleIcon size={MEMBER_ICON_SIZE} uri={masterData?.thumbnail} name={masterData?.name} badge={"stars"} />
-            </MemberLineView>
-          ) : (
-            <MemberTextView>
-              <MemberText>리더가 없습니다.</MemberText>
-            </MemberTextView>
-          )}
+        </SectionView>
+        <View style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+          <Break sep={30} />
+        </View>
+        <SectionView>
+          <TitleView style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+            <SectionTitle>{`방명록`}</SectionTitle>
+            <SectionDetailButton onPress={goToClubGuestBook}>
+              <SectionText>{`모두보기 >`}</SectionText>
+            </SectionDetailButton>
+          </TitleView>
 
-          <MemberSubTitleView>
-            <MemberSubTitle>Manager</MemberSubTitle>
-          </MemberSubTitleView>
-          {managerData?.length !== 0 ? (
-            managerData?.map((bundle, index) => (
-              <MemberLineView key={index}>
-                {bundle.map((item, index) => (
-                  <CircleIcon key={index} size={MEMBER_ICON_SIZE} uri={item.thumbnail} name={item.name} kerning={MEMBER_ICON_KERNING} badge={"check-circle"} />
-                ))}
-              </MemberLineView>
-            ))
-          ) : (
-            <MemberTextView>
-              <MemberText>매니저가 없습니다.</MemberText>
-            </MemberTextView>
-          )}
-          <MemberSubTitleView>
-            <MemberSubTitle>Member</MemberSubTitle>
-          </MemberSubTitleView>
-          {memberData?.length !== 0 ? (
-            memberData?.map((bundle, index) => (
-              <MemberLineView key={index}>
-                {bundle.map((item, index) => (
-                  <CircleIcon key={index} size={MEMBER_ICON_SIZE} uri={item.thumbnail} name={item.name} kerning={MEMBER_ICON_KERNING} />
-                ))}
-              </MemberLineView>
-            ))
-          ) : (
-            <MemberTextView>
-              <MemberText>멤버들이 클럽을 가입할 수 있게 해보세요.</MemberText>
-            </MemberTextView>
-          )}
-        </MemberView>
-      </SectionView>
+          <GusetPage style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
+            {guestComment?.data && guestComment.data.length > 0 ? (
+              [...guestComment?.data]
+                .reverse()
+                .slice(0, 4)
+                .map((guest: GuestComment, index: number) => (
+                  <GuestItem key={`guest_${index}`}>
+                    <CircleIcon size={28} uri={guest.thumbnail} kerning={5} onPress={() => goToProfile(guest.userId)} />
+                    <GuestItemInnerView>
+                      <GuestItemHeader>
+                        <GuestItemHeaderLeft>
+                          <GuestName onPress={() => goToProfile(guest.userId)}>{guest.userName}</GuestName>
+                          <GuestCreatedTime>{moment(guest.created, "YYYY-MM-DDThh:mm:ss").fromNow()}</GuestCreatedTime>
+                        </GuestItemHeaderLeft>
+                        <GuestItemHeaderRight>
+                          {guest.userId === me?.id ? <Ionicons onPress={() => deleteGuestComment(guest.id)} name="close-outline" size={14} color="#8E8E8E" /> : <></>}
+                        </GuestItemHeaderRight>
+                      </GuestItemHeader>
+                      <GuestItemContent>
+                        <GuestContentText>{guest.content}</GuestContentText>
+                      </GuestItemContent>
+                    </GuestItemInnerView>
+                  </GuestItem>
+                ))
+            ) : (
+              <EmptyView>
+                <EmptyText>{`아직 등록된 방명록이 없습니다.`}</EmptyText>
+              </EmptyView>
+            )}
+          </GusetPage>
 
+          <View style={{ width: "100%", marginTop: 15, marginBottom: 15 }}>
+            <GuestCommentButton
+              activeOpacity={1}
+              style={{ marginHorizontal: SCREEN_PADDING_SIZE }}
+              onPress={() => {
+                DeviceEventEmitter.emit("ClubGuestCommentFocus");
+                screenScrollRefs.current[screenName]?.scrollToEnd({ animated: true });
+              }}
+            >
+              <GuestCommentGuideText>{`방명록을 작성해보세요. (최대 100자)`}</GuestCommentGuideText>
+            </GuestCommentButton>
+          </View>
+        </SectionView>
+      </Animated.ScrollView>
       <ScheduleModal
         visible={scheduleVisible}
-        clubId={clubData.id}
+        clubId={clubId}
         scheduleData={schedules}
         selectIndex={selectedSchedule}
         closeModal={(refresh: boolean) => {
           closeScheduleModal(refresh);
         }}
       />
-    </Animated.ScrollView>
+    </>
   );
 };
 

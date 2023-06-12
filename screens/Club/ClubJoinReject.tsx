@@ -7,8 +7,6 @@ import CustomText from "../../components/CustomText";
 import { BaseResponse, ClubApi, ClubRejectRequest, ErrorResponse } from "../../api";
 import { useMutation } from "react-query";
 import { useToast } from "react-native-toast-notifications";
-import CustomTextInput from "../../components/CustomTextInput";
-import { StackActions } from "@react-navigation/native";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -26,25 +24,28 @@ const Header = styled.View`
   align-items: center;
 `;
 
-const HeaderText = styled(CustomText)`
+const HeaderText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 16px;
   line-height: 21px;
 `;
 const HeaderBoldText = styled(HeaderText)`
-  font-family: "NotoSansKR-Bold";
+  font-family: ${(props: any) => props.theme.koreanFontB};
 `;
 
 const MemoInfo = styled.View`
   align-items: flex-end;
   justify-content: center;
+  padding: 5px 0px;
 `;
 
-const InfoText = styled(CustomText)`
+const InfoText = styled.Text`
   font-size: 12px;
   color: #b5b5b5;
 `;
 
-const MemoTextInput = styled(CustomTextInput)`
+const MemoTextInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   width: 100%;
   height: 300px;
   background-color: #f3f3f3;
@@ -120,14 +121,14 @@ const ClubJoinReject = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <MainView>
         <Header>
           <HeaderBoldText>{actionerName}</HeaderBoldText>
           <HeaderText>{`님에게 거절 사유를 전해주세요.`}</HeaderText>
         </Header>
         <MemoInfo>
-          <InfoText>{`${message.length} / ${maxLength}`}</InfoText>
+          <InfoText>{`${message.length} / ${maxLength} 자`}</InfoText>
         </MemoInfo>
         <MemoTextInput
           placeholder="가입 거절 사유를 입력해주세요."

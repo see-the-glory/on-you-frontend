@@ -1,8 +1,6 @@
-import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Animated, DeviceEventEmitter, Platform, StatusBar, useWindowDimensions, View } from "react-native";
-import FastImage from "react-native-fast-image";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useMutation, useQuery } from "react-query";
@@ -17,6 +15,7 @@ import FeedOptionModal from "./Feed/FeedOptionModal";
 import FeedReportModal from "./Feed/FeedReportModal";
 import RNFetchBlob from "rn-fetch-blob";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
+import { Iconify } from "react-native-iconify";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -26,21 +25,26 @@ const Loader = styled.SafeAreaView`
 `;
 
 const Container = styled.SafeAreaView`
+  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
   flex: 1;
 `;
 
 const HeaderView = styled.View<{ height: number }>`
+  flex-direction: row;
   height: ${(props: any) => props.height}px;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   background-color: white;
+  padding: 0px 10px;
+`;
+
+const LogoText = styled.Text`
+  font-family: ${(props: any) => props.theme.englishSecondaryFontDB};
+  font-size: 31px;
 `;
 
 const HeaderRightView = styled.View`
-  position: absolute;
   flex-direction: row;
-  right: 0%;
-  padding: 0px 10px;
   height: 50px;
 `;
 
@@ -48,7 +52,6 @@ const HeaderButton = styled.TouchableOpacity`
   height: 100%;
   align-items: center;
   justify-content: center;
-  padding: 0px 10px;
 `;
 
 const NotiView = styled.View``;
@@ -60,7 +63,7 @@ const NotiBadge = styled.View`
   height: 5px;
   border-radius: 5px;
   z-index: 1;
-  background-color: #ff6534;
+  background-color: ${(props: any) => props.theme.accentColor};
   justify-content: center;
   align-items: center;
 `;
@@ -70,23 +73,20 @@ const NotiBadgeText = styled.Text`
 `;
 
 const Home = () => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const me = useSelector((state: RootState) => state.auth.user);
-  const feeds = useSelector((state: RootState) => state.feed.data);
   const dispatch = useAppDispatch();
   const toast = useToast();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [notiCount, setNotiCount] = useState<number>(0);
-  const { ref: myFeedOptionRef, open: openMyFeedOption, close: closeMyFeedOption } = useModalize();
-  const { ref: otherFeedOptionRef, open: openOtherFeedOption, close: closeOtherFeedOption } = useModalize();
+  const { ref: feedOptionRef, open: openFeedOption, close: closeFeedOption } = useModalize();
   const { ref: complainOptionRef, open: openComplainOption, close: closeComplainOption } = useModalize();
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const homeHeaderHeight = 50;
   const modalOptionButtonHeight = 45;
-  const feedDetailHeaderHeight = 62;
+  const feedDetailHeaderHeight = 52;
   const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
-  const itemSeparatorGap = 20;
+  const itemSeparatorGap = 30;
   const [selectFeedData, setSelectFeedData] = useState<Feed>();
   const navigation = useNavigation();
   let scrollY = useRef(new Animated.Value(0)).current;
@@ -94,7 +94,7 @@ const Home = () => {
     inputRange: [0, 50],
     outputRange: [0, 1],
   });
-  const homeFlatlistRef = useRef<Animated.FlatList<Feed>>();
+  const homeFlatlistRef = useRef<Animated.FlatList<Feed>>(null);
 
   //getFeeds ( 무한 스크롤 )
   const {
@@ -111,12 +111,14 @@ const Home = () => {
       }
     },
     onSuccess: (res) => {
-      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeed(res.pages[res.pages.length - 1].responses.content));
+      if (res.pages[res.pages.length - 1].responses) dispatch(feedSlice.actions.addFeeds({ feeds: res?.pages[res.pages.length - 1]?.responses?.content ?? [] }));
     },
     onError: (error) => {
       console.log(`API ERROR | getFeeds ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
+    staleTime: 5000,
+    cacheTime: 15000,
   });
 
   const {
@@ -159,7 +161,7 @@ const Home = () => {
     setRefreshing(true);
     await notiRefetch();
     const result = await feedsRefetch();
-    dispatch(feedSlice.actions.refreshFeed(result?.data?.pages?.map((page) => page?.responses?.content).flat() ?? []));
+    dispatch(feedSlice.actions.refreshFeed({ feeds: result?.data?.pages?.flatMap((page) => page?.responses?.content) ?? [] }));
     setRefreshing(false);
   };
 
@@ -181,7 +183,7 @@ const Home = () => {
     onSuccess: (res) => {
       toast.show(`게시글이 삭제되었습니다.`, { type: "success" });
       onRefresh();
-      closeMyFeedOption();
+      closeFeedOption();
     },
     onError: (error) => {
       console.log(`API ERROR | deleteFeed ${error.code} ${error.status}`);
@@ -194,29 +196,16 @@ const Home = () => {
     onSuccess: (res) => {
       toast.show(`사용자를 차단했습니다.`, { type: "success" });
       onRefresh();
-      closeOtherFeedOption();
+      closeFeedOption();
     },
     onError: (error) => {
       console.log(`API ERROR | blockUser ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
-  const goToClub = useCallback((clubId?: number) => {
-    if (clubId) navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubData: { id: clubId } } });
-  }, []);
-
-  const goToFeedComments = useCallback((feedIndex?: number, feedId?: number) => {
-    if (feedIndex === undefined || feedId === undefined) return;
-    navigation.navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId } });
-  }, []);
-
-  const goToFeedLikes = useCallback((likeUsers?: LikeUser[]) => {
-    if (!likeUsers || likeUsers.length === 0) return;
-    navigation.navigate("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
-  }, []);
 
   const goToUpdateFeed = () => {
-    closeMyFeedOption();
+    closeFeedOption();
     navigation.navigate("FeedStack", { screen: "FeedModification", params: { feedData: selectFeedData } });
   };
 
@@ -228,14 +217,13 @@ const Home = () => {
     navigation.navigate("FeedStack", { screen: "ClubSelection" });
   }, []);
 
-  const openFeedOption = (feedData?: Feed) => {
+  const goToFeedOptionModal = (feedData?: Feed) => {
     if (!feedData) return;
     setSelectFeedData(feedData);
-    if (feedData?.userId === me?.id) openMyFeedOption();
-    else openOtherFeedOption();
+    openFeedOption();
   };
   const goToComplain = () => {
-    closeOtherFeedOption();
+    closeFeedOption();
     openComplainOption();
   };
 
@@ -243,14 +231,14 @@ const Home = () => {
     if (feedIndex === undefined || feedId === undefined) return;
     const requestData: FeedLikeRequest = { feedId };
     likeFeedMutation.mutate(requestData, {
-      onSuccess: (res) => {
-        dispatch(feedSlice.actions.likeToggle(feedIndex));
-      },
+      onSuccess: (res) => {},
       onError: (error) => {
         console.log(`API ERROR | likeFeed ${error.code} ${error.status}`);
         toast.show(`${error.message ?? error.code}`, { type: "warning" });
       },
     });
+
+    dispatch(feedSlice.actions.likeToggle({ feedId }));
   }, []);
 
   const deleteFeed = () => {
@@ -352,7 +340,7 @@ const Home = () => {
                 }
               });
           });
-          closeOtherFeedOption();
+          closeFeedOption();
         },
       },
     ]);
@@ -372,10 +360,7 @@ const Home = () => {
         infoHeight={feedDetailInfoHeight}
         contentHeight={feedDetailContentHeight}
         showClubName={true}
-        goToClub={goToClub}
-        openFeedOption={openFeedOption}
-        goToFeedComments={goToFeedComments}
-        goToFeedLikes={goToFeedLikes}
+        goToFeedOptionModal={goToFeedOptionModal}
         likeFeed={likeFeed}
       />
     ),
@@ -388,29 +373,29 @@ const Home = () => {
     </Loader>
   ) : (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <HeaderView height={homeHeaderHeight}>
-        <FastImage source={require("../assets/home_logo.png")} style={{ width: 100, height: 30 }} />
+        <LogoText>{`ON YOU`}</LogoText>
         <HeaderRightView>
-          <HeaderButton onPress={goToUserNotification}>
+          <HeaderButton onPress={goToUserNotification} style={{ paddingHorizontal: 8 }}>
             <NotiView>
               {!notiLoading && notiCount > 0 ? <NotiBadge>{/* <NotiBadgeText>{notiCount}</NotiBadgeText> */}</NotiBadge> : <></>}
-              <MaterialIcons name="notifications" size={23} color="black" />
+              <Iconify icon="mdi:bell" size={23} color="black" />
             </NotiView>
           </HeaderButton>
-          <HeaderButton onPress={goToFeedCreation}>
-            <MaterialIcons name="add-photo-alternate" size={23} color="black" />
+          <HeaderButton onPress={goToFeedCreation} style={{ paddingLeft: 12 }}>
+            <Iconify icon="mdi:plus-box-multiple" size={23} color="black" />
           </HeaderButton>
         </HeaderRightView>
       </HeaderView>
-      <Animated.View style={{ width: "100%", borderBottomWidth: 0.5, borderBottomColor: "rgba(0,0,0,0.3)", opacity: animatedHeaderOpacity }} />
+      <Animated.View style={{ width: "100%", borderBottomWidth: 0.5, borderBottomColor: "#cccccc", opacity: animatedHeaderOpacity }} />
       <Animated.FlatList
         ref={homeFlatlistRef}
         refreshing={refreshing}
         onRefresh={onRefresh}
         onEndReached={loadMore}
         onEndReachedThreshold={0.7}
-        data={feeds}
+        data={queryFeedData?.pages?.flatMap((page: FeedsResponse) => page.responses.content) ?? []}
         ItemSeparatorComponent={ItemSeparatorComponent}
         ListFooterComponent={ListFooterComponent}
         keyExtractor={keyExtractor}
@@ -420,25 +405,16 @@ const Home = () => {
       />
 
       <FeedOptionModal
-        modalRef={myFeedOptionRef}
+        modalRef={feedOptionRef}
         buttonHeight={modalOptionButtonHeight}
-        isMyFeed={true}
+        isMyFeed={selectFeedData?.userId === me?.id}
         goToUpdateFeed={goToUpdateFeed}
         deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
         downloadImages={downloadImages}
       />
-      <FeedOptionModal
-        modalRef={otherFeedOptionRef}
-        buttonHeight={modalOptionButtonHeight}
-        isMyFeed={false}
-        goToUpdateFeed={goToUpdateFeed}
-        deleteFeed={deleteFeed}
-        goToComplain={goToComplain}
-        blockUser={blockUser}
-        downloadImages={downloadImages}
-      />
+
       <FeedReportModal modalRef={complainOptionRef} buttonHeight={modalOptionButtonHeight} complainSubmit={complainSubmit} />
     </Container>
   );

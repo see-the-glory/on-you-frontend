@@ -11,7 +11,7 @@ export type ClubStackParamList = {
   ClubTopTabs: { clubData: Club };
   ClubHome: { clubData: Club };
   ClubFeed: { clubData: Club };
-  ClubFeedDetail: { clubData: Club; feedData: Feed[]; targetIndex: number };
+  ClubFeedDetail: { clubData: Club; targetIndex: number };
 
   ClubCreationStack: {};
   ClubCreationStepOne: { category: CategoryResponse };
@@ -43,9 +43,9 @@ export type ClubStackParamList = {
 
 export type MainBottomTabParamList = {
   Home: {};
-  Search: {};
-  Clubs: {};
-  Profile: {};
+  Find: {};
+  Chat: {};
+  My: {};
 };
 
 // For Screens
@@ -71,52 +71,12 @@ export type ClubEditIntroductionProps = NativeStackScreenProps<ClubStackParamLis
 export type ClubEditMembersProps = NativeStackScreenProps<ClubStackParamList, "ClubEditMembers">;
 export type ClubDeleteProps = NativeStackScreenProps<ClubStackParamList, "ClubDelete">;
 
-// ClubHome Param For Collapsed Scroll Animation
-export interface ClubHomeParamList {
-  scrollY: Animated.Value;
-  headerDiff: number;
-  offsetY?: number;
-  scheduleOffsetX?: number;
-  schedules?: RefinedSchedule[];
-  syncScrollOffset: (screenName: string) => void;
-  screenScrollRefs: any;
-}
-
-export interface ClubFeedParamList {
-  scrollY: Animated.Value;
-  offsetY?: number;
-  headerDiff: number;
-  syncScrollOffset: (screenName: string) => void;
-  screenScrollRefs: any;
-}
-
-// ClubHome Header
-export interface ClubHomeHaederProps extends ClubHomeParamList {
-  imageURI?: string | null;
-  name?: string;
-  shortDesc?: string | null;
-  categories?: Category[];
-  recruitStatus?: string | null;
-  schedules?: Schedule[] | undefined;
-  heightExpanded: number;
-  heightCollapsed: number;
-}
-
 // For TopTab Navigation
 export type TopTabParamList = {
   ClubTopTabs: { clubData: Club };
 };
 
 export type ClubTopTabProps = MaterialTopTabScreenProps<TopTabParamList, "ClubTopTabs">;
-
-export interface ClubHomeFloatingButtonProps {
-  role?: "MASTER" | "MANAGER" | "MEMBER" | "PENDING" | null;
-  recruitStatus?: "OPEN" | "CLOSE" | null;
-  goToClubEdit: Function;
-  goToClubJoin: Function;
-  goToFeedCreation: Function;
-  withdrawclub: Function;
-}
 
 export interface RefinedSchedule extends Schedule {
   year?: string;

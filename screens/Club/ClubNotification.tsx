@@ -5,7 +5,6 @@ import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import styled from "styled-components/native";
 import { BaseResponse, ClubApi, CommonApi, ErrorResponse, Notification, NotificationsResponse, ReadActionRequest } from "../../api";
-import CustomText from "../../components/CustomText";
 import NotificationItem from "../../components/NotificationItem";
 
 const SCREEN_PADDING_SIZE = 20;
@@ -26,16 +25,17 @@ const EmptyView = styled.View`
   align-items: center;
 `;
 
-const EmptyText = styled(CustomText)`
+const EmptyText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
-  color: #bdbdbd;
+  color: #acacac;
   justify-content: center;
   align-items: center;
 `;
 
 const ClubNotification = ({
-  navigation: { navigate, goBack, setOptions },
+  navigation: { navigate, goBack, setOptions, push },
   route: {
     params: { clubData, clubRole },
   },
@@ -46,7 +46,7 @@ const ClubNotification = ({
     data: notifications,
     isLoading: notiLoading,
     refetch: notiRefetch,
-  } = useQuery<NotificationsResponse, ErrorResponse>(["getClubNotifications", clubData.id], ClubApi.getClubNotifications, {
+  } = useQuery<NotificationsResponse, ErrorResponse>(["getClubNotifications", clubData?.id], ClubApi.getClubNotifications, {
     onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getClubNotifications ${error.code} ${error.status}`);
@@ -90,7 +90,6 @@ const ClubNotification = ({
     return () => {
       clubNotiSubs.remove();
       backHandler.remove();
-      DeviceEventEmitter.emit("ClubRefetch");
     };
   }, []);
 
@@ -118,7 +117,7 @@ const ClubNotification = ({
           createdTime: item.created,
           processDone: item.done || item.processDone,
         };
-        return navigate("ClubApplication", clubApplicationProps);
+        return push("ClubApplication", clubApplicationProps);
       } else {
         return toast.show("가입신청서를 볼 수 있는 권한이 없습니다.", { type: "warning" });
       }
@@ -130,10 +129,10 @@ const ClubNotification = ({
           clubData,
           targetIndex: 0,
         };
-        return navigate("ClubStack", { screen: "ClubFeedDetail", params: clubFeedDetailProps });
+        return push("ClubStack", { screen: "ClubFeedDetail", params: clubFeedDetailProps });
       } else {
         const feedSelectionProps = { selectFeedId: item.actionFeedId };
-        return navigate("FeedStack", { screen: "FeedSelection", params: feedSelectionProps });
+        return push("FeedStack", { screen: "FeedSelection", params: feedSelectionProps });
       }
     } else if (item.actionType === "SCHEDULE_CREATE") {
       readAction(item);
@@ -147,7 +146,7 @@ const ClubNotification = ({
     </Loader>
   ) : (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <FlatList
         contentContainerStyle={{ flexGrow: 1, paddingVertical: 10, paddingHorizontal: SCREEN_PADDING_SIZE }}
         refreshing={refreshing}

@@ -2,6 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { StatusBar } from "react-native";
 import styled from "styled-components/native";
+import { lightTheme } from "../../theme";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -33,13 +34,13 @@ const Button = styled.TouchableHighlight`
   height: 55px;
   border-radius: 30px;
   border-width: 1px;
-  border-color: #6b8bf7;
+  border-color: ${(props: any) => props.theme.primaryColor};
   background-color: #fff;
   margin-bottom: 25px;
 `;
 
 const Title = styled.Text<{ color: string }>`
-  font-family: "AppleSDGothicNeoSB";
+  font-family: ${(props: any) => props.theme.koreanFontSB};
   line-height: 26px;
   font-size: 22px;
   padding-left: 5px;
@@ -60,14 +61,14 @@ const FindLoginInfo: React.FC<NativeStackScreenProps<any, "FindLoginInfo">> = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <TopView>
-        <Button onPressIn={() => setFindEmailColor("white")} onPressOut={() => setFindEmailColor("black")} onPress={goToFindEmail} underlayColor="#6B8BF7">
+        <Button onPressIn={() => setFindEmailColor("white")} onPressOut={() => setFindEmailColor("black")} onPress={goToFindEmail} underlayColor={lightTheme.primaryColor}>
           <TitleView>
             <Title color={findEmailColor}>E-mail 찾기</Title>
           </TitleView>
         </Button>
-        <Button onPressIn={() => setFindPasswordColor("white")} onPressOut={() => setFindPasswordColor("black")} onPress={goToFindPasswrod} underlayColor="#6B8BF7">
+        <Button onPressIn={() => setFindPasswordColor("white")} onPressOut={() => setFindPasswordColor("black")} onPress={goToFindPasswrod} underlayColor={lightTheme.primaryColor}>
           <TitleView>
             <Title color={findPasswordColor}>비밀번호 찾기</Title>
           </TitleView>

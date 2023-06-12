@@ -1,18 +1,16 @@
 import { Entypo } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, Platform, StatusBar, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Alert, FlatList, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-toast-notifications";
 import { useMutation, useQuery } from "react-query";
 import styled from "styled-components/native";
-import { BaseResponse, BlockUser, BlockUserListResponse, ErrorResponse, UserApi, UserBlockRequest } from "../../api";
-import CircleIcon from "../../components/CircleIcon";
-import CustomText from "../../components/CustomText";
-import Tag from "../../components/Tag";
+import { BaseResponse, BlockUser, BlockUserListResponse, ErrorResponse, UserApi, UserBlockRequest } from "../../../api";
+import CircleIcon from "../../../components/CircleIcon";
 
 const Container = styled.SafeAreaView`
   flex: 1;
-  padding-top: ${Platform.OS === "android" ? StatusBar.currentHeight : 0}px;
+  background-color: white;
 `;
 
 const Item = styled.View`
@@ -24,7 +22,7 @@ const Item = styled.View`
   padding: 8px 20px;
 `;
 
-const ItemLeft = styled.View`
+const UserInfo = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
 `;
@@ -35,25 +33,27 @@ const ItemLeftDetail = styled.View`
   padding-left: 10px;
 `;
 
-const ItemText = styled(CustomText)`
+const ItemText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
   font-size: 16px;
-  line-height: 21px;
-  font-family: "NotoSansKR-Medium";
+  line-height: 17px;
   /* margin-bottom: 2px; */
 `;
 
 const UnblockButton = styled.TouchableOpacity`
-  background-color: #ff6534;
+  background-color: ${(props: any) => props.theme.accentColor};
   border-radius: 8px;
 `;
 
-const UnBlockButtonText = styled(CustomText)`
-  padding: 5px 12px;
+const UnBlockButtonText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
+  padding: 6px 12px;
   color: white;
 `;
 
 const Break = styled.View`
-  border-bottom-width: 1px;
+  border-bottom-width: 0.5px;
   border-bottom-color: #e9e9e9;
 `;
 
@@ -64,10 +64,11 @@ const EmptyView = styled.View`
   background-color: white;
 `;
 
-const EmptyText = styled(CustomText)`
+const EmptyText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
-  color: #bdbdbd;
+  color: #acacac;
   justify-content: center;
   align-items: center;
 `;
@@ -90,7 +91,7 @@ const BlockUserList: React.FC<NativeStackScreenProps<any, "BlockUserList">> = ({
   const unblockMutation = useMutation<BaseResponse, ErrorResponse, UserBlockRequest>(UserApi.blockUser, {
     onSuccess: (res) => {
       toast.show(`차단을 해제했습니다.`, { type: "success" });
-      blockUserListRefetch();
+      onRefresh();
     },
     onError: (error) => {
       console.log(`API ERROR | blockUser ${error.code} ${error.status}`);
@@ -105,7 +106,6 @@ const BlockUserList: React.FC<NativeStackScreenProps<any, "BlockUserList">> = ({
   };
 
   const unblock = (userName: string, userId: number) => {
-    console.log(userId);
     const requestData: UserBlockRequest = { userId };
     Alert.alert(`${userName}님을 차단 해제하시겠어요?`, `이제 홈화면에서 ${userName}님의 게시글을 볼 수 있게 됩니다. ${userName}님에게는 차단을 해제했다는 정보를 알리지 않습니다.`, [
       { text: "아니요", onPress: () => {} },
@@ -117,6 +117,8 @@ const BlockUserList: React.FC<NativeStackScreenProps<any, "BlockUserList">> = ({
       },
     ]);
   };
+
+  const goToProfile = (userId?: number) => navigate("ProfileStack", { screen: "Profile", params: { userId } });
 
   useEffect(() => {
     setOptions({
@@ -132,12 +134,12 @@ const BlockUserList: React.FC<NativeStackScreenProps<any, "BlockUserList">> = ({
   const renderItem = useCallback(
     ({ item, index }: { item: BlockUser; index: number }) => (
       <Item key={index}>
-        <ItemLeft>
-          <CircleIcon size={46} uri={item.thumbnail} />
+        <UserInfo onPress={() => goToProfile(item.userId)}>
+          <CircleIcon size={40} uri={item.thumbnail} />
           <ItemLeftDetail>
             <ItemText>{item.userName}</ItemText>
           </ItemLeftDetail>
-        </ItemLeft>
+        </UserInfo>
         <ItemRight>
           <UnblockButton onPress={() => unblock(item.userName, item.userId)}>
             <UnBlockButtonText>{`차단 해제`}</UnBlockButtonText>
@@ -163,7 +165,7 @@ const BlockUserList: React.FC<NativeStackScreenProps<any, "BlockUserList">> = ({
     </Container>
   ) : (
     <FlatList
-      contentContainerStyle={{ flexGrow: 1, paddingVertical: 5 }}
+      contentContainerStyle={{ flexGrow: 1, paddingVertical: 5, backgroundColor: "white" }}
       refreshing={refreshing}
       onRefresh={onRefresh}
       keyExtractor={(item: BlockUser, index: number) => String(index)}

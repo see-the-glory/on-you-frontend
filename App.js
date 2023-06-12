@@ -20,6 +20,8 @@ import CodePush from "react-native-code-push";
 import notifee, { AndroidImportance } from "@notifee/react-native";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
 import queryString from "query-string";
+import { ThemeProvider } from "styled-components/native";
+import { lightTheme } from "./theme";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -41,6 +43,7 @@ const RootNavigation = () => {
       "NotoSansKR-Regular": require("./assets/fonts/NotoSansKR/NotoSansKR-Regular.otf"),
       "NotoSansKR-Medium": require("./assets/fonts/NotoSansKR/NotoSansKR-Medium.otf"),
       AppleSDGothicNeoB: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoB.ttf"),
+      AppleSDGothicNeoEB: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoEB.ttf"),
       AppleSDGothicNeoSB: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoSB.ttf"),
       AppleSDGothicNeoL: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoL.ttf"),
       AppleSDGothicNeoM: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoM.ttf"),
@@ -50,6 +53,7 @@ const RootNavigation = () => {
       "Roboto-Medium": require("./assets/fonts/Roboto/Roboto-Medium.ttf"),
       "Roboto-Regular": require("./assets/fonts/Roboto/Roboto-Regular.ttf"),
       "TT-Commons-Bold": require("./assets/fonts/TTCommons/TT-Commons-Bold.otf"),
+      "TT-Commons-DemiBold": require("./assets/fonts/TTCommons/TT-Commons-DemiBold.otf"),
       "TT-Commons-Light": require("./assets/fonts/TTCommons/TT-Commons-Light.otf"),
       "TT-Commons-Medium": require("./assets/fonts/TTCommons/TT-Commons-Medium.otf"),
       "TT-Commons-Regular": require("./assets/fonts/TTCommons/TT-Commons-Regular.otf"),
@@ -158,7 +162,9 @@ function App() {
         case "club":
           state.routes.push({ name: "ClubStack", state: { routes: [{ name: "ClubTopTabs", params: { clubData: { id: parsed.query.id } } }] } });
           break;
-
+        case "user":
+          state.routes.push({ name: "ProfileStack", state: { routes: [{ name: "Profile", params: { userId: parsed.query.id } }] } });
+          break;
         default:
           break;
       }
@@ -172,20 +178,22 @@ function App() {
         <Provider store={store}>
           <ToastProvider
             offset={70}
-            successColor="#295AF5"
-            warningColor="#6F6F6F"
-            dangerColor="#E7564F"
+            successColor={lightTheme.primaryColor}
+            warningColor={lightTheme.errorColor}
+            dangerColor={lightTheme.accentColor}
             duration={3000}
             animationType="zoom-in"
             style={{ borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8 }}
-            textStyle={{ fontFamily: "AppleSDGothicNeoR", lineHeight: 16 }}
+            textStyle={{ fontFamily: lightTheme.koreanFontR, lineHeight: 16 }}
             successIcon={<Ionicons name="checkmark-circle" size={16} color="white" />}
             warningIcon={<Ionicons name="close-circle" size={16} color="white" />}
             dangerIcon={<Ionicons name="alert-circle" size={16} color="white" />}
           >
-            <NavigationContainer linking={linking}>
-              <RootNavigation />
-            </NavigationContainer>
+            <ThemeProvider theme={lightTheme}>
+              <NavigationContainer linking={linking}>
+                <RootNavigation />
+              </NavigationContainer>
+            </ThemeProvider>
           </ToastProvider>
         </Provider>
       </GestureHandlerRootView>

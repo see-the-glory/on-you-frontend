@@ -16,9 +16,9 @@ const Container = styled.View`
 const Content = styled.View``;
 
 const ContentTitle = styled.Text`
-  font-family: "AppleSDGothicNeoSB";
+  font-family: ${(props: any) => props.theme.koreanFontSB};
   font-size: 16px;
-  color: #aeaeae;
+  color: ${(props: any) => props.theme.infoColor};
   margin-bottom: 8px;
 `;
 
@@ -27,7 +27,7 @@ const ItemView = styled.View`
 `;
 
 const ContentInput = styled.TextInput`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   border-bottom-width: 0.5px;
   border-bottom-color: #000000;
   padding-bottom: 2px;
@@ -107,7 +107,7 @@ const FindPassword: React.FC<NativeStackScreenProps<any, "FindPassword">> = ({ n
         }}
       >
         <Container>
-          <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+          <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
           <Content>
             <ItemView>
               <ContentTitle>이름</ContentTitle>
@@ -156,7 +156,7 @@ const FindPassword: React.FC<NativeStackScreenProps<any, "FindPassword">> = ({ n
           </Content>
         </Container>
       </TouchableWithoutFeedback>
-      <BottomButton onPress={onSubmit} backgroundColor="#6B8BF7" disabled={!(userName.trim() && phoneNumber.trim() && userEmail.trim() && birthNumber.trim())} title={"확인"} />
+      <BottomButton onPress={onSubmit} disabled={!(userName.trim() && phoneNumber.trim() && userEmail.trim() && birthNumber.trim())} title={"확인"} />
     </>
   );
 };

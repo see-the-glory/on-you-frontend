@@ -2,60 +2,59 @@ import React, { useCallback, useLayoutEffect, useState } from "react";
 import { Alert, DeviceEventEmitter, FlatList, Platform, StatusBar, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { useModalize } from "react-native-modalize";
 import { useToast } from "react-native-toast-notifications";
-import { useMutation } from "react-query";
+import { InfiniteData, useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, LikeUser, UserApi, UserBlockRequest } from "../../api";
-import CustomText from "../../components/CustomText";
+import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, LikeUser, UserApi, UserBlockRequest } from "../../api";
 import FeedDetail from "../../components/FeedDetail";
 import { ClubFeedDetailScreenProps } from "../../Types/Club";
 import FeedReportModal from "../Feed/FeedReportModal";
 import FeedOptionModal from "../Feed/FeedOptionModal";
 import { RootState } from "../../redux/store/reducers";
 import { useAppDispatch } from "../../redux/store";
-import clubSlice from "../../redux/slices/club";
 import { Entypo } from "@expo/vector-icons";
 import RNFetchBlob from "rn-fetch-blob";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
+import feedSlice from "../../redux/slices/feed";
 
 const Container = styled.View``;
 const HeaderTitleView = styled.View`
   justify-content: center;
   align-items: center;
 `;
-const HeaderClubName = styled(CustomText)`
-  font-size: 14px;
-  font-family: "NotoSansKR-Medium";
+const HeaderClubName = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-size: 13px;
   color: #8e8e8e;
-  line-height: 20px;
+  line-height: 21px;
 `;
-const HeaderText = styled(CustomText)`
-  font-size: 16px;
-  font-family: "NotoSansKR-Medium";
-  color: #2b2b2b;
+const HeaderText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-size: 15px;
   line-height: 20px;
+  color: #2b2b2b;
 `;
 
 const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   navigation: { setOptions, navigate, goBack },
   route: {
-    params: { clubData, targetIndex },
+    params: { clubData, targetIndex, fetchNextPage },
   },
 }) => {
+  const queryClient = useQueryClient();
   const me = useSelector((state: RootState) => state.auth.user);
-  const myRole = useSelector((state: RootState) => state.club.role);
-  const feeds = useSelector((state: RootState) => state.club.feeds);
+  const myRole = useSelector((state: RootState) => state.club[clubData?.id]?.role);
+  const [query, setQuery] = useState<InfiniteData<FeedsResponse> | undefined>(queryClient.getQueryData<InfiniteData<FeedsResponse>>(["getClubFeeds", clubData?.id]));
   const dispatch = useAppDispatch();
   const toast = useToast();
-  const { ref: myFeedOptionRef, open: openMyFeedOption, close: closeMyFeedOption } = useModalize();
-  const { ref: otherFeedOptionRef, open: openOtherFeedOption, close: closeOtherFeedOption } = useModalize();
+  const { ref: feedOptionRef, open: openFeedOption, close: closeFeedOption } = useModalize();
   const { ref: complainOptionRef, open: openComplainOption, close: closeComplainOption } = useModalize();
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const modalOptionButtonHeight = 45;
-  const feedDetailHeaderHeight = 62;
+  const feedDetailHeaderHeight = 52;
   const feedDetailInfoHeight = 42;
   const feedDetailContentHeight = 40;
-  const itemSeparatorGap = 20;
+  const itemSeparatorGap = 30;
   const itemLength = SCREEN_WIDTH + feedDetailHeaderHeight + feedDetailInfoHeight + feedDetailContentHeight + itemSeparatorGap;
   const [selectFeedData, setSelectFeedData] = useState<Feed>();
 
@@ -74,7 +73,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
       toast.show(`게시글이 삭제되었습니다.`, { type: "success" });
       DeviceEventEmitter.emit("HomeAllRefetch");
       DeviceEventEmitter.emit("ClubFeedRefetch");
-      closeMyFeedOption();
+      closeFeedOption();
     },
     onError: (error) => {
       console.log(`API ERROR | deleteFeed ${error.code} ${error.status}`);
@@ -88,7 +87,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     onSuccess: (res) => {
       toast.show(`사용자를 차단했습니다.`, { type: "success" });
       DeviceEventEmitter.emit("ClubFeedRefetch");
-      closeOtherFeedOption();
+      closeFeedOption();
     },
     onError: (error) => {
       console.log(`API ERROR | blockUser ${error.code} ${error.status}`);
@@ -97,30 +96,19 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   });
 
   const goToComplain = () => {
-    closeOtherFeedOption();
+    closeFeedOption();
     openComplainOption();
   };
 
-  const goToFeedComments = (feedIndex?: number, feedId?: number) => {
-    if (feedIndex === undefined || feedId === undefined) return;
-    navigate("FeedStack", { screen: "FeedComments", params: { feedIndex, feedId, clubId: clubData.id } });
-  };
-
-  const goToFeedLikes = (likeUsers?: LikeUser[]) => {
-    if (!likeUsers || likeUsers.length === 0) return;
-    navigate("FeedStack", { screen: "FeedLikes", params: { likeUsers } });
-  };
-
   const goToUpdateFeed = () => {
-    closeMyFeedOption();
+    closeFeedOption();
     navigate("FeedStack", { screen: "FeedModification", params: { feedData: selectFeedData } });
   };
 
-  const openFeedOption = (feedData?: Feed) => {
+  const goToFeedOptionModal = (feedData?: Feed) => {
     if (!feedData) return;
     setSelectFeedData(feedData);
-    if (feedData?.userId === me?.id) openMyFeedOption();
-    else openOtherFeedOption();
+    openFeedOption();
   };
 
   const deleteFeed = () => {
@@ -154,14 +142,14 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     if (feedIndex === undefined || feedId === undefined) return;
     const requestData: FeedLikeRequest = { feedId };
     likeFeedMutation.mutate(requestData, {
-      onSuccess: (res) => {
-        dispatch(clubSlice.actions.likeToggle(feedIndex));
-      },
+      onSuccess: (res) => {},
       onError: (error) => {
         console.log(`API ERROR | likeFeed ${error.code} ${error.status}`);
         toast.show(`${error.message ?? error.code}`, { type: "warning" });
       },
     });
+
+    dispatch(feedSlice.actions.likeToggle({ feedId }));
   }, []);
 
   const blockUser = () => {
@@ -224,7 +212,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
                 }
               });
           });
-          closeOtherFeedOption();
+          closeFeedOption();
         },
       },
     ]);
@@ -243,9 +231,11 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
     closeComplainOption();
   };
 
-  const loadMore = () => {
-    console.log("ClubFeedDetail - Load more club feed!");
-    DeviceEventEmitter.emit("ClubFeedLoadmore");
+  const loadMore = async () => {
+    if (query?.pages[query?.pages.length - 1].hasData) {
+      const q = await fetchNextPage();
+      setQuery(q.data);
+    }
   };
 
   useLayoutEffect(() => {
@@ -276,9 +266,7 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         headerHeight={feedDetailHeaderHeight}
         infoHeight={feedDetailInfoHeight}
         contentHeight={feedDetailContentHeight}
-        openFeedOption={openFeedOption}
-        goToFeedComments={goToFeedComments}
-        goToFeedLikes={goToFeedLikes}
+        goToFeedOptionModal={goToFeedOptionModal}
         likeFeed={likeFeed}
         isMyClubPost={["MASTER", "MANAGER", "MEMBER"].includes(myRole ?? "") ? true : false}
       />
@@ -297,12 +285,12 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
   );
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <FlatList
         // refreshing={refreshing}
         // onRefresh={onRefresh}
         onEndReached={loadMore}
-        data={feeds}
+        data={query?.pages?.flatMap((page) => page.responses.content) ?? []}
         ItemSeparatorComponent={ItemSeparatorComponent}
         ListFooterComponent={ListFooterComponent}
         keyExtractor={keyExtractor}
@@ -312,12 +300,13 @@ const ClubFeedDetail: React.FC<ClubFeedDetailScreenProps> = ({
         removeClippedSubviews={true}
       />
 
-      <FeedOptionModal modalRef={myFeedOptionRef} buttonHeight={modalOptionButtonHeight} isMyFeed={true} goToUpdateFeed={goToUpdateFeed} deleteFeed={deleteFeed} />
       <FeedOptionModal
-        modalRef={otherFeedOptionRef}
+        modalRef={feedOptionRef}
         buttonHeight={modalOptionButtonHeight}
-        isMyFeed={false}
+        isMyFeed={selectFeedData?.userId === me?.id}
         isMyClubPost={["MASTER", "MANAGER", "MEMBER"].includes(myRole ?? "") ? true : false}
+        goToUpdateFeed={goToUpdateFeed}
+        deleteFeed={deleteFeed}
         goToComplain={goToComplain}
         blockUser={blockUser}
         downloadImages={downloadImages}

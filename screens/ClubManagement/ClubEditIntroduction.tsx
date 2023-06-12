@@ -2,13 +2,11 @@ import { Entypo } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-toast-notifications";
-import { useMutation } from "react-query";
-import { useSelector } from "react-redux";
+import { useMutation, useQueryClient } from "react-query";
 import styled from "styled-components/native";
 import { ClubApi, ClubUpdateRequest, ClubUpdateResponse, ErrorResponse } from "../../api";
 import CustomText from "../../components/CustomText";
 import CustomTextInput from "../../components/CustomTextInput";
-import { RootState } from "../../redux/store/reducers";
 import { ClubEditIntroductionProps } from "../../Types/Club";
 
 const Container = styled.View`
@@ -72,18 +70,20 @@ const LongDescInput = styled(CustomTextInput)`
 const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
   navigation: { navigate, setOptions, goBack },
   route: {
-    params: { clubData },
+    params: { clubId, clubData },
   },
 }) => {
   const toast = useToast();
-  const [clubShortDesc, setClubShortDesc] = useState(clubData.clubShortDesc ?? "");
-  const [clubLongDesc, setClubLongDesc] = useState(clubData.clubLongDesc ?? "");
+  const queryClient = useQueryClient();
+  const [clubShortDesc, setClubShortDesc] = useState(clubData?.clubShortDesc ?? "");
+  const [clubLongDesc, setClubLongDesc] = useState(clubData?.clubLongDesc ?? "");
   const shortDescMax = 20;
   const longDescMax = 3000;
   const mutation = useMutation<ClubUpdateResponse, ErrorResponse, ClubUpdateRequest>(ClubApi.updateClub, {
     onSuccess: (res) => {
+      queryClient.setQueryData<ClubResponse>(["getClub", clubId], res);
       toast.show(`저장이 완료되었습니다.`, { type: "success" });
-      navigate("ClubManagementMain", { clubData: res.data, refresh: true });
+      goBack();
     },
     onError: (error) => {
       console.log(`API ERROR | updateClub ${error.code} ${error.status}`);
@@ -114,10 +114,10 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
       data: {
         clubShortDesc: clubShortDesc.trim(),
         clubLongDesc: clubLongDesc.trim(),
-        category1Id: clubData?.categories ? clubData.categories[0]?.id ?? -1 : -1,
-        category2Id: clubData?.categories ? clubData.categories[1]?.id ?? -1 : -1,
+        category1Id: clubData?.categories ? clubData?.categories[0]?.id ?? -1 : -1,
+        category2Id: clubData?.categories ? clubData?.categories[1]?.id ?? -1 : -1,
       },
-      clubId: clubData.id,
+      clubId,
     };
 
     if (updateData?.data?.category2Id === -1) delete updateData?.data?.category2Id;
@@ -127,7 +127,7 @@ const ClubEditIntroduction: React.FC<ClubEditIntroductionProps> = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={10} style={{ flex: 1 }}>
         <MainView>
           <Content>

@@ -1,5 +1,5 @@
 import axios from "axios";
-const BASE_URL = "http://3.39.190.23:8080";
+export const BASE_URL = "http://3.39.190.23:8080";
 
 export interface BaseResponse {
   resultCode?: string;
@@ -41,10 +41,13 @@ export interface Club {
   categories?: Category[];
   contactPhone?: string | null;
   customCursor?: string;
-}
+  feedNumber?: number;
 
-export interface MyClub extends Club {
-  applyStatus: string;
+  // For MyClub
+  applyStatus?: string;
+
+  // For Profile
+  role?: string;
 }
 
 export interface Notification {
@@ -103,6 +106,23 @@ export interface User {
   interests: [];
 }
 
+export interface Profile {
+  name: string;
+  about: string;
+  birthday: string;
+  isBirthdayPublic: "Y" | "N";
+  clubs: Club[];
+  isClubPublic: "Y" | "N";
+  contact: string;
+  isContactPublic: "Y" | "N";
+  email: string;
+  isEmailPublic: "Y" | "N";
+  isFeedPublic: "Y" | "N";
+  thumbnail: string | null;
+  backgroundImage: string | null;
+  feedNumber: number;
+}
+
 export interface BlockUser {
   userId: number;
   userName: string;
@@ -114,6 +134,7 @@ export interface LikeUser {
   thumbnail: string;
   userName: string;
   likeDate: string;
+  userId: number;
 }
 
 export interface Feed {
@@ -168,6 +189,15 @@ export interface ClubRole {
   applyStatus?: "APPLIED" | "APPROVED";
 }
 
+export interface GuestComment {
+  id: number;
+  content: string;
+  created: string;
+  thumbnail: string;
+  userId: number;
+  userName: string;
+}
+
 export interface LoginResponse extends BaseResponse {
   token: string;
 }
@@ -181,11 +211,7 @@ export interface ClubResponse extends BaseResponse {
 }
 
 export interface MyClubsResponse extends BaseResponse {
-  data: MyClub[];
-}
-
-export interface ClubUpdateResponse extends BaseResponse {
-  data: Club;
+  data: Club[];
 }
 
 export interface ClubCreationResponse extends BaseResponse {
@@ -196,8 +222,8 @@ export interface ClubsResponse extends BaseResponse {
   hasData: boolean;
   responses: {
     content: Club[];
+    size: number;
   };
-  size: number;
 }
 
 export interface NotificationsResponse extends BaseResponse {
@@ -212,8 +238,8 @@ export interface FeedsResponse extends BaseResponse {
   hasData: boolean;
   responses: {
     content: Feed[];
+    size: number;
   };
-  size: number;
 }
 
 export interface FeedCommentsResponse extends BaseResponse {
@@ -226,6 +252,11 @@ export interface FeedsLikeReponse extends BaseResponse {
 export interface UserInfoResponse extends BaseResponse {
   data: User;
 }
+
+export interface ProfileResponse extends BaseResponse {
+  data: Profile;
+}
+
 export interface BlockUserListResponse extends BaseResponse {
   data: BlockUser[];
 }
@@ -236,13 +267,14 @@ export interface ReportResponse extends BaseResponse {
   data: Report[];
 }
 export interface ClubsParams {
-  categoryId: number | null;
-  minMember: number | null;
-  maxMember: number | null;
-  showRecruiting: number;
-  sortType: string;
-  orderBy: string;
-  showMy: number;
+  categoryId?: number | null;
+  minMember?: number | null;
+  maxMember?: number | null;
+  showRecruiting?: number;
+  sortType?: string;
+  orderBy?: string;
+  showMy?: number;
+  keyword?: string;
 }
 
 export interface ReplyParams {
@@ -261,6 +293,10 @@ export interface DuplicateCheckResponse extends BaseResponse {
   data: {
     isDuplicated: "Y" | "N";
   };
+}
+
+export interface GuestCommentResponse extends BaseResponse {
+  data: GuestComment[];
 }
 
 export interface SendCheckEmailResponse extends BaseResponse {
@@ -434,6 +470,15 @@ export interface DuplicateClubNameCheckRequest {
   clubName: string;
 }
 
+export interface GuestCommentRequest {
+  clubId: number;
+  content: string;
+}
+
+export interface GuestCommentDeletionRequest {
+  guestCommentId: number;
+}
+
 export interface FindEmailRequest {
   phoneNumber?: string;
   username?: string;
@@ -454,6 +499,19 @@ export interface UserUpdateRequest {
     organizationName?: string;
     sex?: string | null;
     phoneNumber?: string | null;
+  };
+}
+
+export interface ProfileUpdateRequest {
+  thumbnail?: ImageType | null;
+  backgroundImage?: ImageType | null;
+  data?: {
+    about?: string | null;
+    isBirthdayPublic?: "Y" | "N" | null;
+    isClubPublic?: "Y" | "N" | null;
+    isContactPublic?: "Y" | "N" | null;
+    isEmailPublic?: "Y" | "N" | null;
+    isFeedPublic?: "Y" | "N" | null;
   };
 }
 
@@ -525,10 +583,15 @@ const getClub = ({ queryKey }: any) => {
 };
 const getClubs = ({ queryKey, pageParam }: any) => {
   const [_key, clubsParams]: [string, ClubsParams] = queryKey;
-  let params = `categoryId=${clubsParams.categoryId ?? 0}&showMy=${clubsParams.showMy}&showRecruitingOnly=${clubsParams.showRecruiting}`;
-  params += clubsParams.minMember !== null ? `&min=${clubsParams.minMember}` : "";
-  params += clubsParams.maxMember !== null ? `&max=${clubsParams.maxMember}` : "";
-  params += `&sort=${clubsParams.sortType}&orderBy=${clubsParams.orderBy}`;
+  let params = "";
+  if (clubsParams.keyword) {
+    params += `keyword=${clubsParams.keyword}`;
+  } else {
+    params += `categoryId=${clubsParams.categoryId ?? 0}&showMy=${clubsParams.showMy}&showRecruitingOnly=${clubsParams.showRecruiting}`;
+    params += clubsParams.minMember !== null ? `&min=${clubsParams.minMember}` : "";
+    params += clubsParams.maxMember !== null ? `&max=${clubsParams.maxMember}` : "";
+    params += `&sort=${clubsParams.sortType}&orderBy=${clubsParams.orderBy}`;
+  }
   params += pageParam ? `&cursor=${pageParam}` : "";
 
   return axios.get<string, ClubsResponse>(`/api/clubs?${params}`);
@@ -569,12 +632,21 @@ const updateClub = (req: ClubUpdateRequest) => {
       type: "application/json",
     });
   }
-  return axios.put<string, ClubUpdateResponse>(`api/clubs/${req.clubId}`, body, {
+  return axios.put<string, ClubResponse>(`api/clubs/${req.clubId}`, body, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
 const deleteClub = (req: ClubDeletionRequest) => axios.delete<string, BaseResponse>(`/api/clubs/${req.clubId}`);
 const duplicateClubNameCheck = (req: DuplicateClubNameCheckRequest) => axios.post<string, DuplicateCheckResponse>(`/api/clubs/duplicateCheck`, req);
+
+// Guest Comment
+const getGuestComment = ({ queryKey }: any) => {
+  const [_key, clubId]: [string, number] = queryKey;
+  return axios.get<string, GuestCommentResponse>(`/api/clubs/${clubId}/guestComment`);
+};
+const createGuestComment = (req: GuestCommentRequest) => axios.post<string, BaseResponse>(`/api/clubs/${req.clubId}/guestComment`, req);
+
+const deleteGuestComment = (req: GuestCommentDeletionRequest) => axios.delete<string, BaseResponse>(`/api/clubs/guestComment/${req.guestCommentId}`);
 
 // Club Management
 const approveToClubJoin = (req: ClubApproveRequest) => axios.post<string, BaseResponse>(`/api/clubs/approve`, req);
@@ -629,7 +701,7 @@ const createFeedComment = (req: FeedCommentCreationRequest) => axios.post<string
 const deleteFeedComment = (req: FeedCommentDefaultRequest) => axios.delete<string, BaseResponse>(`/api/comments/${req.commentId}`);
 const likeFeedComment = (req: FeedCommentDefaultRequest) => axios.post<string, BaseResponse>(`/api/comments/${req.commentId}/likes`);
 
-// Profile
+// Account Info
 const getUserInfo = ({ queryKey }: any) => {
   const [_key, token]: [string, string] = queryKey;
   return axios.get<string, UserInfoResponse>(`/api/user`, { headers: { Authorization: token } });
@@ -646,6 +718,40 @@ const updateUserInfo = (req: UserUpdateRequest) => {
   return axios.put<string, BaseResponse>(`/api/user`, body, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+};
+
+// Profile
+const getMyProfile = ({ queryKey }: any) => axios.get<String, ProfileResponse>(`/api/user/myProfile`);
+const updateMyProfile = (req: ProfileUpdateRequest) => {
+  const body = new FormData();
+  if (req.thumbnail) body.append("thumbnail", req.thumbnail);
+  if (req.backgroundImage) body.append("backgroundImage", req.backgroundImage);
+  if (req.data) {
+    body.append("updateMyProfileRequest", {
+      string: JSON.stringify(req.data),
+      type: "application/json",
+    });
+  }
+  return axios.put<string, ProfileResponse>(`/api/user/myProfile`, body, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+const getMyFeeds = ({ queryKey, pageParam }: any) => {
+  const [_key]: [string, number] = queryKey;
+  let params = pageParam ? `cursor=${pageParam}` : "";
+  return axios.get<string, FeedsResponse>(`/api/feeds/my?${params}`);
+};
+
+const getProfile = ({ queryKey }: any) => {
+  const [_key, userId]: [string, number] = queryKey;
+  return axios.get<String, ProfileResponse>(`/api/user/${userId}/profile`);
+};
+
+const getUserFeeds = ({ queryKey, pageParam }: any) => {
+  const [_key, userId]: [string, number] = queryKey;
+  let params = pageParam ? `cursor=${pageParam}` : "";
+  return axios.get<string, FeedsResponse>(`/api/users/${userId}/feeds?${params}`);
 };
 
 const changePassword = (req: PasswordChangeRequest) => axios.post<string, BaseResponse>(`/api/user/changePassword`, req);
@@ -741,6 +847,7 @@ export const ClubApi = {
   getCategories,
   getClub,
   getClubs,
+  getClubFeeds,
   createClub,
   deleteClub,
   updateClub,
@@ -757,6 +864,9 @@ export const ClubApi = {
   approveToClubJoin,
   rejectToClubJoin,
   duplicateClubNameCheck,
+  createGuestComment,
+  getGuestComment,
+  deleteGuestComment,
 };
 
 export const UserApi = {
@@ -777,12 +887,16 @@ export const UserApi = {
   submitSuggestion,
   getUserNotifications,
   metaInfo,
+  getMyProfile,
+  updateMyProfile,
+  getMyFeeds,
+  getProfile,
+  getUserFeeds,
 };
 
 export const FeedApi = {
   getFeed,
   getFeeds,
-  getClubFeeds,
   getFeedComments,
   createFeedComment,
   deleteFeedComment,

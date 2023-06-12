@@ -3,9 +3,8 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import { ActivityIndicator, FlatList, Platform, StatusBar, TouchableOpacity, useWindowDimensions } from "react-native";
 import { useQuery } from "react-query";
-import { UserApi, Club, MyClubsResponse, ErrorResponse, MyClub } from "../../api";
+import { UserApi, Club, MyClubsResponse, ErrorResponse } from "../../api";
 import CircleIcon from "../../components/CircleIcon";
-import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
 import { Entypo } from "@expo/vector-icons";
 import Tag from "../../components/Tag";
@@ -22,7 +21,9 @@ const Header = styled.View`
   padding: 10px 20px;
 `;
 
-const Title = styled(CustomText)`
+const Title = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-size: 12px;
   color: #b0b0b0;
 `;
 
@@ -50,10 +51,10 @@ const CategoryView = styled.View`
   margin-top: 2px;
 `;
 
-const ItemTitle = styled(CustomText)`
+const ItemTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontM};
   font-size: 14px;
   line-height: 20px;
-  font-family: "NotoSansKR-Medium";
 `;
 
 const EmptyView = styled.View`
@@ -63,10 +64,11 @@ const EmptyView = styled.View`
   background-color: white;
 `;
 
-const EmptyText = styled(CustomText)`
+const EmptyText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
-  color: #bdbdbd;
+  color: #acacac;
   justify-content: center;
   align-items: center;
 `;
@@ -94,7 +96,7 @@ const ClubSelection: React.FC<NativeStackScreenProps<any, "ClubSelection">> = ({
 
   const goToImageSelection = (clubData: Club) => {
     const imageSelectionProps = {
-      clubId: clubData.id,
+      clubId: clubData?.id,
     };
     return navigate("FeedStack", {
       screen: "ImageSelection",
@@ -122,9 +124,9 @@ const ClubSelection: React.FC<NativeStackScreenProps<any, "ClubSelection">> = ({
   );
   const itemSeparatorComponent = useCallback(() => <Break />, []);
   const renderItem = useCallback(
-    ({ item, index }: { item: MyClub; index: number }) => (
+    ({ item, index }: { item: Club; index: number }) => (
       <Item key={index} onPress={() => goToImageSelection(item)}>
-        <CircleIcon size={37} uri={item.thumbnail} />
+        <CircleIcon size={36} uri={item.thumbnail} />
         <ItemInfo>
           <ClubNameView>
             <ItemTitle>{item.name}</ItemTitle>
@@ -133,11 +135,12 @@ const ClubSelection: React.FC<NativeStackScreenProps<any, "ClubSelection">> = ({
             {item.categories?.map((category, index) => (
               <Tag
                 key={`Category_${index}`}
+                backgroundColor="#B4B4B4"
                 textColor="white"
-                backgroundColor="#C4C4C4"
+                borderColor="rgba(0,0,0,0)"
                 name={category.name}
-                textStyle={{ fontSize: 10 }}
-                contentContainerStyle={{ paddingTop: 1, paddingBottom: 1 }}
+                contentContainerStyle={{ paddingTop: 1, paddingBottom: 1, paddingRight: 3, paddingLeft: 3 }}
+                textStyle={{ fontSize: 10, lineHeight: 13 }}
               />
             ))}
           </CategoryView>
@@ -164,7 +167,7 @@ const ClubSelection: React.FC<NativeStackScreenProps<any, "ClubSelection">> = ({
       contentContainerStyle={{ flexGrow: 1 }}
       refreshing={refreshing}
       onRefresh={onRefresh}
-      keyExtractor={(item: MyClub, index: number) => String(index)}
+      keyExtractor={(item: Club, index: number) => String(index)}
       data={myClubs?.data.filter((item) => item.applyStatus === "APPROVED")}
       ItemSeparatorComponent={itemSeparatorComponent}
       ListFooterComponent={myClubs?.data?.length ? itemSeparatorComponent : null}

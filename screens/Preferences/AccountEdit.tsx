@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { TouchableOpacity, Text, Platform, KeyboardAvoidingView, DeviceEventEmitter, ActivityIndicator, ScrollView, View } from "react-native";
+import { TouchableOpacity, Platform, KeyboardAvoidingView, DeviceEventEmitter, ActivityIndicator, ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 import ImagePicker from "react-native-image-crop-picker";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { BaseResponse, ErrorResponse, UserApi, UserUpdateRequest } from "../../api";
 import Collapsible from "react-native-collapsible";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import DatePicker from "react-native-date-picker";
 import CustomText from "../../components/CustomText";
 import { useToast } from "react-native-toast-notifications";
-import CustomTextInput from "../../components/CustomTextInput";
 import CircleIcon from "../../components/CircleIcon";
 import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
+import { lightTheme } from "../../theme";
 
 const HeaderView = styled.View`
   align-items: center;
@@ -24,32 +24,34 @@ const Content = styled.View`
   margin-bottom: 20px;
 `;
 
-const ContentItem = styled.View<{ error: boolean }>`
+const ContentItem = styled.View<{ error?: boolean }>`
   width: 100%;
   flex: 1;
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? "#FF6534" : "#cecece")};
+  border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#cecece")};
   margin: 10px 0px;
 `;
 
-const ItemTitle = styled(CustomText)`
+const ItemTitle = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 13px;
-  line-height: 19px;
   color: #b0b0b0;
   margin-bottom: 5px;
 `;
 
-const ItemText = styled(CustomText)<{ disabled: boolean }>`
+const ItemText = styled.Text<{ disabled: boolean }>`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   padding: 2px 0px;
   font-size: 15px;
   line-height: 22px;
   color: ${(props: any) => (props.disabled ? "#6F6F6F" : "black")};
 `;
 
-const ItemTextInput = styled(CustomTextInput)`
+const ItemTextInput = styled.TextInput`
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 15px;
-  line-height: 22px;
   flex: 1;
+  margin-bottom: ${Platform.OS === "ios" ? 3 : 0}px;
 `;
 
 const ValidationView = styled.View`
@@ -65,10 +67,10 @@ const ValidationItem = styled.View`
   margin-right: 8px;
 `;
 
-const ValidationText = styled(CustomText)`
-  color: #ff6534;
+const ValidationText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR};
+  color: ${(props: any) => props.theme.accentColor};
   font-size: 10px;
-  line-height: 15px;
 `;
 
 const RadioButtonView = styled.View`
@@ -82,16 +84,17 @@ const RadioButton = styled.TouchableOpacity`
   margin-right: 10px;
 `;
 
-const ImagePickerButton = styled.TouchableOpacity<{ size: number }>`
+const ImagePickerButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
-  margin-top: 35px;
+  margin-top: 20px;
   margin-bottom: 10px;
 `;
 
-const ProfileText = styled(CustomText)`
+const ProfileText = styled.Text`
+  font-family: ${(props: any) => props.theme.koreanFontR}
   margin-top: 10px;
-  font-size: 12px;
+  font-size: 14px;
   color: #2995fa;
 `;
 
@@ -103,8 +106,9 @@ const DateView = styled.View`
   margin: 5px 0px;
 `;
 
-const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ route: { params: userData }, navigation: { navigate, goBack, setOptions } }) => {
-  const [imageURI, setImageURI] = useState<string | null>(userData?.thumbnail);
+const AccountEdit: React.FC<NativeStackScreenProps<any, "AccountEdit">> = ({ route: { params: userData }, navigation: { navigate, goBack, setOptions } }) => {
+  const queryClient = useQueryClient();
+  const [imageURI, setImageURI] = useState<string | null>(null);
   const [name, setName] = useState<string>(userData?.name);
   const [nameErrorCheck, setNameErrorCheck] = useState<boolean>(false);
   const [sex, setSex] = useState<string | null>(userData?.sex);
@@ -114,7 +118,7 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
   const [organizationName, setOrganizationName] = useState<string>(userData?.organizationName);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const toast = useToast();
-  const imageSize = 85;
+  const imageSize = 100;
   const specialChar = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]+/;
 
   const mutation = useMutation<BaseResponse, ErrorResponse, UserUpdateRequest>(UserApi.updateUserInfo, {
@@ -122,6 +126,7 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
       toast.show("저장에 성공하였습니다.", { type: "success" });
       DeviceEventEmitter.emit("ProfileRefresh");
       DeviceEventEmitter.emit("HomeAllRefetch");
+      queryClient.invalidateQueries(["getMyProfile"]);
       goBack();
     },
     onError: (error) => {
@@ -134,28 +139,23 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
     if (nameErrorCheck) return toast.show(`이름을 다시 설정해주세요.`, { type: "warning" });
 
     const data = {
-      birthday: birthday?.trim() ?? null,
+      birthday: birthday?.trim() === "" ? null : birthday?.trim() ?? null,
       sex: sex ?? null,
       name: name.trim() === "" ? userData?.name : name.trim(),
       organization: organizationName.trim(),
-      phoneNumber: phoneNumber?.trim() ?? null,
+      phoneNumber: phoneNumber?.trim() === "" ? null : phoneNumber?.trim() ?? null,
     };
 
-    console.log(data);
+    const updateData: UserUpdateRequest = { data };
 
-    const splitedURI = new String(imageURI).split("/");
-
-    const updateData: UserUpdateRequest =
-      imageURI === null
-        ? { data }
-        : {
-            image: {
-              uri: Platform.OS === "android" ? imageURI : imageURI.replace("file://", ""),
-              type: "image/jpeg",
-              name: splitedURI[splitedURI.length - 1],
-            },
-            data,
-          };
+    if (imageURI) {
+      const splitedURI = imageURI?.split("/");
+      updateData.image = {
+        uri: Platform.OS === "android" ? imageURI : imageURI.replace("file://", ""),
+        type: "image/jpeg",
+        name: splitedURI[splitedURI.length - 1],
+      };
+    }
     mutation.mutate(updateData);
   };
 
@@ -208,7 +208,7 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
   }, [phoneNumber]);
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={100} style={{ flex: 1 }}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={100} style={{ flex: 1, backgroundColor: "white" }}>
       <ScrollView
         contentContainerStyle={{
           justifyContent: "space-between",
@@ -219,13 +219,13 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
         <View style={{ width: "100%" }}>
           <HeaderView>
             <ImagePickerButton onPress={pickImage} activeOpacity={1}>
-              <CircleIcon size={imageSize} uri={imageURI} />
-              <ProfileText onPress={pickImage}>프로필 사진 설정</ProfileText>
+              <CircleIcon size={imageSize} uri={imageURI ?? userData?.thumbnail} />
+              <ProfileText onPress={pickImage}>{`프로필 사진 설정`}</ProfileText>
             </ImagePickerButton>
           </HeaderView>
           <Content>
             <ContentItem error={nameErrorCheck} style={{ marginBottom: 0 }}>
-              <ItemTitle>이름</ItemTitle>
+              <ItemTitle>{`이름`}</ItemTitle>
               <ItemTextInput
                 value={name}
                 placeholder={`홍길동`}
@@ -247,7 +247,7 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
             <ValidationView>
               {specialChar.test(name) ? (
                 <ValidationItem>
-                  <AntDesign name="check" size={12} color={"#ff6534"} />
+                  <AntDesign name="check" size={12} color={lightTheme.accentColor} />
                   <ValidationText>{` 특수문자 불가능`}</ValidationText>
                 </ValidationItem>
               ) : (
@@ -255,13 +255,13 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
               )}
             </ValidationView>
             <ContentItem style={{ marginTop: 2 }}>
-              <ItemTitle>성별</ItemTitle>
+              <ItemTitle>{`성별`}</ItemTitle>
               <RadioButtonView>
                 <RadioButton onPress={() => setSex("M")} disabled={!shouldSelectSex}>
                   <Ionicons
                     name={sex === "M" ? "radio-button-on" : "radio-button-off"}
                     size={16}
-                    color={sex !== "M" || !shouldSelectSex ? "rgba(0, 0, 0, 0.3)" : "#FF6534"}
+                    color={sex !== "M" || !shouldSelectSex ? "rgba(0, 0, 0, 0.3)" : lightTheme.accentColor}
                     style={{ marginRight: 5 }}
                   />
                   <ItemText disabled={!shouldSelectSex}>{`남`}</ItemText>
@@ -270,7 +270,7 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
                   <Ionicons
                     name={sex === "F" ? "radio-button-on" : "radio-button-off"}
                     size={16}
-                    color={sex !== "F" || !shouldSelectSex ? "rgba(0, 0, 0, 0.3)" : "#FF6534"}
+                    color={sex !== "F" || !shouldSelectSex ? "rgba(0, 0, 0, 0.3)" : lightTheme.accentColor}
                     style={{ marginRight: 5 }}
                   />
                   <ItemText disabled={!shouldSelectSex}>{`여`}</ItemText>
@@ -278,11 +278,11 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
               </RadioButtonView>
             </ContentItem>
             <ContentItem>
-              <ItemTitle>이메일</ItemTitle>
+              <ItemTitle>{`이메일`}</ItemTitle>
               <ItemText>{userData?.email}</ItemText>
             </ContentItem>
             <ContentItem>
-              <ItemTitle>생년월일</ItemTitle>
+              <ItemTitle>{`생년월일`}</ItemTitle>
               <CollapsibleButton collapsed={showDatePicker} onPress={() => setShowDatePicker((prev) => !prev)}>
                 <ItemText>{birthday}</ItemText>
               </CollapsibleButton>
@@ -301,7 +301,7 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
               )}
             </ContentItem>
             <ContentItem>
-              <ItemTitle>연락처</ItemTitle>
+              <ItemTitle>{`연락처`}</ItemTitle>
               <ItemTextInput
                 keyboardType="numeric"
                 value={phoneNumber}
@@ -316,7 +316,7 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
               />
             </ContentItem>
             <ContentItem>
-              <ItemTitle>교회</ItemTitle>
+              <ItemTitle>{`교회`}</ItemTitle>
               {/* <ItemText>{`시광교회`}</ItemText> */}
               <ItemTextInput
                 value={organizationName}
@@ -337,4 +337,4 @@ const EditProfile: React.FC<NativeStackScreenProps<any, "EditProfile">> = ({ rou
   );
 };
 
-export default EditProfile;
+export default AccountEdit;

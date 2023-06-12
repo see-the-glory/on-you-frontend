@@ -31,13 +31,13 @@ const Border = styled.View`
 `;
 
 const AskText = styled.Text`
-  font-family: "AppleSDGothicNeoB";
+  font-family: ${(props: any) => props.theme.koreanFontB};
   font-size: 20px;
   margin-top: 24px;
 `;
 
 const SubText = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
@@ -74,7 +74,7 @@ const ChoiceButton = styled.TouchableOpacity`
 `;
 
 const FieldContentText = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 18px;
   margin-right: 10px;
 `;
@@ -122,7 +122,7 @@ const SignUpChurch: React.FC<NativeStackScreenProps<any, "SignUpChurch">> = ({
       }}
     >
       <Container>
-        <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+        <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
         <BorderWrap>
           <Border />
         </BorderWrap>

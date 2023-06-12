@@ -18,37 +18,37 @@ const Header = styled.View`
 
 const LineView = styled.View`
   height: 1.5px;
-  background-color: #aeaeae;
+  background-color: ${(props: any) => props.theme.infoColor};
 `;
 
 const HeaderTitle = styled.Text`
-  font-family: "Roboto-Medium";
+  font-family: ${(props: any) => props.theme.englishFontM};
   font-size: 40px;
   line-height: 43px;
 `;
 
 const HeaderText = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 16px;
-  color: #aeaeae;
+  color: ${(props: any) => props.theme.infoColor};
   margin-top: 10px;
 `;
 
 const Content = styled.View``;
 
 const ContentTitle = styled.Text`
-  font-family: "Roboto-Bold";
+  font-family: ${(props: any) => props.theme.englishFontB};
   font-size: 26px;
 `;
 const ContentText = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 16px;
 `;
 
 const ContentSubText = styled.Text`
-  font-family: "AppleSDGothicNeoR";
+  font-family: ${(props: any) => props.theme.koreanFontR};
   font-size: 14px;
-  color: #aeaeae;
+  color: ${(props: any) => props.theme.infoColor};
 `;
 
 const Button = styled.TouchableOpacity`
@@ -83,7 +83,7 @@ const FindResult: React.FC<NativeStackScreenProps<any, "FindResult">> = ({
 
   return (
     <Container>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
+      <StatusBar translucent backgroundColor={"transparent"} barStyle={"dark-content"} />
       <Header>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <HeaderTitle>{findType === "Email" ? "Here is" : "Check"}</HeaderTitle>
@@ -108,7 +108,7 @@ const FindResult: React.FC<NativeStackScreenProps<any, "FindResult">> = ({
           </View>
         )}
       </Content>
-      <BottomButton onPress={goToLogin} backgroundColor="#6B8BF7" title={"로그인으로"} />
+      <BottomButton onPress={goToLogin} title={"로그인으로"} />
     </Container>
   );
 };
