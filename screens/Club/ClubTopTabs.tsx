@@ -100,7 +100,7 @@ const AnimatedFooterView = Animated.createAnimatedComponent(FooterView);
 
 const ClubTopTabs = ({
   route: {
-    params: { clubId },
+    params: { clubId, isNew },
   },
   navigation: { navigate, popToTop, push },
 }) => {
@@ -501,6 +501,7 @@ const ClubTopTabs = ({
         heightCollapsed={heightCollapsed}
         headerDiff={headerDiff}
         scrollY={scrollY}
+        isNew={isNew}
       />
 
       <Animated.View

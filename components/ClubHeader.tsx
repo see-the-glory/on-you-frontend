@@ -165,9 +165,10 @@ export interface ClubHomeHaederProps {
   heightCollapsed: number;
   scrollY: Animated.Value;
   headerDiff: number;
+  isNew?: boolean;
 }
 
-const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubId, clubRole, notiCount, openClubOptionModal, headerHeight, heightExpanded, heightCollapsed, headerDiff, scrollY }) => {
+const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubId, clubRole, notiCount, openClubOptionModal, headerHeight, heightExpanded, heightCollapsed, headerDiff, scrollY, isNew }) => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const queryClient = useQueryClient();
   const clubData = queryClient.getQueryData<ClubResponse>(["getClub", clubId])?.data;
@@ -191,11 +192,16 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubId, clubRole, notiCount
     navigation.push("ClubNotification", clubNotificationProps);
   };
 
+  const goBack = () => {
+    if (isNew) navigation.navigate("Tabs", { screen: "Clubs" });
+    else navigation.goBack();
+  };
+
   return (
     <>
       <NavigationView height={headerHeight} style={{ marginTop: top }}>
         <LeftNavigationView>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={goBack}>
             <Animated.View style={{ position: "absolute" }}>
               <Entypo name="chevron-thin-left" size={20} color="white" />
             </Animated.View>
