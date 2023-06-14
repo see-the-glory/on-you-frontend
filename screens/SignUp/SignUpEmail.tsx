@@ -25,7 +25,7 @@ const Header = styled.View`
   margin-bottom: 47px;
 `;
 
-const Item = styled.View<{ error: boolean }>`
+const Item = styled.View<{ error?: boolean }>`
   border-bottom-width: 1px;
   border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#b3b3b3")};
   margin-bottom: ${(props: any) => (props.error ? 0 : 43)}px;
@@ -68,7 +68,7 @@ const ItemText = styled.Text`
   margin-bottom: 3px;
 `;
 
-const Input = styled.TextInput<{ error: boolean }>`
+const Input = styled.TextInput`
   font-family: ${(props: any) => props.theme.englishFontR};
   font-size: 18px;
 `;
