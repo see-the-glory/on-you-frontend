@@ -127,6 +127,7 @@ const ItemTextInput = styled.TextInput`
   line-height: 22px;
   padding: 0px 5px;
   flex: 1;
+  margin-bottom: ${Platform.OS === "ios" ? 3 : 0}px;
 `;
 
 const RadioButtonView = styled.View`

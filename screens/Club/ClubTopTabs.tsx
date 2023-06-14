@@ -102,7 +102,7 @@ const ClubTopTabs = ({
   route: {
     params: { clubId, isNew },
   },
-  navigation: { navigate, popToTop, push },
+  navigation: { navigate, goBack, popToTop, push },
 }) => {
   const me = useSelector((state: RootState) => state.auth.user);
   const toast = useToast();
@@ -437,7 +437,8 @@ const ClubTopTabs = ({
       }).start(() => setGuestCommentZIndex(0));
     });
     const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-      popToTop();
+      if (isNew) popToTop();
+      else goBack();
       return true;
     });
 
