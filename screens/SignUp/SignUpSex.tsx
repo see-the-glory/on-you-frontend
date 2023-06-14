@@ -139,12 +139,12 @@ const SignUpSex: React.FC<NativeStackScreenProps<any, "SignUpSex">> = ({
                 {approvalMethod === 2 ? <MaterialCommunityIcons name="radiobox-marked" size={22} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={22} color="#ABABAB" />}
               </ChoiceButton>
             </FieldContentLine>
-            <FieldContentLine>
+            {/* <FieldContentLine>
               <ChoiceButton onPress={() => setApprovalMethod((prev) => (prev === 3 ? 0 : 3))} activeOpacity={0.5}>
                 <FieldContentText>선택안함</FieldContentText>
                 {approvalMethod === 3 ? <MaterialCommunityIcons name="radiobox-marked" size={22} color="#295AF5" /> : <MaterialCommunityIcons name="radiobox-blank" size={22} color="#ABABAB" />}
               </ChoiceButton>
-            </FieldContentLine>
+            </FieldContentLine> */}
             {/* <FieldContentOptionLine>
               <SkipButton onPress={goToNext}>
                 <SkipText>{`선택하지 않고 넘어가기 >`}</SkipText>

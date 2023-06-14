@@ -41,7 +41,7 @@ const SubText = styled.Text`
   margin-top: 7px;
 `;
 
-const Input = styled.TextInput<{ error: boolean }>`
+const Input = styled.TextInput<{ error?: boolean }>`
   font-family: ${(props: any) => props.theme.koreanFontR};
   border-bottom-width: 1px;
   border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#b3b3b3")};

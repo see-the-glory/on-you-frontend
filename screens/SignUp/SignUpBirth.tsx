@@ -42,7 +42,7 @@ const SubText = styled.Text`
   margin-top: 7px;
 `;
 
-const Input = styled.TextInput`
+const Input = styled.TextInput<{ error?: boolean }>`
   border-bottom-width: 1px;
   border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#b3b3b3")};
   margin-top: 47px;
@@ -160,11 +160,11 @@ const SignUpBirth: React.FC<NativeStackScreenProps<any, "SignUpBirth">> = ({
             error={birthNumber !== "" && !birthReg.test(birthNumber)}
           />
           <ErrorView>{birthNumber !== "" && !birthReg.test(birthNumber) ? <Error>입력을 다시 한번 확인해주세요.</Error> : <></>}</ErrorView>
-          <FieldContentOptionLine>
+          {/* <FieldContentOptionLine>
             <SkipButton onPress={goToNext}>
               <SkipText>{`선택하지 않고 넘어가기 >`}</SkipText>
             </SkipButton>
-          </FieldContentOptionLine>
+          </FieldContentOptionLine> */}
         </Wrap>
         <BottomButton onPress={validate} disabled={!birthReg.test(birthNumber)} title={"다음"} />
       </Container>
