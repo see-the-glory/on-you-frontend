@@ -116,7 +116,7 @@ const UserNotification = ({ navigation: { navigate, goBack, setOptions } }) => {
       });
     } else if (item.actionType === "APPROVE") {
       readAction(item);
-      return navigate("ClubStack", { screen: "ClubTopTabs", params: { clubid: item.actionClubId } });
+      return navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: item.actionClubId } });
     } else if (item.actionType === "REJECT") {
       readAction(item);
       const clubJoinRejectMessageProps = {
