@@ -348,7 +348,7 @@ const Root = () => {
             <Nav.Screen name="ProfileStack" component={ProfileStack} />
             <Nav.Screen name="ClubCreationStack" component={ClubCreationStack} />
             <Nav.Screen name="ClubManagementStack" component={ClubManagementStack} />
-            <Nav.Screen name="Parking" component={Parking} />
+            <Nav.Screen name="Parking" component={Parking} options={{ gestureEnabled: false }} />
             <Nav.Screen
               name="Search"
               component={Search}

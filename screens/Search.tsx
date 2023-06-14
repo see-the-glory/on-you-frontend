@@ -1,6 +1,6 @@
 import { Entypo } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { Iconify } from "react-native-iconify";
 import { useToast } from "react-native-toast-notifications";
@@ -131,7 +131,12 @@ const Search: React.FC<NativeStackScreenProps<any, "Search">> = ({ route, naviga
         </TouchableOpacity>
       ),
     });
-    searchInputRef?.current.focus();
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      searchInputRef?.current.focus();
+    }, 600);
   }, []);
 
   return (

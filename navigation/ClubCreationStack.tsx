@@ -26,7 +26,7 @@ const ClubCreationStack: React.FC<ClubCreationStackProps> = ({ navigation: { nav
       <NativeStack.Screen name="ClubCreationStepOne" component={ClubCreationStepOne} options={{ title: "모임 개설" }} />
       <NativeStack.Screen name="ClubCreationStepTwo" component={ClubCreationStepTwo} options={{ title: "모임 개설" }} />
       <NativeStack.Screen name="ClubCreationStepThree" component={ClubCreationStepThree} options={{ title: "모임 개설" }} />
-      <NativeStack.Screen name="ClubCreationSuccess" component={ClubCreationSuccess} options={{ headerShown: false }} />
+      <NativeStack.Screen name="ClubCreationSuccess" component={ClubCreationSuccess} options={{ headerShown: false, gestureEnabled: false }} />
       <NativeStack.Screen name="ClubCreationFail" component={ClubCreationFail} options={{ headerShown: false }} />
     </NativeStack.Navigator>
   );
