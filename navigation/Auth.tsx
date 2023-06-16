@@ -1,12 +1,18 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
 import LoginStack from "./LoginStack";
-import Main from "../screens/Auth/Main";
+import Main from "../components/pages/Auth/Main";
 import SignUpStack from "./SignupStack";
 
-const NativeStack = createNativeStackNavigator();
+export type AuthStackParamList = {
+  Main: undefined;
+  LoginStack: undefined;
+  SignUpStack: undefined;
+};
 
-const Auth = () => {
+const NativeStack = createNativeStackNavigator<AuthStackParamList>();
+
+const Auth: React.FC<NativeStackScreenProps<any, "Auth">> = () => {
   return (
     <NativeStack.Navigator initialRouteName="Main" screenOptions={{ presentation: "card", contentStyle: { backgroundColor: "white" }, headerShown: false }}>
       <NativeStack.Screen name="Main" component={Main} />

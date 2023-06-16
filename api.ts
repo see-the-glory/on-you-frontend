@@ -91,6 +91,18 @@ export interface Schedule {
   endDate?: string | null;
 }
 
+export interface RefinedSchedule extends Schedule {
+  year?: string;
+  month?: string;
+  day?: string;
+  dayOfWeek?: string;
+  hour?: string;
+  minute?: string;
+  ampm?: string;
+  participation?: boolean;
+  isEnd?: boolean;
+}
+
 export interface User {
   applyStatus: string;
   birthday: string | null;
@@ -106,7 +118,7 @@ export interface User {
   interests: [];
 }
 
-export interface Profile {
+export interface UserProfile {
   name: string;
   about: string;
   birthday: string;
@@ -254,7 +266,7 @@ export interface UserInfoResponse extends BaseResponse {
 }
 
 export interface ProfileResponse extends BaseResponse {
-  data: Profile;
+  data: UserProfile;
 }
 
 export interface BlockUserListResponse extends BaseResponse {
@@ -515,14 +527,14 @@ export interface ProfileUpdateRequest {
   };
 }
 
-export interface SignUp {
-  birthday?: string;
-  email?: string;
-  name?: string;
-  password?: string;
-  organizationName?: string;
-  sex?: string;
-  phoneNumber?: string;
+export interface SignUpRequest {
+  birthday: string | null;
+  email: string;
+  name: string;
+  password: string;
+  organizationName: string;
+  sex: string | null;
+  phoneNumber: string | null;
 }
 
 export interface PasswordChangeRequest {
@@ -816,7 +828,7 @@ const validCheckEmail = async (req: EmailValidRequest) => {
 };
 
 // Sign Up
-const registerUserInfo = async (req: SignUp) => {
+const registerUserInfo = async (req: SignUpRequest) => {
   const res = await fetch(`${BASE_URL}/api/user/signup`, {
     method: "POST",
     headers: { "content-type": "application/json" },

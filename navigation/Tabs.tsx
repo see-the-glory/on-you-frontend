@@ -1,15 +1,16 @@
 import React, { useEffect, useRef } from "react";
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Home from "../screens/Home";
-import Clubs from "../screens/Clubs";
+import Home from "../components/pages/Home/Home";
 import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { Animated, DeviceEventEmitter, Platform, useWindowDimensions, View } from "react-native";
-import { MainBottomTabParamList } from "../Types/Club";
 import { Shadow } from "react-native-shadow-2";
-import Profile from "../screens/Profile/Profile";
+import Profile from "../components/pages/Profile/Profile";
 import { Iconify } from "react-native-iconify";
 import { lightTheme } from "../theme";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import Find from "../components/pages/Find/Find";
+import { RootStackParamList } from "./Root";
 
 const Container = styled.View<{ height: number }>`
   height: ${(props: any) => props.height}px;
@@ -62,6 +63,12 @@ const IconName = styled.Text`
   font-size: 11px;
   margin-top: 2px;
 `;
+
+export type MainBottomTabParamList = {
+  Home: undefined;
+  Find: undefined;
+  My: { userId?: number };
+};
 
 const SlidingTab = Animated.createAnimatedComponent(View);
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
@@ -160,7 +167,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
   );
 };
 
-const Tabs = ({ route, navigation }) => {
+const Tabs: React.FC<NativeStackScreenProps<RootStackParamList, "Tabs">> = ({ route, navigation }) => {
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -168,8 +175,8 @@ const Tabs = ({ route, navigation }) => {
       screenOptions={{ tabBarShowLabel: false, headerShown: false }}
       tabBar={(props) => <CustomTabBar {...props} />}
     >
-      <Tab.Screen name="Home" component={Home} initialParams={{}} options={{ headerShown: false }} />
-      <Tab.Screen name="Find" component={Clubs} initialParams={{}} options={{}} />
+      <Tab.Screen name="Home" component={Home} options={{ headerShown: false }} />
+      <Tab.Screen name="Find" component={Find} options={{}} />
       <Tab.Screen name="My" component={Profile} initialParams={{}} options={{}} />
     </Tab.Navigator>
   );
