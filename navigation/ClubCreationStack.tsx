@@ -1,18 +1,34 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { TouchableOpacity } from "react-native";
-import { Entypo } from "@expo/vector-icons";
-import ClubCreationStepOne from "../screens/ClubCreation/ClubCreationStepOne";
-import ClubCreationStepTwo from "../screens/ClubCreation/ClubCreationStepTwo";
-import ClubCreationStepThree from "../screens/ClubCreation/ClubCreationStepThree";
-import { ClubCreationStackProps, ClubStackParamList } from "../Types/Club";
-import ClubCreationSuccess from "../screens/ClubCreation/ClubCreationSuccess";
-import ClubCreationFail from "../screens/ClubCreation/ClubCreationFail";
+import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
+import ClubCreationStepOne from "../components/pages/ClubCreation/ClubCreationStepOne";
+import ClubCreationStepTwo from "../components/pages/ClubCreation/ClubCreationStepTwo";
+import ClubCreationStepThree from "../components/pages/ClubCreation/ClubCreationStepThree";
+import ClubCreationSuccess from "../components/pages/ClubCreation/ClubCreationSuccess";
+import ClubCreationFail from "../components/pages/ClubCreation/ClubCreationFail";
 import { lightTheme } from "../theme";
+import { Club } from "../api";
+import { RootStackParamList } from "./Root";
 
-const NativeStack = createNativeStackNavigator<ClubStackParamList>();
+export type ClubCreationStackParamList = {
+  ClubCreationStepOne: undefined;
+  ClubCreationStepTwo: { category1: number; category2: number };
+  ClubCreationStepThree: {
+    category1: number;
+    category2: number;
+    clubName: string;
+    maxNumber: number;
+    isApproveRequired: string;
+    phoneNumber: string;
+    organizationName: string;
+    imageURI: string | null;
+  };
+  ClubCreationSuccess: { clubData?: Club };
+  ClubCreationFail: undefined;
+};
 
-const ClubCreationStack: React.FC<ClubCreationStackProps> = ({ navigation: { navigate }, route: { params } }) => {
+const NativeStack = createNativeStackNavigator<ClubCreationStackParamList>();
+
+const ClubCreationStack: React.FC<NativeStackScreenProps<RootStackParamList, "ClubCreationStack">> = ({ navigation: { navigate }, route: { params } }) => {
   return (
     <NativeStack.Navigator
       screenOptions={{

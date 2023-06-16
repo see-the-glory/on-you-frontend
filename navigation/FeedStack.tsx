@@ -1,16 +1,27 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import FeedComments from "../screens/Feed/FeedComments";
-import ImageSelection from "../screens/FeedCreation/ImageSelection";
-import FeedModification from "../screens/Feed/FeedModification";
-import ClubSelection from "../screens/FeedCreation/ClubSelection";
-import FeedSelection from "../screens/Feed/FeedSelection";
-import FeedLikes from "../screens/Feed/FeedLikes";
+import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
+import FeedComments from "../components/pages/Feed/FeedComments";
+import ImageSelection from "../components/pages/FeedCreation/ImageSelection";
+import FeedModification from "../components/pages/Feed/FeedModification";
+import ClubSelection from "../components/pages/FeedCreation/ClubSelection";
+import FeedSelection from "../components/pages/Feed/FeedSelection";
+import FeedLikes from "../components/pages/Feed/FeedLikes";
 import { lightTheme } from "../theme";
+import { Feed, LikeUser } from "../api";
+import { RootStackParamList } from "./Root";
 
-const NativeStack = createNativeStackNavigator();
+export type FeedStackParamList = {
+  FeedComments: { feedId: number; clubId: number };
+  FeedLikes: { likeUsers: LikeUser[] };
+  ImageSelection: { clubId: number };
+  ClubSelection: undefined;
+  FeedSelection: { selectFeedId: number };
+  FeedModification: { feedData: Feed };
+};
 
-const FeedStack = ({ route: { params }, navigation: { navigate } }) => {
+const NativeStack = createNativeStackNavigator<FeedStackParamList>();
+
+const FeedStack: React.FC<NativeStackScreenProps<RootStackParamList, "FeedStack">> = ({ route, navigation }) => {
   return (
     <NativeStack.Navigator
       screenOptions={{

@@ -1,23 +1,25 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Entypo } from "@expo/vector-icons";
-import { ClubManagementStackProps, ClubStackParamList } from "../Types/Club";
-import ClubEditBasics from "../screens/ClubManagement/ClubEditBasics";
-import ClubManagementMain from "../screens/ClubManagement/ClubManagementMain";
-import ClubEditIntroduction from "../screens/ClubManagement/ClubEditIntroduction";
-import ClubEditMembers from "../screens/ClubManagement/ClubEditMembers";
-import ClubDelete from "../screens/ClubManagement/ClubDelete";
-import { TouchableOpacity } from "react-native";
+import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
+import ClubEditBasics from "../components/pages/ClubManagement/ClubEditBasics";
+import ClubManagementMain from "../components/pages/ClubManagement/ClubManagementMain";
+import ClubEditIntroduction from "../components/pages/ClubManagement/ClubEditIntroduction";
+import ClubEditMembers from "../components/pages/ClubManagement/ClubEditMembers";
+import ClubDelete from "../components/pages/ClubManagement/ClubDelete";
 import { lightTheme } from "../theme";
+import { Club } from "../api";
+import { RootStackParamList } from "./Root";
 
-const NativeStack = createNativeStackNavigator<ClubStackParamList>();
+export type ClubManagementStackParamList = {
+  ClubManagementMain: { clubId: number };
+  ClubEditBasics: { clubId: number; clubData: Club };
+  ClubEditIntroduction: { clubId: number; clubData: Club };
+  ClubEditMembers: { clubId: number; clubData: Club };
+  ClubDelete: undefined;
+};
 
-const ClubManagementStack: React.FC<ClubManagementStackProps> = ({
-  navigation,
-  route: {
-    params: { clubData },
-  },
-}) => {
+const NativeStack = createNativeStackNavigator<ClubManagementStackParamList>();
+
+const ClubManagementStack: React.FC<NativeStackScreenProps<RootStackParamList, "ClubManagementStack">> = ({ navigation, route }) => {
   return (
     <NativeStack.Navigator
       screenOptions={{

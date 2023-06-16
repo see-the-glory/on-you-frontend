@@ -1,22 +1,39 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import ClubScheduleAdd from "../screens/Club/ClubScheduleAdd";
-import ClubTopTabs from "../screens/Club/ClubTopTabs";
-import ClubJoin from "../screens/Club/ClubJoin";
-import ClubNotification from "../screens/Club/ClubNotification";
-import ClubApplication from "../screens/Club/ClubApplication";
-import ClubScheduleEdit from "../screens/Club/ClubScheduleEdit";
-import ClubFeedDetail from "../screens/Club/ClubFeedDetail";
-import ClubJoinReject from "../screens/Club/ClubJoinReject";
-import ClubJoinRejectMessage from "../screens/Club/ClubJoinRejectMessage";
-import ClubInvitation from "../screens/Club/ClubInvitation";
+import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
+import ClubScheduleAdd from "../components/pages/Club/ClubScheduleAdd";
+import ClubTopTabs from "../components/pages/Club/ClubTopTabs";
+import ClubJoin from "../components/pages/Club/ClubJoin";
+import ClubNotification from "../components/pages/Club/ClubNotification";
+import ClubApplication from "../components/pages/Club/ClubApplication";
+import ClubScheduleEdit from "../components/pages/Club/ClubScheduleEdit";
+import ClubFeedDetail from "../components/pages/Club/ClubFeedDetail";
+import ClubJoinReject from "../components/pages/Club/ClubJoinReject";
+import ClubJoinRejectMessage from "../components/pages/Club/ClubJoinRejectMessage";
+import ClubInvitation from "../components/pages/Club/ClubInvitation";
 import { lightTheme } from "../theme";
-import ClubMembers from "../screens/Club/ClubMembers";
-import ClubGuestBook from "../screens/Club/ClubGuestBook";
+import ClubMembers from "../components/pages/Club/ClubMembers";
+import ClubGuestBook from "../components/pages/Club/ClubGuestBook";
+import { Club, ClubRole, Member, RefinedSchedule } from "../api";
+import { RootStackParamList } from "./Root";
 
-const NativeStack = createNativeStackNavigator();
+export type ClubStackParamList = {
+  ClubTopTabs: { clubId: number; isNew?: boolean };
+  ClubScheduleAdd: { clubData: Club };
+  ClubScheduleEdit: { clubData: Club; scheduleData: RefinedSchedule };
+  ClubJoin: { clubId: number };
+  ClubNotification: { clubData: Club; clubRole: ClubRole };
+  ClubApplication: { clubData: Club; actionId: number; actionerName?: string | null; actionerId?: number | null; message?: string | null; createdTime?: string; processDone?: boolean };
+  ClubJoinReject: { clubId: number; actionId: number; actionerId?: number; actionerName?: string | null };
+  ClubJoinRejectMessage: { clubName: string; message?: string | null; createdTime?: string };
+  ClubInvitation: undefined;
+  ClubFeedDetail: { clubData: Club; targetIndex: number; fetchNextPage?: Function };
+  ClubMembers: { members: Member[] };
+  ClubGuestBook: { clubId: number; clubData: Club };
+};
 
-const ClubStack = ({ route: { params }, navigation: { navigate, goBack } }) => {
+const NativeStack = createNativeStackNavigator<ClubStackParamList>();
+
+const ClubStack: React.FC<NativeStackScreenProps<RootStackParamList, "ClubStack">> = ({ route, navigation }) => {
   return (
     <NativeStack.Navigator
       screenOptions={{

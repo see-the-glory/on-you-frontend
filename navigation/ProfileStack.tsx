@@ -1,25 +1,46 @@
-import React, { useLayoutEffect } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Profile from "../screens/Profile/Profile";
-import AccountEdit from "../screens/Preferences/AccountEdit";
-import MyClubs from "../screens/Preferences/Activity/MyClubs";
-import AccountSetting from "../screens/Preferences/Settings/AccountSetting";
-import ChangePassword from "../screens/Preferences/Settings/ChangePassword";
-import BlockUserList from "../screens/Preferences/Settings/BlockUserList";
-import NotificationSetting from "../screens/Preferences/Settings/NotificationSetting";
-import Suggestion from "../screens/Preferences/Others/Suggestion";
-import SuggestionSuccess from "../screens/Preferences/Others/SuggestionSuccess";
-import Notice from "../screens/Preferences/Others/Notice";
-import Info from "../screens/Preferences/Others/Info";
-import UserNotification from "../screens/Profile/UserNotification";
-import Preferences from "../screens/Preferences/Preferences";
+import React from "react";
+import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
+import Profile from "../components/pages/Profile/Profile";
+import AccountEdit from "../components/pages/Preferences/AccountEdit";
+import MyClubs from "../components/pages/Preferences/Activity/MyClubs";
+import AccountSetting from "../components/pages/Preferences/Settings/AccountSetting";
+import ChangePassword from "../components/pages/Preferences/Settings/ChangePassword";
+import BlockUserList from "../components/pages/Preferences/Settings/BlockUserList";
+import NotificationSetting from "../components/pages/Preferences/Settings/NotificationSetting";
+import Suggestion from "../components/pages/Preferences/Others/Suggestion";
+import SuggestionSuccess from "../components/pages/Preferences/Others/SuggestionSuccess";
+import Notice from "../components/pages/Preferences/Others/Notice";
+import Info from "../components/pages/Preferences/Others/Info";
+import UserNotification from "../components/pages/Profile/UserNotification";
+import Preferences from "../components/pages/Preferences/Preferences";
 import { lightTheme } from "../theme";
-import ProfileEdit from "../screens/Profile/ProfileEdit";
-import UserFeedDetail from "../screens/Profile/UserFeedDetail";
+import ProfileEdit from "../components/pages/Profile/ProfileEdit";
+import UserFeedDetail from "../components/pages/Profile/UserFeedDetail";
+import { MainBottomTabParamList } from "./Tabs";
+import { User, UserProfile } from "../api";
+import { RootStackParamList } from "./Root";
 
-const NativeStack = createNativeStackNavigator();
+export type ProfileStackParamList = {
+  Profile: { userId?: number };
+  ProfileEdit: { profile: UserProfile; headerHeight: number };
+  UserFeedDetail: { userId: number; profile: UserProfile; targetIndex: number; fetchNextPage?: Function };
+  Preferences: undefined;
+  AccountEdit: { userData?: User };
+  MyClubs: undefined;
+  AccountSetting: undefined;
+  ChangePassword: undefined;
+  BlockUserList: undefined;
+  NotificationSetting: undefined;
+  Suggestion: undefined;
+  SuggestionSuccess: { content?: string };
+  Notice: undefined;
+  Info: undefined;
+  UserNotification: undefined;
+};
 
-const ProfileStack = ({ route, navigation }) => {
+const NativeStack = createNativeStackNavigator<ProfileStackParamList & MainBottomTabParamList>();
+
+const ProfileStack: React.FC<NativeStackScreenProps<RootStackParamList, "ProfileStack">> = ({ route, navigation }) => {
   return (
     <NativeStack.Navigator
       initialRouteName="Profile"
@@ -31,7 +52,7 @@ const ProfileStack = ({ route, navigation }) => {
         headerShadowVisible: false,
       }}
     >
-      <NativeStack.Screen name="Profile" component={Profile} initialParams={{}} options={{ headerShown: false }} />
+      <NativeStack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
       <NativeStack.Screen name="ProfileEdit" component={ProfileEdit} options={{ headerShown: false }} />
       <NativeStack.Screen name="UserFeedDetail" component={UserFeedDetail} options={{ headerBackVisible: false }} />
       <NativeStack.Screen name="Preferences" component={Preferences} options={{ title: "설정" }} />

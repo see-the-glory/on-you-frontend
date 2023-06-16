@@ -1,24 +1,29 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Login from "../screens/Login/Login";
-import FindLoginInfo from "../screens/Login/FindLoginInfo";
+import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack";
+import Login from "../components/pages/Login/Login";
+import FindLoginInfo from "../components/pages/Login/FindLoginInfo";
 import { TouchableOpacity, Text } from "react-native";
 import { Entypo } from "@expo/vector-icons";
-import FindEmail from "../screens/Login/FindEmail";
-import FindPassword from "../screens/Login/FindPassword";
-import FindResult from "../screens/Login/FindResult";
+import FindEmail from "../components/pages/Login/FindEmail";
+import FindPassword from "../components/pages/Login/FindPassword";
+import FindResult from "../components/pages/Login/FindResult";
 import { lightTheme } from "../theme";
+import { AuthStackParamList } from "./Auth";
 
-const NativeStack = createNativeStackNavigator();
+export type LoginStackParamList = {
+  Login: undefined;
+  FindLoginInfo: undefined;
+  FindEmail: undefined;
+  FindResult: { findType: string; email?: string };
+  FindPassword: undefined;
+};
 
-const LoginStack = ({
-  navigation: { navigate, popToTop },
-  route: {
-    params: { email },
-  },
-}) => {
+const NativeStack = createNativeStackNavigator<LoginStackParamList>();
+
+const LoginStack: React.FC<NativeStackScreenProps<AuthStackParamList, "LoginStack">> = ({ navigation: { navigate, popToTop }, route }) => {
   return (
     <NativeStack.Navigator
+      initialRouteName="Login"
       screenOptions={{
         presentation: "card",
         contentStyle: { backgroundColor: "white" },
@@ -43,7 +48,6 @@ const LoginStack = ({
       <NativeStack.Screen
         name="FindEmail"
         component={FindEmail}
-        initialParams={{ email }}
         options={{
           title: "E-Mail 찾기",
           headerLeft: () => (
@@ -56,7 +60,6 @@ const LoginStack = ({
       <NativeStack.Screen
         name="FindResult"
         component={FindResult}
-        initialParams={{ email }}
         options={{
           title: "E-Mail 찾기",
           headerLeft: () => (

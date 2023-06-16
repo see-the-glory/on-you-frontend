@@ -24,12 +24,23 @@ import { useNavigation } from "@react-navigation/native";
 import queryString from "query-string";
 import { getModel, getVersion } from "react-native-device-info";
 import styled from "styled-components/native";
-import CustomText from "../components/CustomText";
-import Parking from "../screens/Parking";
-import Search from "../screens/Search";
+import CustomText from "../components/atoms/CustomText";
+import Parking from "../components/pages/Parking/Parking";
+import Search from "../components/pages/Find/Search";
 import { lightTheme } from "../theme";
 
-const Nav = createNativeStackNavigator();
+export type RootStackParamList = {
+  Tabs: undefined;
+  FeedStack: undefined;
+  ClubStack: undefined;
+  ProfileStack: undefined;
+  ClubCreationStack: undefined;
+  ClubManagementStack: undefined;
+  Parking: undefined;
+  Search: undefined;
+};
+
+const Nav = createNativeStackNavigator<RootStackParamList>();
 
 const ModalContainer = styled.View`
   width: 80%;
@@ -337,6 +348,7 @@ const Root = () => {
       <Host
         children={
           <Nav.Navigator
+            initialRouteName="Tabs"
             screenOptions={{
               presentation: "card",
               headerShown: false,
