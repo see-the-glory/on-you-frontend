@@ -6,7 +6,7 @@ import { Iconify } from "react-native-iconify";
 import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery } from "react-query";
 import styled from "styled-components/native";
-import { Club, ClubsParams, ClubsResponse, ErrorResponse } from "../../../api";
+import { Club, ClubApi, ClubsParams, ClubsResponse, ErrorResponse } from "../../../api";
 import { RootStackParamList } from "../../../navigation/Root";
 import ClubList from "../../organisms/ClubList";
 
