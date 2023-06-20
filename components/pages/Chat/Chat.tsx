@@ -1,10 +1,11 @@
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { Platform, StatusBar } from "react-native";
 import styled from "styled-components/native";
+import { RootStackParamList } from "../../../navigation/Root";
 import { MainBottomTabParamList } from "../../../navigation/Tabs";
 import CircleIcon from "../../atoms/CircleIcon";
-import FadeFastImage from "../../atoms/FadeFastImage";
 import SearchButton from "../../atoms/SearchButton";
 
 const Container = styled.View`
@@ -88,7 +89,8 @@ const MessageCreatedTime = styled.Text`
   color: #a5a5a5;
 `;
 
-const Chat: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Chat">> = ({ navigation, route }) => {
+const Chat: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Chat">> = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const DMs = [
     {
       userId: 414,

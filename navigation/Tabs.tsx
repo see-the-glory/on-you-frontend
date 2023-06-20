@@ -67,6 +67,7 @@ const IconName = styled.Text`
 
 export type MainBottomTabParamList = {
   Home: undefined;
+  Chat: undefined;
   Find: undefined;
   My: { userId?: number };
 };

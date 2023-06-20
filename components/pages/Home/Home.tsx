@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Animated, DeviceEventEmitter, Platform, StatusBar, useWindowDimensions, View } from "react-native";
 import { useModalize } from "react-native-modalize";
@@ -18,6 +18,7 @@ import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import { Iconify } from "react-native-iconify";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MainBottomTabParamList } from "../../../navigation/Tabs";
+import { RootStackParamList } from "../../../navigation/Root";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -75,6 +76,7 @@ const NotiBadgeText = styled.Text`
 `;
 
 const Home: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Home">> = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const me = useSelector((state: RootState) => state.auth.user);
   const dispatch = useAppDispatch();
   const toast = useToast();
@@ -90,7 +92,6 @@ const Home: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Home">> = (
   const feedDetailContentHeight = 40;
   const itemSeparatorGap = 30;
   const [selectFeedData, setSelectFeedData] = useState<Feed>();
-  const navigation = useNavigation();
   let scrollY = useRef(new Animated.Value(0)).current;
   let animatedHeaderOpacity = scrollY.interpolate({
     inputRange: [0, 50],

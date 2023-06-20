@@ -18,10 +18,11 @@ import UserInstroduction from "./UserInstroduction";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
 import Share from "react-native-share";
 import ProfileReportModal from "./ProfileReportModal";
-import { useFocusEffect } from "@react-navigation/native";
+import { NavigationProp, useFocusEffect, useNavigation } from "@react-navigation/native";
 import { lightTheme } from "../../../theme";
 import { ProfileStackParamList } from "../../../navigation/ProfileStack";
 import { MainBottomTabParamList } from "../../../navigation/Tabs";
+import { RootStackParamList } from "../../../navigation/Root";
 
 const Container = styled.View`
   flex: 1;
@@ -36,8 +37,8 @@ const Profile: React.FC<NativeStackScreenProps<ProfileStackParamList & MainBotto
     params: { userId },
     name,
   },
-  navigation: { navigate, goBack, setOptions },
 }) => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const TopTab = createMaterialTopTabNavigator();
   const me = useSelector((state: RootState) => state.auth.user);
   const isMe = !userId || userId === me?.id ? true : false;
@@ -177,11 +178,11 @@ const Profile: React.FC<NativeStackScreenProps<ProfileStackParamList & MainBotto
   );
 
   const goToPreferences = () => {
-    navigate("ProfileStack", { screen: "Preferences" });
+    navigation.navigate("ProfileStack", { screen: "Preferences" });
   };
 
   const goToEditProfile = () => {
-    navigate("ProfileStack", { screen: "ProfileEdit", params: { profile: profile?.data, headerHeight: HEADER_HEIGHT } });
+    navigation.navigate("ProfileStack", { screen: "ProfileEdit", params: { profile: profile?.data, headerHeight: HEADER_HEIGHT } });
   };
 
   const openReportModal = () => {

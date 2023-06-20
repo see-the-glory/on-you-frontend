@@ -16,6 +16,8 @@ import ClubList from "../../organisms/ClubList";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MainBottomTabParamList } from "../../../navigation/Tabs";
 import SearchButton from "../../atoms/SearchButton";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../../../navigation/Root";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -205,11 +207,12 @@ interface ClubSortItem {
   orderBy: string;
 }
 
-const Find: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Find">> = ({ navigation: { navigate, push } }) => {
+const Find: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Find">> = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const queryClient = useQueryClient();
+  const toast = useToast();
   const filterMinNumber = 0;
   const filterMaxNumber = 100;
-  const toast = useToast();
-  const queryClient = useQueryClient();
   const [params, setParams] = useState<ClubsParams>({
     categoryId: 0,
     minMember: filterMinNumber,
@@ -277,18 +280,18 @@ const Find: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Find">> = (
     const clubTopTabsProps = {
       clubId,
     };
-    return navigate("ClubStack", {
+    return navigation.navigate("ClubStack", {
       screen: "ClubTopTabs",
       params: clubTopTabsProps,
     });
   };
 
   const goToCreation = () => {
-    return navigate("ClubCreationStack", { screen: "ClubCreationStepOne", params: { category } });
+    return navigation.navigate("ClubCreationStack", { screen: "ClubCreationStepOne", params: { category } });
   };
 
   const goToSearch = () => {
-    return navigate("Search");
+    return navigation.navigate("Search");
   };
 
   const setClubsCategoryParams = (categoryId: number) => {

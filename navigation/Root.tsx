@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Tabs from "./Tabs";
-import ClubCreationStack from "./ClubCreationStack";
-import ClubStack from "./ClubStack";
-import ProfileStack from "./ProfileStack";
-import ClubManagementStack from "./ClubManagementStack";
-import FeedStack from "./FeedStack";
+import Tabs, { MainBottomTabParamList } from "./Tabs";
+import ClubCreationStack, { ClubCreationStackParamList } from "./ClubCreationStack";
+import ClubStack, { ClubStackParamList } from "./ClubStack";
+import ProfileStack, { ProfileStackParamList } from "./ProfileStack";
+import ClubManagementStack, { ClubManagementStackParamList } from "./ClubManagementStack";
+import FeedStack, { FeedStackParamList } from "./FeedStack";
 import { Host } from "react-native-portalize";
 import { useToast } from "react-native-toast-notifications";
 import { useSelector } from "react-redux";
@@ -20,7 +20,7 @@ import feedSlice from "../redux/slices/feed";
 import messaging from "@react-native-firebase/messaging";
 import notifee, { EventType } from "@notifee/react-native";
 import dynamicLinks, { FirebaseDynamicLinksTypes } from "@react-native-firebase/dynamic-links";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, NavigatorScreenParams, useNavigation } from "@react-navigation/native";
 import queryString from "query-string";
 import { getModel, getVersion } from "react-native-device-info";
 import styled from "styled-components/native";
@@ -28,16 +28,16 @@ import CustomText from "../components/atoms/CustomText";
 import Parking from "../components/pages/Parking/Parking";
 import Search from "../components/pages/Find/Search";
 import { lightTheme } from "../theme";
-import ChatStack from "./ChatStack";
+import ChatStack, { ChatStackParamList } from "./ChatStack";
 
 export type RootStackParamList = {
-  Tabs: undefined;
-  FeedStack: undefined;
-  ClubStack: undefined;
-  ProfileStack: undefined;
-  ClubCreationStack: undefined;
-  ClubManagementStack: undefined;
-  ChatStack: undefined;
+  Tabs: NavigatorScreenParams<MainBottomTabParamList>;
+  FeedStack: NavigatorScreenParams<FeedStackParamList>;
+  ClubStack: NavigatorScreenParams<ClubStackParamList>;
+  ProfileStack: NavigatorScreenParams<ProfileStackParamList>;
+  ClubCreationStack: NavigatorScreenParams<ClubCreationStackParamList>;
+  ClubManagementStack: NavigatorScreenParams<ClubManagementStackParamList>;
+  ChatStack: NavigatorScreenParams<ChatStackParamList>;
   Parking: undefined;
   Search: undefined;
 };
@@ -96,7 +96,7 @@ const Root = () => {
   const dispatch = useAppDispatch();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { refetch: userInfoRefecth } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
       if (res.data) dispatch(updateUser({ user: res.data }));
