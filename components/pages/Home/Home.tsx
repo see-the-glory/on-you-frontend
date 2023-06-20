@@ -6,20 +6,7 @@ import { useToast } from "react-native-toast-notifications";
 import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import {
-  BaseResponse,
-  ErrorResponse,
-  Feed,
-  FeedApi,
-  FeedDeletionRequest,
-  FeedLikeRequest,
-  FeedReportRequest,
-  FeedsResponse,
-  LikeUser,
-  NotificationsResponse,
-  UserApi,
-  UserBlockRequest,
-} from "../../../api";
+import { BaseResponse, ErrorResponse, Feed, FeedApi, FeedDeletionRequest, FeedLikeRequest, FeedReportRequest, FeedsResponse, NotificationsResponse, UserApi, UserBlockRequest } from "../../../api";
 import FeedDetail from "../../organisms/FeedDetail";
 import feedSlice from "../../../redux/slices/feed";
 import { useAppDispatch } from "../../../redux/store";

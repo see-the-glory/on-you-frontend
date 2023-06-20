@@ -15,6 +15,7 @@ import { Iconify } from "react-native-iconify";
 import ClubList from "../../organisms/ClubList";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MainBottomTabParamList } from "../../../navigation/Tabs";
+import SearchButton from "../../atoms/SearchButton";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -78,22 +79,6 @@ const TypeText = styled.Text`
 const SearchSection = styled.View`
   height: 40px;
   padding: 0px 10px;
-`;
-
-const SearchButton = styled.TouchableOpacity`
-  flex-direction: row;
-  background-color: #f8f8f8;
-  border-radius: 10px;
-  height: 100%;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0px 10px;
-`;
-
-const SearchText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
-  font-size: 16px;
-  color: #c4c4c4;
 `;
 
 const HeaderSection = styled.View`
@@ -447,10 +432,7 @@ const Find: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Find">> = (
             </LayoutTypeToggle>
           </TitleSection>
           <SearchSection>
-            <SearchButton activeOpacity={1} onPress={goToSearch}>
-              <SearchText>{`모임 이름을 검색하세요.`}</SearchText>
-              <Iconify icon="ion:search" size={18} color={"#8E8E8E"} />
-            </SearchButton>
+            <SearchButton text="모임을 검색하세요" onPress={goToSearch} />
           </SearchSection>
           <FlatList
             showsHorizontalScrollIndicator={false}

@@ -11,6 +11,7 @@ import { lightTheme } from "../theme";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Find from "../components/pages/Find/Find";
 import { RootStackParamList } from "./Root";
+import Chat from "../components/pages/Chat/Chat";
 
 const Container = styled.View<{ height: number }>`
   height: ${(props: any) => props.height}px;
@@ -144,7 +145,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
                     case "Find":
                       return isFocused ? <Iconify icon="ph:list-magnifying-glass" size={30} color={lightTheme.primaryColor} /> : <Iconify icon="ph:list-magnifying-glass" size={30} color="#9C9C9C" />;
                     case "Chat":
-                      return <Iconify icon="ph:chat-circle-text" size={32} color={lightTheme.primaryColor} />;
+                      return isFocused ? <Iconify icon="ph:chat-circle-text" size={28} color={lightTheme.primaryColor} /> : <Iconify icon="ph:chat-circle-text" size={28} color="#9C9C9C" />;
                     case "My":
                       return isFocused ? <Iconify icon="prime:user" size={32} color={lightTheme.primaryColor} /> : <Iconify icon="prime:user" size={32} color="#9C9C9C" />;
                     default:
@@ -177,6 +178,7 @@ const Tabs: React.FC<NativeStackScreenProps<RootStackParamList, "Tabs">> = ({ ro
     >
       <Tab.Screen name="Home" component={Home} options={{ headerShown: false }} />
       <Tab.Screen name="Find" component={Find} options={{}} />
+      <Tab.Screen name="Chat" component={Chat} options={{}} />
       <Tab.Screen name="My" component={Profile} initialParams={{}} options={{}} />
     </Tab.Navigator>
   );

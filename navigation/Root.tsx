@@ -28,6 +28,7 @@ import CustomText from "../components/atoms/CustomText";
 import Parking from "../components/pages/Parking/Parking";
 import Search from "../components/pages/Find/Search";
 import { lightTheme } from "../theme";
+import ChatStack from "./ChatStack";
 
 export type RootStackParamList = {
   Tabs: undefined;
@@ -36,6 +37,7 @@ export type RootStackParamList = {
   ProfileStack: undefined;
   ClubCreationStack: undefined;
   ClubManagementStack: undefined;
+  ChatStack: undefined;
   Parking: undefined;
   Search: undefined;
 };
@@ -360,6 +362,7 @@ const Root = () => {
             <Nav.Screen name="ProfileStack" component={ProfileStack} />
             <Nav.Screen name="ClubCreationStack" component={ClubCreationStack} />
             <Nav.Screen name="ClubManagementStack" component={ClubManagementStack} />
+            <Nav.Screen name="ChatStack" component={ChatStack} />
             <Nav.Screen name="Parking" component={Parking} options={{ gestureEnabled: false }} />
             <Nav.Screen
               name="Search"
