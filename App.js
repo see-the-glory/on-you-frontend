@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import Root from "./navigation/Root";
-import Auth from "./navigation/Auth";
+import Root from "@navigation/Root";
+import Auth from "@navigation/Auth";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider, useSelector } from "react-redux";
 import { ToastProvider } from "react-native-toast-notifications";
@@ -12,16 +12,16 @@ import SplashScreen from "react-native-splash-screen";
 import moment from "moment";
 import "moment/locale/ko";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import store, { useAppDispatch } from "./redux/store";
+import store, { useAppDispatch } from "redux/store";
 import messaging from "@react-native-firebase/messaging";
-import { init, updateFCMToken } from "./redux/slices/auth";
+import { init, updateFCMToken } from "redux/slices/auth";
 import BackgroundColor from "react-native-background-color";
 import CodePush from "react-native-code-push";
 import notifee, { AndroidImportance } from "@notifee/react-native";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
 import queryString from "query-string";
 import { ThemeProvider } from "styled-components/native";
-import { lightTheme } from "./theme";
+import { lightTheme } from "app/theme";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -39,24 +39,24 @@ const RootNavigation = () => {
 
   const fontSetting = async () => {
     await Font.loadAsync({
-      "NotoSansKR-Bold": require("./assets/fonts/NotoSansKR/NotoSansKR-Bold.otf"),
-      "NotoSansKR-Regular": require("./assets/fonts/NotoSansKR/NotoSansKR-Regular.otf"),
-      "NotoSansKR-Medium": require("./assets/fonts/NotoSansKR/NotoSansKR-Medium.otf"),
-      AppleSDGothicNeoB: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoB.ttf"),
-      AppleSDGothicNeoEB: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoEB.ttf"),
-      AppleSDGothicNeoSB: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoSB.ttf"),
-      AppleSDGothicNeoL: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoL.ttf"),
-      AppleSDGothicNeoM: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoM.ttf"),
-      AppleSDGothicNeoR: require("./assets/fonts/AppleSDGothicNeo/AppleSDGothicNeoR.ttf"),
-      "Roboto-Bold": require("./assets/fonts/Roboto/Roboto-Bold.ttf"),
-      "Roboto-Light": require("./assets/fonts/Roboto/Roboto-Light.ttf"),
-      "Roboto-Medium": require("./assets/fonts/Roboto/Roboto-Medium.ttf"),
-      "Roboto-Regular": require("./assets/fonts/Roboto/Roboto-Regular.ttf"),
-      "TT-Commons-Bold": require("./assets/fonts/TTCommons/TT-Commons-Bold.otf"),
-      "TT-Commons-DemiBold": require("./assets/fonts/TTCommons/TT-Commons-DemiBold.otf"),
-      "TT-Commons-Light": require("./assets/fonts/TTCommons/TT-Commons-Light.otf"),
-      "TT-Commons-Medium": require("./assets/fonts/TTCommons/TT-Commons-Medium.otf"),
-      "TT-Commons-Regular": require("./assets/fonts/TTCommons/TT-Commons-Regular.otf"),
+      "NotoSansKR-Bold": require("@fonts/NotoSansKR/NotoSansKR-Bold.otf"),
+      "NotoSansKR-Regular": require("@fonts/NotoSansKR/NotoSansKR-Regular.otf"),
+      "NotoSansKR-Medium": require("@fonts/NotoSansKR/NotoSansKR-Medium.otf"),
+      AppleSDGothicNeoB: require("@fonts/AppleSDGothicNeo/AppleSDGothicNeoB.ttf"),
+      AppleSDGothicNeoEB: require("@fonts/AppleSDGothicNeo/AppleSDGothicNeoEB.ttf"),
+      AppleSDGothicNeoSB: require("@fonts/AppleSDGothicNeo/AppleSDGothicNeoSB.ttf"),
+      AppleSDGothicNeoL: require("@fonts/AppleSDGothicNeo/AppleSDGothicNeoL.ttf"),
+      AppleSDGothicNeoM: require("@fonts/AppleSDGothicNeo/AppleSDGothicNeoM.ttf"),
+      AppleSDGothicNeoR: require("@fonts/AppleSDGothicNeo/AppleSDGothicNeoR.ttf"),
+      "Roboto-Bold": require("@fonts/Roboto/Roboto-Bold.ttf"),
+      "Roboto-Light": require("@fonts/Roboto/Roboto-Light.ttf"),
+      "Roboto-Medium": require("@fonts/Roboto/Roboto-Medium.ttf"),
+      "Roboto-Regular": require("@fonts/Roboto/Roboto-Regular.ttf"),
+      "TT-Commons-Bold": require("@fonts/TTCommons/TT-Commons-Bold.otf"),
+      "TT-Commons-DemiBold": require("@fonts/TTCommons/TT-Commons-DemiBold.otf"),
+      "TT-Commons-Light": require("@fonts/TTCommons/TT-Commons-Light.otf"),
+      "TT-Commons-Medium": require("@fonts/TTCommons/TT-Commons-Medium.otf"),
+      "TT-Commons-Regular": require("@fonts/TTCommons/TT-Commons-Regular.otf"),
     });
 
     const texts = [Text, TextInput];
