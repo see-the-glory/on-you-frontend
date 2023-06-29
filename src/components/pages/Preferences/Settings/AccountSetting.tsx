@@ -51,13 +51,11 @@ interface AccountItem {
 
 const AccountSetting: React.FC<NativeStackScreenProps<ProfileStackParamList, "AccountSetting">> = ({ navigation: { navigate, goBack, setOptions } }) => {
   const toast = useToast();
-  const fcmToken = useSelector((state: RootState) => state.auth.fcmToken);
   const dispatch = useAppDispatch();
 
   const withdrawMutation = useMutation<BaseResponse, ErrorResponse>(UserApi.withdrawAccount, {
     onSuccess: (res) => {
-      toast.show("회원탈퇴 되었습니다.", { type: "success" });
-      DeviceEventEmitter.emit("Logout", { fcmToken, isWitdrawUser: true });
+      DeviceEventEmitter.emit("Logout", { isWitdrawUser: true });
       dispatch(logout());
     },
     onError: (error) => {

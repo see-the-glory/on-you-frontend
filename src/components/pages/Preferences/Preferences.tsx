@@ -147,7 +147,7 @@ const Preferences: React.FC<NativeStackScreenProps<ProfileStackParamList, "Prefe
   }, []);
 
   const goLogout = async () => {
-    DeviceEventEmitter.emit("Logout", { fcmToken });
+    DeviceEventEmitter.emit("Logout", {});
   };
 
   const goToScreen = (screen?: "MyClubs" | "AccountSetting" | "NotificationSetting" | "Suggestion" | "Info") => {

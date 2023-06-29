@@ -10,11 +10,10 @@ import { Host } from "react-native-portalize";
 import { useToast } from "react-native-toast-notifications";
 import { useSelector } from "react-redux";
 import { RootState } from "redux/store/reducers";
-import axios from "axios";
 import { useAppDispatch } from "redux/store";
 import { logout, updateUser } from "redux/slices/auth";
 import { BackHandler, DeviceEventEmitter, Linking, Modal, Platform, View } from "react-native";
-import { BaseResponse, BASE_URL, ErrorResponse, MetaInfoRequest, MetaInfoResponse, TargetTokenUpdateRequest, UserApi, UserInfoResponse } from "api";
+import { BaseResponse, ErrorResponse, MetaInfoRequest, MetaInfoResponse, TargetTokenUpdateRequest, UserApi, UserInfoResponse } from "api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import feedSlice from "redux/slices/feed";
 import messaging from "@react-native-firebase/messaging";
@@ -90,14 +89,13 @@ const UpdateText = styled(CustomText)`
 `;
 
 const Root = () => {
-  const token = useSelector((state: RootState) => state.auth.token);
   const fcmToken = useSelector((state: RootState) => state.auth.fcmToken);
   const [updateRequire, setUpdateRequire] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const toast = useToast();
   const queryClient = useQueryClient();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const { refetch: userInfoRefecth } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo", token], UserApi.getUserInfo, {
+  const { refetch: userInfoRefecth } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo"], UserApi.getUserInfo, {
     onSuccess: (res) => {
       if (res.data) dispatch(updateUser({ user: res.data }));
     },
@@ -195,43 +193,6 @@ const Root = () => {
 
   useEffect(() => {
     console.log(`Root - useEffect!`);
-    // Axios Setting
-    axios.defaults.baseURL = BASE_URL;
-    if (token) axios.defaults.headers.common["Authorization"] = token;
-    axios.defaults.headers.common["Content-Type"] = "application/json";
-
-    const requestInterceptor = axios.interceptors.request.use(
-      (config) => {
-        config.timeout = 15000;
-        return config;
-      },
-      (error) => error
-    );
-    const responseInterceptor = axios.interceptors.response.use(
-      (response) => ({ ...response.data, status: response.status }), // 2xx
-      async (error) => {
-        // 2xx 범위 밖
-        if (error.response) {
-          const status = error.response.status;
-          if (status === 400) {
-            if (!error.response.data) error.response.data = { message: "잘못된 요청입니다." };
-          } else if (status === 401) {
-            DeviceEventEmitter.emit("Logout", { fcmToken });
-            toast.show(`중복 로그인이 감지되어\n로그아웃 합니다.`, { type: "warning" });
-          } else if (status === 500) {
-            console.log(error.response.data);
-            // toast.show(`${error?.response?.data?.error}`, { type: "warning" });
-            // toast.show(`${error?.response?.data?.message}`, { type: "warning" });
-            error.response.data = { message: "알 수 없는 오류" };
-          }
-          return Promise.reject({ ...error.response?.data, status, code: error.code });
-        } else {
-          console.log(error.response);
-          navigation.navigate("Parking");
-          return Promise.reject({ message: "요청시간이 만료되었습니다.", code: error.code });
-        }
-      }
-    );
 
     // User Infomation Resetting
     userInfoRefecth();
@@ -246,18 +207,15 @@ const Root = () => {
     updateMetaInfo();
     //
 
-    const logoutSubScription = DeviceEventEmitter.addListener("Logout", async ({ fcmToken, isWitdrawUser }) => {
-      console.log(`Root - Logout`);
+    const logoutSubScription = DeviceEventEmitter.addListener("Logout", async ({ isWitdrawUser, isMultiUser }) => {
       const res = await dispatch(logout());
       if (res.meta.requestStatus === "fulfilled") {
-        if (!isWitdrawUser) toast.show(`로그아웃 되었습니다.`, { type: "success" });
-        try {
-          if (fcmToken && !isWitdrawUser) updateTargetToken(null);
-          if (!fcmToken) console.log(`Root - Logout : FCM Token 이 없습니다.`);
-          dispatch(feedSlice.actions.deleteFeed());
-        } catch (e) {
-          console.warn(e);
+        if (isWitdrawUser) toast.show("회원탈퇴 되었습니다.", { type: "success" });
+        else {
+          if (isMultiUser) toast.show(`다른 기기에서의 로그인이 감지되어 로그아웃합니다.`, { type: "success" });
+          else toast.show(`로그아웃 되었습니다.`, { type: "success" });
         }
+        dispatch(feedSlice.actions.deleteFeed());
       } else toast.show(`로그아웃 실패.`, { type: "warning" });
     });
 
@@ -310,8 +268,6 @@ const Root = () => {
 
     return () => {
       console.log(`Root - remove!`);
-      axios.interceptors.request.eject(requestInterceptor);
-      axios.interceptors.response.eject(responseInterceptor);
       logoutSubScription.remove();
       fcmUnsubscribe();
       notiUnsubscribe();
