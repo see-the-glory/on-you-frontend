@@ -8,6 +8,7 @@ import { ClubApi, ClubCreationData, ClubCreationRequest, ClubCreationResponse, E
 import BottomButton from "@components/atoms/BottomButton";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ClubCreationStackParamList } from "@navigation/ClubCreationStack";
+import { createClubEvent } from "app/analytics";
 
 const MainView = styled.View`
   width: 100%;
@@ -111,8 +112,11 @@ const ClubCreationStepThree: React.FC<NativeStackScreenProps<ClubCreationStackPa
   const mutation = useMutation<ClubCreationResponse, ErrorResponse, ClubCreationRequest>(ClubApi.createClub, {
     onSuccess: (res) => {
       setDisableSubmit(false);
-      DeviceEventEmitter.emit("ClubListRefetch");
-      navigate("ClubCreationSuccess", { clubData: res?.data });
+      if (res?.data) {
+        DeviceEventEmitter.emit("ClubListRefetch");
+        createClubEvent(res?.data);
+        navigate("ClubCreationSuccess", { clubData: res?.data });
+      }
     },
     onError: (error) => {
       console.log(`API ERROR | createClub ${error.code} ${error.status}`);

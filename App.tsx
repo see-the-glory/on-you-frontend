@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { NavigationContainer, useNavigationContainerRef } from "@react-navigation/native";
 import Root from "@navigation/Root";
 import Auth from "@navigation/Auth";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider, useSelector } from "react-redux";
+import { RootState } from "redux/store/reducers";
 import { ToastProvider } from "react-native-toast-notifications";
 import { Ionicons } from "@expo/vector-icons";
 import { LogBox, Platform, Text, TextInput, View } from "react-native";
@@ -22,11 +23,12 @@ import dynamicLinks from "@react-native-firebase/dynamic-links";
 import queryString from "query-string";
 import { ThemeProvider } from "styled-components/native";
 import { lightTheme } from "app/theme";
+import analytics from "@react-native-firebase/analytics";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
 const RootNavigation = () => {
-  const token = useSelector((state) => state.auth.token);
+  const token = useSelector((state: RootState) => state.auth.token);
   const [appIsReady, setAppIsReady] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -57,18 +59,6 @@ const RootNavigation = () => {
       "TT-Commons-Light": require("@fonts/TTCommons/TT-Commons-Light.otf"),
       "TT-Commons-Medium": require("@fonts/TTCommons/TT-Commons-Medium.otf"),
       "TT-Commons-Regular": require("@fonts/TTCommons/TT-Commons-Regular.otf"),
-    });
-
-    const texts = [Text, TextInput];
-    texts.forEach((v) => {
-      v.defaultProps = {
-        ...(v.defaultProps || {}),
-        allowFontScaling: false,
-        style: {
-          fontFamily: "NotoSansKR-Regular",
-          lineHeight: Platform.OS === "ios" ? 19 : 21,
-        },
-      };
     });
   };
 
@@ -108,7 +98,6 @@ const RootNavigation = () => {
 
   const prepare = async () => {
     try {
-      console.log(`App - Prepare!`);
       await dispatch(init());
       await fontSetting();
       timezoneSetting();
@@ -147,6 +136,8 @@ const RootNavigation = () => {
 };
 
 function App() {
+  const navigationRef = useNavigationContainerRef();
+  const routeNameRef = useRef<string>();
   const queryClient = new QueryClient();
   const linking = {
     prefixes: ["https://onyou.page.link"],
@@ -190,7 +181,7 @@ function App() {
             dangerIcon={<Ionicons name="alert-circle" size={16} color="white" />}
           >
             <ThemeProvider theme={lightTheme}>
-              <NavigationContainer linking={linking}>
+              <NavigationContainer ref={navigationRef} linking={linking}>
                 <RootNavigation />
               </NavigationContainer>
             </ThemeProvider>

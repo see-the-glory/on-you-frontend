@@ -35,6 +35,7 @@ import { useModalize } from "react-native-modalize";
 import TabBar from "@components/atoms/TabBar";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ClubStackParamList } from "@navigation/ClubStack";
+import { selectClubEvent, ClubEventParams } from "app/analytics";
 
 const Container = styled.View`
   flex: 1;
@@ -323,7 +324,7 @@ const ClubTopTabs: React.FC<NativeStackScreenProps<ClubStackParamList, "ClubTopT
       return toast.show("멤버 모집 기간이 아닙니다.", { type: "warning" });
     }
 
-    push("ClubJoin", { clubId });
+    push("ClubJoin", { clubId, clubName: clubData?.data.name });
   };
 
   const goToFeedCreation = () => {
@@ -400,6 +401,10 @@ const ClubTopTabs: React.FC<NativeStackScreenProps<ClubStackParamList, "ClubTopT
       },
     ]);
   };
+
+  useEffect(() => {
+    if (clubData?.data) selectClubEvent(clubData?.data);
+  }, [clubData]);
 
   useEffect(() => {
     dispatch(clubSlice.actions.initClub({ clubId }));

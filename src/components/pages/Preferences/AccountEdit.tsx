@@ -130,9 +130,10 @@ const AccountEdit: React.FC<NativeStackScreenProps<ProfileStackParamList, "Accou
   const mutation = useMutation<BaseResponse, ErrorResponse, UserUpdateRequest>(UserApi.updateUserInfo, {
     onSuccess: (res) => {
       toast.show("저장에 성공하였습니다.", { type: "success" });
-      DeviceEventEmitter.emit("ProfileRefresh");
       DeviceEventEmitter.emit("HomeAllRefetch");
+      DeviceEventEmitter.emit("ProfileRefresh");
       queryClient.invalidateQueries(["getMyProfile"]);
+
       goBack();
     },
     onError: (error) => {

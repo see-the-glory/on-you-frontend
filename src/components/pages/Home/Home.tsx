@@ -139,7 +139,6 @@ const Home: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Home">> = (
   });
 
   useEffect(() => {
-    console.log("Home - add listner");
     const homeFeedSubscription = DeviceEventEmitter.addListener("HomeAllRefetch", () => {
       onRefresh();
     });
@@ -153,7 +152,6 @@ const Home: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Home">> = (
     });
 
     return () => {
-      console.log("Home - remove listner");
       homeFeedSubscription.remove();
       homeNotiSubscription.remove();
       homeFeedScrollToTopSubscription.remove();

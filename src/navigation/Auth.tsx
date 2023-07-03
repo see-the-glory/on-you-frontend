@@ -12,7 +12,7 @@ export type AuthStackParamList = {
 
 const NativeStack = createNativeStackNavigator<AuthStackParamList>();
 
-const Auth: React.FC<NativeStackScreenProps<any, "Auth">> = () => {
+const Auth = () => {
   return (
     <NativeStack.Navigator initialRouteName="Main" screenOptions={{ presentation: "card", contentStyle: { backgroundColor: "white" }, headerShown: false }}>
       <NativeStack.Screen name="Main" component={Main} />

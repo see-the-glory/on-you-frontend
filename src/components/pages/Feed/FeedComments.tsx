@@ -15,6 +15,7 @@ import feedSlice from "redux/slices/feed";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { FeedStackParamList } from "@navigation/FeedStack";
+import { createCommentEvent } from "app/analytics";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -143,6 +144,7 @@ const FeedComments: React.FC<NativeStackScreenProps<FeedStackParamList, "FeedCom
 
   const createFeedCommentMutation = useMutation<BaseResponse, ErrorResponse, FeedCommentCreationRequest>(FeedApi.createFeedComment, {
     onSuccess: (res) => {
+      // createCommentEvent({comment_id: null, feed_id: feedId, club_id: clubId, user_id: null, comment_type: "normal"});
       setComment("");
       setParentUserName(undefined);
       setParentCommentId(undefined);

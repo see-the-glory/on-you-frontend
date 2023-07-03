@@ -1,6 +1,6 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useWindowDimensions, StatusBar, Animated, Platform } from "react-native";
 import { useModalize } from "react-native-modalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -23,6 +23,7 @@ import { lightTheme } from "app/theme";
 import { ProfileStackParamList } from "@navigation/ProfileStack";
 import { MainBottomTabParamList } from "@navigation/Tabs";
 import { RootStackParamList } from "@navigation/Root";
+import { selectProfileEvent } from "app/analytics";
 
 const Container = styled.View`
   flex: 1;
@@ -230,6 +231,10 @@ const Profile: React.FC<NativeStackScreenProps<ProfileStackParamList & MainBotto
       await Share.open(options);
     } catch (e) {}
   };
+
+  useEffect(() => {
+    if (!isMe && userId) selectProfileEvent(userId, profile?.data);
+  }, []);
 
   useFocusEffect(() => {
     // Android만 지원

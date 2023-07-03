@@ -9,6 +9,7 @@ import { useAppDispatch } from "redux/store";
 import { login } from "redux/slices/auth";
 import BottomButton from "@components/atoms/BottomButton";
 import { LoginStackParamList } from "@navigation/LoginStack";
+import { loginEvent } from "app/analytics";
 
 const Container = styled.View`
   width: 100%;
@@ -72,9 +73,10 @@ const Login: React.FC<NativeStackScreenProps<LoginStackParamList, "Login">> = ({
   const mutation = useMutation<LoginResponse, any, LoginRequest>(CommonApi.login, {
     onSuccess: async (res) => {
       if (res.status === 200) {
-        const token = res.token;
-        console.log(`Login: ${token}`);
-        if (token) await dispatch(login({ token }));
+        if (res.token) {
+          loginEvent();
+          await dispatch(login({ token: res.token }));
+        }
       } else if (res.status === 400) {
         toast.show(`아이디와 비밀번호가 잘못되었습니다.`, { type: "danger" });
       } else if (res.status === 404) {

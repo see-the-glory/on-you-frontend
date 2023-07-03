@@ -8,6 +8,7 @@ import { useToast } from "react-native-toast-notifications";
 import { Entypo } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ClubStackParamList } from "@navigation/ClubStack";
+import { clubJoinEvent } from "app/analytics";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -60,7 +61,7 @@ const MemoTextInput = styled.TextInput`
 const ClubJoin: React.FC<NativeStackScreenProps<ClubStackParamList, "ClubJoin">> = ({
   navigation: { navigate, goBack, setOptions },
   route: {
-    params: { clubId },
+    params: { clubId, clubName },
   },
 }) => {
   const [memo, setMemo] = useState<string>("");
@@ -70,6 +71,7 @@ const ClubJoin: React.FC<NativeStackScreenProps<ClubStackParamList, "ClubJoin">>
   const clubApplyMutation = useMutation<BaseResponse, ErrorResponse, ClubApplyRequest>(ClubApi.applyClub, {
     onSuccess: (res) => {
       toast.show(`가입 신청이 완료되었습니다.`, { type: "success" });
+      clubJoinEvent({ club_id: clubId, club_name: clubName ?? null });
       DeviceEventEmitter.emit("ClubRefetch");
       goBack();
     },

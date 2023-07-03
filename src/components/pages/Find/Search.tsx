@@ -9,6 +9,7 @@ import styled from "styled-components/native";
 import { Club, ClubApi, ClubsParams, ClubsResponse, ErrorResponse } from "api";
 import { RootStackParamList } from "@navigation/Root";
 import ClubList from "@components/organisms/ClubList";
+import { searchEvent } from "app/analytics";
 
 const Loader = styled.SafeAreaView`
   flex: 1;
@@ -121,6 +122,7 @@ const Search: React.FC<NativeStackScreenProps<RootStackParamList, "Search">> = (
     if (searchKeyword?.trim() === undefined || "") return toast.show(`검색어를 입력하세요.`, { type: "warning" });
     if (searchKeyword?.trim().length < 2) return toast.show(`2자 이상만 입력할 수 있습니다.`, { type: "warning" });
     const newParams = { keyword: searchKeyword?.trim() };
+    searchEvent(newParams.keyword);
     setParams(newParams);
   };
 
