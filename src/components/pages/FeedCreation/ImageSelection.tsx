@@ -12,6 +12,7 @@ import CustomText from "@components/atoms/CustomText";
 import { View } from "react-native";
 import FastImage from "react-native-fast-image";
 import { FeedStackParamList } from "@navigation/FeedStack";
+import { createFeedEvent } from "app/analytics";
 
 const Container = styled.View`
   flex: 1;
@@ -87,7 +88,7 @@ interface ImageBundle {
 const ImageSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "ImageSelection">> = ({
   navigation: { navigate, setOptions, goBack },
   route: {
-    params: { clubId },
+    params: { clubData },
   },
 }) => {
   const toast = useToast();
@@ -102,8 +103,11 @@ const ImageSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "Image
 
   const mutation = useMutation<BaseResponse, ErrorResponse, FeedCreationRequest>(FeedApi.createFeed, {
     onSuccess: (res) => {
-      DeviceEventEmitter.emit("HomeAllRefetch");
-      navigate("Tabs", { screen: "Home" });
+      if (res?.data) {
+        // createFeedEvent(res?.data, clubData);
+        DeviceEventEmitter.emit("HomeAllRefetch");
+        navigate("Tabs", { screen: "Home" });
+      }
     },
     onError: (error) => {
       console.log(`API ERROR | createFeed ${error.code} ${error.status}`);
@@ -159,7 +163,7 @@ const ImageSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "Image
     let requestData: FeedCreationRequest = {
       image,
       data: {
-        clubId,
+        clubId: clubData.id,
         content: content.trim(),
       },
     };

@@ -77,7 +77,6 @@ const UserNotification: React.FC<NativeStackScreenProps<ProfileStackParamList, "
 
   useEffect(() => {
     let userNotifSubs = DeviceEventEmitter.addListener("UserNotificationRefresh", () => {
-      console.log("UserNotification - Refresh Event");
       onRefresh();
     });
     return () => {

@@ -93,8 +93,6 @@ const SignUpConfirm: React.FC<NativeStackScreenProps<SignUpStackParamList, "Sign
       }
     },
     onError: (error) => {
-      console.log("--- regeister Error ---");
-      console.log(`error: ${error}`);
       toast.show(`회원가입에 실패했습니다. (Error Code: ${error})`, { type: "warning" });
     },
   });

@@ -12,6 +12,7 @@ import { RootState } from "redux/store/reducers";
 import { useAppDispatch } from "redux/store";
 import { updateUser } from "redux/slices/auth";
 import { ProfileStackParamList } from "@navigation/ProfileStack";
+import { setUserProperties } from "app/analytics";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -122,6 +123,7 @@ const Preferences: React.FC<NativeStackScreenProps<ProfileStackParamList, "Prefe
     data: userInfo,
   } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo", token], UserApi.getUserInfo, {
     onSuccess: (res) => {
+      setUserProperties(res.data.id, res.data.birthday, res.data.sex, res.data.organizationName);
       dispatch(updateUser({ user: res.data }));
     },
     onError: (error) => {
@@ -140,7 +142,6 @@ const Preferences: React.FC<NativeStackScreenProps<ProfileStackParamList, "Prefe
     });
 
     let subscription = DeviceEventEmitter.addListener("ProfileRefresh", () => {
-      console.log("Account - Refresh Event");
       userInfoRefetch();
     });
     return () => subscription.remove();

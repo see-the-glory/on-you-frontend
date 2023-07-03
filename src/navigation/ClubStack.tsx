@@ -20,7 +20,7 @@ export type ClubStackParamList = {
   ClubTopTabs: { clubId: number; isNew?: boolean };
   ClubScheduleAdd: { clubData: Club };
   ClubScheduleEdit: { clubData: Club; scheduleData: RefinedSchedule };
-  ClubJoin: { clubId: number };
+  ClubJoin: { clubId: number; clubName?: string };
   ClubNotification: { clubData: Club; clubRole: ClubRole };
   ClubApplication: { clubData: Club; actionId: number; actionerName?: string | null; actionerId?: number | null; message?: string | null; createdTime?: string; processDone?: boolean };
   ClubJoinReject: { clubId: number; actionId: number; actionerId?: number; actionerName?: string | null };

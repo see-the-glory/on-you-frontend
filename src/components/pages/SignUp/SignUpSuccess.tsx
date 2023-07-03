@@ -62,7 +62,6 @@ const SignUpSuccess: React.FC<NativeStackScreenProps<SignUpStackParamList, "Sign
     onSuccess: async (res) => {
       if (res.status === 200) {
         const token = res?.token;
-        console.log(`Login: ${token}`);
         if (token) await dispatch(login({ token }));
       } else if (res.status === 400) {
         toast.show(`아이디와 비밀번호가 잘못되었습니다.`, { type: "warning" });

@@ -96,13 +96,7 @@ const ClubSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "ClubSe
   };
 
   const goToImageSelection = (clubData: Club) => {
-    const imageSelectionProps = {
-      clubId: clubData?.id,
-    };
-    return navigate("FeedStack", {
-      screen: "ImageSelection",
-      params: imageSelectionProps,
-    });
+    return navigate("ImageSelection", { clubData });
   };
 
   useLayoutEffect(() => {

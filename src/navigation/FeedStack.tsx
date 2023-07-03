@@ -7,13 +7,13 @@ import ClubSelection from "@components/pages/FeedCreation/ClubSelection";
 import FeedSelection from "@components/pages/Feed/FeedSelection";
 import FeedLikes from "@components/pages/Feed/FeedLikes";
 import { lightTheme } from "app/theme";
-import { Feed, LikeUser } from "api";
+import { Club, Feed, LikeUser } from "api";
 import { RootStackParamList } from "./Root";
 
 export type FeedStackParamList = {
   FeedComments: { feedId: number; clubId: number };
   FeedLikes: { likeUsers: LikeUser[] };
-  ImageSelection: { clubId: number };
+  ImageSelection: { clubData: Club };
   ClubSelection: undefined;
   FeedSelection: { selectFeedId: number };
   FeedModification: { feedData: Feed };

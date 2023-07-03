@@ -28,6 +28,8 @@ import Parking from "@components/pages/Parking/Parking";
 import Search from "@components/pages/Find/Search";
 import { lightTheme } from "app/theme";
 import ChatStack, { ChatStackParamList } from "./ChatStack";
+import { clearUserProperties, setUserProperties } from "app/analytics";
+import { AOS_STORE_URL, IOS_STORE_URL } from "app/properties";
 
 export type RootStackParamList = {
   Tabs: NavigatorScreenParams<MainBottomTabParamList>;
@@ -95,15 +97,20 @@ const Root = () => {
   const toast = useToast();
   const queryClient = useQueryClient();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const { refetch: userInfoRefecth } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo"], UserApi.getUserInfo, {
+  const { data: userInfo, refetch: userInfoRefecth } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo"], UserApi.getUserInfo, {
     onSuccess: (res) => {
-      if (res.data) dispatch(updateUser({ user: res.data }));
+      if (res.data) {
+        console.log("root!");
+        setUserProperties(res.data.id, res.data.birthday, res.data.sex, res.data.organizationName);
+        dispatch(updateUser({ user: res.data }));
+      }
     },
     onError: (error) => {
       console.log(`API ERROR | getUserInfo ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
     enabled: false,
+    staleTime: Infinity,
   });
 
   const updateTargetTokenMutation = useMutation<BaseResponse, ErrorResponse, TargetTokenUpdateRequest>(UserApi.updateTargetToken);
@@ -143,8 +150,8 @@ const Root = () => {
   };
 
   const goToStore = () => {
-    if (Platform.OS === "android") Linking.openURL("https://play.google.com/store/apps/details?id=com.onyoufrontend");
-    else if (Platform.OS === "ios") Linking.openURL("itms-apps://apps.apple.com/kr/app/%EC%98%A8%EC%9C%A0/id1663717005");
+    if (Platform.OS === "android") Linking.openURL(AOS_STORE_URL);
+    else if (Platform.OS === "ios") Linking.openURL(IOS_STORE_URL);
   };
 
   const handleDynamicLink = (link: FirebaseDynamicLinksTypes.DynamicLink) => {
@@ -192,8 +199,6 @@ const Root = () => {
   };
 
   useEffect(() => {
-    console.log(`Root - useEffect!`);
-
     // User Infomation Resetting
     userInfoRefecth();
 
@@ -215,6 +220,8 @@ const Root = () => {
           if (isMultiUser) toast.show(`다른 기기에서의 로그인이 감지되어 로그아웃합니다.`, { type: "success" });
           else toast.show(`로그아웃 되었습니다.`, { type: "success" });
         }
+        queryClient.invalidateQueries({ queryKey: ["getUserInfo"] });
+        clearUserProperties();
         dispatch(feedSlice.actions.deleteFeed());
       } else toast.show(`로그아웃 실패.`, { type: "warning" });
     });
@@ -240,7 +247,6 @@ const Root = () => {
 
     // Firebase - bacgkround 에서 실행 중에 push 가 선택될 경우
     const unsubscribeNotification = messaging().onNotificationOpenedApp((message) => {
-      console.log("onNotificationOpenedApp --");
       handlePushMessage(message?.data);
     });
 
@@ -248,13 +254,11 @@ const Root = () => {
     messaging()
       .getInitialNotification()
       .then((message) => {
-        console.log("Firebase - getInitialNotification");
         handlePushMessage(message?.data);
       });
 
     // Notifee - 앱이 종료되었는데 push 가 선택될 경우
     notifee.getInitialNotification().then((message) => {
-      console.log("Notifee - getInitialNotification");
       handlePushMessage(message?.notification?.data);
     });
 
@@ -267,7 +271,6 @@ const Root = () => {
     });
 
     return () => {
-      console.log(`Root - remove!`);
       logoutSubScription.remove();
       fcmUnsubscribe();
       notiUnsubscribe();
