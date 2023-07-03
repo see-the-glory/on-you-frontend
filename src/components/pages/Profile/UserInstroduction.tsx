@@ -76,40 +76,40 @@ const ClubThumbnail = styled(FadeFastImage)`
 `;
 
 const HeaderTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
-  color: ${(props: any) => props.theme.accentColor};
+  font-family: ${(props) => props.theme.koreanFontSB};
+  color: ${(props) => props.theme.accentColor};
   font-size: 14px;
   line-height: 17px;
 `;
 
 const AboutText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   color: #555555;
   font-size: 14px;
 `;
 
 const PersonalText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 11px;
   margin-left: 5px;
 `;
 
 const ClubNameText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 16px;
   margin-right: 5px;
 `;
 
 const ClubMemberCount = styled.Text`
-  font-family: ${(props: any) => props.theme.englishFontM};
-  color: ${(props: any) => props.theme.accentColor};
+  font-family: ${(props) => props.theme.englishFontM};
+  color: ${(props) => props.theme.accentColor};
   font-size: 12px;
   margin-left: -2px;
   margin-bottom: 1px;
 `;
 
 const ClubCategoryText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   margin: 1px 0px;
   margin-right: 5px;
@@ -117,7 +117,7 @@ const ClubCategoryText = styled.Text`
 `;
 
 const ClubRoleText = styled.Text`
-  font-family: ${(props: any) => props.theme.englishFontR};
+  font-family: ${(props) => props.theme.englishFontR};
   font-size: 10px;
   line-height: 13px;
   color: white;

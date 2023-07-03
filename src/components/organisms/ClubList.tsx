@@ -24,20 +24,20 @@ const CategoryBundle = styled.View`
 `;
 
 const Title = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 14px;
   color: #2b2b2b;
 `;
 
 const Description = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #6f6f6f;
 `;
 
 interface ClubListProps {
   clubData: Club;
-  onPress: Function;
+  onPress: () => void;
 }
 
 const ClubList: React.FC<ClubListProps> = ({ clubData, onPress }) => {

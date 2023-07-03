@@ -8,6 +8,8 @@ import styled from "styled-components/native";
 import { BaseResponse, CommonApi, ErrorResponse, Notification, NotificationsResponse, ReadActionRequest, UserApi } from "api";
 import { ProfileStackParamList } from "@navigation/ProfileStack";
 import NotificationItem from "@components/organisms/NotificationItem";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "navigation/Root";
 
 const SCREEN_PADDING_SIZE = 20;
 
@@ -28,7 +30,7 @@ const EmptyView = styled.View`
 `;
 
 const EmptyText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #acacac;
@@ -36,15 +38,15 @@ const EmptyText = styled.Text`
   align-items: center;
 `;
 
-const UserNotification: React.FC<NativeStackScreenProps<ProfileStackParamList, "UserNotification">> = ({ navigation: { navigate, goBack, setOptions } }) => {
+const UserNotification: React.FC<NativeStackScreenProps<ProfileStackParamList, "UserNotification">> = ({ navigation: { goBack, setOptions } }) => {
   const toast = useToast();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const {
     data: notifications,
     isLoading: notiLoading,
     refetch: notiRefetch,
   } = useQuery<NotificationsResponse, ErrorResponse>(["getUserNotifications"], UserApi.getUserNotifications, {
-    onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getUserNotifications ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
@@ -52,7 +54,6 @@ const UserNotification: React.FC<NativeStackScreenProps<ProfileStackParamList, "
   });
 
   const readActionMutation = useMutation<BaseResponse, ErrorResponse, ReadActionRequest>(CommonApi.readAction, {
-    onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | readAction ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
@@ -76,7 +77,7 @@ const UserNotification: React.FC<NativeStackScreenProps<ProfileStackParamList, "
   }, []);
 
   useEffect(() => {
-    let userNotifSubs = DeviceEventEmitter.addListener("UserNotificationRefresh", () => {
+    const userNotifSubs = DeviceEventEmitter.addListener("UserNotificationRefresh", () => {
       onRefresh();
     });
     return () => {
@@ -91,7 +92,7 @@ const UserNotification: React.FC<NativeStackScreenProps<ProfileStackParamList, "
     if (item.read || item.done) return;
     const requestData: ReadActionRequest = { actionId: item.actionId };
     readActionMutation.mutate(requestData, {
-      onSuccess: (res) => {
+      onSuccess: () => {
         item.read = true;
       },
     });
@@ -111,13 +112,13 @@ const UserNotification: React.FC<NativeStackScreenProps<ProfileStackParamList, "
         createdTime: item.created,
         processDone: item.done || item.processDone,
       };
-      return navigate("ClubStack", {
+      return navigation.navigate("ClubStack", {
         screen: "ClubApplication",
         params: clubApplicationProps,
       });
     } else if (item.actionType === "APPROVE") {
       readAction(item);
-      return navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: item.actionClubId } });
+      return navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: item.actionClubId } });
     } else if (item.actionType === "REJECT") {
       readAction(item);
       const clubJoinRejectMessageProps = {
@@ -125,16 +126,16 @@ const UserNotification: React.FC<NativeStackScreenProps<ProfileStackParamList, "
         message: item.message,
         createdTime: item.created,
       };
-      return navigate("ClubStack", { screen: "ClubJoinRejectMessage", params: clubJoinRejectMessageProps });
+      return navigation.navigate("ClubStack", { screen: "ClubJoinRejectMessage", params: clubJoinRejectMessageProps });
     } else if (item.actionType === "FEED_COMMENT") {
       readAction(item);
-      return navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: item.actionFeedId } });
+      return navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: item.actionFeedId } });
     } else if (item.actionType === "SCHEDULE_CREATE") {
       readAction(item);
-      return navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: item.actionClubId } });
+      return navigation.navigate("ClubStack", { screen: "ClubTopTabs", params: { clubId: item.actionClubId } });
     } else if (item.actionType === "COMMENT_REPLY") {
       readAction(item);
-      return navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: item.actionFeedId } });
+      return navigation.navigate("FeedStack", { screen: "FeedSelection", params: { selectFeedId: item.actionFeedId } });
     }
   };
 
@@ -149,10 +150,10 @@ const UserNotification: React.FC<NativeStackScreenProps<ProfileStackParamList, "
         contentContainerStyle={{ flexGrow: 1, paddingVertical: 10, paddingHorizontal: SCREEN_PADDING_SIZE }}
         refreshing={refreshing}
         onRefresh={onRefresh}
-        data={notifications && Array.isArray(notifications?.data) ? [...notifications?.data].filter((item) => handlingActions.includes(item.actionType ?? "")).reverse() : []}
+        data={notifications && Array.isArray(notifications?.data) ? [...(notifications?.data ?? [])].filter((item) => handlingActions.includes(item.actionType ?? "")).reverse() : []}
         ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
         keyExtractor={(item: Notification, index: number) => String(index)}
-        renderItem={({ item, index }: { item: Notification; index: number }) => (
+        renderItem={({ item }: { item: Notification }) => (
           <TouchableOpacity onPress={() => onPressItem(item)}>
             <NotificationItem notificationData={item} notificationType={"USER"} clubData={{ id: item.actionClubId, name: item.actionClubName }} />
           </TouchableOpacity>

@@ -65,7 +65,7 @@ const RoundingView = styled.View`
   padding: 3px 10px;
 `;
 const CommentInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   flex: 1;
   margin: 1px 0px;
@@ -85,11 +85,11 @@ const SubmitLoadingView = styled.View`
   margin-bottom: 8px;
 `;
 const SubmitButtonText = styled.Text<{ disabled: boolean }>`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 14px;
   line-height: 20px;
   color: #63abff;
-  opacity: ${(props: any) => (props.disabled ? 0.3 : 1)};
+  opacity: ${(props) => (props.disabled ? 0.3 : 1)};
 `;
 
 const TopTab = createMaterialTopTabNavigator();
@@ -187,7 +187,7 @@ const ClubTopTabs: React.FC<NativeStackScreenProps<ClubStackParamList, "ClubTopT
       for (let i = 0; i < res?.data?.length; ++i) {
         const date = moment(res.data[i].startDate).tz("Asia/Seoul");
         const dayOfWeek = week[date.day()];
-        let refined: RefinedSchedule = {
+        const refined: RefinedSchedule = {
           id: res.data[i].id,
           location: res.data[i].location,
           name: res.data[i].name,
@@ -260,7 +260,7 @@ const ClubTopTabs: React.FC<NativeStackScreenProps<ClubStackParamList, "ClubTopT
   const guestCommentSubmit = () => {
     if (!validation) return toast.show(`글을 입력하세요.`, { type: "warning" });
 
-    let requestData: GuestCommentRequest = {
+    const requestData: GuestCommentRequest = {
       clubId,
       content: guestComment.trim(),
     };
@@ -411,13 +411,10 @@ const ClubTopTabs: React.FC<NativeStackScreenProps<ClubStackParamList, "ClubTopT
 
     const scrollListener = scrollY.addListener(({ value }) => {});
 
-    console.log("ClubTopTabs - add listner");
     const scheduleSubscription = DeviceEventEmitter.addListener("SchedulesRefetch", () => {
-      console.log("ClubTopTabs - Schedule Refetch Event");
       schedulesRefetch();
     });
     const clubSubscription = DeviceEventEmitter.addListener("ClubRefetch", () => {
-      console.log("ClubTopTabs - ClubData, ClubRole, ClubNoti Refetch Event");
       clubDataRefetch();
       clubRoleRefetch();
       clubNotiRefetch();
@@ -458,12 +455,11 @@ const ClubTopTabs: React.FC<NativeStackScreenProps<ClubStackParamList, "ClubTopT
       keyboardDidHideListener.remove();
       backHandler.remove();
       dispatch(clubSlice.actions.initClub({ clubId }));
-      console.log("ClubTopTabs - remove listner & delete clubslice");
     };
   }, []);
 
   const renderClubHome = useCallback(
-    (props: any) => (
+    (props) => (
       <ClubHome
         {...props}
         clubData={clubData?.data}
@@ -481,7 +477,7 @@ const ClubTopTabs: React.FC<NativeStackScreenProps<ClubStackParamList, "ClubTopT
   );
 
   const renderClubFeed = useCallback(
-    (props: any) => (
+    (props) => (
       <ClubFeed
         {...props}
         scrollY={scrollY}

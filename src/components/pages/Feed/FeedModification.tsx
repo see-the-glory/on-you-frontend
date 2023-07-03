@@ -4,7 +4,7 @@ import { ActivityIndicator, Alert, DeviceEventEmitter, Dimensions, KeyboardAvoid
 import { useSelector } from "react-redux";
 import { useMutation, useQuery } from "react-query";
 import { FeedApi, FeedUpdateRequest, UserApi, Club, ErrorResponse, MyClubsResponse, BaseResponse } from "api";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { Modalize } from "react-native-modalize";
 import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import Carousel from "@components/atoms/Carousel";
@@ -18,6 +18,7 @@ import Tag from "@components/atoms/Tag";
 import { FeedStackParamList } from "@navigation/FeedStack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import FadeFastImage from "@components/atoms/FadeFastImage";
+import { RootStackParamList } from "navigation/Root";
 
 const Loader = styled.View`
   flex: 1;
@@ -43,7 +44,7 @@ const UserInfoSubButton = styled.TouchableOpacity`
 `;
 
 const NameText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontEB};
+  font-family: ${(props) => props.theme.koreanFontEB};
   font-size: 14px;
   line-height: 16px;
   color: #2b2b2b;
@@ -57,7 +58,7 @@ const ContentInfo = styled.View`
 `;
 
 const InfoText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #b5b5b5;
 `;
@@ -69,7 +70,7 @@ const ContentArea = styled.View`
 `;
 
 const FeedTextInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   width: 100%;
   height: 300px;
   font-size: 14px;
@@ -93,10 +94,10 @@ const HeaderNameView = styled.View`
 `;
 
 const ModalClubName = styled.Text<{ selected: boolean }>`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 14px;
   line-height: 16px;
-  color: ${(props: any) => (props.selected ? "#B0B0B0" : "#2B2B2B")};
+  color: ${(props) => (props.selected ? "#B0B0B0" : "#2B2B2B")};
 `;
 
 const ModalClubNameArea = styled.View`
@@ -114,7 +115,7 @@ const ModalContainText = styled.View`
 `;
 
 const IntroTextLeft = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   text-align: left;
   font-size: 12px;
   padding-left: 20px;
@@ -122,7 +123,7 @@ const IntroTextLeft = styled.Text`
 `;
 
 const IntroTextRight = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   text-align: right;
   font-size: 12px;
   padding-right: 20px;
@@ -137,14 +138,14 @@ const FeedModifyFin = styled.Text`
 `;
 
 const FeedModification: React.FC<NativeStackScreenProps<FeedStackParamList, "FeedModification">> = ({
-  navigation: { navigate, goBack },
+  navigation: { goBack, setOptions },
   route: {
     params: { feedData },
   },
 }) => {
   const me = useSelector((state: RootState) => state.auth.user);
   const [content, setContent] = useState<string>(feedData.content);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const modalizeRef = useRef<Modalize>(null);
   const [clubId, setClubId] = useState<number>(feedData.clubId);
   const [clubName, setClubName] = useState<string>(feedData.clubName);
@@ -153,15 +154,14 @@ const FeedModification: React.FC<NativeStackScreenProps<FeedStackParamList, "Fee
   const maxLength = 1000;
 
   const onOpen = () => {
-    console.log("Before Modal Passed FeedId");
     modalizeRef.current?.open();
   };
 
   const mutation = useMutation<BaseResponse, ErrorResponse, FeedUpdateRequest>(FeedApi.updateFeed, {
-    onSuccess: (res) => {
+    onSuccess: () => {
       toast.show(`피드가 수정되었습니다.`, { type: "success" });
       DeviceEventEmitter.emit("HomeAllRefetch");
-      navigate("Tabs", { screen: "Home" });
+      navigation.navigate("Tabs", { screen: "Home" });
     },
     onError: (error) => {
       console.log(`API ERROR | updateFeed ${error.code} ${error.status}`);
@@ -170,7 +170,7 @@ const FeedModification: React.FC<NativeStackScreenProps<FeedStackParamList, "Fee
   });
 
   //피드업데이트
-  const FixComplete = async () => {
+  const FixComplete = () => {
     if (content?.length == 0) {
       Alert.alert("글을 수정하세요");
     } else {
@@ -186,7 +186,7 @@ const FeedModification: React.FC<NativeStackScreenProps<FeedStackParamList, "Fee
     }
   };
   useLayoutEffect(() => {
-    navigation.setOptions({
+    setOptions({
       headerLeft: () => (
         <TouchableOpacity onPress={() => goBack()}>
           <Entypo name="chevron-thin-left" size={20} color="black" />
@@ -214,15 +214,14 @@ const FeedModification: React.FC<NativeStackScreenProps<FeedStackParamList, "Fee
   }, []);
 
   const { isLoading: clubInfoLoading, data: club } = useQuery<MyClubsResponse, ErrorResponse>(["getMyClubs"], UserApi.getMyClubs, {
-    onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getMyClubs ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
     },
   });
 
-  const ChangeClub = (id: any, name: any) => {
-    setClubName(name);
+  const ChangeClub = (id: number, name?: string) => {
+    setClubName(name ?? "");
     setClubId(id);
     modalizeRef.current?.close();
   };

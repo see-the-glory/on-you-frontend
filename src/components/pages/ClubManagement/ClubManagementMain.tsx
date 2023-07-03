@@ -226,7 +226,7 @@ const ClubManagementMain: React.FC<NativeStackScreenProps<ClubManagementStackPar
       {
         text: "예",
         onPress: () => {
-          let requestData: ClubDeletionRequest = {
+          const requestData: ClubDeletionRequest = {
             clubId,
           };
           deleteClubMutation.mutate(requestData);
@@ -236,7 +236,7 @@ const ClubManagementMain: React.FC<NativeStackScreenProps<ClubManagementStackPar
   };
 
   const onPressToggle = () => {
-    let updateData: ClubUpdateRequest = {
+    const updateData: ClubUpdateRequest = {
       data: {
         recruitStatus: isToggle ? "CLOSE" : "OPEN",
         category1Id: clubData?.data?.categories?.length > 0 ? clubData?.data?.categories[0].id : -1,

@@ -25,7 +25,7 @@ const ContentInfo = styled.View`
 `;
 
 const InfoText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #b5b5b5;
 `;
@@ -37,7 +37,7 @@ const ContentView = styled.View`
 `;
 
 const FeedTextInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   width: 100%;
   height: 300px;
   font-size: 14px;
@@ -51,8 +51,8 @@ const HeaderView = styled.View`
 `;
 
 const ImageSelectionButton = styled.TouchableOpacity<{ size: number }>`
-  width: ${(props: any) => (props.size ? 55 : 0)}px;
-  height: ${(props: any) => (props.size ? 55 : 0)}px;
+  width: ${(props) => (props.size ? 55 : 0)}px;
+  height: ${(props) => (props.size ? 55 : 0)}px;
   background-color: #ececec;
 `;
 
@@ -64,14 +64,14 @@ const PlusText = styled.Text`
 `;
 
 const HeaderText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #979797;
 `;
 
 const SelectImage = styled(FastImage)<{ size: number }>`
-  width: ${(props: any) => (props.size ? 55 : 0)}px;
-  height: ${(props: any) => (props.size ? 55 : 0)}px;
+  width: ${(props) => (props.size ? 55 : 0)}px;
+  height: ${(props) => (props.size ? 55 : 0)}px;
 `;
 
 const CancelIcon = styled.TouchableOpacity`
@@ -150,7 +150,7 @@ const ImageSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "Image
     if (imageURLs.length == 0) return toast.show(`이미지를 1개 이상 선택하세요.`, { type: "warning" });
     if (content.length == 0) return toast.show(`글에 내용이 없습니다.`, { type: "warning" });
 
-    let image: ImageType[] = [];
+    const image: ImageType[] = [];
     for (let i = 0; i < imageURLs.length; i++) {
       const splitedURI = String(imageURLs[i].cropped).split("/");
       image.push({
@@ -160,7 +160,7 @@ const ImageSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "Image
       });
     }
 
-    let requestData: FeedCreationRequest = {
+    const requestData: FeedCreationRequest = {
       image,
       data: {
         clubId: clubData.id,
@@ -185,9 +185,9 @@ const ImageSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "Image
         return;
       }
 
-      let imageBundle: ImageBundle[] = [];
+      const imageBundle: ImageBundle[] = [];
       for (let i = 0; i < newImages.length; i++) {
-        let cropped = await ImagePicker.openCropper({
+        const cropped = await ImagePicker.openCropper({
           mediaType: "photo",
           path: newImages[i].path,
           width: 1080,
@@ -213,7 +213,7 @@ const ImageSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "Image
   const cropImage = async (index?: number) => {
     if (index === undefined) return;
     try {
-      let cropped = await ImagePicker.openCropper({
+      const cropped = await ImagePicker.openCropper({
         mediaType: "photo",
         path: imageURLs[index].original,
         width: 1080,

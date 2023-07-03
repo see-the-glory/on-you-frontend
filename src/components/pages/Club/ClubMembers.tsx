@@ -64,17 +64,14 @@ const ClubMembers: React.FC<NativeStackScreenProps<ClubStackParamList, "ClubMemb
         memberList.push(members[i]);
       }
     }
-    for (var i = 0; i < memberList.length; i += memberCountPerLine) {
+    for (let i = 0; i < memberList.length; i += memberCountPerLine) {
       memberBundle.push(memberList.slice(i, i + memberCountPerLine));
     }
-    for (var i = 0; i < managerList.length; i += memberCountPerLine) {
+    for (let i = 0; i < managerList.length; i += memberCountPerLine) {
       managerBundle.push(managerList.slice(i, i + memberCountPerLine));
     }
     setMemberData(memberBundle);
     setManagerData(managerBundle);
-
-    console.log(memberBundle);
-    console.log(managerBundle);
   }, []);
 
   useLayoutEffect(() => {

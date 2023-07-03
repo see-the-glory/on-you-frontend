@@ -24,7 +24,7 @@ const Header = styled.View`
   margin-top: 3px;
 `;
 const HeaderTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 18px;
   line-height: 22px;
   color: #2b2b2b;
@@ -32,7 +32,7 @@ const HeaderTitle = styled.Text`
 `;
 
 const HeaderText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   line-height: 18px;
   color: #b0b0b0;
@@ -56,14 +56,14 @@ const ItemSub = styled.View`
 `;
 
 const ItemTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 18px;
   line-height: 21px;
   color: #2b2b2b;
 `;
 
 const ItemText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #b0b0b0;
 `;

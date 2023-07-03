@@ -14,7 +14,7 @@ import { RootStackParamList } from "./Root";
 import Chat from "@components/pages/Chat/Chat";
 
 const Container = styled.View<{ height: number }>`
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
 `;
 
 const TabBarContainer = styled.View<{ height: number }>`
@@ -22,7 +22,7 @@ const TabBarContainer = styled.View<{ height: number }>`
   bottom: 0px;
   flex-direction: row;
   width: 100%;
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   justify-content: space-around;
   align-items: center;
   background-color: white;
@@ -31,36 +31,36 @@ const TabBarContainer = styled.View<{ height: number }>`
 const ShadowBox = styled.View<{ height: number }>`
   position: absolute;
   width: 100%;
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   background-color: white;
   box-shadow: 0px 9px 6px gray;
 `;
 
 const SlidingTabContainer = styled.View<{ tabWidth: number }>`
   position: absolute;
-  width: ${(props: any) => props.tabWidth}px;
+  width: ${(props) => props.tabWidth}px;
   left: 0;
   align-items: center;
   box-shadow: 1px 1px 3px gray;
 `;
 
 const Circle = styled.View<{ tabWidth: number }>`
-  width: ${(props: any) => props.tabWidth * 1.8}px;
-  height: ${(props: any) => props.tabWidth * 1.9}px;
+  width: ${(props) => props.tabWidth * 1.8}px;
+  height: ${(props) => props.tabWidth * 1.9}px;
   bottom: ${Platform.OS === "ios" ? 18 : 16}px;
-  border-radius: ${(props: any) => props.tabWidth}px;
+  border-radius: ${(props) => props.tabWidth}px;
   background-color: white;
 `;
 
 const IconButton = styled.TouchableOpacity<{ tabPaddingBottom: number }>`
   align-items: center;
   padding-top: 5px;
-  padding-bottom: ${(props: any) => props.tabPaddingBottom}px;
+  padding-bottom: ${(props) => props.tabPaddingBottom}px;
 `;
 
 const IconName = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
-  color: ${(props: any) => props.theme.primaryColor};
+  font-family: ${(props) => props.theme.koreanFontR};
+  color: ${(props) => props.theme.primaryColor};
   font-size: 11px;
   margin-top: 2px;
 `;

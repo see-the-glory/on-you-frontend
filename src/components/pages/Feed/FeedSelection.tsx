@@ -57,7 +57,7 @@ const FeedSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "FeedSe
   });
 
   const complainMutation = useMutation<BaseResponse, ErrorResponse, FeedReportRequest>(FeedApi.reportFeed, {
-    onSuccess: (res) => {
+    onSuccess: () => {
       toast.show(`신고 요청이 완료 되었습니다.`, { type: "success" });
     },
     onError: (error) => {
@@ -67,7 +67,7 @@ const FeedSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "FeedSe
   });
 
   const deleteFeedMutation = useMutation<BaseResponse, ErrorResponse, FeedDeletionRequest>(FeedApi.deleteFeed, {
-    onSuccess: (res) => {
+    onSuccess: () => {
       toast.show(`게시글이 삭제되었습니다.`, { type: "success" });
       DeviceEventEmitter.emit("HomeAllRefetch");
       DeviceEventEmitter.emit("ClubFeedRefetch");
@@ -82,7 +82,7 @@ const FeedSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "FeedSe
   const likeFeedMutation = useMutation<BaseResponse, ErrorResponse, FeedLikeRequest>(FeedApi.likeFeed);
 
   const blockUserMutation = useMutation<BaseResponse, ErrorResponse, UserBlockRequest>(UserApi.blockUser, {
-    onSuccess: (res) => {
+    onSuccess: () => {
       toast.show(`사용자를 차단했습니다.`, { type: "success" });
       DeviceEventEmitter.emit("ClubFeedRefetch");
       closeFeedOption();
@@ -138,7 +138,7 @@ const FeedSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "FeedSe
   const likeFeed = useCallback((feedIndex?: number, feedId?: number) => {
     const requestData: FeedLikeRequest = { feedId: selectFeedId };
     likeFeedMutation.mutate(requestData, {
-      onSuccess: (res) => {
+      onSuccess: () => {
         // setFeedData((prev) => {
         //   if (!prev) return;
         //   if (prev.likeYn) prev.likesCount--;
@@ -190,7 +190,7 @@ const FeedSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "FeedSe
         text: "예",
         onPress: () => {
           feedData?.imageUrls?.map((url) => {
-            let fileName = url.split("/").pop();
+            const fileName = url.split("/").pop();
             let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DownloadDir}` : `${RNFetchBlob.fs.dirs.CacheDir}`;
             path += `/OnYou/${fileName}`;
             RNFetchBlob.config({
@@ -244,8 +244,7 @@ const FeedSelection: React.FC<NativeStackScreenProps<FeedStackParamList, "FeedSe
   }, []);
 
   useEffect(() => {
-    let feedRefetchSubscription = DeviceEventEmitter.addListener("SelectFeedRefetch", () => {
-      console.log("Feed Selection - Feed Refetch Event");
+    const feedRefetchSubscription = DeviceEventEmitter.addListener("SelectFeedRefetch", () => {
       feedRefetch();
     });
     return () => {

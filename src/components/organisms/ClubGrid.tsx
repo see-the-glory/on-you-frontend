@@ -17,27 +17,27 @@ const ThumbnailView = styled.View`
 
 const ThumbnailImage = styled(FastImage)<{ size: number }>`
   position: absolute;
-  width: ${(props: any) => props.size}px;
-  height: ${(props: any) => props.size}px;
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
 `;
 
 const Gradient = styled(LinearGradient)<{ size: number }>`
   padding: 0px 10px 0px 10px;
-  width: ${(props: any) => props.size}px;
-  height: ${(props: any) => props.size}px;
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
   justify-content: flex-end;
   align-items: flex-start;
 `;
 
 const RecruitView = styled.View`
-  background-color: ${(props: any) => props.theme.accentColor};
+  background-color: ${(props) => props.theme.accentColor};
   padding: 1.5px 5px;
   border-radius: 3px;
   margin-bottom: 3px;
 `;
 
 const RecruitText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 10px;
   line-height: 11px;
   color: white;
@@ -52,7 +52,7 @@ const TitleView = styled.View`
 `;
 
 const ClubNameText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   flex: 5;
   font-size: 16px;
   line-height: 19px;
@@ -67,14 +67,14 @@ const TitleViewRight = styled.View`
 `;
 
 const Number = styled.Text`
-  font-family: ${(props: any) => props.theme.englishFontM};
+  font-family: ${(props) => props.theme.englishFontM};
   margin-left: 2px;
   color: white;
   font-size: 10px;
 `;
 
 const ClubInfo = styled.View<{ width: number }>`
-  width: ${(props: any) => (props.width ? `${props.width}px` : "100%")};
+  width: ${(props) => (props.width ? `${props.width}px` : "100%")};
   padding: 0px 10px;
   justify-content: space-evenly;
 `;
@@ -91,7 +91,7 @@ const DescView = styled.View`
   margin: 5px 0px;
 `;
 const ShortDescText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   color: #6f6f6f;
   font-size: 12px;
 `;

@@ -29,27 +29,27 @@ const ContentItem = styled.View<{ error?: boolean }>`
   width: 100%;
   flex: 1;
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#cecece")};
+  border-bottom-color: ${(props) => (props.error ? props.theme.accentColor : "#cecece")};
   margin: 10px 0px;
 `;
 
 const ItemTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 13px;
   color: #b0b0b0;
   margin-bottom: 5px;
 `;
 
 const ItemText = styled.Text<{ disabled: boolean }>`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   padding: 2px 0px;
   font-size: 15px;
   line-height: 22px;
-  color: ${(props: any) => (props.disabled ? "#6F6F6F" : "black")};
+  color: ${(props) => (props.disabled ? "#6F6F6F" : "black")};
 `;
 
 const ItemTextInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 15px;
   flex: 1;
   margin-bottom: ${Platform.OS === "ios" ? 3 : 0}px;
@@ -69,8 +69,8 @@ const ValidationItem = styled.View`
 `;
 
 const ValidationText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
-  color: ${(props: any) => props.theme.accentColor};
+  font-family: ${(props) => props.theme.koreanFontR};
+  color: ${(props) => props.theme.accentColor};
   font-size: 10px;
 `;
 
@@ -93,7 +93,7 @@ const ImagePickerButton = styled.TouchableOpacity`
 `;
 
 const ProfileText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR}
+  font-family: ${(props) => props.theme.koreanFontR}
   margin-top: 10px;
   font-size: 14px;
   color: #2995fa;
@@ -168,8 +168,8 @@ const AccountEdit: React.FC<NativeStackScreenProps<ProfileStackParamList, "Accou
 
   const pickImage = async () => {
     try {
-      let image = await ImagePicker.openPicker({ mediaType: "photo" });
-      let croped = await ImagePicker.openCropper({
+      const image = await ImagePicker.openPicker({ mediaType: "photo" });
+      const croped = await ImagePicker.openCropper({
         mediaType: "photo",
         path: image.path,
         width: 1080,

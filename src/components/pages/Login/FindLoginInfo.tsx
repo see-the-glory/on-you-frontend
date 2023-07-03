@@ -35,17 +35,17 @@ const Button = styled.TouchableHighlight`
   height: 55px;
   border-radius: 30px;
   border-width: 1px;
-  border-color: ${(props: any) => props.theme.primaryColor};
+  border-color: ${(props) => props.theme.primaryColor};
   background-color: #fff;
   margin-bottom: 25px;
 `;
 
 const Title = styled.Text<{ color: string }>`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-family: ${(props) => props.theme.koreanFontSB};
   line-height: 26px;
   font-size: 22px;
   padding-left: 5px;
-  color: ${(props: any) => props.color};
+  color: ${(props) => props.color};
 `;
 
 const FindLoginInfo: React.FC<NativeStackScreenProps<LoginStackParamList, "FindLoginInfo">> = ({ navigation: { navigate } }) => {

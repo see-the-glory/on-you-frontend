@@ -2,49 +2,49 @@ import React, { useRef } from "react";
 import styled from "styled-components/native";
 import FastImage from "react-native-fast-image";
 import { Iconify } from "react-native-iconify";
-import { Animated, View } from "react-native";
+import { Animated } from "react-native";
 
 const Container = styled.TouchableOpacity<{ size: number; kerning: number; opacity: number }>`
   position: relative;
   justify-content: center;
   align-items: center;
-  margin-right: ${(props: any) => props.kerning}px;
-  opacity: ${(props: any) => props.opacity};
+  margin-right: ${(props) => props.kerning}px;
+  opacity: ${(props) => props.opacity};
 `;
 
 const BadgeIcon = styled.View<{ size: number }>`
   position: absolute;
   z-index: 2;
   elevation: 2;
-  top: ${(props: any) => props.size * 0.58}px;
+  top: ${(props) => props.size * 0.58}px;
   right: 0%;
-  width: ${(props: any) => props.size * 0.4}px;
-  height: ${(props: any) => props.size * 0.4}px;
-  background-color: ${(props: any) => props.theme.accentColor};
-  border-radius: ${(props: any) => props.size / 2}px;
+  width: ${(props) => props.size * 0.4}px;
+  height: ${(props) => props.size * 0.4}px;
+  background-color: ${(props) => props.theme.accentColor};
+  border-radius: ${(props) => props.size / 2}px;
   border: 1px solid white;
   justify-content: center;
   align-items: center;
 `;
 
 const Backplate = styled.View<{ size: number }>`
-  width: ${(props: any) => props.size}px;
-  height: ${(props: any) => props.size}px;
-  border-radius: ${(props: any) => props.size / 2}px;
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
+  border-radius: ${(props) => props.size / 2}px;
   justify-content: center;
   align-items: center;
   background-color: #e3e3e3;
 `;
 
 const IconImage = styled(FastImage)<{ size: number }>`
-  width: ${(props: any) => props.size}px;
-  height: ${(props: any) => props.size}px;
-  border-radius: ${(props: any) => props.size / 2}px;
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
+  border-radius: ${(props) => props.size / 2}px;
   border: 0.2px solid #c4c4c4;
 `;
 
 const CircleName = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 11px;
   margin-top: 4px;
 `;
@@ -75,7 +75,7 @@ const CircleIcon: React.FC<CircleIconProps> = ({ size, uri, name, badge, kerning
 
   return (
     <Container size={size} kerning={kerning ?? 0} opacity={opacity ?? 1} activeOpacity={1} onPress={onPress}>
-      {["MASTER", "MANAGER"].includes(badge) ? (
+      {["MASTER", "MANAGER"].includes(badge ?? "") ? (
         <AnimatedBadgeIcon size={size} style={{ opacity: animatedOpacity }}>
           {badge === "MASTER" ? <Iconify icon="ph:star-fill" size={size * 0.23} color="white" /> : <Iconify icon="fluent-mdl2:skype-check" size={size * 0.23} color="white" />}
         </AnimatedBadgeIcon>

@@ -26,8 +26,8 @@ const Loader = styled.View`
 
 const Break = styled.View<{ sep: number }>`
   width: 100%;
-  margin-bottom: ${(props: any) => props.sep}px;
-  margin-top: ${(props: any) => props.sep}px;
+  margin-bottom: ${(props) => props.sep}px;
+  margin-top: ${(props) => props.sep}px;
   border-bottom-width: 1px;
   border-bottom-color: #e3e3e3;
   opacity: 0.5;
@@ -48,31 +48,31 @@ const TitleView = styled.View`
 `;
 
 const SectionTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 15px;
-  color: ${(props: any) => props.theme.primaryColor};
+  color: ${(props) => props.theme.primaryColor};
 `;
 const SectionDetailButton = styled.TouchableOpacity``;
 const SectionText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #aaaaaa;
 `;
 
 const ContentView = styled.View<{ paddingSize?: number }>`
-  padding-left: ${(props: any) => props.paddingSize ?? 0}px;
-  padding-right: ${(props: any) => props.paddingSize ?? 0}px;
+  padding-left: ${(props) => props.paddingSize ?? 0}px;
+  padding-right: ${(props) => props.paddingSize ?? 0}px;
 `;
 
 const ContentText = styled(LinkedText)`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #0a0a0a;
 `;
 
 const ContentSubText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 13px;
   color: #828282;
 `;
@@ -98,7 +98,7 @@ const ScheduleAddView = styled.TouchableOpacity`
 `;
 
 const ScheduleDateView = styled.View<{ index: number }>`
-  background-color: ${(props: any) => (props.index === 0 ? props.theme.accentColor : "#EBEBEB")};
+  background-color: ${(props) => (props.index === 0 ? props.theme.accentColor : "#EBEBEB")};
   justify-content: center;
   align-items: center;
   padding: 7px 15px;
@@ -121,7 +121,7 @@ const ScheduleDetailItemView = styled.View`
 const ScheduleText = styled(CustomText)<{ index?: number }>`
   font-size: 11px;
   line-height: 15px;
-  color: ${(props: any) => (props.index === 0 ? "white" : "black")};
+  color: ${(props) => (props.index === 0 ? "white" : "black")};
 `;
 
 const ScheduleSubText = styled(CustomText)`
@@ -135,7 +135,7 @@ const ScheduleTitle = styled(CustomText)<{ index: number }>`
   font-size: 18px;
   font-family: "NotoSansKR-Bold";
   line-height: 25px;
-  color: ${(props: any) => (props.index === 0 ? "white" : "black")};
+  color: ${(props) => (props.index === 0 ? "white" : "black")};
 `;
 
 const GuestBookInfoView = styled.View`
@@ -150,13 +150,13 @@ const GuestCommentButton = styled.TouchableOpacity`
   padding: 8px 10px;
 `;
 const GuestCommentGuideText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   color: #b0b0b0;
 `;
 
 const InfoText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 11px;
   color: #959595;
 `;
@@ -187,20 +187,20 @@ const GuestItemHeaderLeft = styled.View`
 const GuestItemHeaderRight = styled.View``;
 
 const GuestName = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 13px;
   line-height: 15px;
   color: #2b2b2b;
   margin-right: 5px;
 `;
 const GuestCreatedTime = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 11px;
   color: #8e8e8e;
 `;
 const GuestItemContent = styled.View``;
 const GuestContentText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 15px;
   color: #2b2b2b;
 `;
@@ -212,7 +212,7 @@ const EmptyView = styled.View`
 `;
 
 const EmptyText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #acacac;
   justify-content: center;
@@ -252,7 +252,7 @@ const ClubHome: React.FC<NativeStackScreenProps<any, "ClubHome"> & ClubHomeParam
   const me = useSelector((state: RootState) => state.auth.user);
   const [scheduleVisible, setScheduleVisible] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(-1);
-  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
+  const { height: SCREEN_HEIGHT } = useWindowDimensions();
   const [memberLoading, setMemberLoading] = useState(true);
   const [members, setMembers] = useState<Member[]>([]);
   const myRole = useSelector((state: RootState) => state.club[clubId]?.role);
@@ -267,13 +267,11 @@ const ClubHome: React.FC<NativeStackScreenProps<any, "ClubHome"> & ClubHomeParam
 
   useEffect(() => {
     const guestCommentSubscription = DeviceEventEmitter.addListener("GuestCommentRefetch", () => {
-      console.log("ClubHome - GuestCommentRefetch Refetch Event");
       guestCommentRefetch();
     });
 
     return () => {
       guestCommentSubscription.remove();
-      console.log("ClubHome - remove listner");
     };
   }, []);
 
@@ -282,7 +280,6 @@ const ClubHome: React.FC<NativeStackScreenProps<any, "ClubHome"> & ClubHomeParam
     isLoading: isGuestCommentLoading,
     refetch: guestCommentRefetch,
   } = useQuery<GuestCommentResponse, ErrorResponse>(["getGuestComment", clubId], ClubApi.getGuestComment, {
-    onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getGuestComment ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
@@ -292,7 +289,7 @@ const ClubHome: React.FC<NativeStackScreenProps<any, "ClubHome"> & ClubHomeParam
   });
 
   const deleteGuestCommentMutation = useMutation<BaseResponse, ErrorResponse, GuestCommentDeletionRequest>(ClubApi.deleteGuestComment, {
-    onSuccess: (res) => {
+    onSuccess: () => {
       guestCommentRefetch();
       toast.show(`방명록을 삭제했습니다.`, { type: "success" });
     },
@@ -358,7 +355,7 @@ const ClubHome: React.FC<NativeStackScreenProps<any, "ClubHome"> & ClubHomeParam
   ) : (
     <>
       <Animated.ScrollView
-        ref={(ref: any) => {
+        ref={(ref) => {
           screenScrollRefs.current[screenName] = ref;
         }}
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
@@ -517,7 +514,7 @@ const ClubHome: React.FC<NativeStackScreenProps<any, "ClubHome"> & ClubHomeParam
 
           <GusetPage style={{ paddingHorizontal: SCREEN_PADDING_SIZE }}>
             {guestComment?.data && guestComment.data.length > 0 ? (
-              [...guestComment?.data]
+              [...(guestComment?.data ?? [])]
                 .reverse()
                 .slice(0, 4)
                 .map((guest: GuestComment, index: number) => (

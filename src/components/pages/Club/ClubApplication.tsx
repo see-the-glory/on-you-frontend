@@ -27,12 +27,12 @@ const Header = styled.View`
 `;
 
 const HeaderText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 16px;
   line-height: 21px;
 `;
 const HeaderBoldText = styled(HeaderText)`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
 `;
 const Content = styled.View``;
 const MessageView = styled.ScrollView`
@@ -46,12 +46,12 @@ const CreatedTimeView = styled.View`
   padding: 5px 0px;
 `;
 const CreatedTimeText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #8e8e8e;
 `;
 const ContentText = styled(LinkedText)`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   margin: 8px;
   color: #343434;
   font-size: 14px;
@@ -72,12 +72,12 @@ const RejectButton = styled.TouchableOpacity`
 `;
 const AcceptButton = styled.TouchableOpacity`
   width: 50%;
-  background-color: ${(props: any) => props.theme.primaryColor};
+  background-color: ${(props) => props.theme.primaryColor};
   justify-content: center;
   align-items: center;
 `;
 const ButtonText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-family: ${(props) => props.theme.koreanFontSB};
   font-size: 20px;
   line-height: 23px;
   color: white;
@@ -98,7 +98,7 @@ const ClubApplication: React.FC<NativeStackScreenProps<ClubStackParamList, "Club
   };
 
   const approveMutation = useMutation<BaseResponse, ErrorResponse, ClubApproveRequest>(ClubApi.approveToClubJoin, {
-    onSuccess: (res) => {
+    onSuccess: () => {
       toast.show(`가입신청을 수락했습니다.`, { type: "success" });
       refetchEmit();
       goBack();
@@ -110,8 +110,7 @@ const ClubApplication: React.FC<NativeStackScreenProps<ClubStackParamList, "Club
   });
 
   useEffect(() => {
-    let processDoneChangeSubs = DeviceEventEmitter.addListener("ClubApplicationProcessDone", () => {
-      console.log("ClubApplication - Process Done Event");
+    const processDoneChangeSubs = DeviceEventEmitter.addListener("ClubApplicationProcessDone", () => {
       setShowButton(false);
     });
     return () => {
@@ -146,7 +145,7 @@ const ClubApplication: React.FC<NativeStackScreenProps<ClubStackParamList, "Club
       {
         text: "예",
         onPress: () => {
-          let data: ClubApproveRequest = {
+          const data: ClubApproveRequest = {
             clubId: clubData?.id,
             actionId: actionId,
             userId: actionerId,

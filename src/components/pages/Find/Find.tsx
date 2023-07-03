@@ -31,14 +31,14 @@ const CategoryButton = styled.TouchableOpacity`
   align-items: center;
 `;
 const CategoryName = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 15px;
   line-height: 17px;
   color: #8e8e8e;
 `;
 
 const SelectedCategoryName = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 15px;
   line-height: 18px;
 `;
@@ -61,9 +61,9 @@ const TitleSection = styled.View`
 `;
 
 const Title = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 20px;
-  color: ${(props: any) => props.theme.accentColor};
+  color: ${(props) => props.theme.accentColor};
 `;
 
 const LayoutTypeToggle = styled.TouchableOpacity`
@@ -72,7 +72,7 @@ const LayoutTypeToggle = styled.TouchableOpacity`
 `;
 
 const TypeText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 11px;
   color: #6f6f6f;
   margin-right: 5px;
@@ -104,7 +104,7 @@ const HeaderItem = styled.View`
 `;
 
 const HeaderItemText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 13px;
 `;
 
@@ -119,7 +119,7 @@ const EmptyView = styled.View`
 `;
 
 const EmptyText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #acacac;
@@ -133,7 +133,7 @@ const FloatingButton = styled.TouchableOpacity`
   bottom: 20px;
   width: 50px;
   height: 50px;
-  background-color: ${(props: any) => props.theme.accentColor};
+  background-color: ${(props) => props.theme.accentColor};
   elevation: 5;
   box-shadow: 1px 1px 3px gray;
   border-radius: 50px;
@@ -160,16 +160,16 @@ const ItemRightView = styled.View`
   flex: 0.77;
 `;
 const ItemNameText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 16px;
   line-height: 18px;
 `;
 const ItemContentText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 15px;
 `;
 const ItemContentSubText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
 `;
 const ItemContentButton = styled.TouchableOpacity`
@@ -197,8 +197,8 @@ const SortingItemButton = styled.TouchableOpacity`
 `;
 const SortingItemText = styled.Text<{ selected: boolean }>`
   font-size: 15px;
-  color: ${(props: any) => (props.selected ? props.theme.accentColor : "#b0b0b0")};
-  font-family: ${(props: any) => (props.selected ? props.theme.koreanFontM : props.theme.koreanFontR)};
+  color: ${(props) => (props.selected ? props.theme.accentColor : "#b0b0b0")};
+  font-family: ${(props) => (props.selected ? props.theme.koreanFontM : props.theme.koreanFontR)};
 `;
 
 interface ClubSortItem {
@@ -237,15 +237,12 @@ const Find: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Find">> = (
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const colSize = Math.round(SCREEN_WIDTH / 2);
   const clubsFlatlistRef = useRef<FlatList<Club>>();
-  const [searchKeyword, setSearchKeyword] = useState<string | undefined>(undefined);
   const [layoutType, setLayoutType] = useState<"list" | "grid">("grid");
 
   const {
     isLoading: clubsLoading,
     data: clubs,
-    isRefetching: isRefetchingClubs,
     hasNextPage,
-    refetch: clubsRefetch,
     fetchNextPage,
   } = useInfiniteQuery<ClubsResponse, ErrorResponse>(["clubs", params], ClubApi.getClubs, {
     getNextPageParam: (lastPage) => {
@@ -253,7 +250,7 @@ const Find: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Find">> = (
         return lastPage.hasData === true ? lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor : null;
       }
     },
-    onSuccess: (res) => {
+    onSuccess: () => {
       setIsPageTransition(false);
     },
     onError: (error) => {
@@ -262,12 +259,7 @@ const Find: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Find">> = (
     },
   });
 
-  const {
-    isLoading: categoryLoading,
-    data: category,
-    isRefetching: isRefetchingCategory,
-  } = useQuery<CategoryResponse, ErrorResponse>(["getCategories"], ClubApi.getCategories, {
-    onSuccess: (res) => {},
+  const { isLoading: categoryLoading, data: category } = useQuery<CategoryResponse, ErrorResponse>(["getCategories"], ClubApi.getCategories, {
     onError: (error) => {
       console.log(`API ERROR | getCategories ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
@@ -295,7 +287,7 @@ const Find: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Find">> = (
   };
 
   const setClubsCategoryParams = (categoryId: number) => {
-    let curParams: ClubsParams = params;
+    const curParams: ClubsParams = params;
     curParams.categoryId = categoryId;
     setParams(curParams);
     setSelectedCategory(categoryId);
@@ -303,7 +295,7 @@ const Find: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Find">> = (
   };
 
   const setClubsFilterParams = () => {
-    let curParams: ClubsParams = params;
+    const curParams: ClubsParams = params;
     curParams.showRecruiting = showRecruiting;
     curParams.showMy = showMy;
     curParams.minMember = Array.isArray(memberRange) ? memberRange[0] : null;
@@ -317,7 +309,7 @@ const Find: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Find">> = (
 
   const setClubsSortingParams = (sortIndex: number) => {
     setSelectedSortIndex(sortIndex);
-    let curParams: ClubsParams = params;
+    const curParams: ClubsParams = params;
     if (sortItem !== undefined) {
       curParams.sortType = sortItem[sortIndex].sortType;
       curParams.orderBy = sortItem[sortIndex].orderBy;
@@ -360,12 +352,11 @@ const Find: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Find">> = (
     </TouchableOpacity>
   );
 
-  const listRenderItem = ({ item, index }: { item: Club; index: number }) => <ClubList clubData={item} onPress={() => goToClub(item.id)} />;
+  const listRenderItem = ({ item }: { item: Club }) => <ClubList clubData={item} onPress={() => goToClub(item.id)} />;
 
   const loading = categoryLoading && clubsLoading;
 
   useEffect(() => {
-    console.log("Clubs - add listner");
     setSortItem([
       {
         title: "최신개설 모임 순",
@@ -403,7 +394,6 @@ const Find: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Find">> = (
     });
 
     return () => {
-      console.log("Clubs - remove listner");
       clubListSubscription.remove();
       clubListScrollToTopSubscription.remove();
     };
@@ -452,7 +442,7 @@ const Find: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Find">> = (
               },
               ...(category?.data ?? []),
             ]}
-            keyExtractor={(item: Category) => item.id + ""}
+            keyExtractor={(item: Category) => String(item.id)}
             renderItem={({ item, index }: { item: Category; index: number }) => (
               <CategoryButton
                 style={{

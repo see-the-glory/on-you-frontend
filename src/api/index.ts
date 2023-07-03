@@ -620,7 +620,7 @@ const getClubSchedules = ({ queryKey }: any) => {
 };
 const getClubFeeds = ({ queryKey, pageParam }: any) => {
   const [_key, clubId]: [string, number] = queryKey;
-  let params = pageParam ? `cursor=${pageParam}` : "";
+  const params = pageParam ? `cursor=${pageParam}` : "";
   return apiAxios.get<string, FeedsResponse>(`/api/clubs/${clubId}/feeds?${params}`);
 };
 const createClub = (req: ClubCreationRequest) => {
@@ -678,7 +678,7 @@ const getFeed = ({ queryKey }: any) => {
   return apiAxios.get<string, FeedResponse>(`/api/feeds/${feedId}`);
 };
 const getFeeds = ({ pageParam }: any) => {
-  let params = pageParam ? `cursor=${pageParam}` : "";
+  const params = pageParam ? `cursor=${pageParam}` : "";
   return apiAxios.get<string, FeedsResponse>(`/api/feeds?${params}`);
 };
 const createFeed = (req: FeedCreationRequest) => {
@@ -733,7 +733,7 @@ const updateUserInfo = (req: UserUpdateRequest) => {
 };
 
 // Profile
-const getMyProfile = ({ queryKey }: any) => apiAxios.get<String, ProfileResponse>(`/api/user/myProfile`);
+const getMyProfile = ({ queryKey }: any) => apiAxios.get<string, ProfileResponse>(`/api/user/myProfile`);
 const updateMyProfile = (req: ProfileUpdateRequest) => {
   const body = new FormData();
   if (req.thumbnail) body.append("thumbnail", req.thumbnail);
@@ -751,18 +751,18 @@ const updateMyProfile = (req: ProfileUpdateRequest) => {
 
 const getMyFeeds = ({ queryKey, pageParam }: any) => {
   const [_key]: [string, number] = queryKey;
-  let params = pageParam ? `cursor=${pageParam}` : "";
+  const params = pageParam ? `cursor=${pageParam}` : "";
   return apiAxios.get<string, FeedsResponse>(`/api/feeds/my?${params}`);
 };
 
 const getProfile = ({ queryKey }: any) => {
   const [_key, userId]: [string, number] = queryKey;
-  return apiAxios.get<String, ProfileResponse>(`/api/user/${userId}/profile`);
+  return apiAxios.get<string, ProfileResponse>(`/api/user/${userId}/profile`);
 };
 
 const getUserFeeds = ({ queryKey, pageParam }: any) => {
   const [_key, userId]: [string, number] = queryKey;
-  let params = pageParam ? `cursor=${pageParam}` : "";
+  const params = pageParam ? `cursor=${pageParam}` : "";
   return apiAxios.get<string, FeedsResponse>(`/api/users/${userId}/feeds?${params}`);
 };
 
@@ -772,7 +772,7 @@ const blockUser = (req: UserBlockRequest) => apiAxios.post<string, BaseResponse>
 const getBlockUserList = ({ queryKey }: any) => apiAxios.get<string, BlockUserListResponse>(`/api/user/blockUserList`);
 
 // Account Setting
-const getPushAlarm = ({ queryKey }: any) => apiAxios.get<String, PushAlarmResponse>(`/api/user/pushAlarm`);
+const getPushAlarm = ({ queryKey }: any) => apiAxios.get<string, PushAlarmResponse>(`/api/user/pushAlarm`);
 const setPushAlarm = (req: UserPushAlarmRequest) => apiAxios.put<string, BaseResponse>(`/api/user/pushAlarm`, req);
 const withdrawAccount = () => apiAxios.post<string, BaseResponse>(`/api/user/withdraw`);
 const getMyClubs = ({ queryKey }: any) => apiAxios.get<string, MyClubsResponse>(`/api/clubs/my`);

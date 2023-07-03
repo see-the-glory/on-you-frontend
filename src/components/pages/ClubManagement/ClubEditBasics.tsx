@@ -25,7 +25,7 @@ const Header = styled.View`
 
 const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
   width: 100%;
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   justify-content: center;
   align-items: center;
   background-color: #d3d3d3;
@@ -39,7 +39,7 @@ const ImagePickerText = styled(CustomText)`
 
 const PickedImage = styled.Image<{ height: number }>`
   width: 100%;
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
 `;
 
 const Content = styled.View`
@@ -51,7 +51,7 @@ const ContentItem = styled.View`
   width: 100%;
   flex: 1;
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#cecece")};
+  border-bottom-color: ${(props) => (props.error ? props.theme.accentColor : "#cecece")};
   padding-bottom: 3px;
   margin: 10px 0px;
 `;
@@ -70,7 +70,7 @@ const ValidationItem = styled.View`
 `;
 
 const ValidationText = styled(CustomText)`
-  color: ${(props: any) => props.theme.accentColor};
+  color: ${(props) => props.theme.accentColor};
   font-size: 10px;
   line-height: 15px;
 `;
@@ -86,7 +86,7 @@ const ErrorView = styled.View`
   align-items: center;
 `;
 const ErrorText = styled(CustomText)`
-  color: ${(props: any) => props.theme.accentColor};
+  color: ${(props) => props.theme.accentColor};
 `;
 
 const Item = styled.View`
@@ -143,7 +143,7 @@ const CategoryText = styled(CustomText)<{ selected?: boolean }>`
   font-size: 14px;
   line-height: 21px;
   text-align: center;
-  color: ${(props: any) => (props.selected ? "white" : "black")};
+  color: ${(props) => (props.selected ? "white" : "black")};
 `;
 
 const CategoryView = styled.View`
@@ -157,7 +157,7 @@ const CategoryLabel = styled.TouchableOpacity<{ selected?: boolean }>`
   padding: 3px 5px;
   border-radius: 20px;
   border: 1px solid #d7d7d7;
-  background-color: ${(props: any) => (props.selected ? "#295AF5" : "white")};
+  background-color: ${(props) => (props.selected ? "#295AF5" : "white")};
   margin: 0px 5px;
 `;
 
@@ -251,7 +251,7 @@ const ClubEditBasics: React.FC<NativeStackScreenProps<ClubManagementStackParamLi
     }
 
     const contactPhone = phoneNumber.replace(/-/g, "");
-    let data = {
+    const data = {
       category1Id: category1,
       clubMaxMember: maxNumberInfinity ? 0 : Number(maxNumber.split(" ")[0]),
       isApproveRequired,
@@ -284,8 +284,8 @@ const ClubEditBasics: React.FC<NativeStackScreenProps<ClubManagementStackParamLi
 
   const pickImage = async () => {
     try {
-      let image = await ImagePicker.openPicker({ mediaType: "photo" });
-      let croped = await ImagePicker.openCropper({
+      const image = await ImagePicker.openPicker({ mediaType: "photo" });
+      const croped = await ImagePicker.openCropper({
         mediaType: "photo",
         path: image.path,
         width: 1080,

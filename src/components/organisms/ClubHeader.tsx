@@ -19,7 +19,7 @@ const NavigationView = styled.SafeAreaView<{ height: number }>`
   position: absolute;
   z-index: 3;
   width: 100%;
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -43,7 +43,7 @@ const NotiBadge = styled.View`
   height: 5px;
   border-radius: 5px;
   z-index: 1;
-  background-color: ${(props: any) => props.theme.accentColor};
+  background-color: ${(props) => props.theme.accentColor};
   justify-content: center;
   align-items: center;
 `;
@@ -84,7 +84,7 @@ const ClubNameView = styled.View`
 `;
 
 const ClubNameText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 28px;
   line-height: 33px;
   color: white;
@@ -94,7 +94,7 @@ const ClubShortDescView = styled.View`
   align-items: center;
 `;
 const ClubShortDescText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 14px;
   line-height: 18px;
   color: white;
@@ -122,14 +122,14 @@ const DetailInfoItem = styled.View`
 `;
 
 const DetailItemTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 11px;
-  color: ${(props: any) => props.theme.secondaryColor};
+  color: ${(props) => props.theme.secondaryColor};
   margin-right: 3px;
 `;
 
 const DetailItemText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: white;
 `;
@@ -145,7 +145,7 @@ const CollapsedNameView = styled.View`
 `;
 
 const CollapsedNameText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 18px;
   line-height: 22px;
   color: #2b2b2b;
@@ -211,7 +211,7 @@ const ClubHeader: React.FC<ClubHomeHaederProps> = ({ clubId, clubRole, notiCount
           </TouchableOpacity>
         </LeftNavigationView>
         <RightNavigationView>
-          {["MASTER", "MANAGER", "MEMBER"].includes(clubRole?.role) ? (
+          {["MASTER", "MANAGER", "MEMBER"].includes(clubRole?.role ?? "") ? (
             <TouchableOpacity onPress={goClubNotification} style={{ paddingHorizontal: 8 }}>
               <Animated.View style={{ position: "absolute", left: 8 }}>
                 <NotiView>

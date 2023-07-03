@@ -30,13 +30,13 @@ const HeaderTitleView = styled.View`
   align-items: center;
 `;
 const HeaderClubName = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 13px;
   color: #8e8e8e;
   line-height: 21px;
 `;
 const HeaderText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 15px;
   line-height: 20px;
   color: #2b2b2b;
@@ -49,7 +49,7 @@ const CommentInputView = styled.View<{ padding: number }>`
   border-top-width: 1px;
   border-top-color: #c4c4c4;
   align-items: flex-end;
-  padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
+  padding: 10px ${(props) => (props.padding ? props.padding : 0)}px;
   margin-bottom: 10px;
 `;
 
@@ -63,7 +63,7 @@ const RoundingView = styled.View`
   border-radius: 15px; */
 `;
 const CommentInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 13px;
   flex: 1;
   margin: 1px 0px;
@@ -83,11 +83,11 @@ const SubmitLoadingView = styled.View`
   margin-bottom: 8px;
 `;
 const SubmitButtonText = styled.Text<{ disabled: boolean }>`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 15px;
   line-height: 20px;
   color: #63abff;
-  opacity: ${(props: any) => (props.disabled ? 0.3 : 1)};
+  opacity: ${(props) => (props.disabled ? 0.3 : 1)};
 `;
 
 const EmptyView = styled.View`
@@ -97,7 +97,7 @@ const EmptyView = styled.View`
 `;
 
 const EmptyText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 15px;
   line-height: 20px;
   color: #acacac;
@@ -113,7 +113,7 @@ const HiddenItemContainer = styled.View`
   justify-content: flex-end;
 `;
 const HiddenItemButton = styled.TouchableOpacity<{ width: number }>`
-  width: ${(props: any) => props.width}px;
+  width: ${(props) => props.width}px;
   height: 100%;
   background-color: #8e8e8e;
   justify-content: center;
@@ -134,20 +134,20 @@ const CommentContent = styled.View`
   flex: 1;
 `;
 const CommentUserName = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 13px;
   margin-right: 8px;
   color: #2b2b2b;
 `;
 
 const CommentContentText = styled(LinkedText)`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   color: #2b2b2b;
 `;
 
 const CommentSubText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 11px;
   color: #8e8e8e;
 `;
@@ -212,7 +212,7 @@ const ClubGuestBook: React.FC<NativeStackScreenProps<ClubStackParamList, "ClubGu
   const guestCommentSubmit = () => {
     if (!validation) return toast.show(`글을 입력하세요.`, { type: "warning" });
 
-    let requestData: GuestCommentRequest = {
+    const requestData: GuestCommentRequest = {
       clubId,
       content: comment.trim(),
     };

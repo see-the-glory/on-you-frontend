@@ -6,7 +6,7 @@ import { useToast } from "react-native-toast-notifications";
 import * as WebBrowser from "expo-web-browser";
 
 const NormalText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   color: #555555;
   font-size: 14px;
 `;

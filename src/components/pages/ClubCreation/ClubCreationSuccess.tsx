@@ -26,14 +26,14 @@ const SectionView = styled.View`
 `;
 
 const H1 = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 24px;
   line-height: 33px;
   margin-top: 15px;
 `;
 
 const H2 = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #5c5c5c;

@@ -45,7 +45,7 @@ const SearchWrapper = styled.View`
 `;
 
 const SearchInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 16px;
   width: 95%;
   height: 100%;
@@ -56,12 +56,12 @@ const Content = styled.View`
 `;
 
 const ListHeaderText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
 `;
 
 const SearchText = styled(ListHeaderText)`
-  color: ${(props: any) => props.theme.primaryColor};
+  color: ${(props) => props.theme.primaryColor};
 `;
 
 const EmptyView = styled.View`
@@ -71,7 +71,7 @@ const EmptyView = styled.View`
 `;
 
 const EmptyText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #acacac;
@@ -90,18 +90,13 @@ const Search: React.FC<NativeStackScreenProps<RootStackParamList, "Search">> = (
   const {
     isLoading: clubsLoading,
     data: clubs,
-    isRefetching: isRefetchingClubs,
     hasNextPage,
-    refetch: clubsRefetch,
     fetchNextPage,
   } = useInfiniteQuery<ClubsResponse, ErrorResponse>(["searchClubs", params], ClubApi.getClubs, {
     getNextPageParam: (lastPage) => {
       if (lastPage) {
         return lastPage.hasData === true ? lastPage.responses?.content[lastPage.responses?.content.length - 1].customCursor : null;
       }
-    },
-    onSuccess: (res) => {
-      console.log(res);
     },
     onError: (error) => {
       console.log(`API ERROR | getClubs ${error.code} ${error.status}`);
@@ -190,7 +185,7 @@ const Search: React.FC<NativeStackScreenProps<RootStackParamList, "Search">> = (
               ListFooterComponent={() => <View />}
               ListFooterComponentStyle={{ marginBottom: 60 }}
               keyExtractor={(item: Club, index: number) => String(index)}
-              renderItem={({ item, index }: { item: Club; index: number }) => <ClubList clubData={item} onPress={() => goToClub(item.id)} />}
+              renderItem={({ item }: { item: Club }) => <ClubList clubData={item} onPress={() => goToClub(item.id)} />}
               ListEmptyComponent={() => (
                 <EmptyView>
                   <EmptyText>{`조건에 해당하는 모임이 없습니다.`}</EmptyText>

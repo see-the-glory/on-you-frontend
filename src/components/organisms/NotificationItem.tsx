@@ -10,13 +10,13 @@ const Header = styled.View`
   align-items: center;
 `;
 const ItemTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #8e8e8e;
   margin-bottom: 3px;
 `;
 const ItemDateText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 11px;
   line-height: 15px;
   color: #9a9a9a;
@@ -25,13 +25,13 @@ const TextView = styled.View`
   flex-direction: row;
 `;
 const ItemText = styled.Text<{ read: boolean }>`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 15px;
   line-height: 22px;
-  color: ${(props: any) => (props.read ? "#8E8E8E" : "black")};
+  color: ${(props) => (props.read ? "#8E8E8E" : "black")};
 `;
 const ItemBoldText = styled(ItemText)`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
 `;
 
 interface NotificationItemProps {

@@ -14,7 +14,7 @@ const Container = styled.TouchableOpacity`
 `;
 
 const NameText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 14px;
   line-height: 16px;
   color: #2b2b2b;

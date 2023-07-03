@@ -20,7 +20,7 @@ const MenuItem = styled.TouchableOpacity`
 `;
 
 const MenuItemText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   color: #2e2e2e;
   font-size: 16px;
   line-height: 22px;

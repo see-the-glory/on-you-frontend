@@ -97,10 +97,9 @@ const Root = () => {
   const toast = useToast();
   const queryClient = useQueryClient();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const { data: userInfo, refetch: userInfoRefecth } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo"], UserApi.getUserInfo, {
+  const { refetch: userInfoRefecth } = useQuery<UserInfoResponse, ErrorResponse>(["getUserInfo"], UserApi.getUserInfo, {
     onSuccess: (res) => {
       if (res.data) {
-        console.log("root!");
         setUserProperties(res.data.id, res.data.birthday, res.data.sex, res.data.organizationName);
         dispatch(updateUser({ user: res.data }));
       }
@@ -119,7 +118,7 @@ const Root = () => {
   const updateTargetToken = (fcmToken: string | null) => {
     const requestData: TargetTokenUpdateRequest = { targetToken: fcmToken };
     updateTargetTokenMutation.mutate(requestData, {
-      onSuccess: (res) => {
+      onSuccess: () => {
         console.log(`API CALL | updateTargetToken : ${fcmToken}`);
       },
       onError: (error) => {
@@ -129,9 +128,9 @@ const Root = () => {
     });
   };
 
-  const updateMetaInfo = async () => {
-    let deviceInfo = await getModel();
-    let currentVersion = await getVersion();
+  const updateMetaInfo = () => {
+    const deviceInfo = getModel();
+    const currentVersion = getVersion();
     const requestData: MetaInfoRequest = { deviceInfo, currentVersion };
 
     updateMetaInfoMutation.mutate(requestData, {
@@ -306,39 +305,37 @@ const Root = () => {
       ) : (
         <></>
       )}
-      <Host
-        children={
-          <Nav.Navigator
-            initialRouteName="Tabs"
-            screenOptions={{
-              presentation: "card",
-              headerShown: false,
+      <Host>
+        <Nav.Navigator
+          initialRouteName="Tabs"
+          screenOptions={{
+            presentation: "card",
+            headerShown: false,
+          }}
+        >
+          <Nav.Screen name="Tabs" component={Tabs} />
+          <Nav.Screen name="FeedStack" component={FeedStack} />
+          <Nav.Screen name="ClubStack" component={ClubStack} />
+          <Nav.Screen name="ProfileStack" component={ProfileStack} />
+          <Nav.Screen name="ClubCreationStack" component={ClubCreationStack} />
+          <Nav.Screen name="ClubManagementStack" component={ClubManagementStack} />
+          <Nav.Screen name="ChatStack" component={ChatStack} />
+          <Nav.Screen name="Parking" component={Parking} options={{ gestureEnabled: false }} />
+          <Nav.Screen
+            name="Search"
+            component={Search}
+            options={{
+              headerShown: true,
+              title: "모임 검색",
+              contentStyle: { backgroundColor: "white" },
+              headerTitleAlign: "center",
+              headerTitleStyle: { fontFamily: lightTheme.koreanFontB, fontSize: 16 },
+              headerShadowVisible: false,
+              headerBackVisible: false,
             }}
-          >
-            <Nav.Screen name="Tabs" component={Tabs} />
-            <Nav.Screen name="FeedStack" component={FeedStack} />
-            <Nav.Screen name="ClubStack" component={ClubStack} />
-            <Nav.Screen name="ProfileStack" component={ProfileStack} />
-            <Nav.Screen name="ClubCreationStack" component={ClubCreationStack} />
-            <Nav.Screen name="ClubManagementStack" component={ClubManagementStack} />
-            <Nav.Screen name="ChatStack" component={ChatStack} />
-            <Nav.Screen name="Parking" component={Parking} options={{ gestureEnabled: false }} />
-            <Nav.Screen
-              name="Search"
-              component={Search}
-              options={{
-                headerShown: true,
-                title: "모임 검색",
-                contentStyle: { backgroundColor: "white" },
-                headerTitleAlign: "center",
-                headerTitleStyle: { fontFamily: lightTheme.koreanFontB, fontSize: 16 },
-                headerShadowVisible: false,
-                headerBackVisible: false,
-              }}
-            />
-          </Nav.Navigator>
-        }
-      ></Host>
+          />
+        </Nav.Navigator>
+      </Host>
     </>
   );
 };

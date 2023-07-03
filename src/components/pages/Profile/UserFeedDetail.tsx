@@ -24,13 +24,13 @@ const HeaderTitleView = styled.View`
   align-items: center;
 `;
 const HeaderClubName = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 13px;
   color: #8e8e8e;
   line-height: 21px;
 `;
 const HeaderText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 15px;
   line-height: 20px;
   color: #2b2b2b;
@@ -206,8 +206,8 @@ const UserFeedDetail: React.FC<NativeStackScreenProps<ProfileStackParamList, "Us
         text: "예",
         onPress: () => {
           selectFeedData?.imageUrls?.map((url) => {
-            let fileName = url.split("/").pop();
-            let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}` : `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}`;
+            const fileName = url.split("/").pop();
+            const path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DCIMDir}/${fileName}` : `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}`;
             RNFetchBlob.config({
               addAndroidDownloads: {
                 useDownloadManager: true,

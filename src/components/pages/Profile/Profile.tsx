@@ -128,7 +128,7 @@ const Profile: React.FC<NativeStackScreenProps<ProfileStackParamList & MainBotto
   };
 
   const renderUserInstroduction = useCallback(
-    (props: any) => {
+    (props) => {
       return (
         <Animated.ScrollView
           ref={(ref: any) => {
@@ -161,7 +161,7 @@ const Profile: React.FC<NativeStackScreenProps<ProfileStackParamList & MainBotto
   );
 
   const renderUserFeed = useCallback(
-    (props: any) => {
+    (props) => {
       return (
         <UserFeed
           userId={userId}

@@ -25,7 +25,7 @@ const EmptyView = styled.View`
 `;
 
 const EmptyText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #acacac;
@@ -102,14 +102,11 @@ const ClubFeed: React.FC<NativeStackScreenProps<any, "ClubFeed"> & ClubFeedParam
   };
 
   useEffect(() => {
-    console.log("ClubFeed - add listner");
-    let clubFeedRefetchSub = DeviceEventEmitter.addListener("ClubFeedRefetch", () => {
-      console.log("ClubFeed - Club Feed Refetch Event");
+    const clubFeedRefetchSub = DeviceEventEmitter.addListener("ClubFeedRefetch", () => {
       onRefresh();
     });
 
     return () => {
-      console.log("ClubFeed - remove listner");
       clubFeedRefetchSub.remove();
       queryClient.removeQueries({ queryKey: ["getClubFeeds"] });
     };
@@ -135,7 +132,7 @@ const ClubFeed: React.FC<NativeStackScreenProps<any, "ClubFeed"> & ClubFeedParam
       }}
       onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
       contentOffset={{ x: 0, y: screenScrollOffset?.current[screenName] ?? 0 }}
-      onMomentumScrollEnd={(event) => syncScrollOffset(screenName)}
+      onMomentumScrollEnd={() => syncScrollOffset(screenName)}
       onScrollEndDrag={() => syncScrollOffset(screenName)}
       style={{
         flex: 1,

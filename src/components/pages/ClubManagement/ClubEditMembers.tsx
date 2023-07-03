@@ -30,7 +30,7 @@ const HeaderText = styled(CustomText)`
   color: #959595;
 `;
 const ContentItem = styled.TouchableOpacity<{ col: number }>`
-  flex: ${(props: any) => 1 / props.col};
+  flex: ${(props) => 1 / props.col};
   justify-content: center;
   align-items: flex-start;
 `;
@@ -142,7 +142,7 @@ const ClubEditMembers: React.FC<NativeStackScreenProps<ClubManagementStackParamL
       }
     });
 
-    for (let member of memberMap) {
+    for (const member of memberMap) {
       if (member[1].role === "MASTER") masterCount++;
     }
 
@@ -177,7 +177,7 @@ const ClubEditMembers: React.FC<NativeStackScreenProps<ClubManagementStackParamL
     const managers: Member[] = [];
     const members: Member[] = [];
 
-    for (let member of memberMap) {
+    for (const member of memberMap) {
       if (member[1].role === "MASTER") masters.push(member[1]);
       else if (member[1].role === "MANAGER") managers.push(member[1]);
       else if (member[1].role === "MEMBER") members.push(member[1]);
@@ -332,12 +332,12 @@ const ClubEditMembers: React.FC<NativeStackScreenProps<ClubManagementStackParamL
 };
 
 Array.prototype.division = function (n) {
-  var arr = this;
-  var len = arr.length;
-  var cnt = Math.floor(len / n) + (Math.floor(len % n) > 0 ? 1 : 0);
-  var tmp = [];
+  const arr = this;
+  const len = arr.length;
+  const cnt = Math.floor(len / n) + (Math.floor(len % n) > 0 ? 1 : 0);
+  const tmp = [];
 
-  for (var i = 0; i < cnt; i++) {
+  for (let i = 0; i < cnt; i++) {
     tmp.push(arr.splice(0, n));
   }
 

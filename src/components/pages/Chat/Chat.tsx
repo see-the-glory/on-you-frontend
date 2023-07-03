@@ -30,7 +30,7 @@ const SearchSection = styled.View`
 `;
 
 const Title = styled.Text`
-  font-family: ${(props: any) => props.theme.englishSecondaryFontDB};
+  font-family: ${(props) => props.theme.englishSecondaryFontDB};
   font-size: 31px;
 `;
 
@@ -54,12 +54,12 @@ const MessageContentTop = styled.View`
 `;
 
 const MessageTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-family: ${(props) => props.theme.koreanFontSB};
   font-size: 18px;
 `;
 
 const MessageBadge = styled.View`
-  background-color: ${(props: any) => props.theme.accentColor};
+  background-color: ${(props) => props.theme.accentColor};
   width: 16px;
   height: 16px;
   align-items: center;
@@ -79,13 +79,13 @@ const MessageContentBottom = styled.View`
 `;
 
 const MessageText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   color: #a5a5a5;
 `;
 
 const MessageCreatedTime = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   color: #a5a5a5;
 `;
 

@@ -33,13 +33,13 @@ const UserInfo = styled.View`
 `;
 
 const UserInfoName = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 18px;
   line-height: 24px;
 `;
 
 const UserInfoEmail = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #7d7d7d;
@@ -54,7 +54,7 @@ const MenuBundle = styled.View`
 `;
 
 const MenuBundleTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 14px;
   line-height: 20px;
   color: #8e8e8e;
@@ -68,7 +68,7 @@ const MenuButton = styled.TouchableOpacity`
   margin-bottom: 13px;
 `;
 const MenuTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 16px;
   line-height: 17px;
 `;
@@ -85,7 +85,7 @@ const LogoutButton = styled.TouchableOpacity`
 `;
 
 const LogoutText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   text-align: center;
   font-size: 15px;
   line-height: 22px;
@@ -141,7 +141,7 @@ const Preferences: React.FC<NativeStackScreenProps<ProfileStackParamList, "Prefe
       ),
     });
 
-    let subscription = DeviceEventEmitter.addListener("ProfileRefresh", () => {
+    const subscription = DeviceEventEmitter.addListener("ProfileRefresh", () => {
       userInfoRefetch();
     });
     return () => subscription.remove();

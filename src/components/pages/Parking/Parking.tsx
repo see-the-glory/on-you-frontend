@@ -18,19 +18,19 @@ const Header = styled.View`
 
 const LineView = styled.View`
   height: 1.5px;
-  background-color: ${(props: any) => props.theme.infoColor};
+  background-color: ${(props) => props.theme.infoColor};
 `;
 
 const HeaderTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.englishFontM};
+  font-family: ${(props) => props.theme.englishFontM};
   font-size: 40px;
   line-height: 43px;
 `;
 
 const HeaderText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 16px;
-  color: ${(props: any) => props.theme.infoColor};
+  color: ${(props) => props.theme.infoColor};
   margin-top: 10px;
 `;
 
@@ -40,7 +40,7 @@ const Content = styled.View`
 `;
 
 const ContentText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 16px;
 `;
 

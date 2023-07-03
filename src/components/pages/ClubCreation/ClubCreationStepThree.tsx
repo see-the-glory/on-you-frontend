@@ -21,13 +21,13 @@ const HeaderView = styled.View`
 `;
 
 const H1 = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 18px;
   line-height: 25px;
 `;
 
 const H2 = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #5c5c5c;
@@ -40,14 +40,14 @@ const ContentItem = styled.View`
 `;
 
 const ItemTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 13px;
   line-height: 19px;
   margin-bottom: 8px;
 `;
 
 const ItemText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 11px;
   line-height: 15px;
   padding: 6px 0px;
@@ -61,13 +61,13 @@ const ItemTitleView = styled.View`
 `;
 
 const InfoText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #b5b5b5;
 `;
 
 const ShortDescInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   width: 100%;
   font-size: 14px;
   line-height: 20px;
@@ -77,7 +77,7 @@ const ShortDescInput = styled.TextInput`
 `;
 
 const LongDescInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   width: 100%;
   height: 250px;
   font-size: 14px;

@@ -13,7 +13,7 @@ const Button = styled.TouchableOpacity`
 `;
 
 const SearchText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 16px;
   color: #c4c4c4;
 `;

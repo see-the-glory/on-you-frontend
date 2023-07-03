@@ -23,7 +23,6 @@ import dynamicLinks from "@react-native-firebase/dynamic-links";
 import queryString from "query-string";
 import { ThemeProvider } from "styled-components/native";
 import { lightTheme } from "app/theme";
-import analytics from "@react-native-firebase/analytics";
 
 LogBox.ignoreLogs(["Setting a timer"]);
 
@@ -137,7 +136,6 @@ const RootNavigation = () => {
 
 function App() {
   const navigationRef = useNavigationContainerRef();
-  const routeNameRef = useRef<string>();
   const queryClient = new QueryClient();
   const linking = {
     prefixes: ["https://onyou.page.link"],
@@ -147,7 +145,7 @@ function App() {
     },
     getStateFromPath(path, config) {
       const parsed = queryString.parseUrl(path);
-      let state = { routes: [{ name: "Tabs" }] };
+      const state = { routes: [{ name: "Tabs" }] };
       const match = parsed.url.split("/").pop();
       switch (match) {
         case "club":

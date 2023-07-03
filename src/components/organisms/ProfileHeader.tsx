@@ -14,7 +14,7 @@ const NavigationView = styled.SafeAreaView<{ height: number }>`
   position: absolute;
   z-index: 3;
   width: 100%;
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -52,14 +52,14 @@ const CollapsedNameView = styled.View`
 `;
 
 const CollapsedNameText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 18px;
   line-height: 22px;
   color: #2b2b2b;
 `;
 
 const NameText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 22px;
   color: white;
   margin: 10px 0px;
@@ -73,15 +73,15 @@ const InfoDetailItem = styled.View`
   margin: 0px 5px;
 `;
 const InfoDetailText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 13px;
   color: white;
   margin: 0px 5px;
 `;
 const InfoDetailNumber = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 13px;
-  color: ${(props: any) => props.theme.secondaryColor};
+  color: ${(props) => props.theme.secondaryColor};
 `;
 
 const OptionView = styled.View`
@@ -95,7 +95,7 @@ const OptionButton = styled.TouchableOpacity`
   margin: 0px 5px;
 `;
 const OptionText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   color: white;
 `;

@@ -21,12 +21,12 @@ const Header = styled.View`
 `;
 
 const HeaderText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 16px;
   line-height: 21px;
 `;
 const HeaderBoldText = styled(HeaderText)`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
 `;
 const Content = styled.View``;
 const MessageView = styled.ScrollView`
@@ -40,12 +40,12 @@ const CreatedTimeView = styled.View`
   padding: 5px 0px;
 `;
 const CreatedTimeText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #8e8e8e;
 `;
 const ContentText = styled(LinkedText)`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   margin: 8px;
   color: #343434;
   font-size: 14px;
