@@ -13,37 +13,37 @@ const ModalContainer = styled.View`
 `;
 
 const ModalHeader = styled.View<{ padding: number }>`
-  padding: 0px ${(props: any) => (props.padding ? props.padding : 0)}px;
+  padding: 0px ${(props) => (props.padding ? props.padding : 0)}px;
   margin-bottom: 15px;
 `;
 const ModalHeaderTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 20px;
   line-height: 22px;
   margin-bottom: 5px;
 `;
 const ModalHeaderText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #a0a0a0;
 `;
 
 const OptionButton = styled.TouchableOpacity<{ height: number; padding: number; alignItems: string }>`
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   justify-content: center;
-  align-items: ${(props: any) => (props.alignItems ? props.alignItems : "center")};
-  padding: 0px ${(props: any) => (props.padding ? props.padding : 0)}px;
+  align-items: ${(props) => (props.alignItems ? props.alignItems : "center")};
+  padding: 0px ${(props) => (props.padding ? props.padding : 0)}px;
 `;
 const OptionName = styled.Text<{ warning?: boolean }>`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 16px;
   line-height: 18px;
-  color: ${(props: any) => (props.warning ? "#FF551F" : "#2b2b2b")};
+  color: ${(props) => (props.warning ? "#FF551F" : "#2b2b2b")};
 `;
 const Break = styled.View<{ sep: number }>`
   width: 100%;
-  margin-bottom: ${(props: any) => props.sep}px;
-  margin-top: ${(props: any) => props.sep}px;
+  margin-bottom: ${(props) => props.sep}px;
+  margin-top: ${(props) => props.sep}px;
   border-bottom-width: 1px;
   border-bottom-color: rgba(0, 0, 0, 0.2);
   opacity: 0.5;

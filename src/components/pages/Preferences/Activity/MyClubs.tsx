@@ -40,12 +40,12 @@ const ItemInfo = styled.TouchableOpacity`
 const ItemInfoDetail = styled.View``;
 
 const WithdrawButton = styled.TouchableOpacity`
-  background-color: ${(props: any) => props.theme.accentColor};
+  background-color: ${(props) => props.theme.accentColor};
   border-radius: 8px;
 `;
 
 const WithdrawText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   padding: 6px 12px;
   color: white;
@@ -58,7 +58,7 @@ const CategoryView = styled.View`
 `;
 
 const ItemTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   color: #2b2b2b;
   font-size: 16px;
 `;
@@ -71,7 +71,7 @@ const EmptyView = styled.View`
 `;
 
 const EmptyText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #acacac;
@@ -87,7 +87,7 @@ const MyClubs: React.FC<NativeStackScreenProps<ProfileStackParamList, "MyClubs">
     data: myClubs,
     refetch: myClubRefetch,
   } = useQuery<MyClubsResponse, ErrorResponse>(["getMyClubs"], UserApi.getMyClubs, {
-    onSuccess: (res) => {
+    onSuccess: () => {
       onRefresh();
     },
     onError: (error) => {
@@ -97,7 +97,7 @@ const MyClubs: React.FC<NativeStackScreenProps<ProfileStackParamList, "MyClubs">
   });
 
   const withdrawClubMutation = useMutation<BaseResponse, ErrorResponse, ClubWithdrawRequest>(ClubApi.withdrawClub, {
-    onSuccess: (res) => {
+    onSuccess: () => {
       toast.show(`모임에서 탈퇴하셨습니다.`, { type: "success" });
       DeviceEventEmitter.emit("ClubRefetch");
     },

@@ -25,12 +25,12 @@ const CalendarHeader = styled.View`
 `;
 
 const CalendarMonthText = styled.Text`
-  font-family: ${(props: any) => props.theme.englishFontB};
+  font-family: ${(props) => props.theme.englishFontB};
   font-size: 18px;
   line-height: 24px;
 `;
 const CalendarYearText = styled.Text`
-  font-family: ${(props: any) => props.theme.englishFontR};
+  font-family: ${(props) => props.theme.englishFontR};
   font-size: 12px;
   color: #737373;
 `;
@@ -62,19 +62,19 @@ const InputItem = styled.View`
 `;
 
 const ItemTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
 `;
 const ItemText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 16px;
   line-height: 23px;
   color: #6f6f6f;
 `;
 
 const ItemTextInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 16px;
   line-height: 18px;
   color: #6f6f6f;
@@ -82,7 +82,7 @@ const ItemTextInput = styled.TextInput`
 `;
 
 const InfoText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #b5b5b5;
 `;
@@ -92,7 +92,7 @@ const MemoView = styled.View`
 `;
 
 const MemoInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   margin-top: 15px;
   width: 100%;
   height: 300px;

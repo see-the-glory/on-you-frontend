@@ -23,7 +23,7 @@ import FadeFastImage from "@components/atoms/FadeFastImage";
 
 const Container = styled.View``;
 const Header = styled.View<{ height: number }>`
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   flex-direction: row;
   align-items: center;
   padding: 6px 10px;
@@ -49,16 +49,16 @@ const HeaderInformationBottom = styled.View`
 const HeaderText = styled.Text`
   font-size: 14px;
   line-height: 16px;
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   color: #2b2b2b;
   margin-right: 5px;
 `;
 
 const Content = styled.View<{ padding: number }>`
-  padding: 0px ${(props: any) => (props.padding ? props.padding : "0")}px;
+  padding: 0px ${(props) => (props.padding ? props.padding : "0")}px;
 `;
 const Information = styled.View<{ height: number }>`
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -81,27 +81,27 @@ const InformationNumberButton = styled.TouchableOpacity`
 `;
 
 const CountingNumber = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-family: ${(props) => props.theme.koreanFontSB};
   font-size: 15px;
   margin-left: 3px;
 `;
 const CreatedTime = styled.Text`
   color: #9a9a9a;
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
 `;
 const ContentTextView = styled.Text<{ height?: number }>`
-  ${(props: any) => (props.height ? `height: ${props.height}px` : "")};
+  ${(props) => (props.height ? `height: ${props.height}px` : "")};
 `;
 const ContentText = styled(LinkedText)`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #2b2b2b;
 `;
 
 const ContentSubText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 13px;
   line-height: 19px;
   color: #5b5b5b;
@@ -159,13 +159,13 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
 
   // prettier-ignore
   const onTextLayout = (event: NativeSyntheticEvent<TextLayoutEventData>) => {
-      const moreContent = event.nativeEvent.lines.length > 2 ? true : false;
-      const collapsedTextList = event.nativeEvent.lines.slice(0, 2).map(line => line.text);
-      const collapsedText = collapsedTextList.join("").trim();
-      const remainedText = moreContent ? event.nativeEvent.lines.slice(2).map((line) => line.text).join("").trim() : "";
-      const textHeight = moreContent ? (event.nativeEvent.lines.slice(2).length * (contentHeight / 2)) : 0;
-      setcontentState({ textHeight, moreContent, collapsedText, collapsedTextList, remainedText });
-    };
+    const moreContent = event.nativeEvent.lines.length > 2 ? true : false;
+    const collapsedTextList = event.nativeEvent.lines.slice(0, 2).map(line => line.text);
+    const collapsedText = collapsedTextList.join("").trim();
+    const remainedText = moreContent ? event.nativeEvent.lines.slice(2).map((line) => line.text).join("").trim() : "";
+    const textHeight = moreContent ? (event.nativeEvent.lines.slice(2).length * (contentHeight / 2)) : 0;
+    setcontentState({ textHeight, moreContent, collapsedText, collapsedTextList, remainedText });
+  };
 
   const contentTextTouch = () => {
     if (contentState.moreContent && isCollapsed) setIscollapsed(false);
@@ -249,7 +249,7 @@ const FeedDetail: React.FC<FeedDetailProps> = ({ feedData, feedIndex, feedSize, 
   const downloadImage = (url?: string) => {
     if (!url) return;
     if (!isMyClubPost) return;
-    let fileName = url.split("/").pop();
+    const fileName = url.split("/").pop();
     let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DownloadDir}` : `${RNFetchBlob.fs.dirs.CacheDir}`;
     path += `/OnYou/${fileName}`;
     Alert.alert("사진 저장", "이 사진을 저장하시겠습니까?", [

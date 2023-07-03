@@ -27,8 +27,8 @@ const Header = styled.View`
 
 const Item = styled.View<{ error?: boolean }>`
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#b3b3b3")};
-  margin-bottom: ${(props: any) => (props.error ? 0 : 43)}px;
+  border-bottom-color: ${(props) => (props.error ? props.theme.accentColor : "#b3b3b3")};
+  margin-bottom: ${(props) => (props.error ? 0 : 43)}px;
 `;
 
 const ItemInputView = styled.View`
@@ -49,46 +49,46 @@ const Border = styled.View`
 `;
 
 const AskText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 20px;
   margin-top: 24px;
 `;
 
 const SubText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
 `;
 
 const ItemText = styled.Text`
-  font-family: ${(props: any) => props.theme.englishFontR};
+  font-family: ${(props) => props.theme.englishFontR};
   color: #a0a0a0;
   font-size: 13px;
   margin-bottom: 3px;
 `;
 
 const Input = styled.TextInput`
-  font-family: ${(props: any) => props.theme.englishFontR};
+  font-family: ${(props) => props.theme.englishFontR};
   font-size: 18px;
 `;
 
 const Error = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   color: #e7564f;
   font-size: 12px;
 `;
 
 const ValidButton = styled.TouchableOpacity``;
 const ValidText = styled.Text<{ error: boolean }>`
-  opacity: ${(props: any) => (props.error ? 0.2 : 1)};
+  opacity: ${(props) => (props.error ? 0.2 : 1)};
 `;
 
 const ValidationView = styled.View<{ error: boolean }>`
   flex-direction: row;
   align-items: center;
   margin-top: 8px;
-  margin-bottom: ${(props: any) => (props.error ? 20 : 0)}px;
+  margin-bottom: ${(props) => (props.error ? 20 : 0)}px;
 `;
 
 const SignUpEmail: React.FC<NativeStackScreenProps<SignUpStackParamList, "SignUpEmail">> = ({

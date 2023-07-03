@@ -111,7 +111,7 @@ const ClubEditIntroduction: React.FC<NativeStackScreenProps<ClubManagementStackP
   }, [clubShortDesc, clubLongDesc, mutation.isLoading]);
 
   const save = () => {
-    let updateData: ClubUpdateRequest = {
+    const updateData: ClubUpdateRequest = {
       data: {
         clubShortDesc: clubShortDesc.trim(),
         clubLongDesc: clubLongDesc.trim(),

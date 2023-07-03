@@ -34,7 +34,7 @@ const Container = styled.SafeAreaView`
 
 const HeaderView = styled.View<{ height: number }>`
   flex-direction: row;
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   justify-content: space-between;
   align-items: center;
   background-color: white;
@@ -42,7 +42,7 @@ const HeaderView = styled.View<{ height: number }>`
 `;
 
 const LogoText = styled.Text`
-  font-family: ${(props: any) => props.theme.englishSecondaryFontDB};
+  font-family: ${(props) => props.theme.englishSecondaryFontDB};
   font-size: 31px;
 `;
 
@@ -66,7 +66,7 @@ const NotiBadge = styled.View`
   height: 5px;
   border-radius: 5px;
   z-index: 1;
-  background-color: ${(props: any) => props.theme.accentColor};
+  background-color: ${(props) => props.theme.accentColor};
   justify-content: center;
   align-items: center;
 `;
@@ -92,8 +92,8 @@ const Home: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Home">> = (
   const feedDetailContentHeight = 40;
   const itemSeparatorGap = 30;
   const [selectFeedData, setSelectFeedData] = useState<Feed>();
-  let scrollY = useRef(new Animated.Value(0)).current;
-  let animatedHeaderOpacity = scrollY.interpolate({
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const animatedHeaderOpacity = scrollY.interpolate({
     inputRange: [0, 50],
     outputRange: [0, 1],
   });
@@ -317,7 +317,7 @@ const Home: React.FC<NativeStackScreenProps<MainBottomTabParamList, "Home">> = (
         text: "예",
         onPress: () => {
           selectFeedData?.imageUrls?.map((url) => {
-            let fileName = url.split("/").pop();
+            const fileName = url.split("/").pop();
             let path = Platform.OS === "android" ? `${RNFetchBlob.fs.dirs.DownloadDir}` : `${RNFetchBlob.fs.dirs.CacheDir}`;
             path += `/OnYou/${fileName}`;
             RNFetchBlob.config({

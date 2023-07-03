@@ -22,16 +22,16 @@ const Header = styled.View`
 `;
 
 const HeaderTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.englishFontM};
+  font-family: ${(props) => props.theme.englishFontM};
   font-size: 40px;
 `;
 
 const Content = styled.View``;
 
 const ContentTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.englishFontM};
+  font-family: ${(props) => props.theme.englishFontM};
   font-size: 16px;
-  color: ${(props: any) => props.theme.infoColor};
+  color: ${(props) => props.theme.infoColor};
   margin-bottom: 8px;
 `;
 
@@ -44,7 +44,7 @@ const PasswordView = styled.View`
 `;
 
 const ContentInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.englishFontR};
+  font-family: ${(props) => props.theme.englishFontR};
   border-bottom-width: 0.5px;
   border-bottom-color: #000000;
   padding-bottom: 2px;
@@ -59,7 +59,7 @@ const InformationView = styled.View`
 const FindAccountButton = styled.TouchableOpacity``;
 
 const InformationText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-family: ${(props) => props.theme.koreanFontSB};
   font-size: 14px;
   color: #777777;
 `;
@@ -86,7 +86,6 @@ const Login: React.FC<NativeStackScreenProps<LoginStackParamList, "Login">> = ({
       }
     },
     onError: (error) => {
-      console.log(error);
       toast.show(`네트워크를 확인해주세요.`, { type: "danger" });
     },
   });

@@ -17,9 +17,9 @@ const Container = styled.View`
 const Content = styled.View``;
 
 const ContentTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-family: ${(props) => props.theme.koreanFontSB};
   font-size: 16px;
-  color: ${(props: any) => props.theme.infoColor};
+  color: ${(props) => props.theme.infoColor};
   margin-bottom: 8px;
 `;
 
@@ -28,7 +28,7 @@ const ItemView = styled.View`
 `;
 
 const ContentInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   border-bottom-width: 0.5px;
   border-bottom-color: #000000;
   padding-bottom: 2px;
@@ -40,9 +40,6 @@ const FindPassword: React.FC<NativeStackScreenProps<LoginStackParamList, "FindPa
   const [userEmail, setUserEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [birthNumber, setBirthNumber] = useState("");
-  const nameReg = /^[가-힣]+$/;
-  const phoneReg = /^(01[0|1|6|7|8|9]?)-([0-9]{4})-([0-9]{4})$/;
-  const birthReg = /^(19[0-9][0-9]|20\d{2})-(0[0-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
 
   const toast = useToast();
 
@@ -72,8 +69,8 @@ const FindPassword: React.FC<NativeStackScreenProps<LoginStackParamList, "FindPa
 
   const mutation = useMutation(UserApi.FindUserPw, {
     onSuccess: (res) => {
-      if (res.status === 200) {
-      } else if (res.status === 500) {
+      if (res?.status === 200) {
+      } else if (res?.status === 500) {
         console.log(res);
         toast.show(`알 수 없는 오류`, { type: "danger" });
       } else {
@@ -84,7 +81,6 @@ const FindPassword: React.FC<NativeStackScreenProps<LoginStackParamList, "FindPa
       console.log(error);
       toast.show(`네트워크를 확인해주세요.`, { type: "danger" });
     },
-    onSettled: (res, error) => {},
   });
 
   const onSubmit = () => {

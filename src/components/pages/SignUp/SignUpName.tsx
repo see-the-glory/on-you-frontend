@@ -29,28 +29,28 @@ const Border = styled.View`
 `;
 
 const AskText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 20px;
   margin-top: 24px;
 `;
 
 const SubText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   color: #a0a0a0;
   font-size: 13px;
   margin-top: 7px;
 `;
 
 const Input = styled.TextInput<{ error?: boolean }>`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#b3b3b3")};
+  border-bottom-color: ${(props) => (props.error ? props.theme.accentColor : "#b3b3b3")};
   margin-top: 47px;
   font-size: 18px;
 `;
 
 const Error = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   color: #e7564f;
   font-size: 12px;
 `;

@@ -18,13 +18,13 @@ const HeaderView = styled.View`
 `;
 
 const H1 = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 18px;
   line-height: 25px;
 `;
 
 const H2 = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #5c5c5c;
@@ -36,7 +36,7 @@ const Content = styled.View`
 
 const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
   width: 100%;
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   justify-content: center;
   align-items: center;
   background-color: #d3d3d3;
@@ -44,7 +44,7 @@ const ImagePickerButton = styled.TouchableOpacity<{ height: number }>`
 `;
 
 const ImagePickerText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 15px;
   color: #2995fa;
   line-height: 22px;
@@ -52,14 +52,14 @@ const ImagePickerText = styled.Text`
 
 const PickedImage = styled.Image<{ height: number }>`
   width: 100%;
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
 `;
 
 const ContentItem = styled.View<{ error: boolean }>`
   width: 100%;
   flex: 1;
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#cecece")};
+  border-bottom-color: ${(props) => (props.error ? props.theme.accentColor : "#cecece")};
   margin: 10px 0px;
 `;
 
@@ -77,8 +77,8 @@ const ValidationItem = styled.View`
 `;
 
 const ValidationText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
-  color: ${(props: any) => props.theme.accentColor};
+  font-family: ${(props) => props.theme.koreanFontR};
+  color: ${(props) => props.theme.accentColor};
   font-size: 10px;
   line-height: 15px;
 `;
@@ -94,9 +94,9 @@ const ErrorView = styled.View`
   align-items: center;
 `;
 const ErrorText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
-  color: ${(props: any) => props.theme.accentColor};
+  color: ${(props) => props.theme.accentColor};
 `;
 
 const Item = styled.View`
@@ -108,7 +108,7 @@ const Item = styled.View`
 `;
 
 const ItemTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 13px;
   line-height: 19px;
   color: #b0b0b0;
@@ -116,14 +116,14 @@ const ItemTitle = styled.Text`
 `;
 
 const ItemText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   margin-right: 5px;
 `;
 
 const ItemTextInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 15px;
   line-height: 22px;
   padding: 0px 5px;
@@ -178,8 +178,8 @@ const ClubCreationStepTwo: React.FC<NativeStackScreenProps<ClubCreationStackPara
 
   const pickImage = async () => {
     try {
-      let image = await ImagePicker.openPicker({ mediaType: "photo" });
-      let croped = await ImagePicker.openCropper({
+      const image = await ImagePicker.openPicker({ mediaType: "photo" });
+      const croped = await ImagePicker.openCropper({
         mediaType: "photo",
         path: image.path,
         width: 1080,

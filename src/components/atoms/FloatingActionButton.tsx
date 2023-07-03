@@ -14,7 +14,7 @@ const Container = styled.View<{ height: number }>`
   justify-content: space-between;
   z-index: 2;
   width: 100%;
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   bottom: 0px;
   padding-right: 20px;
   padding-left: 20px;
@@ -40,11 +40,11 @@ const IconButton = styled.TouchableOpacity`
 
 const Button = styled.TouchableOpacity<{ isJoined: boolean }>`
   padding: 8px 15px;
-  background-color: ${(props: any) => (props.isJoined ? props.theme.accentColor : props.theme.primaryColor)};
+  background-color: ${(props) => (props.isJoined ? props.theme.accentColor : props.theme.primaryColor)};
   border-radius: 20px;
 `;
 const ButtonText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-family: ${(props) => props.theme.koreanFontSB};
   font-size: 18px;
   line-height: 22px;
   color: white;

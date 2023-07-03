@@ -18,7 +18,7 @@ const Header = styled.View`
 `;
 
 const HeaderText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 16px;
   line-height: 21px;
 `;
@@ -29,7 +29,7 @@ const MessageView = styled.ScrollView`
 `;
 
 const ContentText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   margin: 8px;
   color: #343434;
   font-size: 14px;

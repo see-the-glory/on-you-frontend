@@ -35,19 +35,19 @@ const ItemLeftDetail = styled.View`
 `;
 
 const ItemText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 16px;
   line-height: 17px;
   /* margin-bottom: 2px; */
 `;
 
 const UnblockButton = styled.TouchableOpacity`
-  background-color: ${(props: any) => props.theme.accentColor};
+  background-color: ${(props) => props.theme.accentColor};
   border-radius: 8px;
 `;
 
 const UnBlockButtonText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   padding: 6px 12px;
   color: white;
@@ -66,7 +66,7 @@ const EmptyView = styled.View`
 `;
 
 const EmptyText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #acacac;

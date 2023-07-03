@@ -24,7 +24,7 @@ const Header = styled.View`
   align-items: center;
 `;
 const Content = styled.View<{ width: number }>`
-  width: ${(props: any) => (props.width ? props.width : 0)}px;
+  width: ${(props) => (props.width ? props.width : 0)}px;
   margin-bottom: 2px;
 `;
 const Footer = styled.View`
@@ -33,14 +33,14 @@ const Footer = styled.View`
 `;
 
 const Side = styled.View<{ width: number }>`
-  width: ${(props: any) => (props.width ? props.width : 0)}px;
+  width: ${(props) => (props.width ? props.width : 0)}px;
   padding-top: 3px;
   justify-content: flex-start;
   align-items: center;
 `;
 
 const UserName = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 13px;
   line-height: 21px;
   margin-right: 8px;
@@ -48,14 +48,14 @@ const UserName = styled.Text`
 `;
 
 const ContentText = styled(LinkedText)`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 21px;
   color: #2b2b2b;
 `;
 
 const SubText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 11px;
   line-height: 14px;
   color: #8e8e8e;

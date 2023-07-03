@@ -22,22 +22,22 @@ const Item = styled.View`
 `;
 
 const ItemText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-family: ${(props) => props.theme.koreanFontSB};
   font-size: 16px;
-  color: ${(props: any) => props.theme.infoColor};
+  color: ${(props) => props.theme.infoColor};
   margin-bottom: 10px;
 `;
 
 const Input = styled.TextInput<{ error: boolean }>`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 20px;
   border-bottom-width: 1px;
-  border-bottom-color: ${(props: any) => (props.error ? props.theme.accentColor : "#b3b3b3")};
+  border-bottom-color: ${(props) => (props.error ? props.theme.accentColor : "#b3b3b3")};
 `;
 
 const ErrorText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
-  color: ${(props: any) => props.theme.accentColor};
+  font-family: ${(props) => props.theme.koreanFontR};
+  color: ${(props) => props.theme.accentColor};
   font-size: 12px;
   line-height: 14px;
 `;
@@ -55,7 +55,7 @@ const ValidationItem = styled.View`
 `;
 
 const ValidationText = styled.Text`
-  font-family: ${(props: any) => props.theme.englishFontL};
+  font-family: ${(props) => props.theme.englishFontL};
   color: #8e8e8e;
   font-size: 10px;
   line-height: 14px;

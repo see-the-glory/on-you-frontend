@@ -21,7 +21,7 @@ const Wrap = styled.View`
 `;
 
 const HeaderText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   color: #2b2b2b;
   font-size: 16px;
   line-height: 21px;
@@ -37,15 +37,15 @@ const Item = styled.TouchableOpacity`
 `;
 
 const RedText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   margin-right: 5px;
-  color: ${(props: any) => props.theme.accentColor};
+  color: ${(props) => props.theme.accentColor};
   font-size: 16px;
   line-height: 17px;
 `;
 
 const ItemText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   color: #6f6f6f;
   font-size: 16px;
   line-height: 17px;

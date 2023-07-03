@@ -17,9 +17,9 @@ const Container = styled.View`
 const Content = styled.View``;
 
 const ContentTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-family: ${(props) => props.theme.koreanFontSB};
   font-size: 16px;
-  color: ${(props: any) => props.theme.infoColor};
+  color: ${(props) => props.theme.infoColor};
   margin-bottom: 8px;
 `;
 
@@ -32,7 +32,7 @@ const PhoneNumberView = styled.View`
 `;
 
 const ContentInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   border-bottom-width: 0.5px;
   border-bottom-color: #000000;
   padding-bottom: 2px;

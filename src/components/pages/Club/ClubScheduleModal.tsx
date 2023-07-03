@@ -22,28 +22,28 @@ const ModalContainer = styled.View`
 `;
 const Container = styled.View<{ pageWidth: number; gap: number }>`
   background-color: white;
-  width: ${(props: any) => props.pageWidth}px;
-  margin: 0px ${(props: any) => props.gap / 2}px;
+  width: ${(props) => props.pageWidth}px;
+  margin: 0px ${(props) => props.gap / 2}px;
 `;
 const Header = styled.View<{ index: number }>`
   align-items: center;
   justify-content: center;
   width: 100%;
-  background-color: ${(props: any) => (props.index === 0 ? "#FF551F" : "#C0C0C0")};
+  background-color: ${(props) => (props.index === 0 ? "#FF551F" : "#C0C0C0")};
   padding: 10px 0px;
 `;
 
 const ScheduleText = styled(CustomText)<{ index: number }>`
   font-size: 18px;
   line-height: 24px;
-  color: ${(props: any) => (props.index === 0 ? "white" : "black")};
+  color: ${(props) => (props.index === 0 ? "white" : "black")};
 `;
 
 const ScheduleTitle = styled(CustomText)<{ index: number }>`
   font-size: 28px;
   font-family: "NotoSansKR-Bold";
   line-height: 36px;
-  color: ${(props: any) => (props.index === 0 ? "white" : "black")};
+  color: ${(props) => (props.index === 0 ? "white" : "black")};
 `;
 
 const Content = styled.View`
@@ -53,7 +53,7 @@ const Content = styled.View`
 `;
 
 const ContentItemView = styled.View<{ height: number }>`
-  height: ${(props: any) => (props.height ? props.height : 35)}px;
+  height: ${(props) => (props.height ? props.height : 35)}px;
   width: 100%;
   flex-direction: row;
   padding: 1px 8px;
@@ -85,7 +85,7 @@ const ContentText = styled(CustomText)`
 
 const MemoScrollView = styled.ScrollView<{ showMember: boolean }>`
   width: 100%;
-  height: ${(props: any) => (props.showMember ? 130 : 200)}px;
+  height: ${(props) => (props.showMember ? 130 : 200)}px;
   padding: 0px 8px;
 `;
 const Memo = styled(CustomText)`
@@ -106,9 +106,9 @@ const ApplyButton = styled.TouchableOpacity<{ participation: boolean }>`
   width: 110px;
   justify-content: center;
   align-items: center;
-  background-color: ${(props: any) => (props.participation ? "white" : "#FF6534")};
+  background-color: ${(props) => (props.participation ? "white" : "#FF6534")};
   padding: 9px 0px;
-  border: 1px solid ${(props: any) => props.theme.accentColor};
+  border: 1px solid ${(props) => props.theme.accentColor};
   border-radius: 20px;
 `;
 
@@ -116,7 +116,7 @@ const ButtonText = styled(CustomText)<{ participation: boolean }>`
   font-size: 14px;
   line-height: 20px;
   font-family: "NotoSansKR-Medium";
-  color: ${(props: any) => (props.participation ? "#FF6534" : "white")};
+  color: ${(props) => (props.participation ? "#FF6534" : "white")};
 `;
 
 const ModalHeaderLeft = styled.View`
@@ -135,8 +135,8 @@ const ModalHeaderRight = styled.View`
 
 const Break = styled.View<{ sep: number }>`
   width: 100%;
-  margin-bottom: ${(props: any) => props.sep}px;
-  margin-top: ${(props: any) => props.sep}px;
+  margin-bottom: ${(props) => props.sep}px;
+  margin-top: ${(props) => props.sep}px;
   border-bottom-width: 1px;
   border-bottom-color: rgba(0, 0, 0, 0.2);
   opacity: 0.5;
@@ -144,7 +144,7 @@ const Break = styled.View<{ sep: number }>`
 
 const MenuText = styled(CustomText)<{ color: string }>`
   font-size: 12px;
-  color: ${(props: any) => (props.color ? props.color : "#1b1717")};
+  color: ${(props) => (props.color ? props.color : "#1b1717")};
 `;
 
 interface ScheduleModalProps {
@@ -190,7 +190,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
     if (scheduleId === undefined) {
       return toast.show(`Schedule ID Error`, { type: "warning" });
     }
-    let requestData: ClubScheduleJoinOrCancelRequest = {
+    const requestData: ClubScheduleJoinOrCancelRequest = {
       clubId,
       scheduleId,
     };
@@ -200,7 +200,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
         if (scheduleData) {
           // 이 스케줄에 참여한 상태라면, 멤버 중 '나'를 찾고 삭제한다.
           if (scheduleData[index].participation) {
-            let target = scheduleData[index].members?.findIndex((member) => member.id === me?.id);
+            const target = scheduleData[index].members?.findIndex((member) => member.id === me?.id);
             if (target !== undefined && target > -1) scheduleData[index].members?.splice(target, 1);
           } else {
             // 이 스케줄에 내가 참여되어 있지 않다면, '나'를 추가한다.
@@ -222,7 +222,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ visible, clubId, schedule
       return toast.show(`Schedule ID Error`, { type: "warning" });
     }
 
-    let requestData: ClubScheduleDeletionRequest = {
+    const requestData: ClubScheduleDeletionRequest = {
       clubId,
       scheduleId,
     };

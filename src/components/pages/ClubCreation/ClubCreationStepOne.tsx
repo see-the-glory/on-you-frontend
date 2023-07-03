@@ -26,13 +26,13 @@ const HeaderView = styled.View`
 `;
 
 const H1 = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 18px;
   line-height: 25px;
 `;
 
 const H2 = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #5c5c5c;
@@ -46,7 +46,7 @@ const HeaderSubView = styled.View`
 `;
 
 const H3 = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 12px;
   color: #8b8b8b;
 `;
@@ -63,16 +63,16 @@ const CategoryItem = styled.TouchableOpacity<{ selected: boolean }>`
   height: 45px;
   align-items: center;
   justify-content: center;
-  background-color: ${(props: any) => (props.selected ? "#295AF5" : "white")};
+  background-color: ${(props) => (props.selected ? "#295AF5" : "white")};
   border-radius: 20px;
   border: 0.5px solid #c3c3c3;
   padding: 0px 15px 0px 15px;
 `;
 const CategoryText = styled.Text<{ selected: boolean }>`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
-  color: ${(props: any) => (props.selected ? "white" : "black")};
+  color: ${(props) => (props.selected ? "white" : "black")};
 `;
 
 const ClubCreationStepOne: React.FC<NativeStackScreenProps<ClubCreationStackParamList, "ClubCreationStepOne">> = ({

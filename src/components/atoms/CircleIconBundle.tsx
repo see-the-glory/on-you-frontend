@@ -4,25 +4,25 @@ import styled from "styled-components/native";
 import CustomText from "./CustomText";
 
 const BundleContainer = styled.View<{ size: number; kerning: number; opacity: number }>`
-  height: ${(props: any) => props.size}px;
+  height: ${(props) => props.size}px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding-left: ${(props: any) => -props.kerning}px;
-  opacity: ${(props: any) => props.opacity};
+  padding-left: ${(props) => -props.kerning}px;
+  opacity: ${(props) => props.opacity};
 `;
 
 const Container = styled.View<{ kerning: number; zIndex: number }>`
   position: relative;
   justify-content: center;
   align-items: center;
-  margin-left: ${(props: any) => props.kerning}px;
-  z-index: ${(props: any) => props.zIndex};
+  margin-left: ${(props) => props.kerning}px;
+  z-index: ${(props) => props.zIndex};
 `;
 const Backplate = styled.View<{ size: number }>`
-  width: ${(props: any) => props.size}px;
-  height: ${(props: any) => props.size}px;
-  border-radius: ${(props: any) => Math.ceil(props.size / 2)}px;
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
+  border-radius: ${(props) => Math.ceil(props.size / 2)}px;
   justify-content: center;
   align-items: center;
   border: 1px;
@@ -33,17 +33,17 @@ const Backplate = styled.View<{ size: number }>`
 `;
 
 const IconImage = styled(FastImage)<{ size: number }>`
-  width: ${(props: any) => props.size - 2}px;
-  height: ${(props: any) => props.size - 2}px;
-  border-radius: ${(props: any) => Math.ceil(props.size / 2)}px;
+  width: ${(props) => props.size - 2}px;
+  height: ${(props) => props.size - 2}px;
+  border-radius: ${(props) => Math.ceil(props.size / 2)}px;
 `;
 
 const EmptyCircleView = styled.View<{ size: number }>`
-  width: ${(props: any) => props.size - 2}px;
+  width: ${(props) => props.size - 2}px;
   justify-content: center;
   align-items: center;
-  height: ${(props: any) => props.size - 2}px;
-  border-radius: ${(props: any) => Math.ceil(props.size / 2)}px;
+  height: ${(props) => props.size - 2}px;
+  border-radius: ${(props) => Math.ceil(props.size / 2)}px;
   background-color: #6f6f6f;
 `;
 

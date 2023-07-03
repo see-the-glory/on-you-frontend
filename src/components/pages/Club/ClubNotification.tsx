@@ -28,7 +28,7 @@ const EmptyView = styled.View`
 `;
 
 const EmptyText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 14px;
   line-height: 20px;
   color: #acacac;
@@ -37,7 +37,7 @@ const EmptyText = styled.Text`
 `;
 
 const ClubNotification: React.FC<NativeStackScreenProps<ClubStackParamList, "ClubNotification">> = ({
-  navigation: { navigate, goBack, setOptions, push },
+  navigation: { goBack, setOptions, push },
   route: {
     params: { clubData, clubRole },
   },
@@ -49,7 +49,6 @@ const ClubNotification: React.FC<NativeStackScreenProps<ClubStackParamList, "Clu
     isLoading: notiLoading,
     refetch: notiRefetch,
   } = useQuery<NotificationsResponse, ErrorResponse>(["getClubNotifications", clubData?.id], ClubApi.getClubNotifications, {
-    onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | getClubNotifications ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
@@ -57,7 +56,6 @@ const ClubNotification: React.FC<NativeStackScreenProps<ClubStackParamList, "Clu
   });
 
   const readActionMutation = useMutation<BaseResponse, ErrorResponse, ReadActionRequest>(CommonApi.readAction, {
-    onSuccess: (res) => {},
     onError: (error) => {
       console.log(`API ERROR | readAction ${error.code} ${error.status}`);
       toast.show(`${error.message ?? error.code}`, { type: "warning" });
@@ -81,8 +79,7 @@ const ClubNotification: React.FC<NativeStackScreenProps<ClubStackParamList, "Clu
   }, []);
 
   useEffect(() => {
-    let clubNotiSubs = DeviceEventEmitter.addListener("ClubNotificationRefresh", () => {
-      console.log("ClubNotification - Refresh Event");
+    const clubNotiSubs = DeviceEventEmitter.addListener("ClubNotificationRefresh", () => {
       onRefresh();
     });
     const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
@@ -101,7 +98,7 @@ const ClubNotification: React.FC<NativeStackScreenProps<ClubStackParamList, "Clu
     if (item.read || item.done) return;
     const requestData: ReadActionRequest = { actionId: item.actionId };
     readActionMutation.mutate(requestData, {
-      onSuccess: (res) => {
+      onSuccess: () => {
         item.read = true;
       },
     });
@@ -153,10 +150,10 @@ const ClubNotification: React.FC<NativeStackScreenProps<ClubStackParamList, "Clu
         contentContainerStyle={{ flexGrow: 1, paddingVertical: 10, paddingHorizontal: SCREEN_PADDING_SIZE }}
         refreshing={refreshing}
         onRefresh={onRefresh}
-        data={notifications && Array.isArray(notifications?.data) ? [...notifications?.data].filter((item) => handlingActions.includes(item.actionType ?? "")).reverse() : []}
+        data={notifications && Array.isArray(notifications?.data) ? [...(notifications?.data ?? [])].filter((item) => handlingActions.includes(item.actionType ?? "")).reverse() : []}
         ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
         keyExtractor={(item: Notification, index: number) => String(index)}
-        renderItem={({ item, index }: { item: Notification; index: number }) => (
+        renderItem={({ item }: { item: Notification }) => (
           <TouchableOpacity onPress={() => onPressItem(item)}>
             <NotificationItem notificationData={item} notificationType={"CLUB"} clubData={clubData} />
           </TouchableOpacity>

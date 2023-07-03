@@ -27,12 +27,12 @@ const Header = styled.View`
 `;
 
 const HeaderText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 16px;
   line-height: 21px;
 `;
 const HeaderBoldText = styled(HeaderText)`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
 `;
 
 const MemoInfo = styled.View`
@@ -47,7 +47,7 @@ const InfoText = styled.Text`
 `;
 
 const MemoTextInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   width: 100%;
   height: 300px;
   background-color: #f3f3f3;

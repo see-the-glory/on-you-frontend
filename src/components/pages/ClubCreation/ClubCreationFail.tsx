@@ -26,7 +26,7 @@ const SectionView = styled.View`
 `;
 
 const H1 = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 24px;
   line-height: 33px;
   font-family: "NotoSansKR-Bold";
@@ -34,7 +34,7 @@ const H1 = styled.Text`
 `;
 
 const H2 = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 16px;
   line-height: 21px;
   color: #5c5c5c;

@@ -1,5 +1,5 @@
 import analytics from "@react-native-firebase/analytics";
-import { Club, Feed, GuestComment, UserProfile } from "api";
+import { Club, GuestComment, UserProfile } from "api";
 
 export interface ClubEventParams {
   club_id: number;
@@ -68,53 +68,52 @@ const dataToParams = (type: string, data: any) => {
 
 export const loginEvent = () => {
   const params = { method: "onyou" };
-  analytics().logLogin(params);
+  void analytics().logLogin(params);
 };
 
 export const setUserProperties = (userId?: number, birthday?: string | null, sex?: string | null, organizationName?: string) => {
   if (!userId) return;
-  analytics().setUserId(`${userId}`);
-  analytics().setUserProperties({ birthday: birthday ?? null, sex: sex ?? null, organization_name: organizationName ?? null }, { global: true });
+  void analytics().setUserId(`${userId}`);
+  void analytics().setUserProperties({ birthday: birthday ?? null, sex: sex ?? null, organization_name: organizationName ?? null }, { global: true });
 };
 
 export const clearUserProperties = () => {
-  analytics().resetAnalyticsData();
+  void analytics().resetAnalyticsData();
 };
 
 export const searchEvent = (keyword: string) => {
   if (!keyword || keyword === "") return;
-  analytics().logViewSearchResults({ search_term: keyword });
+  void analytics().logViewSearchResults({ search_term: keyword });
 };
 
 export const createClubEvent = (data: Club) => {
   if (!data?.id) return;
   const params = dataToParams(DataType.club, data);
-  analytics().logEvent("create_club", params);
+  void analytics().logEvent("create_club", params);
 };
 
 export const selectClubEvent = (data: Club) => {
   if (!data?.id) return;
   const params = dataToParams(DataType.club, data);
-  if (params) analytics().logEvent("select_club", params);
+  if (params) void analytics().logEvent("select_club", params);
 };
 
 export const selectProfileEvent = (userId: number, data?: UserProfile) => {
   if (!userId) return;
   const params = dataToParams(DataType.profile, { userId, ...data });
-  console.log(params);
-  analytics().logEvent("select_profile", params);
+  void analytics().logEvent("select_profile", params);
 };
 
 export const createFeedEvent = (params: FeedEventParams) => {
   if (!params?.feed_id) return;
-  analytics().logEvent("create_feed", params);
+  void analytics().logEvent("create_feed", params);
 };
 
 export const createCommentEvent = (params: CommentEventParams) => {
   if (!params) return;
   // club / feed / user
   // 댓글인지 답글인지
-  analytics().logEvent("create_feed_comment", params);
+  void analytics().logEvent("create_feed_comment", params);
 };
 
 export const createGuestCommentEvent = (guestComment: GuestComment) => {
@@ -125,5 +124,5 @@ export const createGuestCommentEvent = (guestComment: GuestComment) => {
 
 export const clubJoinEvent = (params: ClubJoinEventParams) => {
   if (!params?.club_id) return;
-  analytics().logEvent("request_join_club", params);
+  void analytics().logEvent("request_join_club", params);
 };

@@ -10,29 +10,29 @@ const TabBarContainer = styled.View<{ height: number; rounding: boolean }>`
   align-items: center;
   border-bottom-width: 1px;
   border-bottom-color: rgba(0, 0, 0, 0.2);
-  border-top-left-radius: ${(props: any) => (props.rounding ? 80 : 0)}px;
-  border-top-right-radius: ${(props: any) => (props.rounding ? 80 : 0)}px;
+  border-top-left-radius: ${(props) => (props.rounding ? 80 : 0)}px;
+  border-top-right-radius: ${(props) => (props.rounding ? 80 : 0)}px;
 `;
 
 const TabButton = styled.TouchableOpacity<{ isFocused: boolean; height: number; focusColor?: string }>`
   flex: 1;
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   justify-content: center;
   align-items: center;
   border-bottom-width: 2px;
-  border-bottom-color: ${(props: any) => (props.isFocused ? props.focusColor ?? props.theme.primaryColor : "transparent")};
+  border-bottom-color: ${(props) => (props.isFocused ? props.focusColor ?? props.theme.primaryColor : "transparent")};
 `;
 
 const TextWrap = styled.View<{ height: number }>`
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   justify-content: center;
 `;
 
 const TabText = styled.Text<{ isFocused: boolean }>`
-  font-family: ${(props: any) => (props.isFocused ? props.theme.koreanFontM : props.theme.koreanFontR)};
+  font-family: ${(props) => (props.isFocused ? props.theme.koreanFontM : props.theme.koreanFontR)};
   font-size: 15px;
-  line-height: ${(props: any) => (props.isFocused ? 17 : 18)}px;
-  color: ${(props: any) => (props.isFocused ? "black" : "#818181")};
+  line-height: ${(props) => (props.isFocused ? 17 : 18)}px;
+  color: ${(props) => (props.isFocused ? "black" : "#818181")};
 `;
 
 interface TabBarProps extends MaterialTopTabBarProps {

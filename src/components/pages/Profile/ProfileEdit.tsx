@@ -29,7 +29,7 @@ const NavigationView = styled.View<{ height: number }>`
   position: absolute;
   z-index: 3;
   width: 100%;
-  height: ${(props: any) => props.height}px;
+  height: ${(props) => props.height}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -48,7 +48,7 @@ const CenterNavigationView = styled.View`
 `;
 
 const NavigationTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 16px;
   color: #2b2b2b;
 `;
@@ -60,7 +60,7 @@ const FilterView = styled.View`
 `;
 
 const ImageChangeText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontL};
+  font-family: ${(props) => props.theme.koreanFontL};
   color: #dedede;
   font-size: 14px;
   margin: 20px 0px 35px 0px;
@@ -90,7 +90,7 @@ const SectionHeader = styled.View`
 const SectionContent = styled.View``;
 
 const AboutTextInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   width: 100%;
   height: 120px;
   background-color: #f8f8f8;
@@ -114,14 +114,14 @@ const PersonalInfo = styled.View`
 
 const PersonalInfoTitle = styled.Text`
   width: 50px;
-  font-family: ${(props: any) => props.theme.koreanFontSB};
-  color: ${(props: any) => props.theme.accentColor};
+  font-family: ${(props) => props.theme.koreanFontSB};
+  color: ${(props) => props.theme.accentColor};
   font-size: 13px;
   color: #020202;
 `;
 const PersonalInfoText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
-  color: ${(props: any) => props.theme.accentColor};
+  font-family: ${(props) => props.theme.koreanFontR};
+  color: ${(props) => props.theme.accentColor};
   font-size: 14px;
   color: #808080;
 `;
@@ -168,20 +168,20 @@ const ClubThumbnail = styled(FadeFastImage)`
 `;
 
 const ClubNameText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontB};
+  font-family: ${(props) => props.theme.koreanFontB};
   font-size: 15px;
   margin-right: 5px;
 `;
 
 const ClubMemberCount = styled.Text`
-  font-family: ${(props: any) => props.theme.englishFontM};
+  font-family: ${(props) => props.theme.englishFontM};
   color: #c4c4c4;
   font-size: 12px;
   margin-bottom: 1px;
 `;
 
 const ClubCategoryText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 13px;
   margin: 1px 0px;
   margin-right: 5px;
@@ -189,38 +189,38 @@ const ClubCategoryText = styled.Text`
 `;
 
 const ClubRoleText = styled.Text`
-  font-family: ${(props: any) => props.theme.englishFontR};
+  font-family: ${(props) => props.theme.englishFontR};
   font-size: 10px;
   line-height: 13px;
   color: white;
 `;
 
 const HeaderTitle = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
-  color: ${(props: any) => props.theme.accentColor};
+  font-family: ${(props) => props.theme.koreanFontSB};
+  color: ${(props) => props.theme.accentColor};
   font-size: 14px;
   line-height: 17px;
 `;
 const HeaderText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-family: ${(props) => props.theme.koreanFontSB};
   color: #2b2b2b;
   font-size: 11px;
 `;
 const HeaderSubText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   color: #bcbcbc;
   font-size: 11px;
 `;
 
 const SectionContentSubText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   color: #bcbcbc;
   font-size: 12px;
   margin-top: 10px;
 `;
 
 const SubmitText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   color: #2995fa;
   font-size: 14px;
 `;
@@ -260,8 +260,8 @@ const ProfileEdit: React.FC<NativeStackScreenProps<ProfileStackParamList, "Profi
 
   const pickImage = async (type: IMAGE_TYPE) => {
     try {
-      let image = await ImagePicker.openPicker({ mediaType: "photo" });
-      let croped = await ImagePicker.openCropper({
+      const image = await ImagePicker.openPicker({ mediaType: "photo" });
+      const croped = await ImagePicker.openCropper({
         mediaType: "photo",
         path: image.path,
         width: 1080,
@@ -303,8 +303,8 @@ const ProfileEdit: React.FC<NativeStackScreenProps<ProfileStackParamList, "Profi
       },
     };
 
-    let splitedThumbnail = thumbnail?.split("/");
-    let splitedBackgroundImage = backgroundImage?.split("/");
+    const splitedThumbnail = thumbnail?.split("/");
+    const splitedBackgroundImage = backgroundImage?.split("/");
 
     if (thumbnail && splitedThumbnail) {
       updateData.thumbnail = {

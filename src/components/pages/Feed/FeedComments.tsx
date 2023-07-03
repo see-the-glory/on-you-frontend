@@ -35,11 +35,11 @@ const ReplyStatusView = styled.View<{ padding: number }>`
   justify-content: space-between;
   align-items: center;
   background-color: #ececec;
-  padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
+  padding: 10px ${(props) => (props.padding ? props.padding : 0)}px;
 `;
 
 const StatusText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 13px;
   color: #8e8e8e;
 `;
@@ -51,7 +51,7 @@ const CommentInputView = styled.View<{ padding: number }>`
   border-top-width: 1px;
   border-top-color: #c4c4c4;
   align-items: flex-end;
-  padding: 10px ${(props: any) => (props.padding ? props.padding : 0)}px;
+  padding: 10px ${(props) => (props.padding ? props.padding : 0)}px;
   margin-bottom: 10px;
 `;
 
@@ -65,7 +65,7 @@ const RoundingView = styled.View`
   border-radius: 15px; */
 `;
 const CommentInput = styled.TextInput`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 13px;
   flex: 1;
   margin: 1px 0px;
@@ -85,11 +85,11 @@ const SubmitLoadingView = styled.View`
   margin-bottom: 8px;
 `;
 const SubmitButtonText = styled.Text<{ disabled: boolean }>`
-  font-family: ${(props: any) => props.theme.koreanFontM};
+  font-family: ${(props) => props.theme.koreanFontM};
   font-size: 15px;
   line-height: 20px;
   color: #63abff;
-  opacity: ${(props: any) => (props.disabled ? 0.3 : 1)};
+  opacity: ${(props) => (props.disabled ? 0.3 : 1)};
 `;
 
 const EmptyView = styled.View`
@@ -99,7 +99,7 @@ const EmptyView = styled.View`
 `;
 
 const EmptyText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 15px;
   line-height: 20px;
   color: #acacac;
@@ -128,7 +128,7 @@ const FeedComments: React.FC<NativeStackScreenProps<FeedStackParamList, "FeedCom
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const insets = useSafeAreaInsets();
   const paddingSize = 20;
-  let { refetch: commentsRefetch } = useQuery<FeedCommentsResponse, ErrorResponse>(["getFeedComments", feedId], FeedApi.getFeedComments, {
+  const { refetch: commentsRefetch } = useQuery<FeedCommentsResponse, ErrorResponse>(["getFeedComments", feedId], FeedApi.getFeedComments, {
     onSuccess: (res: FeedCommentsResponse) => {
       setCommentData(res?.data);
       setIsLoading(false);
@@ -196,7 +196,7 @@ const FeedComments: React.FC<NativeStackScreenProps<FeedStackParamList, "FeedCom
   const submit = () => {
     if (!validation) return toast.show(`글을 입력하세요.`, { type: "warning" });
 
-    let requestData: FeedCommentCreationRequest = {
+    const requestData: FeedCommentCreationRequest = {
       feedId,
       content: comment.trim(),
     };
@@ -209,7 +209,7 @@ const FeedComments: React.FC<NativeStackScreenProps<FeedStackParamList, "FeedCom
   const deleteComment = (commentId: number) => {
     if (commentId === -1) return toast.show(`댓글 정보가 잘못되었습니다.`, { type: "warning" });
 
-    let requestData: FeedCommentDefaultRequest = { commentId };
+    const requestData: FeedCommentDefaultRequest = { commentId };
     Alert.alert("댓글 삭제", "작성하신 댓글을 삭제하시겠어요?", [
       { text: "아니요" },
       {
@@ -232,7 +232,7 @@ const FeedComments: React.FC<NativeStackScreenProps<FeedStackParamList, "FeedCom
   const likeComment = (commentId: number, commentType: number, parentIndex: number, replyIndex?: number) => {
     if (commentId === -1) return toast.show(`댓글 정보가 잘못되었습니다.`, { type: "warning" });
 
-    let requestData: FeedCommentDefaultRequest = { commentId };
+    const requestData: FeedCommentDefaultRequest = { commentId };
     likeFeedCommentMutation.mutate(requestData);
 
     setCommentData((prev) => {

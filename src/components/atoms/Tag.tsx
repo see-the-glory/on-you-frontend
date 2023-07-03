@@ -6,18 +6,18 @@ import styled from "styled-components/native";
 const TagView = styled.View<{ backgroundColor?: string; borderColor?: string }>`
   flex-direction: row;
   align-items: center;
-  background-color: ${(props: any) => (props.backgroundColor ? props.backgroundColor : "white")};
+  background-color: ${(props) => (props.backgroundColor ? props.backgroundColor : "white")};
   padding: 2px 4px;
   border-radius: 5px;
   margin-right: 5px;
-  ${(props: any) => (props.borderColor ? `border: 1px solid ${props.borderColor};` : "")}
+  ${(props) => (props.borderColor ? `border: 1px solid ${props.borderColor};` : "")}
 `;
 
 const TagText = styled.Text<{ color?: string; includeEmoji?: boolean }>`
-  font-family: ${(props: any) => props.theme.koreanFontSB};
+  font-family: ${(props) => props.theme.koreanFontSB};
   font-size: 11px;
-  line-height: ${(props: any) => (props.includeEmoji ? 15 : 13)}px;
-  color: ${(props: any) => (props.color ? props.color : "white")};
+  line-height: ${(props) => (props.includeEmoji ? 15 : 13)}px;
+  color: ${(props) => (props.color ? props.color : "white")};
 `;
 
 interface TagProps {

@@ -15,7 +15,7 @@ const HiddenItemContainer = styled.View`
   justify-content: flex-end;
 `;
 const HiddenItemButton = styled.TouchableOpacity<{ width: number }>`
-  width: ${(props: any) => props.width}px;
+  width: ${(props) => props.width}px;
   height: 100%;
   background-color: #8e8e8e;
   justify-content: center;
@@ -27,7 +27,7 @@ const ReplyShowButton = styled.TouchableOpacity`
   align-items: center;
 `;
 const ReplyText = styled.Text`
-  font-family: ${(props: any) => props.theme.koreanFontR};
+  font-family: ${(props) => props.theme.koreanFontR};
   font-size: 11px;
   color: #8e8e8e;
 `;
