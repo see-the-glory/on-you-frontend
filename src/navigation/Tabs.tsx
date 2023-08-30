@@ -179,7 +179,7 @@ const Tabs: React.FC<NativeStackScreenProps<RootStackParamList, "Tabs">> = ({ ro
     >
       <Tab.Screen name="Home" component={Home} options={{ headerShown: false }} />
       <Tab.Screen name="Find" component={Find} options={{}} />
-      <Tab.Screen name="Chat" component={Chat} options={{}} />
+      {/* <Tab.Screen name="Chat" component={Chat} options={{}} /> */}
       <Tab.Screen name="My" component={Profile} initialParams={{}} options={{}} />
     </Tab.Navigator>
   );

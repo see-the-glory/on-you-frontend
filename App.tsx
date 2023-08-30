@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { NavigationContainer, useNavigationContainerRef } from "@react-navigation/native";
 import Root from "@navigation/Root";
 import Auth from "@navigation/Auth";
@@ -7,7 +7,7 @@ import { Provider, useSelector } from "react-redux";
 import { RootState } from "redux/store/reducers";
 import { ToastProvider } from "react-native-toast-notifications";
 import { Ionicons } from "@expo/vector-icons";
-import { LogBox, Platform, Text, TextInput, View } from "react-native";
+import { LogBox, Platform, View } from "react-native";
 import * as Font from "expo-font";
 import SplashScreen from "react-native-splash-screen";
 import moment from "moment";
@@ -38,7 +38,7 @@ const RootNavigation = () => {
     });
   };
 
-  const fontSetting = async () => {
+  const fontSetting = useCallback(async () => {
     await Font.loadAsync({
       "NotoSansKR-Bold": require("@fonts/NotoSansKR/NotoSansKR-Bold.otf"),
       "NotoSansKR-Regular": require("@fonts/NotoSansKR/NotoSansKR-Regular.otf"),
@@ -59,9 +59,9 @@ const RootNavigation = () => {
       "TT-Commons-Medium": require("@fonts/TTCommons/TT-Commons-Medium.otf"),
       "TT-Commons-Regular": require("@fonts/TTCommons/TT-Commons-Regular.otf"),
     });
-  };
+  }, []);
 
-  const updateFCM = async () => {
+  const updateFCM = useCallback(async () => {
     const authStatus = await messaging().requestPermission();
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
     console.log(`FCM Enabled: ${enabled}`);
@@ -73,11 +73,11 @@ const RootNavigation = () => {
       if (Platform.OS === "android") await messaging().registerDeviceForRemoteMessages();
       const fcmToken = await messaging().getToken();
       console.log("FCM token:", fcmToken);
-      dispatch(updateFCMToken({ fcmToken }));
+      void dispatch(updateFCMToken({ fcmToken }));
     } catch (e) {
       console.warn(e);
     }
-  };
+  }, [dispatch]);
 
   const notificationChannelSetting = async () => {
     await notifee.createChannel({
@@ -95,26 +95,26 @@ const RootNavigation = () => {
     });
   };
 
-  const prepare = async () => {
+  const prepare = useCallback(async () => {
     try {
       await dispatch(init());
       await fontSetting();
       timezoneSetting();
-      updateFCM();
+      void updateFCM();
     } catch (e) {
       console.warn(e);
     } finally {
       setAppIsReady(true);
     }
-  };
+  }, [dispatch, fontSetting, updateFCM]);
 
   useEffect(() => {
-    prepare();
+    void prepare();
     if (Platform.OS === "android") {
-      notificationChannelSetting();
+      void notificationChannelSetting();
       BackgroundColor.setColor("#FFFFFF");
     }
-  }, []);
+  }, [prepare]);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
