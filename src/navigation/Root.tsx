@@ -250,14 +250,14 @@ const Root = () => {
     });
 
     // Firebase - 앱이 종료되었는데 push 가 선택될 경우
-    messaging()
+    void messaging()
       .getInitialNotification()
       .then((message) => {
         handlePushMessage(message?.data);
       });
 
     // Notifee - 앱이 종료되었는데 push 가 선택될 경우
-    notifee.getInitialNotification().then((message) => {
+    void notifee.getInitialNotification().then((message) => {
       handlePushMessage(message?.notification?.data);
     });
 
